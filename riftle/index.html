@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Riftle — a daily League of Legends word game</title>
+  <meta name="description" content="Six guesses to find a five-letter word from League of Legends. A new one every day." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="Riftle" />
+  <meta property="og:description" content="Six guesses to find a five-letter word from League of Legends. A new one every day." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gracefully.dev/riftle/" />
+
+  <link rel="canonical" href="https://gracefully.dev/riftle/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%94%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="riftle.css" />
+
+  <script>
+    // Before first paint, so there is no flash. Light is the default:
+    // the system preference is deliberately not consulted.
+    try {
+      var t = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* blocked storage — stay on light */ }
+
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
+  </script>
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.25" />
+      <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
+    </svg>
+  </button>
+
+  <main class="page">
+    <header class="masthead">
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">
+        <span id="daynum">a word from the rift</span>
+      </p>
+
+      <h1 class="wordmark reveal reveal--display" style="--i:1">Riftle<span class="wordmark__mark">.</span></h1>
+
+      <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
+        <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
+          <path class="penstroke__ink" pathLength="1"
+                d="M10 30 C 74 8 132 40 198 26 C 258 13 312 34 366 22 C 384 18 398 22 410 32" />
+          <g class="penstroke__pen">
+            <g transform="rotate(-26) scale(0.86)">
+              <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+              <path class="penstroke__slit" d="M0 -4 V-15" />
+              <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+              <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+              <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lede reveal" style="--i:4">
+        Six guesses to find a five-letter word from League of Legends — a champion,
+        an item, a monster, a place, or something people type in chat.
+        <em>A new one every day.</em>
+      </p>
+    </header>
+
+    <div class="modes reveal" style="--i:5" role="group" aria-label="Which game to play">
+      <button class="mode" type="button" data-mode="daily" aria-pressed="true">Today's word</button>
+      <button class="mode" type="button" data-mode="endless" aria-pressed="false">Endless</button>
+    </div>
+
+    <section class="reveal" style="--i:6" aria-label="Guessing board">
+      <div class="board" id="board"></div>
+      <p class="msg" id="msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <div class="keyboard reveal" style="--i:7" id="keyboard" role="group" aria-label="Letter keys"></div>
+
+    <section class="result" id="result" hidden aria-live="polite">
+      <p class="result__verdict" id="result-verdict"></p>
+      <p class="result__word" id="result-word"></p>
+      <p class="result__gloss" id="result-gloss"></p>
+      <div class="result__actions">
+        <button class="btn" type="button" id="share">Copy my grid</button>
+        <button class="btn btn--quiet" type="button" id="again" hidden>Another word</button>
+      </div>
+      <p class="result__next" id="next-word"></p>
+    </section>
+
+    <section class="tally" aria-labelledby="stats-heading">
+      <h2 class="section-label reveal reveal--rule" id="stats-heading" style="--i:8">How you're doing</h2>
+
+      <div class="stats reveal" style="--i:9">
+        <p class="stat"><span class="stat__num" id="s-played">0</span><span class="stat__label">played</span></p>
+        <p class="stat"><span class="stat__num" id="s-rate">0%</span><span class="stat__label">won</span></p>
+        <p class="stat"><span class="stat__num" id="s-streak">0</span><span class="stat__label">streak</span></p>
+        <p class="stat"><span class="stat__num" id="s-best">0</span><span class="stat__label">best streak</span></p>
+      </div>
+
+      <div class="dist reveal" style="--i:10" id="dist" aria-label="Guesses it took"></div>
+    </section>
+
+    <details class="howto">
+      <summary>How to play</summary>
+      <p>
+        Type any five letters and press enter. A
+        <span class="swatch swatch--hit" aria-hidden="true"></span> green tile is the right
+        letter in the right place, a <span class="swatch swatch--near" aria-hidden="true"></span>
+        gold one is the right letter somewhere else, and a
+        <span class="swatch swatch--miss" aria-hidden="true"></span> grey one is not in the
+        word at all.
+      </p>
+      <p>
+        Guesses aren't checked against a dictionary, so you can open with whatever
+        probes the alphabet best. Only the <em>answers</em> come from League — every
+        one of them is a champion, an item, a monster, a place, a rune, or a piece of
+        the vocabulary. Today's word is the same for everyone; endless gives you a new
+        one whenever you want.
+      </p>
+      <p>
+        Everything lives in this browser and nowhere else. Save a copy from the bottom
+        of the page if you'd like to keep it.
+      </p>
+    </details>
+  </main>
+
+  <footer class="colophon reveal" style="--i:11">
+    <span><a href="/">Gracefully</a> &middot; Riftle &middot; not affiliated with Riot Games</span>
+    <span class="colophon__data">
+      <button type="button" id="export">Save my progress</button>
+      <label for="import">Restore
+        <input class="visually-hidden" type="file" id="import" accept="application/json,.json" />
+      </label>
+    </span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

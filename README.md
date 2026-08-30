@@ -19,6 +19,13 @@ var apps = [
 Commit and push to `main`. Pages redeploys automatically within a minute or so.
 Numbering and entrance animation are generated — don't write them by hand.
 
+## Adding an app itself
+
+Apps live in their own folder off the root (`riftle/`, and so on) and are served at
+`/<folder>/`. Each one loads the shared `/style.css` first, then its own stylesheet for
+whatever it adds — never a second copy of the design system. Link back to `/` from its
+colophon, then add it to the `apps` array above.
+
 ## Files
 
 | File | Purpose |
@@ -28,6 +35,7 @@ Numbering and entrance animation are generated — don't write them by hand.
 | `style.css` | The design system — tokens, components, motion |
 | `STYLE-GUIDE.md` | **The style guide** — read before changing anything visual |
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
+| `riftle/` | **Riftle** — a daily League of Legends word game, at [/riftle/](https://gracefully.dev/riftle/) |
 
 ## Working on it locally
 

@@ -1,0 +1,485 @@
+/* ============================================================
+   Riftle — game components
+
+   The design system (tokens, texture, the pen, the reveal engine)
+   is loaded first from /style.css and is NOT repeated here. This
+   file holds only what the game itself adds.
+
+   See STYLE-GUIDE.md at the repo root before changing anything
+   visual, and add new values as tokens rather than literals.
+   ============================================================ */
+
+/* --- 15. Game tokens ------------------------------------- */
+
+:root {
+  --hit:      #2b7d58;
+  --hit-ink:  #fbf7ef;
+  --near:     #b5822b;
+  --near-ink: #fbf7ef;
+  --miss:     #b2a693;
+  --miss-ink: #fbf7ef;
+
+  /* The tile outline and the tile fill: the same hand-drawn shape,
+     once as a stroke and once solid. Used as masks, so both take
+     their colour from the element and theme correctly. */
+  --tile-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M9 5 C 32 3 68 3 92 6 C 96 25 97 71 94 93 C 71 97 32 97 7 94 C 4 71 3 26 9 5 Z' fill='none' stroke='%23000' stroke-width='2.6' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --tile-body: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M9 5 C 32 3 68 3 92 6 C 96 25 97 71 94 93 C 71 97 32 97 7 94 C 4 71 3 26 9 5 Z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="dark"] {
+  --hit:      #3d8a63;
+  --hit-ink:  #f4efe4;
+  --near:     #96701f;
+  --near-ink: #f4efe4;
+  --miss:     #4a4234;
+  --miss-ink: #b3a996;
+}
+
+/* --- 16. Mode switch ------------------------------------- */
+
+.modes {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.mode {
+  background: none;
+  border: 0;
+  padding: 0 0 0.1em;
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink-faint);
+  transition: color var(--dur) var(--ease);
+}
+
+.mode::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.24em;
+  height: 6px;
+  background: var(--accent);
+  -webkit-mask-image: var(--wave-mask);
+  mask-image: var(--wave-mask);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 40px 6px;
+  mask-size: 40px 6px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease-expo);
+}
+
+.mode:hover { color: var(--accent); }
+.mode[aria-pressed="true"] { color: var(--ink); }
+.mode[aria-pressed="true"]::after { transform: scaleX(1); }
+
+/* --- 17. The board --------------------------------------- */
+
+.board {
+  display: grid;
+  gap: 0.45rem;
+  width: min(21rem, 100%);
+  margin: 0 auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.45rem;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+/* The outline — a drawn rectangle, never a border */
+.tile::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--rule);
+  -webkit-mask-image: var(--tile-edge);
+  mask-image: var(--tile-edge);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+
+/* The fill — the same shape, solid, faded in on reveal */
+.tile::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--miss);
+  -webkit-mask-image: var(--tile-body);
+  mask-image: var(--tile-body);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  opacity: 0;
+}
+
+.tile__letter {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(1.4rem, 6.2vw, 2rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--ink);
+  transition: color var(--dur) var(--ease);
+}
+
+.tile[data-state="typed"]::before { background: var(--rule-strong); }
+
+.tile[data-state="hit"]::after  { background: var(--hit);  opacity: 1; }
+.tile[data-state="near"]::after { background: var(--near); opacity: 1; }
+.tile[data-state="miss"]::after { background: var(--miss); opacity: 1; }
+
+.tile[data-state="hit"]::before,
+.tile[data-state="near"]::before,
+.tile[data-state="miss"]::before { opacity: 0; }
+
+.tile[data-state="hit"]  .tile__letter { color: var(--hit-ink); }
+.tile[data-state="near"] .tile__letter { color: var(--near-ink); }
+.tile[data-state="miss"] .tile__letter { color: var(--miss-ink); }
+
+/* --- 18. Board motion ------------------------------------ */
+
+.tile.is-typed .tile__letter { animation: letter-land 200ms var(--ease-bounce); }
+
+@keyframes letter-land {
+  0%   { transform: scale(0.72) rotate(-5deg); opacity: 0.4; }
+  100% { transform: none; opacity: 1; }
+}
+
+.tile.is-settling::after { animation: tile-settle 440ms var(--ease-bounce); }
+
+@keyframes tile-settle {
+  0%   { transform: scale(0.8) rotate(-3deg); opacity: 0; }
+  55%  { transform: scale(1.07) rotate(1.5deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+.row.is-wrong { animation: row-shake 420ms var(--ease); }
+
+@keyframes row-shake {
+  15%, 85% { transform: translateX(-4px) rotate(-0.5deg); }
+  35%, 65% { transform: translateX(6px) rotate(0.6deg); }
+  50%      { transform: translateX(-6px); }
+}
+
+.row.is-won .tile { animation: tile-cheer 560ms var(--ease-bounce) both; }
+.row.is-won .tile:nth-child(1) { animation-delay: 0ms; }
+.row.is-won .tile:nth-child(2) { animation-delay: 80ms; }
+.row.is-won .tile:nth-child(3) { animation-delay: 160ms; }
+.row.is-won .tile:nth-child(4) { animation-delay: 240ms; }
+.row.is-won .tile:nth-child(5) { animation-delay: 320ms; }
+
+@keyframes tile-cheer {
+  0%   { transform: none; }
+  40%  { transform: translateY(-12px) rotate(-3deg); }
+  70%  { transform: translateY(2px) rotate(1deg); }
+  100% { transform: none; }
+}
+
+/* --- 19. Message ----------------------------------------- */
+
+.msg {
+  min-height: 1.9em;
+  margin-top: var(--space-xs);
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  line-height: 1.2;
+  color: var(--ink-muted);
+}
+
+.msg:empty { color: transparent; }
+
+/* --- 20. Keyboard ---------------------------------------- */
+
+.keyboard {
+  width: min(28rem, 100%);
+  margin: var(--space-sm) auto 0;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.krow {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: center;
+}
+
+.key {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.75rem 0.1rem;
+  border: 0;
+  border-radius: 10px 13px 9px 12px;
+  background: var(--paper-warm);
+  color: var(--ink);
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              transform var(--dur-fast) var(--ease-bounce);
+}
+
+.key:hover { transform: translateY(-2px) rotate(-1.5deg); }
+.key:active { transform: translateY(1px); }
+
+.key--wide {
+  flex: 1.9 1 0;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+}
+
+.key[data-state="hit"]  { background: var(--hit);  color: var(--hit-ink); }
+.key[data-state="near"] { background: var(--near); color: var(--near-ink); }
+.key[data-state="miss"] { background: var(--miss); color: var(--miss-ink); }
+
+/* --- 21. Result panel ------------------------------------ */
+
+.result {
+  margin: var(--space-md) auto 0;
+  width: min(28rem, 100%);
+  padding: var(--space-sm) var(--space-sm) var(--space-md);
+  background: var(--paper-sunk);
+  border-radius: var(--radius-blob);
+  text-align: center;
+  animation: settle-in var(--dur-slow) var(--ease-expo) both;
+}
+
+@keyframes settle-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.result__verdict {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+}
+
+.result__word {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(2rem, 8vw, 2.75rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--accent);
+  margin: var(--space-2xs) 0;
+}
+
+.result__gloss {
+  font-style: italic;
+  color: var(--ink-muted);
+  line-height: var(--leading-snug);
+  max-width: 22rem;
+  margin: 0 auto var(--space-sm);
+}
+
+.result__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+
+.result__next {
+  margin-top: var(--space-sm);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+}
+
+/* --- 22. Buttons ----------------------------------------- */
+
+.btn {
+  border: 0;
+  cursor: pointer;
+  padding: 0.45em 1.1em;
+  border-radius: 16px 20px 15px 22px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  transition: transform var(--dur) var(--ease-bounce), opacity var(--dur) var(--ease);
+}
+
+:root[data-theme="dark"] .btn { color: var(--paper); }
+
+.btn:hover { transform: rotate(-1.5deg) scale(1.04); }
+
+.btn--quiet {
+  background: transparent;
+  color: var(--ink-muted);
+  box-shadow: inset 0 0 0 0 transparent;
+}
+
+.btn--quiet:hover { color: var(--accent); }
+
+/* --- 23. Stats ------------------------------------------- */
+
+.tally { margin-top: var(--space-lg); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.stat { text-align: center; }
+
+.stat__num {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.1;
+  display: block;
+}
+
+.stat__label {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.2;
+  color: var(--ink-muted);
+}
+
+.dist { display: grid; gap: 0.3rem; max-width: 24rem; }
+
+.dist__row {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+}
+
+.dist__bar {
+  height: 1.5rem;
+  min-width: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.45em;
+  border-radius: 7px 10px 6px 11px;
+  background: var(--paper-sunk);
+  color: var(--ink-muted);
+  transition: width var(--dur-slow) var(--ease-expo);
+}
+
+.dist__row.is-latest .dist__bar { background: var(--accent); color: var(--paper); }
+
+/* --- 24. How to play, colophon extras -------------------- */
+
+.howto {
+  margin-top: var(--space-lg);
+  max-width: var(--measure);
+}
+
+.howto > summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  font-weight: 600;
+  color: var(--ink-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+.howto > summary:hover { color: var(--accent); }
+.howto > summary::before { content: "✎ "; color: var(--ink-faint); }
+.howto[open] > summary::before { content: "✓ "; color: var(--accent); }
+
+.howto p { margin-top: var(--space-xs); line-height: var(--leading-loose); }
+
+.swatch {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 4px 6px 3px 7px;
+  vertical-align: -0.06em;
+}
+
+.swatch--hit  { background: var(--hit); }
+.swatch--near { background: var(--near); }
+.swatch--miss { background: var(--miss); }
+
+.colophon__data {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.colophon__data button,
+.colophon__data label {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.colophon__data button:hover,
+.colophon__data label:hover { color: var(--accent); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- 25. Game motion, reduced ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .tile.is-settling::after,
+  .tile.is-typed .tile__letter,
+  .row.is-won .tile,
+  .row.is-wrong { animation: none !important; }
+
+  .result { animation: none; opacity: 1; transform: none; }
+  .key:hover, .btn:hover { transform: none; }
+}
+
+/* --- 26. Narrow viewports -------------------------------- */
+
+@media (max-width: 26rem) {
+  .board { gap: 0.35rem; }
+  .row { gap: 0.35rem; }
+  .key { padding: 0.7rem 0.05rem; font-size: 0.9375rem; }
+  .stats { grid-template-columns: repeat(2, 1fr); row-gap: var(--space-sm); }
+}
