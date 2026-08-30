@@ -1,218 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gracefully</title>
-  <meta name="description" content="A home for gracefully developed apps by Grace Piddington." />
+  <meta name="description" content="A home for gracefully developed apps by Grace P." />
+  <meta name="author" content="Grace P" />
+  <meta name="color-scheme" content="light dark" />
 
   <meta property="og:title" content="Gracefully" />
-  <meta property="og:description" content="A home for gracefully developed apps by Grace Piddington." />
+  <meta property="og:description" content="A home for gracefully developed apps by Grace P." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://gracefully.dev/" />
 
+  <link rel="canonical" href="https://gracefully.dev/" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E" />
 
-  <style>
-    :root {
-      --bg: #fbfaf8;
-      --fg: #1a1a17;
-      --muted: #6b6b63;
-      --hair: #e4e2dc;
-      --accent: #3a7d5c;
-      --card: #ffffff;
-    }
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&display=swap" rel="stylesheet" />
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #141513;
-        --fg: #ecebe6;
-        --muted: #9a9a90;
-        --hair: #2b2c28;
-        --accent: #6cc79b;
-        --card: #1c1d1a;
-      }
-    }
+  <link rel="stylesheet" href="/style.css" />
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html { -webkit-text-size-adjust: 100%; }
-
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    main {
-      flex: 1;
-      width: 100%;
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: clamp(3rem, 12vh, 9rem) 1.5rem 3rem;
-    }
-
-    header { margin-bottom: 3.5rem; }
-
-    .wordmark {
-      font-size: clamp(2.25rem, 7vw, 3.25rem);
-      font-weight: 300;
-      letter-spacing: 0.02em;
-      line-height: 1.1;
-    }
-
-    .wordmark .dot { color: var(--accent); }
-
-    .tagline {
-      margin-top: 1rem;
-      color: var(--muted);
-      font-size: 1.0625rem;
-      max-width: 30rem;
-    }
-
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--hair);
-      margin-bottom: 0.5rem;
-    }
-
-    ul.apps { list-style: none; }
-
-    ul.apps li { border-bottom: 1px solid var(--hair); }
-
-    a.app {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: baseline;
-      gap: 0.25rem 1rem;
-      padding: 1.15rem 0.25rem;
-      text-decoration: none;
-      color: inherit;
-      transition: padding-left 0.15s ease, background 0.15s ease;
-    }
-
-    a.app:hover,
-    a.app:focus-visible {
-      padding-left: 0.75rem;
-      background: var(--card);
-      outline: none;
-    }
-
-    a.app .name {
-      font-size: 1.125rem;
-      font-weight: 500;
-    }
-
-    a.app:hover .name,
-    a.app:focus-visible .name { color: var(--accent); }
-
-    a.app .desc {
-      color: var(--muted);
-      font-size: 0.9375rem;
-      flex: 1 1 12rem;
-    }
-
-    a.app .arrow {
-      color: var(--muted);
-      transition: transform 0.15s ease;
-    }
-
-    a.app:hover .arrow,
-    a.app:focus-visible .arrow {
-      transform: translateX(3px);
-      color: var(--accent);
-    }
-
-    .empty {
-      padding: 1.5rem 0.25rem;
-      color: var(--muted);
-      font-size: 0.9375rem;
-    }
-
-    footer {
-      max-width: 40rem;
-      margin: 0 auto;
-      width: 100%;
-      padding: 2rem 1.5rem 2.5rem;
-      border-top: 1px solid var(--hair);
-      color: var(--muted);
-      font-size: 0.8125rem;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--accent); }
-  </style>
+  <script>
+    // Set the theme before first paint so there is no flash.
+    // Light is the default: the system preference is deliberately not consulted.
+    try {
+      var t = localStorage.getItem("gracefully-theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* private mode, blocked storage — stay on light */ }
+  </script>
 </head>
 <body>
-  <main>
-    <header>
-      <h1 class="wordmark">Gracefully<span class="dot">.</span></h1>
-      <p class="tagline">A home for gracefully developed apps by Grace Piddington.</p>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.25" />
+      <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
+    </svg>
+  </button>
+
+  <main class="page">
+    <header class="masthead">
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">Gracefully &middot; gracefully.dev</p>
+
+      <h1 class="wordmark reveal reveal--display" style="--i:1">Gracefully<span class="wordmark__mark">.</span></h1>
+
+      <p class="lede reveal" style="--i:3">
+        A home for gracefully developed apps by <em>Grace P</em>.
+      </p>
     </header>
 
-    <nav aria-label="Apps">
-      <div class="section-label">Apps</div>
-      <ul class="apps" id="app-list"></ul>
-      <p class="empty" id="empty-state" hidden>Nothing here yet &mdash; the first app is on its way.</p>
-    </nav>
+    <section aria-labelledby="index-heading">
+      <h2 class="section-label reveal reveal--rule" id="index-heading" style="--i:4">Index</h2>
+      <ol class="entries" id="entries"></ol>
+      <p class="empty reveal" id="empty-state" style="--i:5" hidden>
+        <span>Nothing here yet &mdash; the first app is being written.</span>
+      </p>
+    </section>
   </main>
 
-  <footer>
-    <span>&copy; <span id="year"></span> Grace Piddington</span>
+  <footer class="colophon reveal" style="--i:6">
+    <span>&copy; <span id="year"></span> Grace P</span>
     <a href="https://github.com/lvlygrce" rel="me">github.com/lvlygrce</a>
   </footer>
 
   <script>
-    // To publish an app, add an entry here and push. Order is preserved.
-    //   { name: "App Name", desc: "One-line description.", url: "https://app.gracefully.dev" }
-    const apps = [];
+    /* --- The index -------------------------------------------------------
+       To publish an app, add an entry below and push. Order is preserved;
+       numbering is generated. See STYLE-GUIDE.md for the full pattern.
 
-    const list = document.getElementById("app-list");
-    const empty = document.getElementById("empty-state");
+         { name: "App Name", desc: "One line, sentence case.", url: "https://…" }
+       ------------------------------------------------------------------ */
+    var apps = [];
 
-    if (apps.length === 0) {
-      empty.hidden = false;
-    } else {
-      for (const app of apps) {
-        const li = document.createElement("li");
-        const a = document.createElement("a");
-        a.className = "app";
-        a.href = app.url;
+    (function () {
+      var list  = document.getElementById("entries");
+      var empty = document.getElementById("empty-state");
 
-        const name = document.createElement("span");
-        name.className = "name";
-        name.textContent = app.name;
+      if (!apps.length) {
+        empty.hidden = false;
+      } else {
+        apps.forEach(function (app, i) {
+          var li = document.createElement("li");
+          li.className = "entry reveal";
+          li.style.setProperty("--i", String(5 + i));
 
-        const desc = document.createElement("span");
-        desc.className = "desc";
-        desc.textContent = app.desc || "";
+          var a = document.createElement("a");
+          a.className = "entry__link";
+          a.href = app.url;
 
-        const arrow = document.createElement("span");
-        arrow.className = "arrow";
-        arrow.setAttribute("aria-hidden", "true");
-        arrow.textContent = "→";
+          var num = document.createElement("span");
+          num.className = "entry__num";
+          num.setAttribute("aria-hidden", "true");
+          num.textContent = String(i + 1).padStart(2, "0");
 
-        a.append(name, desc, arrow);
-        li.append(a);
-        list.append(li);
+          var name = document.createElement("span");
+          name.className = "entry__name";
+          name.textContent = app.name;
+
+          var arrow = document.createElement("span");
+          arrow.className = "entry__arrow";
+          arrow.setAttribute("aria-hidden", "true");
+          arrow.textContent = "→";
+
+          a.append(num, name, arrow);
+
+          if (app.desc) {
+            var desc = document.createElement("span");
+            desc.className = "entry__desc";
+            desc.textContent = app.desc;
+            a.append(desc);
+          }
+
+          li.append(a);
+          list.append(li);
+        });
       }
-    }
 
-    document.getElementById("year").textContent = new Date().getFullYear();
+      /* --- Entrance --------------------------------------------------- */
+      var revealables = document.querySelectorAll(".reveal");
+
+      if (!("IntersectionObserver" in window)) {
+        revealables.forEach(function (el) { el.classList.add("is-in"); });
+      } else {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-in");
+            io.unobserve(entry.target);
+          });
+        }, { rootMargin: "0px 0px -8% 0px", threshold: 0.01 });
+
+        revealables.forEach(function (el) { io.observe(el); });
+      }
+
+      /* --- Theme ------------------------------------------------------ */
+      var root   = document.documentElement;
+      var toggle = document.getElementById("theme-toggle");
+
+      function paint(theme) {
+        root.setAttribute("data-theme", theme);
+        toggle.setAttribute(
+          "aria-label",
+          theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+        );
+      }
+
+      paint(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
+
+      toggle.addEventListener("click", function () {
+        var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        paint(next);
+        try { localStorage.setItem("gracefully-theme", next); } catch (e) { /* no-op */ }
+      });
+
+      document.getElementById("year").textContent = new Date().getFullYear();
+    })();
   </script>
 </body>
 </html>
