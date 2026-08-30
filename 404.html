@@ -10,7 +10,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/style.css" />
 
@@ -19,6 +19,10 @@
       var t = localStorage.getItem("gracefully-theme");
       document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
     } catch (e) { /* stay on light */ }
+
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
   </script>
 
   <style>
@@ -29,28 +33,39 @@
       flex-direction: column;
       justify-content: center;
     }
-    .page--404 .lede { margin-top: var(--space-sm); }
+    .page--404 .lede { margin-top: var(--space-xs); }
     .back {
       display: inline-flex;
       align-items: baseline;
       gap: var(--space-2xs);
       margin-top: var(--space-md);
-      font-family: var(--font-meta);
-      font-size: var(--size-meta);
-      font-weight: 500;
-      letter-spacing: var(--tracking-meta);
-      text-transform: uppercase;
+      font-family: var(--font-hand);
+      font-size: var(--size-hand);
       color: var(--ink-muted);
       text-decoration: none;
-      background-image: linear-gradient(var(--accent), var(--accent));
-      background-repeat: no-repeat;
-      background-position: 0 100%;
-      background-size: 0% 1px;
-      transition: background-size var(--dur) var(--ease-expo), color var(--dur) var(--ease);
+      position: relative;
+      transition: color var(--dur) var(--ease);
     }
-    .back:hover, .back:focus-visible { color: var(--accent); background-size: 100% 1px; }
-    .back__arrow { transition: transform var(--dur) var(--ease-expo); }
-    .back:hover .back__arrow { transform: translateX(-4px); }
+    .back::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: -0.24em;
+      height: 6px;
+      background: var(--accent);
+      -webkit-mask-image: var(--wave-mask);
+      mask-image: var(--wave-mask);
+      -webkit-mask-repeat: repeat-x;
+      mask-repeat: repeat-x;
+      -webkit-mask-size: 40px 6px;
+      mask-size: 40px 6px;
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--dur) var(--ease-expo);
+    }
+    .back:hover, .back:focus-visible { color: var(--accent); }
+    .back:hover::after, .back:focus-visible::after { transform: scaleX(1); }
+    .back__arrow { transition: transform var(--dur) var(--ease-bounce); }
+    .back:hover .back__arrow { transform: translateX(-5px); }
     @media (prefers-reduced-motion: reduce) {
       .back:hover .back__arrow { transform: none; }
     }
@@ -60,17 +75,37 @@
   <main class="page page--404">
     <p class="masthead__meta reveal reveal--rule" style="--i:0">Error 404</p>
     <h1 class="wordmark reveal reveal--display" style="--i:1">Not found<span class="wordmark__mark">.</span></h1>
-    <p class="lede reveal" style="--i:3">
+
+    <div class="penstroke penstroke--squiggle reveal" style="--i:3" aria-hidden="true">
+      <svg class="penstroke__svg" viewBox="0 0 222 46" fill="none">
+        <path class="penstroke__ink" pathLength="1"
+              d="M8 26 C 48 6 88 40 128 22 C 158 9 186 30 214 18" />
+        <g class="penstroke__pen">
+          <g transform="rotate(-26) scale(0.86)">
+            <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+            <path class="penstroke__slit" d="M0 -4 V-15" />
+            <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+            <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+            <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <p class="lede reveal" style="--i:4">
       That page doesn&rsquo;t exist &mdash; <em>gracefully</em>, of course.
     </p>
-    <p class="reveal" style="--i:4">
+    <p class="reveal" style="--i:5">
       <a class="back" href="/"><span class="back__arrow" aria-hidden="true">&larr;</span> Back to the index</a>
     </p>
   </main>
 
-  <footer class="colophon reveal" style="--i:5">
-    <span>&copy; <span id="year"></span> Grace P</span>
-    <a href="https://github.com/lvlygrce" rel="me">github.com/lvlygrce</a>
+  <footer class="colophon reveal" style="--i:6">
+    <span>&copy; <span id="year"></span> Grace Piddington</span>
+    <span class="colophon__links">
+      <a href="/style-guide.html">style guide</a>
+      <a href="https://github.com/lvlygrce" rel="me">github.com/lvlygrce</a>
+    </span>
   </footer>
 
   <script>

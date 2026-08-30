@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Gracefully</title>
   <meta name="description" content="A home for gracefully developed apps by Grace P." />
-  <meta name="author" content="Grace P" />
+  <meta name="author" content="Grace Piddington" />
   <meta name="color-scheme" content="light dark" />
 
   <meta property="og:title" content="Gracefully" />
@@ -18,7 +18,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/style.css" />
 
@@ -29,16 +29,21 @@
       var t = localStorage.getItem("gracefully-theme");
       document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
     } catch (e) { /* private mode, blocked storage — stay on light */ }
+
+    // No motion path means no pen. The ink still draws.
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
   </script>
 </head>
 <body>
   <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
          stroke-linecap="round" aria-hidden="true">
       <circle cx="12" cy="12" r="4.25" />
       <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
     </svg>
-    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
     </svg>
@@ -46,27 +51,46 @@
 
   <main class="page">
     <header class="masthead">
-      <p class="masthead__meta reveal reveal--rule" style="--i:0">Gracefully &middot; gracefully.dev</p>
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">gracefully.dev</p>
 
       <h1 class="wordmark reveal reveal--display" style="--i:1">Gracefully<span class="wordmark__mark">.</span></h1>
 
-      <p class="lede reveal" style="--i:3">
+      <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
+      <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
+        <path class="penstroke__ink" pathLength="1"
+              d="M10 30 C 74 8 132 40 198 26 C 258 13 312 34 366 22 C 384 18 398 22 410 32" />
+        <g class="penstroke__pen">
+          <g transform="rotate(-26) scale(0.86)">
+            <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+            <path class="penstroke__slit" d="M0 -4 V-15" />
+            <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+            <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+            <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+          </g>
+        </g>
+      </svg>
+      </div>
+
+      <p class="lede reveal" style="--i:4">
         A home for gracefully developed apps by <em>Grace P</em>.
       </p>
     </header>
 
     <section aria-labelledby="index-heading">
-      <h2 class="section-label reveal reveal--rule" id="index-heading" style="--i:4">Index</h2>
+      <h2 class="section-label reveal reveal--rule" id="index-heading" style="--i:5">The index</h2>
       <ol class="entries" id="entries"></ol>
-      <p class="empty reveal" id="empty-state" style="--i:5" hidden>
+      <p class="empty reveal" id="empty-state" style="--i:6" hidden>
         <span>Nothing here yet &mdash; the first app is being written.</span>
       </p>
     </section>
   </main>
 
-  <footer class="colophon reveal" style="--i:6">
-    <span>&copy; <span id="year"></span> Grace P</span>
-    <a href="https://github.com/lvlygrce" rel="me">github.com/lvlygrce</a>
+  <footer class="colophon reveal" style="--i:7">
+    <span>&copy; <span id="year"></span> Grace Piddington</span>
+    <span class="colophon__links">
+      <a href="/style-guide.html">style guide</a>
+      <a href="https://github.com/lvlygrce" rel="me">github.com/lvlygrce</a>
+    </span>
   </footer>
 
   <script>
@@ -88,7 +112,7 @@
         apps.forEach(function (app, i) {
           var li = document.createElement("li");
           li.className = "entry reveal";
-          li.style.setProperty("--i", String(5 + i));
+          li.style.setProperty("--i", String(6 + i));
 
           var a = document.createElement("a");
           a.className = "entry__link";

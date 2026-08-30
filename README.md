@@ -2,8 +2,9 @@
 
 A home for gracefully developed apps by Grace P — live at **[gracefully.dev](https://gracefully.dev)**.
 
-An editorial, page-like index: light by default, serif throughout, with a dark theme
-behind a toggle. Static HTML and CSS, no build step, served by GitHub Pages from `main`.
+A warm, page-like index: light by default, serif throughout, textured paper, wobbly
+hand-drawn rules, and a fountain pen that signs the masthead on arrival. Static HTML and
+CSS, no build step, served by GitHub Pages from `main`.
 
 ## Adding an app to the index
 
@@ -25,7 +26,8 @@ Numbering and entrance animation are generated — don't write them by hand.
 | `index.html` | The index page |
 | `404.html` | Custom not-found page, served by GitHub Pages |
 | `style.css` | The design system — tokens, components, motion |
-| `STYLE-GUIDE.md` | What every token is for, and how to add pages |
+| `style-guide.html` | The living style guide, at [/style-guide.html](https://gracefully.dev/style-guide.html) |
+| `STYLE-GUIDE.md` | The same rules in writing, for grepping |
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
 
 ## Working on it locally
@@ -39,4 +41,8 @@ Then open <http://localhost:8000>. Use a server rather than opening the file dir
 
 ## Design
 
-See **[STYLE-GUIDE.md](STYLE-GUIDE.md)** before changing anything visual.
+See **[STYLE-GUIDE.md](STYLE-GUIDE.md)** — or the living version at
+**[gracefully.dev/style-guide.html](https://gracefully.dev/style-guide.html)** — before
+changing anything visual.
+
+The one rule worth repeating here: **no full-caps letterspaced labels, anywhere.**
