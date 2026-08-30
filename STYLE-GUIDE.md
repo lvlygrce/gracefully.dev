@@ -3,11 +3,8 @@
 The design system behind [gracefully.dev](https://gracefully.dev). Everything here is
 implemented as CSS custom properties in [`style.css`](style.css).
 
-> **There is a living version of this document at
-> [gracefully.dev/style-guide.html](https://gracefully.dev/style-guide.html)** — same
-> rules, but with real swatches, type specimens, texture samples and a pen you can make
-> write again. Read that one if you want to *see* the system; read this one if you want to
-> grep it.
+**Read this before changing anything visual.** The system is deliberately
+opinionated; §2 in particular is a hard rule, not a preference.
 
 ---
 

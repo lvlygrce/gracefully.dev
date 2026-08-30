@@ -1,7 +1,7 @@
 /* ============================================================
    Gracefully — design system
    Tokens first, then base, then components, then motion.
-   Full documentation: STYLE-GUIDE.md and /style-guide.html
+   Full documentation: STYLE-GUIDE.md
    ============================================================ */
 
 /* --- 1. Tokens ------------------------------------------- */
@@ -481,12 +481,6 @@ em { font-style: italic; }
   top: 0;
   left: var(--space-sm);
   right: var(--space-sm);
-}
-
-.colophon__links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
 }
 
 .colophon a {

@@ -26,8 +26,7 @@ Numbering and entrance animation are generated — don't write them by hand.
 | `index.html` | The index page |
 | `404.html` | Custom not-found page, served by GitHub Pages |
 | `style.css` | The design system — tokens, components, motion |
-| `style-guide.html` | The living style guide, at [/style-guide.html](https://gracefully.dev/style-guide.html) |
-| `STYLE-GUIDE.md` | The same rules in writing, for grepping |
+| `STYLE-GUIDE.md` | **The style guide** — read before changing anything visual |
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
 
 ## Working on it locally
@@ -41,8 +40,10 @@ Then open <http://localhost:8000>. Use a server rather than opening the file dir
 
 ## Design
 
-See **[STYLE-GUIDE.md](STYLE-GUIDE.md)** — or the living version at
-**[gracefully.dev/style-guide.html](https://gracefully.dev/style-guide.html)** — before
-changing anything visual.
+See **[STYLE-GUIDE.md](STYLE-GUIDE.md)** before changing anything visual. It covers the
+palette, the three typefaces, the texture layers, the pen, and the motion system.
 
 The one rule worth repeating here: **no full-caps letterspaced labels, anywhere.**
+
+The style guide is documentation, not a page — it lives in the repo and is deliberately
+not published to the site.
