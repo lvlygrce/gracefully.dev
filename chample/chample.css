@@ -1,0 +1,705 @@
+/* ============================================================
+   Chample — game components
+
+   The design system (tokens, texture, the pen, the reveal engine)
+   is loaded first from /style.css and is NOT repeated here. This
+   file holds only what the game itself adds.
+
+   It is a deliberate sibling of riftle.css: the same three result
+   colours, the same drawn tile shape, the same mode switch, buttons
+   and statistics. What differs is the board — wide slots holding
+   words rather than square tiles holding letters — and the tag
+   palette that replaces the keyboard.
+
+   See STYLE-GUIDE.md at the repo root before changing anything
+   visual, and add new values as tokens rather than literals.
+   ============================================================ */
+
+/* --- 15. Game tokens ------------------------------------- */
+
+:root {
+  --hit:      #2b7d58;
+  --hit-ink:  #fbf7ef;
+  --near:     #b5822b;
+  --near-ink: #fbf7ef;
+  --miss:     #b2a693;
+  --miss-ink: #fbf7ef;
+
+  /* Gold is hatched rather than flat, so the three states stay
+     distinct with the colour taken away. */
+  --near-hatch: repeating-linear-gradient(52deg,
+                  rgba(251, 247, 239, 0.22) 0 4px,
+                  rgba(251, 247, 239, 0) 4px 11px);
+
+  /* The tile outline and the tile fill: the same hand-drawn shape,
+     once as a stroke and once solid. Used as masks, so both take
+     their colour from the element and theme correctly. */
+  --tile-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M9 5 C 32 3 68 3 92 6 C 96 25 97 71 94 93 C 71 97 32 97 7 94 C 4 71 3 26 9 5 Z' fill='none' stroke='%23000' stroke-width='2.6' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --tile-body: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M9 5 C 32 3 68 3 92 6 C 96 25 97 71 94 93 C 71 97 32 97 7 94 C 4 71 3 26 9 5 Z' fill='%23000'/%3E%3C/svg%3E");
+}
+
+:root[data-theme="dark"] {
+  --hit:      #3d8a63;
+  --hit-ink:  #f4efe4;
+  --near:     #96701f;
+  --near-ink: #f4efe4;
+  --miss:     #4a4234;
+  --miss-ink: #b3a996;
+
+  --near-hatch: repeating-linear-gradient(52deg,
+                  rgba(244, 239, 228, 0.16) 0 4px,
+                  rgba(244, 239, 228, 0) 4px 11px);
+}
+
+/* The board needs a little more room than a reading column. Body copy
+   is still capped at --measure by the components that carry it. */
+.page--wide { max-width: 46rem; }
+
+/* --- 16. Mode switch ------------------------------------- */
+
+.modes {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.mode {
+  background: none;
+  border: 0;
+  padding: 0 0 0.1em;
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink-faint);
+  transition: color var(--dur) var(--ease);
+}
+
+.mode::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.24em;
+  height: 6px;
+  background: var(--accent);
+  -webkit-mask-image: var(--wave-mask);
+  mask-image: var(--wave-mask);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 40px 6px;
+  mask-size: 40px 6px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease-expo);
+}
+
+.mode:hover { color: var(--accent); }
+.mode[aria-pressed="true"] { color: var(--ink); }
+.mode[aria-pressed="true"]::after { transform: scaleX(1); }
+
+/* --- 17. The board --------------------------------------- */
+
+.board { width: 100%; }
+
+.kit-head,
+.kit-row {
+  display: grid;
+  grid-template-columns: 7rem repeat(5, 1fr);
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.kit-head {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.2;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-bottom: 0.35rem;
+}
+
+.kit-head__name { text-align: left; }
+
+.kit-rows {
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.kit-row__name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1rem;
+  font-weight: 450;
+  line-height: 1.15;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* A guess whose every slot matched, that still wasn't the champion. */
+.kit-row.is-twin .kit-row__name { color: var(--near); }
+.kit-row.is-twin .kit-row__name::after { content: " ✻"; }
+
+.cell {
+  position: relative;
+  min-height: 2.9rem;
+  display: grid;
+  place-items: center;
+  padding: 0.2rem 0.15rem;
+}
+
+/* The outline — a drawn rectangle, never a border */
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--rule);
+  -webkit-mask-image: var(--tile-edge);
+  mask-image: var(--tile-edge);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  transition: background var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+
+/* The fill — the same shape, solid, faded in on reveal */
+.cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--miss);
+  -webkit-mask-image: var(--tile-body);
+  mask-image: var(--tile-body);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  opacity: 0;
+}
+
+.cell__tag,
+.cell__slot {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-hand);
+  line-height: 1.15;
+  white-space: nowrap;
+  transition: color var(--dur) var(--ease);
+}
+
+.cell__tag {
+  font-size: clamp(0.95rem, 2.7vw, 1.1875rem);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.cell__slot {
+  font-size: 0.9375rem;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+.cell[data-state="hit"]::after  { background-color: var(--hit);  opacity: 1; }
+.cell[data-state="miss"]::after { background-color: var(--miss); opacity: 1; }
+
+.cell[data-state="near"]::after {
+  background-color: var(--near);
+  background-image: var(--near-hatch);
+  opacity: 1;
+}
+
+.cell[data-state="hit"]::before,
+.cell[data-state="near"]::before,
+.cell[data-state="miss"]::before { opacity: 0; }
+
+.cell[data-state="hit"]  .cell__tag,
+.cell[data-state="hit"]  .cell__slot { color: var(--hit-ink); }
+.cell[data-state="near"] .cell__tag { color: var(--near-ink); }
+.cell[data-state="miss"] .cell__tag { color: var(--miss-ink); }
+
+/* --- 18. Board motion ------------------------------------ */
+
+.cell.is-settling::after { animation: cell-settle 460ms var(--ease-bounce); }
+.cell.is-settling .cell__tag { animation: tag-land 320ms var(--ease-bounce); }
+
+@keyframes cell-settle {
+  0%   { transform: scale(0.86) rotate(-2deg); opacity: 0; }
+  55%  { transform: scale(1.05) rotate(1deg); opacity: 1; }
+  100% { transform: none; opacity: 1; }
+}
+
+@keyframes tag-land {
+  0%   { transform: translateY(4px); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+
+.kit-row.is-wrong { animation: row-shake 420ms var(--ease); }
+
+@keyframes row-shake {
+  15%, 85% { transform: translateX(-4px) rotate(-0.4deg); }
+  35%, 65% { transform: translateX(6px) rotate(0.5deg); }
+  50%      { transform: translateX(-6px); }
+}
+
+.kit-row.is-won .cell { animation: cell-cheer 560ms var(--ease-bounce) both; }
+.kit-row.is-won .cell:nth-of-type(1) { animation-delay: 0ms; }
+.kit-row.is-won .cell:nth-of-type(2) { animation-delay: 80ms; }
+.kit-row.is-won .cell:nth-of-type(3) { animation-delay: 160ms; }
+.kit-row.is-won .cell:nth-of-type(4) { animation-delay: 240ms; }
+.kit-row.is-won .cell:nth-of-type(5) { animation-delay: 320ms; }
+
+@keyframes cell-cheer {
+  0%   { transform: none; }
+  40%  { transform: translateY(-10px) rotate(-2deg); }
+  70%  { transform: translateY(2px) rotate(0.8deg); }
+  100% { transform: none; }
+}
+
+/* --- 19. The guess field --------------------------------- */
+
+.guess {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: stretch;
+  margin-top: var(--space-sm);
+}
+
+.guess[hidden] { display: none; }
+
+.guess__field { position: relative; flex: 1 1 auto; }
+
+.guess__input {
+  width: 100%;
+  border: 0;
+  border-radius: 15px 19px 13px 17px;
+  padding: 0.5em 0.85em;
+  background: var(--paper-warm);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.0625rem;
+  font-weight: 450;
+  line-height: 1.4;
+  transition: background var(--dur) var(--ease);
+}
+
+.guess__input::placeholder {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+}
+
+.guess__input:hover { background: var(--paper-sunk); }
+
+.suggest {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  list-style: none;
+  padding: 0.35rem;
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  box-shadow: 0 14px 30px -20px rgba(36, 31, 26, 0.7);
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.suggest[hidden] { display: none; }
+
+.suggest__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-xs);
+  padding: 0.32rem 0.6rem;
+  border-radius: 10px 13px 9px 12px;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1rem;
+  font-weight: 450;
+  color: var(--ink);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.suggest__item:hover { background: var(--accent-wash); }
+
+.suggest__item[aria-selected="true"] {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+.suggest__note {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+}
+
+/* --- 20. The tag palette --------------------------------- */
+
+.palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin-top: var(--space-xs);
+}
+
+.chip {
+  padding: 0.1em 0.75em;
+  border-radius: 12px 15px 11px 16px;
+  background: var(--paper-warm);
+  color: var(--ink-muted);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 500;
+  line-height: 1.4;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+
+.chip[data-state="hit"]  { background: var(--hit);  color: var(--hit-ink); }
+
+.chip[data-state="near"] {
+  background-color: var(--near);
+  background-image: var(--near-hatch);
+  color: var(--near-ink);
+}
+
+.chip[data-state="miss"] {
+  background: none;
+  color: var(--ink-faint);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+/* --- 21. Result panel ------------------------------------ */
+
+.result {
+  margin: var(--space-md) auto 0;
+  width: min(30rem, 100%);
+  padding: var(--space-sm) var(--space-sm) var(--space-md);
+  background: var(--paper-sunk);
+  border-radius: var(--radius-blob);
+  text-align: center;
+  animation: settle-in var(--dur-slow) var(--ease-expo) both;
+}
+
+@keyframes settle-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.result__verdict {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+}
+
+.result__name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(1.75rem, 7vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--accent);
+  margin: var(--space-2xs) 0 var(--space-xs);
+}
+
+.result__kit {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.35rem;
+  margin-bottom: var(--space-sm);
+}
+
+.result__kit .cell {
+  min-height: 3.4rem;
+  align-content: center;
+  gap: 0.1rem;
+}
+
+.result__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  justify-content: center;
+}
+
+.result__next {
+  margin-top: var(--space-sm);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+}
+
+/* --- 22. Buttons ----------------------------------------- */
+
+.btn {
+  border: 0;
+  cursor: pointer;
+  padding: 0.45em 1.1em;
+  border-radius: 16px 20px 15px 22px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+  line-height: 1.3;
+  transition: transform var(--dur) var(--ease-bounce), opacity var(--dur) var(--ease);
+}
+
+.btn:hover { transform: rotate(-1.5deg) scale(1.04); }
+
+.btn--quiet {
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.btn--quiet:hover { color: var(--accent); }
+
+/* --- 23. Message ----------------------------------------- */
+
+.msg {
+  min-height: 1.9em;
+  margin-top: var(--space-xs);
+  text-align: center;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  line-height: 1.2;
+  color: var(--ink-muted);
+}
+
+.msg:empty { color: transparent; }
+
+/* --- 24. Stats ------------------------------------------- */
+
+.tally { margin-top: var(--space-lg); }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-xs);
+  margin: var(--space-sm) 0 var(--space-md);
+}
+
+.stat { text-align: center; }
+
+.stat__num {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.75rem;
+  font-weight: 500;
+  line-height: 1.1;
+  display: block;
+}
+
+.stat__label {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.2;
+  color: var(--ink-muted);
+}
+
+.dist { display: grid; gap: 0.3rem; max-width: 24rem; }
+
+.dist__row {
+  display: grid;
+  grid-template-columns: 1.1rem 1fr;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+}
+
+.dist__bar {
+  height: 1.5rem;
+  min-width: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.45em;
+  border-radius: 7px 10px 6px 11px;
+  background: var(--paper-sunk);
+  color: var(--ink-muted);
+  transition: width var(--dur-slow) var(--ease-expo);
+}
+
+.dist__row.is-latest .dist__bar { background: var(--accent); color: var(--paper); }
+
+/* --- 25. How to play, the glossary, the codex ------------ */
+
+.howto {
+  margin-top: var(--space-md);
+  max-width: var(--measure);
+}
+
+.howto > summary {
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  font-weight: 600;
+  color: var(--ink-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.howto > summary::-webkit-details-marker { display: none; }
+.howto > summary:hover { color: var(--accent); }
+.howto > summary::before { content: "✎ "; color: var(--ink-faint); }
+.howto[open] > summary::before { content: "✓ "; color: var(--accent); }
+
+.howto p { margin-top: var(--space-xs); line-height: var(--leading-loose); }
+
+.swatch {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  border-radius: 4px 6px 3px 7px;
+  vertical-align: -0.06em;
+}
+
+.swatch--hit  { background: var(--hit); }
+.swatch--miss { background: var(--miss); }
+
+.swatch--near {
+  background-color: var(--near);
+  background-image: var(--near-hatch);
+}
+
+.glossary {
+  margin-top: var(--space-sm);
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  column-gap: var(--space-xs);
+  row-gap: 0.3rem;
+  align-items: baseline;
+}
+
+.glossary dt {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.glossary dd {
+  font-style: italic;
+  line-height: var(--leading-snug);
+  color: var(--ink-muted);
+}
+
+.codex {
+  list-style: none;
+  margin-top: var(--space-sm);
+  max-height: 22rem;
+  overflow-y: auto;
+  padding-right: var(--space-2xs);
+}
+
+.codex__row {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: var(--space-2xs) var(--space-xs);
+  padding: 0.25rem 0;
+  align-items: baseline;
+}
+
+.codex__name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 0.9375rem;
+  font-weight: 450;
+}
+
+.codex__tags {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.3;
+  color: var(--ink-muted);
+}
+
+/* --- 26. Colophon extras --------------------------------- */
+
+.colophon__data {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.colophon__data button,
+.colophon__data label {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink-muted);
+  transition: color var(--dur) var(--ease);
+}
+
+.colophon__data button:hover,
+.colophon__data label:hover { color: var(--accent); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --- 27. Game motion, reduced ---------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cell.is-settling::after,
+  .cell.is-settling .cell__tag,
+  .kit-row.is-won .cell,
+  .kit-row.is-wrong { animation: none !important; }
+
+  .result { animation: none; opacity: 1; transform: none; }
+  .btn:hover { transform: none; }
+}
+
+/* --- 28. Narrow viewports -------------------------------- */
+
+@media (max-width: 34rem) {
+  .kit-head,
+  .kit-row { grid-template-columns: 5.5rem repeat(5, 1fr); }
+  .kit-head { font-size: 1.0625rem; }
+  .cell { padding: 0.2rem 0.05rem; }
+  .glossary { grid-template-columns: 5.25rem 1fr; }
+}
+
+@media (max-width: 28rem) {
+  .kit-head { grid-template-columns: repeat(5, 1fr); gap: 0.3rem; }
+  .kit-head__name { display: none; }
+
+  .kit-row {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.3rem;
+    row-gap: 0.15rem;
+  }
+
+  .kit-row__name {
+    grid-column: 1 / -1;
+    font-size: 0.9375rem;
+    min-height: 1.2em;
+  }
+
+  .kit-rows { gap: 0.55rem; }
+  .cell { min-height: 2.6rem; }
+  .cell__tag { font-size: 0.875rem; }
+  .stats { grid-template-columns: repeat(2, 1fr); row-gap: var(--space-sm); }
+  .codex__row { grid-template-columns: 1fr; }
+}
