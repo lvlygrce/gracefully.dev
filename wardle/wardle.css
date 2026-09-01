@@ -1,5 +1,5 @@
 /* ============================================================
-   Chample — game components
+   Wardle — game components
 
    The design system (tokens, texture, the pen, the reveal engine)
    is loaded first from /style.css and is NOT repeated here. This
@@ -377,6 +377,78 @@
   text-decoration-thickness: 1px;
 }
 
+/* --- 20b. Hints ------------------------------------------ */
+
+.hints {
+  width: 100%;
+  margin: var(--space-md) auto var(--space-xs);
+  animation: settle-in var(--dur-slow) var(--ease-expo) both;
+}
+
+.hint-list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs) var(--space-xs);
+  margin-top: var(--space-xs);
+}
+
+.hint {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.25;
+}
+
+.hint__ask {
+  border: 0;
+  cursor: pointer;
+  padding: 0.3em 0.9em;
+  border-radius: 13px 17px 12px 18px;
+  background: var(--paper-warm);
+  color: var(--ink-muted);
+  font: inherit;
+  font-weight: 600;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              transform var(--dur) var(--ease-bounce);
+}
+
+.hint__ask::after {
+  content: " ?";
+  color: var(--ink-faint);
+}
+
+.hint__ask:hover,
+.hint__ask:focus-visible {
+  background: var(--accent-wash);
+  color: var(--accent);
+  transform: rotate(-1.5deg) scale(1.04);
+}
+
+.hint__ask:hover::after,
+.hint__ask:focus-visible::after { color: var(--accent); }
+
+.hint.is-open {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+  padding: 0.3em 0;
+  animation: hint-turn 420ms var(--ease-bounce);
+}
+
+.hint__label { color: var(--ink-faint); }
+
+.hint__value {
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  font-style: italic;
+  color: var(--ink);
+}
+
+@keyframes hint-turn {
+  0%   { opacity: 0; transform: translateY(-4px) rotate(-2deg); }
+  100% { opacity: 1; transform: none; }
+}
+
 /* --- 21. Result panel ------------------------------------ */
 
 .result {
@@ -411,18 +483,39 @@
   margin: var(--space-2xs) 0 var(--space-xs);
 }
 
-.result__kit {
+/* The answer's kit, named. Three columns: slot, ability, tag. */
+.answer-kit {
+  list-style: none;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.35rem;
-  margin-bottom: var(--space-sm);
+  gap: 0.15rem;
+  margin: 0 0 var(--space-sm);
+  text-align: left;
 }
 
-.result__kit .cell {
-  min-height: 3.4rem;
-  align-content: center;
-  gap: 0.1rem;
+.answer-kit__row {
+  display: grid;
+  grid-template-columns: 3.75rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  padding: 0.15rem 0;
 }
+
+.answer-kit__slot {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+}
+
+.answer-kit__name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 0.9375rem;
+  font-weight: 450;
+  line-height: 1.25;
+}
+
+.answer-kit .chip { justify-self: end; }
 
 .result__actions {
   display: flex;
@@ -667,8 +760,9 @@
   .kit-row.is-won .cell,
   .kit-row.is-wrong { animation: none !important; }
 
-  .result { animation: none; opacity: 1; transform: none; }
-  .btn:hover { transform: none; }
+  .result, .hints { animation: none; opacity: 1; transform: none; }
+  .hint.is-open { animation: none; }
+  .btn:hover, .hint__ask:hover { transform: none; }
 }
 
 /* --- 28. Narrow viewports -------------------------------- */
@@ -702,4 +796,6 @@
   .cell__tag { font-size: 0.875rem; }
   .stats { grid-template-columns: repeat(2, 1fr); row-gap: var(--space-sm); }
   .codex__row { grid-template-columns: 1fr; }
+  .answer-kit__row { grid-template-columns: 3.25rem 1fr; row-gap: 0.1rem; }
+  .answer-kit .chip { grid-column: 2 / -1; justify-self: start; }
 }

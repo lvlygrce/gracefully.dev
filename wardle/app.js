@@ -1,4 +1,4 @@
-/* Chample — front-end only. No server, no database, no build step.
+/* Wardle — front-end only. No server, no database, no build step.
    State lives in localStorage; the daily champion is derived from the date,
    so every browser lands on the same answer without anything asking a server. */
 
@@ -6,7 +6,7 @@ import { CHAMPIONS, BY_KEY, TAGS, SLOTS, normalise } from "./champions.js";
 
 const LEN = 5;
 const ROWS = 6;
-const KEY = "chample:v1:state";
+const KEY = "wardle:v1:state";
 const EPOCH = new Date(2026, 0, 1);   /* day zero, local time */
 
 /* --- Storage ---------------------------------------------------------
@@ -27,9 +27,12 @@ const store = {
 };
 
 /* --- Which champion, which day ---------------------------------------
-   The roster is shuffled once with a fixed seed, then indexed by day.
-   Adding a champion therefore never disturbs a puzzle already played, and
-   consecutive days are never neighbours in an alphabetical list. */
+   The roster is shuffled once with a fixed seed, then indexed by day, so
+   consecutive days are never neighbours in an alphabetical list.
+
+   NOTE: the shuffle is over the whole roster, so adding or removing a
+   champion re-deals every day, not just the ones after it. Freeze the
+   roster before a published schedule matters to anyone. */
 
 function mulberry32(a) {
   return function () {
@@ -68,8 +71,8 @@ const blankStats = () => ({
   dist: [0, 0, 0, 0, 0, 0]
 });
 
-const blankDaily = n => ({ day: n, guesses: [], status: "playing" });
-const blankEndless = () => ({ champion: randomChampion(), guesses: [], status: "playing" });
+const blankDaily = n => ({ day: n, guesses: [], hints: [], status: "playing" });
+const blankEndless = () => ({ champion: randomChampion(), guesses: [], hints: [], status: "playing" });
 
 function fresh() {
   return {
@@ -89,6 +92,7 @@ function normaliseState(raw) {
 
   if (raw.daily && Number.isInteger(raw.daily.day) && guessesOk(raw.daily.guesses)) s.daily = raw.daily;
   if (raw.endless && BY_KEY.has(raw.endless.champion) && guessesOk(raw.endless.guesses)) s.endless = raw.endless;
+  for (const g of [s.daily, s.endless]) if (!Array.isArray(g.hints)) g.hints = [];
   if (raw.stats && typeof raw.stats === "object") s.stats = Object.assign(blankStats(), raw.stats);
   if (!Array.isArray(s.stats.dist) || s.stats.dist.length !== ROWS) s.stats.dist = [0, 0, 0, 0, 0, 0];
   if (s.daily.day !== dayNumber()) s.daily = blankDaily(dayNumber());
@@ -123,6 +127,57 @@ function score(guessKit, answerKit) {
 }
 
 const SAID = { hit: "same slot", near: "elsewhere in the kit", miss: "not in the kit" };
+
+/* --- Hints -----------------------------------------------------------
+   Offered after three guesses, and only if asked for. Five facts about the
+   champion that say nothing about the kit, so the deduction stays yours. */
+
+const HINT_AFTER = 3;
+
+const hintsFor = c => [
+  ["Lane and role", `${c.lane} \u00b7 ${c.role}`],
+  ["Passive",       c.passive],
+  ["Released",      c.year],
+  ["Region",        c.region],
+  ["Skins",         c.skins === 1 ? "1, so far" : String(c.skins)]
+];
+
+const hintsEl = document.getElementById("hints");
+const hintListEl = document.getElementById("hint-list");
+
+function paintHints() {
+  const g = game();
+  const show = g.guesses.length >= HINT_AFTER && g.status === "playing";
+  hintsEl.hidden = !show;
+  if (!show) { hintListEl.replaceChildren(); return; }
+
+  hintListEl.replaceChildren(...hintsFor(answer()).map(([label, value], i) => {
+    const li = document.createElement("li");
+    li.className = "hint";
+    if (g.hints.includes(i)) {
+      li.classList.add("is-open");
+      const l = document.createElement("span");
+      l.className = "hint__label";
+      l.textContent = label;
+      const v = document.createElement("span");
+      v.className = "hint__value";
+      v.textContent = value;
+      li.append(l, v);
+    } else {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "hint__ask";
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        g.hints.push(i);
+        save();
+        paintHints();
+      });
+      li.append(btn);
+    }
+    return li;
+  }));
+}
 
 /* --- Board -----------------------------------------------------------  */
 
@@ -193,6 +248,7 @@ function paintBoard() {
   }
   if (g.status === "won") rows[g.guesses.length - 1].el.classList.add("is-won");
   paintPalette();
+  paintHints();
 }
 
 /* --- The tag palette -------------------------------------------------
@@ -376,6 +432,7 @@ function submit(champion) {
 
   setTimeout(() => {
     paintPalette();
+    paintHints();
     if (won) rows[r].el.classList.add("is-won");
     if (over) { formEl.hidden = true; setTimeout(showResult, won ? 900 : 500); }
     else if (marks.every(m => m === "hit")) flash("Every slot matches — and it still isn't the champion.");
@@ -449,18 +506,21 @@ function showResult() {
   verdictEl.textContent = g.status === "won" ? PRAISE[g.guesses.length - 1] : "Not this time. The kit belonged to";
   nameEl.textContent = ans.name;
 
+  const named = [ans.passive, ...ans.abilities];
   kitEl.replaceChildren(...ans.kit.map((code, i) => {
-    const cell = document.createElement("span");
-    cell.className = "cell";
-    cell.dataset.state = "hit";
-    const tag = document.createElement("span");
-    tag.className = "cell__tag";
-    tag.textContent = TAGS[code];
+    const li = document.createElement("li");
+    li.className = "answer-kit__row";
     const slot = document.createElement("span");
-    slot.className = "cell__slot";
+    slot.className = "answer-kit__slot";
     slot.textContent = SLOTS[i];
-    cell.append(slot, tag);
-    return cell;
+    const name = document.createElement("span");
+    name.className = "answer-kit__name";
+    name.textContent = named[i];
+    const tag = document.createElement("span");
+    tag.className = "chip";
+    tag.textContent = TAGS[code];
+    li.append(slot, name, tag);
+    return li;
   }));
 
   resultEl.hidden = false;
@@ -508,8 +568,8 @@ shareBtn.addEventListener("click", async () => {
   const face = { hit: "\u{1F7E9}", near: "\u{1F7E8}", miss: dark ? "⬛" : "⬜" };
   const tally = g.status === "won" ? g.guesses.length : "X";
   const head = state.mode === "daily"
-    ? `Chample no. ${state.daily.day + 1} — ${tally}/${ROWS}`
-    : `Chample practice — ${tally}/${ROWS}`;
+    ? `Wardle no. ${state.daily.day + 1} — ${tally}/${ROWS}`
+    : `Wardle practice — ${tally}/${ROWS}`;
   const grid = g.guesses
     .map(key => score(BY_KEY.get(key).kit, ans.kit).map(m => face[m]).join(""))
     .join("\n");
@@ -593,7 +653,7 @@ codexDetails.addEventListener("toggle", () => {
 document.getElementById("export").addEventListener("click", () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-  const a = Object.assign(document.createElement("a"), { href: url, download: "chample-progress.json" });
+  const a = Object.assign(document.createElement("a"), { href: url, download: "wardle-progress.json" });
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -611,7 +671,7 @@ document.getElementById("import").addEventListener("change", async e => {
     paintMode();
     flash("Progress restored.");
   } catch {
-    flash("That doesn't look like a Chample backup.");
+    flash("That doesn't look like a Wardle backup.");
   }
   e.target.value = "";
 });

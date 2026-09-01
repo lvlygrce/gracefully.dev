@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chample — a daily League of Legends deduction game</title>
+  <title>Wardle — a daily League of Legends kit game</title>
   <meta name="description" content="The answer isn't a word, it's a champion: five slots — passive, Q, W, E, R — each with one tag. Six guesses. A new kit every day." />
   <meta name="color-scheme" content="light dark" />
 
-  <meta property="og:title" content="Chample" />
+  <meta property="og:title" content="Wardle" />
   <meta property="og:description" content="The answer isn't a word, it's a champion — five abilities, five tags. Six guesses to name them." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://gracefully.dev/chample/" />
+  <meta property="og:url" content="https://gracefully.dev/wardle/" />
 
-  <link rel="canonical" href="https://gracefully.dev/chample/" />
+  <link rel="canonical" href="https://gracefully.dev/wardle/" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%AE%3C/text%3E%3C/svg%3E" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="/style.css" />
-  <link rel="stylesheet" href="chample.css" />
+  <link rel="stylesheet" href="wardle.css" />
 
   <script>
     // Before first paint, so there is no flash. Light is the default:
@@ -54,7 +54,7 @@
         <span id="daynum">five slots, one champion</span>
       </p>
 
-      <h1 class="wordmark reveal reveal--display" style="--i:1">Chample<span class="wordmark__mark">.</span></h1>
+      <h1 class="wordmark reveal reveal--display" style="--i:1">Wardle<span class="wordmark__mark">.</span></h1>
 
       <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
         <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
@@ -113,10 +113,15 @@
       <div class="palette reveal" style="--i:7" id="palette" aria-label="What you know about the nine tags"></div>
     </section>
 
+    <section class="hints" id="hints" hidden aria-labelledby="hints-heading">
+      <h2 class="section-label" id="hints-heading">Need a hand?</h2>
+      <ul class="hint-list" id="hint-list"></ul>
+    </section>
+
     <section class="result" id="result" hidden aria-live="polite">
       <p class="result__verdict" id="result-verdict"></p>
       <p class="result__name" id="result-name"></p>
-      <div class="result__kit" id="result-kit"></div>
+      <ol class="answer-kit" id="result-kit"></ol>
       <div class="result__actions">
         <button class="btn" type="button" id="share">Copy my grid</button>
         <button class="btn btn--quiet" type="button" id="again" hidden>Another kit</button>
@@ -156,28 +161,37 @@
         lights up.
       </p>
       <p>
-        Six guesses, <span id="count">120</span> champions. A guess that turns entirely
-        green without winning is not a bug — a handful of kits are indistinguishable at
-        this resolution, and telling those apart is the last bit of the puzzle.
+        Six guesses, <span id="count">173</span> champions — everyone from the 2009
+        originals to Locke. A guess that turns entirely green without winning is not a
+        bug: eighteen champions share a kit fingerprint with somebody else, and telling
+        those apart is the last bit of the puzzle.
+      </p>
+      <p>
+        Three guesses in, five hints appear. They cover lane and role, the name of the
+        passive, the year of release, the region, and the number of skins — facts about
+        the champion rather than the kit, so the deduction stays yours. Take one, take
+        all five, or take none; nothing about them changes the scoring.
       </p>
     </details>
 
     <details class="howto">
-      <summary>The nine tags</summary>
+      <summary>The ten tags</summary>
       <p>
         One tag per ability is a deliberate simplification. Abilities do several things;
-        the tag is the thing the ability is <em>for</em>.
+        the tag is the thing the ability is <em>for</em>. Nine of these describe what an
+        ability does in a fight; the tenth is for the handful that don't fight at all.
       </p>
       <dl class="glossary">
         <dt>damage</dt><dd>whose whole job is a number going down.</dd>
         <dt>dash</dt><dd>a burst of your own movement — blinks, leaps, charges, and plain movement speed on yourself.</dd>
-        <dt>shield</dt><dd>a barrier, damage reduction, bonus resistances or health, a spell block, standing somewhere and being unkillable.</dd>
+        <dt>shield</dt><dd>a barrier, damage reduction, bonus resistances or health, a spell block, standing somewhere and being unkillable, refusing to die.</dd>
         <dt>heal</dt><dd>health restored to anyone, lifesteal passives included.</dd>
         <dt>hard CC</dt><dd>stun, root, knock-up, knock-back, taunt, fear, charm, sleep, polymorph, suppression.</dd>
         <dt>soft CC</dt><dd>slow, silence, blind, ground, cripple, a wall in the way.</dd>
         <dt>stealth</dt><dd>invisibility, camouflage, disguise, or leaving the board so nothing can touch you.</dd>
-        <dt>summon</dt><dd>anything left on the field that acts on its own — pets, turrets, traps, plants, clones, barrels.</dd>
+        <dt>summon</dt><dd>anything left on the field that acts on its own — pets, turrets, traps, plants, clones, barrels, a borrowed body.</dd>
         <dt>global</dt><dd>reaches the whole map, or so far past the fight that the range is the point.</dd>
+        <dt>utility</dt><dd>the fifteen abilities that do none of the above: gold, experience, vision, cooldowns, forging items, swapping weapons or stances, stealing or repeating somebody else's spell.</dd>
       </dl>
     </details>
 
@@ -192,7 +206,7 @@
   </main>
 
   <footer class="colophon reveal" style="--i:11">
-    <span><a href="/">Gracefully</a> &middot; Chample &middot; not affiliated with Riot Games</span>
+    <span><a href="/">Gracefully</a> &middot; Wardle &middot; not affiliated with Riot Games</span>
     <span class="colophon__data">
       <button type="button" id="export">Save my progress</button>
       <label for="import">Restore

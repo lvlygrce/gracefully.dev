@@ -36,7 +36,7 @@ colophon, then add it to the `apps` array above.
 | `STYLE-GUIDE.md` | **The style guide** — read before changing anything visual |
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
 | `riftle/` | **Riftle** — a daily League of Legends word game, at [/riftle/](https://gracefully.dev/riftle/) |
-| `chample/` | **Chample** — a daily champion-kit deduction game, at [/chample/](https://gracefully.dev/chample/) |
+| `wardle/` | **Wardle** — a daily champion-kit deduction game, at [/wardle/](https://gracefully.dev/wardle/) |
 
 ## Working on it locally
 

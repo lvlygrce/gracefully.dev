@@ -27,9 +27,12 @@ const store = {
 };
 
 /* --- Which word, which day -------------------------------------------
-   The answers are shuffled once with a fixed seed, then indexed by day.
-   Appending to words.js therefore never disturbs a puzzle already played,
-   and consecutive days are never adjacent entries in the list. */
+   The answers are shuffled once with a fixed seed, then indexed by day, so
+   consecutive days are never adjacent entries in the list.
+
+   NOTE: the shuffle is over the whole list, so appending to words.js
+   re-deals every day, not just the ones after it — as words.js itself
+   warns. Freeze the list before a published schedule matters to anyone. */
 
 function mulberry32(a) {
   return function () {
