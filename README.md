@@ -26,6 +26,12 @@ Apps live in their own folder off the root (`riftle/`, and so on) and are served
 whatever it adds — never a second copy of the design system. Link back to `/` from its
 colophon, then add it to the `apps` array above.
 
+**One app deliberately breaks that rule.** `bts-album-match/` is a Spotify pastiche —
+dark, Figtree, Spotify green — because the look *is* the puzzle: the page reads as an
+album page with the title taken out. It is self-contained, shares nothing with
+`/style.css`, and carries only a back-link to tie it to the site. Do not "fix" it into
+the house style, and do not treat it as a precedent.
+
 ## Files
 
 | File | Purpose |
@@ -37,6 +43,7 @@ colophon, then add it to the `apps` array above.
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
 | `riftle/` | **Riftle** — a daily League of Legends word game, at [/riftle/](https://gracefully.dev/riftle/) |
 | `wardle/` | **Wardle** — a daily champion-kit deduction game, at [/wardle/](https://gracefully.dev/wardle/) |
+| `bts-album-match/` | **BTS Album Match** — a Spotify-styled album guessing game, at [/bts-album-match/](https://gracefully.dev/bts-album-match/) |
 
 ## Working on it locally
 
