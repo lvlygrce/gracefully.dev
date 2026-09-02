@@ -6,6 +6,7 @@
 export const ALBUMS = [
   {
     id: "2-cool-4-skool",
+    art: "https://i.scdn.co/image/ab67616d00001e02c7c7014c91ed63c909b50ef5",
     title: "2 Cool 4 Skool",
     year: 2013,
     runtime: 1830,
@@ -19,6 +20,7 @@ export const ALBUMS = [
   },
   {
     id: "o-rul8-2",
+    art: "https://i.scdn.co/image/ab67616d00001e0238a73fb596e530ac18446812",
     title: "O!RUL8,2?",
     year: 2013,
     runtime: 1980,
@@ -32,6 +34,7 @@ export const ALBUMS = [
   },
   {
     id: "skool-luv-affair",
+    art: "https://i.scdn.co/image/ab67616d00001e02ab9433cc4b9cda9431be879a",
     title: "Skool Luv Affair",
     year: 2014,
     runtime: 1860,
@@ -45,6 +48,7 @@ export const ALBUMS = [
   },
   {
     id: "dark-and-wild",
+    art: "https://i.scdn.co/image/ab67616d00001e0232c1cbd06faf825f0346ca75",
     title: "Dark & Wild",
     year: 2014,
     runtime: 3120,
@@ -60,6 +64,7 @@ export const ALBUMS = [
   },
   {
     id: "hyyh-pt1",
+    art: "https://i.scdn.co/image/ab67616d00001e02019385816d2b6c1760e0d7db",
     title: "The Most Beautiful Moment in Life, Part 1",
     short: "HYYH Pt.1",
     year: 2015,
@@ -74,6 +79,7 @@ export const ALBUMS = [
   },
   {
     id: "hyyh-pt2",
+    art: "https://i.scdn.co/image/ab67616d00001e02d5d5e874bde16f6ef86c99dc",
     title: "The Most Beautiful Moment in Life, Part 2",
     short: "HYYH Pt.2",
     year: 2015,
@@ -88,6 +94,7 @@ export const ALBUMS = [
   },
   {
     id: "young-forever",
+    art: "https://i.scdn.co/image/ab67616d00001e02cf5fcabbbae09fa45aa5116f",
     title: "The Most Beautiful Moment in Life: Young Forever",
     short: "Young Forever",
     year: 2016,
@@ -106,6 +113,7 @@ export const ALBUMS = [
   },
   {
     id: "wings",
+    art: "https://i.scdn.co/image/ab67616d00001e028bd5d941f9ced8e7f9c60dd4",
     title: "Wings",
     year: 2016,
     runtime: 3240,
@@ -119,6 +127,7 @@ export const ALBUMS = [
   },
   {
     id: "you-never-walk-alone",
+    art: "https://i.scdn.co/image/ab67616d00001e02bd375b430c3abeceb8b5d8da",
     title: "You Never Walk Alone",
     year: 2017,
     runtime: 3420,
@@ -133,6 +142,7 @@ export const ALBUMS = [
   },
   {
     id: "love-yourself-her",
+    art: "https://i.scdn.co/image/ab67616d00001e0240f078d0a28bffb93e2e2c11",
     title: "Love Yourself: Her",
     year: 2017,
     runtime: 2100,
@@ -145,6 +155,7 @@ export const ALBUMS = [
   },
   {
     id: "love-yourself-tear",
+    art: "https://i.scdn.co/image/ab67616d00001e02a274bd961be8afb88d0d5c54",
     title: "Love Yourself: Tear",
     year: 2018,
     runtime: 2520,
@@ -157,6 +168,7 @@ export const ALBUMS = [
   },
   {
     id: "love-yourself-answer",
+    art: "https://i.scdn.co/image/ab67616d00001e02af396dce4438624ec801ff1a",
     title: "Love Yourself: Answer",
     year: 2018,
     runtime: 5700,
@@ -173,6 +185,7 @@ export const ALBUMS = [
   },
   {
     id: "map-of-the-soul-persona",
+    art: "https://i.scdn.co/image/ab67616d00001e0218d0ed4f969b376893f9a38f",
     title: "Map of the Soul: Persona",
     year: 2019,
     runtime: 1560,
@@ -185,6 +198,7 @@ export const ALBUMS = [
   },
   {
     id: "map-of-the-soul-7",
+    art: "https://i.scdn.co/image/ab67616d00001e02505190077497c230422f2934",
     title: "Map of the Soul: 7",
     year: 2020,
     runtime: 4500,
@@ -199,6 +213,7 @@ export const ALBUMS = [
   },
   {
     id: "be",
+    art: "https://i.scdn.co/image/ab67616d00001e02c07d5d2fdc02ae252fcd07e5",
     title: "Be",
     year: 2020,
     runtime: 1740,
@@ -211,6 +226,7 @@ export const ALBUMS = [
   },
   {
     id: "proof",
+    art: "https://i.scdn.co/image/ab67616d00001e0217db30ce3f081d6818a8ad49",
     title: "Proof",
     year: 2022,
     runtime: 11100,
@@ -228,6 +244,7 @@ export const ALBUMS = [
   },
   {
     id: "arirang",
+    art: "https://i.scdn.co/image/ab67616d00001e02dfa17fad7f190c901603270e",
     title: "ARIRANG",
     year: 2026,
     runtime: 2480,

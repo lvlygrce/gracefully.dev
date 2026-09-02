@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
 <meta name="description" content="Guess a BTS album from a blurred tracklist and a drip-feed of clues, on a Spotify page with the name taken out.">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="light">
 
 <meta property="og:title" content="BTS Album Match">
-<meta property="og:description" content="Guess a BTS album from a blurred tracklist and a drip-feed of clues.">
+<meta property="og:description" content="Guess a BTS album from a blurred tracklist and a drip of clues.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://gracefully.dev/bts-album-match/">
 
@@ -20,25 +20,26 @@
 
 <style>
 :root{
-  --bg:#121212; --bg-2:#181818; --bg-3:#242424; --hover:#2a2a2a;
-  --line:rgba(255,255,255,.09);
-  --ink:#ffffff; --ink-2:#b3b3b3; --ink-3:#7a7a7a;
-  --green:#1ed760; --green-2:#1db954;
-  --wrong:#e0554f;
-  --hero:#333333;
+  --bg:#ffffff; --bg-2:#f6f6f4; --bg-3:#ebebe8; --hover:#e4e4e0;
+  --line:rgba(0,0,0,.10);
+  --ink:#121212; --ink-2:#585856; --ink-3:#8d8d89;
+  --green:#1db954;          /* fills and bars */
+  --green-ink:#0e7a35;      /* green that survives as text on white */
+  --wrong:#c0392b;
+  --hero:#cfcfcf;
   --radius:8px;
-  --shadow:0 8px 24px rgba(0,0,0,.5);
+  --shadow:0 6px 20px rgba(0,0,0,.18);
   --font:"Figtree",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
-  background:#000; color:var(--ink); font-family:var(--font);
+  background:#ececeb; color:var(--ink); font-family:var(--font);
   -webkit-font-smoothing:antialiased; line-height:1.5;
 }
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 input{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--green);outline-offset:3px;border-radius:4px}
+:focus-visible{outline:2px solid var(--green-ink);outline-offset:3px;border-radius:4px}
 
 /* ---------- shell ---------- */
 .shell{max-width:1180px;margin:0 auto;padding:10px;display:grid;gap:10px}
@@ -58,7 +59,10 @@ input{font:inherit;color:inherit}
 
 /* ---------- album page ---------- */
 .page{
-  background:linear-gradient(180deg,var(--hero) 0%,color-mix(in srgb,var(--hero) 45%, #121212) 24%,#121212 62%);
+  background:linear-gradient(180deg,
+    color-mix(in srgb, var(--hero) 42%, #fff) 0%,
+    color-mix(in srgb, var(--hero) 16%, #fff) 28%,
+    var(--bg) 66%);
   border-radius:var(--radius);overflow:hidden;transition:background .8s ease;
 }
 .hero{display:flex;align-items:flex-end;gap:24px;padding:52px 32px 24px;flex-wrap:wrap}
@@ -67,12 +71,14 @@ input{font:inherit;color:inherit}
   overflow:hidden;position:relative;background:var(--bg-3);
   display:grid;place-items:center;
 }
-.cover svg{width:100%;height:100%;display:block;transition:filter .7s ease}
-.cover.blurred svg{filter:blur(22px) saturate(1.3);transform:scale(1.15)}
-.cover .locked{color:#4e4e4e}
+.cover svg,.cover .art{width:100%;height:100%;display:block;transition:filter .7s ease}
+.cover .art{position:absolute;inset:0;object-fit:cover;z-index:1}
+.cover.blurred svg,.cover.blurred .art{filter:blur(22px) saturate(1.3);transform:scale(1.15)}
+.nowbar .thumb{position:relative}
+.nowbar .thumb .art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 .cover .qmark{
   position:absolute;inset:0;display:grid;place-items:center;
-  font-size:88px;font-weight:900;color:rgba(255,255,255,.13);
+  font-size:88px;font-weight:900;color:rgba(0,0,0,.14);
 }
 .hero-text{flex:1 1 320px;min-width:0}
 .kicker{font-size:13px;font-weight:700;color:var(--ink)}
@@ -80,10 +86,10 @@ input{font:inherit;color:inherit}
 #guess{
   width:100%;background:transparent;border:0;padding:0 0 6px;
   font-size:clamp(30px,6.2vw,68px);font-weight:900;letter-spacing:-.045em;
-  line-height:1.06;border-bottom:2px dashed rgba(255,255,255,.22);
+  line-height:1.06;border-bottom:2px dashed rgba(0,0,0,.25);
 }
-#guess::placeholder{color:rgba(255,255,255,.28);font-weight:800}
-#guess:focus{outline:none;border-bottom-color:var(--green)}
+#guess::placeholder{color:rgba(0,0,0,.26);font-weight:800}
+#guess:focus{outline:none;border-bottom-color:var(--green-ink)}
 .title-slot.solved{font-size:clamp(30px,6.2vw,68px);font-weight:900;letter-spacing:-.045em;line-height:1.06}
 .meta{display:flex;align-items:center;gap:6px;font-size:14px;flex-wrap:wrap;color:var(--ink)}
 .meta .dot{width:24px;height:24px;border-radius:50%;background:var(--bg-3);display:grid;place-items:center;font-size:11px;font-weight:800}
@@ -92,9 +98,9 @@ input{font:inherit;color:inherit}
 .meta .comma{color:var(--ink-2);margin-left:-4px}
 .meta .val{color:var(--ink-2)}
 .meta .val.hidden-val{
-  color:var(--ink-3);background:rgba(255,255,255,.07);border-radius:3px;padding:0 7px;
+  color:var(--ink-3);background:rgba(0,0,0,.06);border-radius:3px;padding:0 7px;
 }
-.meta .val.fresh{color:var(--green);font-weight:700}
+.meta .val.fresh{color:var(--green-ink);font-weight:700}
 
 /* ---------- actions ---------- */
 .actions{display:flex;align-items:center;gap:18px;padding:8px 32px 20px}
@@ -120,9 +126,9 @@ input{font:inherit;color:inherit}
 .trow .num{color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
 .trow .dur{color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
 .trow:not(.head):hover{background:var(--hover)}
-.bar{height:11px;border-radius:3px;background:rgba(255,255,255,.1);max-width:100%}
-.bar.sub{height:8px;margin-top:6px;background:rgba(255,255,255,.06)}
-.trow.revealed .tname{color:var(--green);font-weight:700}
+.bar{height:11px;border-radius:3px;background:rgba(0,0,0,.10);max-width:100%}
+.bar.sub{height:8px;margin-top:6px;background:rgba(0,0,0,.06)}
+.trow.revealed .tname{color:var(--green-ink);font-weight:700}
 .trow .tsub{color:var(--ink-2);font-size:12px;margin-top:1px}
 .tracks .note{color:var(--ink-3);font-size:13px;padding:14px 12px 0;font-style:italic}
 @keyframes shimmer{0%{opacity:.5}50%{opacity:.95}100%{opacity:.5}}
@@ -130,11 +136,11 @@ input{font:inherit;color:inherit}
 @media (prefers-reduced-motion:reduce){.pending .bar{animation:none}}
 
 /* ---------- now playing ---------- */
-.trow.playing .tname{color:var(--green);font-weight:700}
+.trow.playing .tname{color:var(--green-ink);font-weight:700}
 .trow.playing .num .n{display:none}
 .num .eq{display:none;gap:2px;align-items:flex-end;height:13px;justify-content:flex-end}
 .trow.playing .num .eq{display:flex}
-.eq i{width:2px;background:var(--green);height:100%;transform-origin:bottom;
+.eq i{width:2px;background:var(--green-ink);height:100%;transform-origin:bottom;
       animation:eq .9s ease-in-out infinite}
 .eq i:nth-child(2){animation-delay:-.35s}
 .eq i:nth-child(3){animation-delay:-.62s}
@@ -154,7 +160,7 @@ input{font:inherit;color:inherit}
 .nowbar .t{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nowbar .s{font-size:12px;color:var(--ink-2)}
 .nowbar .toggle{
-  margin-left:auto;width:38px;height:38px;border-radius:50%;background:var(--ink);color:#000;
+  margin-left:auto;width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--bg);
   display:grid;place-items:center;flex:none;
 }
 .nowbar .toggle:hover{transform:scale(1.06)}
@@ -173,10 +179,10 @@ body.nowbar-open .shell{padding-bottom:80px}
   width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;
   font-size:11px;font-weight:800;background:var(--bg-3);color:var(--ink-3);margin-top:1px;
 }
-.clue.on .idx{background:var(--green);color:#000}
+.clue.on .idx{background:var(--green);color:#fff}
 .clue .lab{font-size:14px;font-weight:600;color:var(--ink-3)}
 .clue.on .lab{color:var(--ink)}
-.clue .ans{font-size:14px;color:var(--green);font-weight:700;margin-top:2px}
+.clue .ans{font-size:14px;color:var(--green-ink);font-weight:700;margin-top:2px}
 .clue .where{font-size:12px;color:var(--ink-3);margin-top:2px}
 
 .gcount{font-size:13px;color:var(--ink-2);margin-bottom:12px}
@@ -187,17 +193,17 @@ body.nowbar-open .shell{padding-bottom:80px}
   padding:9px 12px;border-radius:4px;background:var(--bg-3);color:var(--ink-2);
 }
 .glist li.miss .gt{text-decoration:line-through;text-decoration-color:var(--wrong)}
-.glist li.hit{background:rgba(30,215,96,.16);color:var(--ink)}
+.glist li.hit{background:rgba(29,185,84,.18);color:var(--ink)}
 .glist li .mark{font-size:12px;flex:none}
 .glist li.miss .mark{color:var(--wrong)}
-.glist li.hit .mark{color:var(--green)}
+.glist li.hit .mark{color:var(--green-ink)}
 .empty{font-size:13px;color:var(--ink-3);font-style:italic}
 
 /* ---------- autocomplete ---------- */
 .assist{display:flex;align-items:center;gap:10px;min-height:28px;margin:0 0 12px}
 .assist .note{font-size:13px;color:var(--ink-3)}
 .ghost.small{padding:4px 12px;font-size:12px}
-.ghost.small[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#000}
+.ghost.small[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
 .combo{position:relative}
 .acl{
   position:absolute;z-index:40;left:0;right:0;top:calc(100% + 8px);
@@ -216,7 +222,7 @@ body.nowbar-open .shell{padding-bottom:80px}
 .result p{margin:0 0 14px;color:var(--ink-2);font-size:14px}
 .grid-emoji{font-size:20px;letter-spacing:2px;margin:0 0 14px}
 .result .row{display:flex;gap:10px;flex-wrap:wrap}
-.solid{background:var(--ink);color:#000;padding:9px 20px;border-radius:999px;font-weight:800;font-size:14px}
+.solid{background:var(--ink);color:var(--bg);padding:9px 20px;border-radius:999px;font-weight:800;font-size:14px}
 .solid:hover{transform:scale(1.04)}
 .foot{color:var(--ink-3);font-size:12px;padding:6px 10px 20px;text-align:center}
 .foot a{color:var(--ink-2)}
@@ -227,8 +233,8 @@ body.nowbar-open .shell{padding-bottom:80px}
 
 /* ---------- back to the index ----------
    This page keeps its own look on purpose, so the link is styled for the
-   dark palette rather than pulled from /style.css. It is the only thread
-   tying the page back to the rest of gracefully.dev. */
+   page's own palette rather than pulled from /style.css. It is the only
+   thread tying the page back to the rest of gracefully.dev. */
 .home{
   display:flex;align-items:center;gap:7px;
   margin:0 0 4px;padding:0;
@@ -236,7 +242,7 @@ body.nowbar-open .shell{padding-bottom:80px}
   font-size:13px;font-weight:600;
   transition:color .18s ease;
 }
-.home:hover,.home:focus-visible{color:var(--green)}
+.home:hover,.home:focus-visible{color:var(--green-ink)}
 .home span{transition:transform .18s ease;display:inline-block}
 .home:hover span{transform:translateX(-3px)}
 @media (prefers-reduced-motion: reduce){ .home:hover span{transform:none} }
@@ -329,7 +335,7 @@ body.nowbar-open .shell{padding-bottom:80px}
   </div>
 
   <p><a class="home" href="/"><span aria-hidden="true">&larr;</span> Gracefully</a></p>
-  <p class="foot">Metadata is close but hand-compiled, and the covers are original colour-field stand-ins rather than the real artwork. Everything lives in your browser.</p>
+  <p class="foot">Metadata is close but hand-compiled, and the covers are Spotify&rsquo;s own, loaded from their CDN &mdash; a generated stand-in takes over if they don&rsquo;t appear. Everything else lives in your browser.</p>
 </div>
 
 <script>
@@ -341,6 +347,7 @@ body.nowbar-open .shell{padding-bottom:80px}
 const ALBUMS = [
   {
     id: "2-cool-4-skool",
+    art: "https://i.scdn.co/image/ab67616d00001e02c7c7014c91ed63c909b50ef5",
     title: "2 Cool 4 Skool",
     year: 2013,
     runtime: 1830,
@@ -354,6 +361,7 @@ const ALBUMS = [
   },
   {
     id: "o-rul8-2",
+    art: "https://i.scdn.co/image/ab67616d00001e0238a73fb596e530ac18446812",
     title: "O!RUL8,2?",
     year: 2013,
     runtime: 1980,
@@ -367,6 +375,7 @@ const ALBUMS = [
   },
   {
     id: "skool-luv-affair",
+    art: "https://i.scdn.co/image/ab67616d00001e02ab9433cc4b9cda9431be879a",
     title: "Skool Luv Affair",
     year: 2014,
     runtime: 1860,
@@ -380,6 +389,7 @@ const ALBUMS = [
   },
   {
     id: "dark-and-wild",
+    art: "https://i.scdn.co/image/ab67616d00001e0232c1cbd06faf825f0346ca75",
     title: "Dark & Wild",
     year: 2014,
     runtime: 3120,
@@ -395,6 +405,7 @@ const ALBUMS = [
   },
   {
     id: "hyyh-pt1",
+    art: "https://i.scdn.co/image/ab67616d00001e02019385816d2b6c1760e0d7db",
     title: "The Most Beautiful Moment in Life, Part 1",
     short: "HYYH Pt.1",
     year: 2015,
@@ -409,6 +420,7 @@ const ALBUMS = [
   },
   {
     id: "hyyh-pt2",
+    art: "https://i.scdn.co/image/ab67616d00001e02d5d5e874bde16f6ef86c99dc",
     title: "The Most Beautiful Moment in Life, Part 2",
     short: "HYYH Pt.2",
     year: 2015,
@@ -423,6 +435,7 @@ const ALBUMS = [
   },
   {
     id: "young-forever",
+    art: "https://i.scdn.co/image/ab67616d00001e02cf5fcabbbae09fa45aa5116f",
     title: "The Most Beautiful Moment in Life: Young Forever",
     short: "Young Forever",
     year: 2016,
@@ -441,6 +454,7 @@ const ALBUMS = [
   },
   {
     id: "wings",
+    art: "https://i.scdn.co/image/ab67616d00001e028bd5d941f9ced8e7f9c60dd4",
     title: "Wings",
     year: 2016,
     runtime: 3240,
@@ -454,6 +468,7 @@ const ALBUMS = [
   },
   {
     id: "you-never-walk-alone",
+    art: "https://i.scdn.co/image/ab67616d00001e02bd375b430c3abeceb8b5d8da",
     title: "You Never Walk Alone",
     year: 2017,
     runtime: 3420,
@@ -468,6 +483,7 @@ const ALBUMS = [
   },
   {
     id: "love-yourself-her",
+    art: "https://i.scdn.co/image/ab67616d00001e0240f078d0a28bffb93e2e2c11",
     title: "Love Yourself: Her",
     year: 2017,
     runtime: 2100,
@@ -480,6 +496,7 @@ const ALBUMS = [
   },
   {
     id: "love-yourself-tear",
+    art: "https://i.scdn.co/image/ab67616d00001e02a274bd961be8afb88d0d5c54",
     title: "Love Yourself: Tear",
     year: 2018,
     runtime: 2520,
@@ -492,6 +509,7 @@ const ALBUMS = [
   },
   {
     id: "love-yourself-answer",
+    art: "https://i.scdn.co/image/ab67616d00001e02af396dce4438624ec801ff1a",
     title: "Love Yourself: Answer",
     year: 2018,
     runtime: 5700,
@@ -508,6 +526,7 @@ const ALBUMS = [
   },
   {
     id: "map-of-the-soul-persona",
+    art: "https://i.scdn.co/image/ab67616d00001e0218d0ed4f969b376893f9a38f",
     title: "Map of the Soul: Persona",
     year: 2019,
     runtime: 1560,
@@ -520,6 +539,7 @@ const ALBUMS = [
   },
   {
     id: "map-of-the-soul-7",
+    art: "https://i.scdn.co/image/ab67616d00001e02505190077497c230422f2934",
     title: "Map of the Soul: 7",
     year: 2020,
     runtime: 4500,
@@ -534,6 +554,7 @@ const ALBUMS = [
   },
   {
     id: "be",
+    art: "https://i.scdn.co/image/ab67616d00001e02c07d5d2fdc02ae252fcd07e5",
     title: "Be",
     year: 2020,
     runtime: 1740,
@@ -546,6 +567,7 @@ const ALBUMS = [
   },
   {
     id: "proof",
+    art: "https://i.scdn.co/image/ab67616d00001e0217db30ce3f081d6818a8ad49",
     title: "Proof",
     year: 2022,
     runtime: 11100,
@@ -563,6 +585,7 @@ const ALBUMS = [
   },
   {
     id: "arirang",
+    art: "https://i.scdn.co/image/ab67616d00001e02dfa17fad7f190c901603270e",
     title: "ARIRANG",
     year: 2026,
     runtime: 2480,
@@ -592,8 +615,7 @@ const CLUES = [
 ];
 const MAX_GUESSES = 12;
 const PLAY_TRACK = 3;        // 0-based: solving drops the needle on track 4
-const AC_AFTER = 4;          // the album list stays off the table until this many guesses
-const STORE = "bts-album-game/v3";
+const STORE = "bts-album-game/v4";
 
 /* ---------------- deterministic randomness ---------------- */
 function hash(str){
@@ -655,7 +677,15 @@ function coverSVG(a){
     <rect width="300" height="300" fill="url(#${gid})"/>${shapes.join("")}
   </svg>`;
 }
-const LOCKED_COVER = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="300" height="300" fill="#242424"/></svg>`;
+/* Spotify's own CDN, hotlinked. It loads when the page is opened locally; the
+   published artifact's CSP blocks remote images, so onerror drops back to the
+   generated stand-in below. */
+function coverArt(a){
+  const svg = coverSVG(a);
+  if (!a.art) return svg;
+  return `<img class="art" src="${a.art}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">` + svg;
+}
+const LOCKED_COVER = `<svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="300" height="300" fill="#e2e2df"/></svg>`;
 
 /* ---------------- state ---------------- */
 let S = null;
@@ -663,7 +693,7 @@ let S = null;
 function newGame(seed){
   const s = seed ?? (Date.now() ^ hash(String(Math.random())));
   const pick = ALBUMS[Math.floor(rng(s)() * ALBUMS.length)];
-  S = { seed: s, answer: pick.id, guesses: [], over: false, won: false, acOn: false, playing: false };
+  S = { seed: s, answer: pick.id, guesses: [], over: false, won: false, acOff: false, playing: false };
   save(); render();
 }
 function unlocked(){
@@ -691,7 +721,7 @@ function render(){
   /* cover + page tint */
   const cover = $("cover");
   const showCover = has("cover");
-  cover.innerHTML = showCover ? coverSVG(a) : LOCKED_COVER + '<span class="qmark" aria-hidden="true">?</span>';
+  cover.innerHTML = showCover ? coverArt(a) : LOCKED_COVER + '<span class="qmark" aria-hidden="true">?</span>';
   cover.classList.toggle("blurred", showCover && !S.over);
   $("page").style.setProperty("--hero", showCover ? a.colors[0] : "#333333");
 
@@ -759,23 +789,17 @@ function render(){
   renderResult(a);
 }
 
-/* the album list is earned, not given: hidden for the first few guesses,
-   then offered as a toggle the player opts into */
-function acUnlocked(){ return S.guesses.length >= AC_AFTER; }
-function acLive(){ return acUnlocked() && S.acOn && !S.over; }
+/* the album list is available from the first guess; the toggle only suppresses it */
+function acLive(){ return !S.acOff && !S.over; }
 
 function renderAssist(){
   const btn = $("ac-toggle"), note = $("assist-note"), inp = $("guess");
   if (S.over){ btn.hidden = true; note.textContent = ""; }
-  else if (acUnlocked()){
+  else {
     btn.hidden = false;
-    btn.setAttribute("aria-pressed", S.acOn);
-    btn.textContent = S.acOn ? "Hide album list" : "Show album list";
-    note.textContent = S.acOn ? "" : "Or keep typing from memory.";
-  } else {
-    btn.hidden = true;
-    const left = AC_AFTER - S.guesses.length;
-    note.textContent = `Type from memory \u2014 the album list unlocks in ${left} guess${left === 1 ? "" : "es"}.`;
+    btn.setAttribute("aria-pressed", !S.acOff);
+    btn.textContent = S.acOff ? "Show album list" : "Hide album list";
+    note.textContent = S.acOff ? "Typing from memory only." : "Matches appear as you type.";
   }
   // only advertise a combobox while there is actually a list behind it
   if (acLive()) inp.setAttribute("role", "combobox");
@@ -866,7 +890,7 @@ function renderNowPlaying(a){
   document.body.classList.toggle("nowbar-open", S.won);
   document.body.classList.toggle("paused", S.won && !S.playing);
   if (!S.won) return;
-  $("now-thumb").innerHTML = coverSVG(a);
+  $("now-thumb").innerHTML = coverArt(a);
   $("now-title").textContent = a.tracks[playIndex(a)];
   const t = $("now-toggle");
   t.innerHTML = S.playing ? ICON_PAUSE : ICON_PLAY;
@@ -981,8 +1005,10 @@ function resolveTyped(){
 }
 
 /* ---------------- wiring ---------------- */
-$("guess").addEventListener("input", e => openAC(e.target.value));
-$("guess").addEventListener("focus", e => openAC(e.target.value));
+$("guess").addEventListener("input", e => {
+  if (e.target.value.trim()) openAC(e.target.value); else closeAC();
+});
+$("guess").addEventListener("focus", e => { if (e.target.value.trim()) openAC(e.target.value); });
 $("guess").addEventListener("keydown", e => {
   if (e.key === "ArrowDown"){ if (!acLive()) return; e.preventDefault(); moveAC(1); }
   else if (e.key === "ArrowUp"){ if (!acLive()) return; e.preventDefault(); moveAC(-1); }
@@ -1006,10 +1032,10 @@ document.addEventListener("click", e => {
 $("play").onclick = togglePlay;
 $("now-toggle").onclick = togglePlay;
 $("ac-toggle").onclick = () => {
-  S.acOn = !S.acOn;
+  S.acOff = !S.acOff;
   save(); render();
   $("guess").focus();
-  if (S.acOn) openAC($("guess").value);
+  if (!S.acOff) openAC($("guess").value);
 };
 $("new-game").onclick = () => newGame();
 $("give-up").onclick = () => { if (!S.over){ S.over = true; S.won = false; save(); render(); } };
