@@ -43,7 +43,7 @@ the house style, and do not treat it as a precedent.
 | `CNAME` | Tells GitHub Pages the custom domain is `gracefully.dev` |
 | `riftle/` | **Riftle** — a daily League of Legends word game, at [/riftle/](https://gracefully.dev/riftle/) |
 | `wardle/` | **Wardle** — a daily champion-kit deduction game, at [/wardle/](https://gracefully.dev/wardle/) |
-| `bts-album-match/` | **BTS Album Match** — a Spotify-styled album guessing game, at [/bts-album-match/](https://gracefully.dev/bts-album-match/) |
+| `bts-album-match/` | **BTS Album Match** — an album guessing game in Spotify's clothes, at [/bts-album-match/](https://gracefully.dev/bts-album-match/) |
 
 ## Working on it locally
 
