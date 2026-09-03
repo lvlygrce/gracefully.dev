@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>asoifle</title>
+  <meta name="description" content="Guess the character from Game of Thrones. One a day, six clues a guess." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="asoifle" />
+  <meta property="og:description" content="One A Song of Ice and Fire character a day. Eight guesses, six clues each." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gracefully.dev/asoifle/" />
+
+  <link rel="canonical" href="https://gracefully.dev/asoifle/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9A%94%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="asoifle.css" />
+
+  <script>
+    // Before first paint, so there is no flash. Light is the default:
+    // the system preference is deliberately not consulted.
+    try {
+      var t = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* blocked storage — stay on light */ }
+
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
+  </script>
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.25" />
+      <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
+    </svg>
+  </button>
+
+  <main class="page page--wide">
+    <header class="masthead">
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">a guessing game for a song of ice and fire</p>
+
+      <h1 class="wordmark reveal reveal--display" style="--i:1">asoifle<span class="wordmark__mark">.</span></h1>
+
+      <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
+        <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
+          <path class="penstroke__ink" pathLength="1"
+                d="M10 30 C 74 8 132 40 198 26 C 258 13 312 34 366 22 C 384 18 398 22 410 32" />
+          <g class="penstroke__pen">
+            <g transform="rotate(-26) scale(0.86)">
+              <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+              <path class="penstroke__slit" d="M0 -4 V-15" />
+              <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+              <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+              <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lede reveal" style="--i:4">
+        One character a day, drawn from the <em>125 people who appear in three or more
+        episodes</em>. Every guess tells you six things. Eight guesses, then the raven comes.
+      </p>
+    </header>
+
+    <div class="modes reveal" style="--i:5" role="group" aria-label="Game mode">
+      <button class="btn btn--mode is-on" type="button" data-mode="daily">Today's character</button>
+      <button class="btn btn--mode" type="button" data-mode="endless">Keep playing</button>
+      <button class="btn btn--quiet" type="button" id="how-btn" aria-expanded="false" aria-controls="how">How it works</button>
+    </div>
+
+    <section class="how" id="how" hidden>
+      <h2 class="section-label" id="how-heading">How it works</h2>
+      <ul class="how__list">
+        <li><span class="chip chip--hit" aria-hidden="true">✓</span> the guess matches the answer exactly.</li>
+        <li><span class="chip chip--near" aria-hidden="true">~</span> close, but not it — the same part of the world, or a season or two out, or within five episodes.</li>
+        <li><span class="chip chip--miss" aria-hidden="true">✗</span> nothing in common.</li>
+        <li><span class="chip chip--near" aria-hidden="true">↑</span> the answer is higher than your guess; <span class="chip chip--near" aria-hidden="true">↓</span> lower.</li>
+        <li><span class="chip chip--miss" aria-hidden="true">?</span> under the guess bar, a count of how many of the 125 still fit everything you have been told.</li>
+        <li><span class="chip chip--miss" aria-hidden="true">”</span> from the fourth guess you may ask for a hint: a line they said, or their initials if they were not much of a talker.</li>
+      </ul>
+      <p class="how__note">
+        <em>House</em> is the house they were born or married into; failing that, the order,
+        people or trade they belong to. <em>Origin</em> is where they were born when the show
+        tells us — so Catelyn is of the Riverlands and Daenerys, born on Dragonstone, is of the
+        Crownlands. <em>Status</em> is where they stand when the last episode ends.
+      </p>
+    </section>
+
+    <section class="play" aria-labelledby="play-heading">
+      <h2 class="section-label reveal reveal--rule" id="play-heading" style="--i:6">
+        <span id="play-label">Guess the character</span>
+        <span class="tally" id="tally">1 of 8</span>
+      </h2>
+
+      <form class="guessbar" id="guess-form" autocomplete="off">
+        <div class="combo">
+          <input class="combo__input" id="guess-input" type="text" name="guess"
+                 placeholder="Start typing a name…" aria-label="Your guess"
+                 role="combobox" aria-expanded="false" aria-controls="suggestions"
+                 aria-autocomplete="list" />
+          <ul class="combo__list" id="suggestions" role="listbox" aria-label="Matching characters" hidden></ul>
+        </div>
+        <button class="btn btn--go" type="submit">Guess</button>
+      </form>
+
+      <p class="hint" id="hint" role="status" aria-live="polite"></p>
+
+      <div class="narrowing" id="narrowing" hidden>
+        <p class="narrowing__count" id="remaining" role="status" aria-live="polite"></p>
+        <button class="btn btn--quiet" type="button" id="hint-btn" hidden>Ask for a hint</button>
+      </div>
+
+      <blockquote class="whisper" id="whisper" hidden>
+        <p class="whisper__text" id="whisper-text"></p>
+        <p class="whisper__by" id="whisper-by"></p>
+      </blockquote>
+
+      <div class="boardwrap" id="boardwrap" hidden>
+        <div class="board__head" id="board-head" role="row"></div>
+        <div class="board__body" id="board-body"></div>
+      </div>
+    </section>
+
+    <section class="outcome" id="outcome" hidden aria-live="polite"></section>
+
+    <section class="stats" aria-labelledby="stats-heading">
+      <h2 class="section-label reveal reveal--rule" id="stats-heading" style="--i:7">Your record</h2>
+      <dl class="stats__grid" id="stats-grid"></dl>
+      <p class="stats__tools">
+        <button class="btn btn--quiet" type="button" id="export-btn">Save your record to a file</button>
+        <button class="btn btn--quiet" type="button" id="import-btn">Load one back in</button>
+        <input type="file" id="import-file" accept="application/json" hidden />
+      </p>
+    </section>
+  </main>
+
+  <footer class="colophon reveal" style="--i:8">
+    <span><a href="/">Gracefully</a> &middot; asoifle &middot; not affiliated with HBO or George R. R. Martin</span>
+    <span>&copy; <span id="year"></span> Grace Piddington &middot; no server, no database, no ravens</span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

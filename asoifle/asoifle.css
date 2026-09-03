@@ -1,0 +1,399 @@
+/* ============================================================
+   asoifle — game components
+
+   The design system (tokens, texture, the pen, the reveal engine)
+   is loaded first from /style.css and is NOT repeated here. This
+   file holds only what the game itself adds.
+
+   See STYLE-GUIDE.md at the repo root before changing anything
+   visual, and add new values as tokens rather than literals.
+   ============================================================ */
+
+/* --- 15. Extra tokens ------------------------------------ */
+
+:root {
+  /* Three verdicts. The accent carries "right"; a warm ochre carries
+     "close". Nothing else on the page uses either. */
+  --hit-wash:  rgba(43, 125, 88, 0.16);
+  --near-wash: rgba(176, 125, 43, 0.20);
+  --miss-wash: rgba(160, 149, 133, 0.15);
+  --hit-ink:   #1f6344;
+  --near-ink:  #8a5f18;
+
+  --cols: 10.5rem repeat(6, 5.75rem);
+}
+
+:root[data-theme="dark"] {
+  --hit-wash:  rgba(134, 208, 164, 0.15);
+  --near-wash: rgba(217, 164, 65, 0.17);
+  --miss-wash: rgba(160, 149, 133, 0.09);
+  --hit-ink:   #97dcb1;
+  --near-ink:  #dcae5c;
+}
+
+.page--wide { max-width: 58rem; }
+
+/* A class with its own `display` beats the UA sheet's [hidden] rule, so
+   say it once and mean it. */
+[hidden] { display: none !important; }
+
+/* --- 16. Buttons ----------------------------------------- */
+
+/* No borders anywhere: a button is a soft blob of warm paper. */
+.btn {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--paper-warm);
+  border: 0;
+  border-radius: var(--radius-blob);
+  padding: 0.6rem 1.1rem 0.5rem;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              transform var(--dur) var(--ease-bounce);
+}
+
+.btn:hover { background: var(--accent-wash); color: var(--accent); transform: translateY(-1px); }
+
+.btn--go { background: var(--accent); color: var(--paper); }
+.btn--go:hover { background: var(--accent); color: var(--paper); filter: brightness(1.08); }
+
+.btn--quiet { background: transparent; color: var(--ink-muted); }
+
+.btn--mode.is-on { background: var(--accent-wash); color: var(--accent); }
+
+.modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-md);
+}
+
+/* --- 17. How it works ------------------------------------ */
+
+.how {
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  padding: var(--space-sm) var(--space-sm) var(--space-xs);
+  margin-bottom: var(--space-md);
+  max-width: var(--measure);
+}
+
+.how__list { list-style: none; margin-bottom: var(--space-xs); }
+
+.how__list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2xs);
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-2xs);
+  color: var(--ink-muted);
+}
+
+.how__note { color: var(--ink-muted); line-height: var(--leading-snug); }
+.how__note em { color: var(--ink); }
+
+.chip {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 46% 54% 52% 48%;
+  font-family: var(--font-hand);
+  font-size: 1rem;
+  transform: translateY(0.2rem);
+}
+
+.chip--hit  { background: var(--hit-wash);  color: var(--hit-ink); }
+.chip--near { background: var(--near-wash); color: var(--near-ink); }
+.chip--miss { background: var(--miss-wash); color: var(--ink-faint); }
+
+/* --- 18. The guess bar ----------------------------------- */
+
+.play { margin-bottom: var(--space-lg); }
+
+.tally { order: 2; color: var(--ink-faint); font-weight: 500; }
+.section-label::after { order: 1; }
+
+.guessbar {
+  display: flex;
+  gap: var(--space-2xs);
+  align-items: flex-start;
+  margin: var(--space-sm) 0 var(--space-xs);
+}
+
+.combo { position: relative; flex: 1; max-width: 24rem; }
+
+.combo__input {
+  width: 100%;
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  color: var(--ink);
+  background: var(--paper-warm);
+  border: 0;
+  border-radius: var(--radius-soft);
+  padding: 0.7rem 0.9rem;
+  transition: background var(--dur) var(--ease);
+}
+
+.combo__input::placeholder { color: var(--ink-faint); font-style: italic; }
+.combo__input:focus { background: var(--paper-sunk); outline-offset: 2px; }
+
+.combo__list {
+  position: absolute;
+  z-index: 6;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  right: 0;
+  list-style: none;
+  background: var(--paper);
+  border-radius: var(--radius-soft);
+  box-shadow: 0 10px 30px rgba(36, 31, 26, 0.14), 0 2px 6px rgba(36, 31, 26, 0.08);
+  padding: 0.3rem;
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+.combo__option {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.0625rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.combo__option:hover,
+.combo__option.is-active { background: var(--accent-wash); color: var(--accent); }
+
+.hint {
+  min-height: 1.6rem;
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: var(--leading-snug);
+}
+
+/* --- 18b. Narrowing down --------------------------------- */
+
+.narrowing {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-xs);
+}
+
+.narrowing__count {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+/* The hint, when one is asked for. */
+.whisper {
+  max-width: var(--measure);
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.whisper__text {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.375rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: var(--leading-snug);
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.whisper__by {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-faint);
+  line-height: 1.2;
+  margin-top: var(--space-2xs);
+}
+
+/* --- 19. The board --------------------------------------- */
+
+.boardwrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: var(--space-2xs);
+  margin-top: var(--space-xs);
+}
+
+.board__head,
+.row {
+  display: grid;
+  grid-template-columns: var(--cols);
+  gap: 0.4rem;
+  min-width: max-content;
+}
+
+.board__head { margin-bottom: 0.4rem; }
+.row { margin-bottom: 0.4rem; }
+
+.board__th {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  padding: 0 0.6rem;
+  line-height: 1.2;
+}
+
+/* Pinned with the name column beneath it, so the labels stay lined up
+   when a narrow screen scrolls the board sideways. */
+.board__th:first-child { position: sticky; left: 0; z-index: 3; background: var(--paper); }
+
+
+.cell {
+  --cell-wash: var(--miss-wash);
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.3rem;
+  min-height: 3.1rem;
+  padding: 0.55rem 0.5rem;
+  border-radius: var(--radius-blob);
+  text-align: center;
+  line-height: 1.25;
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+  /* Solid paper underneath, wash on top — so the sticky first column
+     never lets the row behind it show through. */
+  background-color: var(--paper);
+  background-image: linear-gradient(var(--cell-wash), var(--cell-wash));
+  animation: settle 420ms var(--ease-bounce) backwards;
+  animation-delay: calc(var(--c, 0) * 70ms);
+}
+
+.cell--hit  { --cell-wash: var(--hit-wash);  color: var(--hit-ink); }
+.cell--near { --cell-wash: var(--near-wash); color: var(--near-ink); }
+
+.cell--name {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  justify-content: flex-start;
+  text-align: left;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.0625rem;
+  color: var(--ink);
+  padding-left: 0.75rem;
+}
+
+.cell--name.cell--hit { color: var(--hit-ink); }
+
+.cell__arrow { font-family: var(--font-hand); font-size: 1.125rem; }
+
+@keyframes settle {
+  from { opacity: 0; transform: translateY(-8px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* --- 20. Outcome ----------------------------------------- */
+
+.outcome { margin-bottom: var(--space-lg); max-width: var(--measure); }
+
+.outcome__line {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.625rem;
+  font-weight: 450;
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-xs);
+}
+
+.card {
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  padding: var(--space-sm);
+}
+
+.card__name {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: var(--size-entry);
+  line-height: 1.2;
+}
+
+.card__meta {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  line-height: 1.35;
+  margin-top: var(--space-2xs);
+}
+
+.card__note {
+  font-style: italic;
+  color: var(--ink-muted);
+  line-height: var(--leading-snug);
+  margin-top: var(--space-xs);
+}
+
+.outcome__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-sm);
+}
+
+/* --- 21. Stats ------------------------------------------- */
+
+/* dt/dd pairs sit as columns: each dt carries its number underneath it. */
+.stats__grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
+  justify-content: start;
+  gap: 0 var(--space-md);
+  margin: var(--space-sm) 0;
+}
+
+.stats__grid dt {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+.stats__grid dd {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.stats__tools { display: flex; flex-wrap: wrap; gap: var(--space-2xs); }
+
+/* --- 22. Reduced motion, game additions ------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .cell { animation: none; }
+  .btn:hover { transform: none; }
+}
+
+/* --- 23. Narrow viewports, game additions ---------------- */
+
+@media (max-width: 40rem) {
+  :root { --cols: 8.5rem repeat(6, 5.25rem); }
+  .cell { font-size: 0.875rem; }
+  .cell--name { font-size: 1rem; }
+  .stats__grid { gap: var(--space-sm); }
+}

@@ -44,6 +44,7 @@ the house style, and do not treat it as a precedent.
 | `riftle/` | **Riftle** — a daily League of Legends word game, at [/riftle/](https://gracefully.dev/riftle/) |
 | `wardle/` | **Wardle** — a daily champion-kit deduction game, at [/wardle/](https://gracefully.dev/wardle/) |
 | `bts-album-match/` | **BTS Album Match** — an album guessing game in Spotify's clothes, at [/bts-album-match/](https://gracefully.dev/bts-album-match/) |
+| `asoifle/` | **asoifle** — a daily A Song of Ice and Fire character deduction game, at [/asoifle/](https://gracefully.dev/asoifle/) |
 
 ## Working on it locally
 
