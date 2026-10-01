@@ -1,0 +1,520 @@
+/* ============================================================
+   Mount Ever-Rarest — game components
+
+   The design system (tokens, texture, the pen, the reveal engine)
+   is loaded first from /style.css and is NOT repeated here. This
+   file holds only what the game itself adds.
+
+   See STYLE-GUIDE.md at the repo root before changing anything
+   visual, and add new values as tokens rather than literals.
+   ============================================================ */
+
+/* --- 15. Extra tokens ------------------------------------ */
+
+:root {
+  --rock:      #e8dfcc;
+  --rock-far:  #efe7d6;
+  --snow:      #fdfbf6;
+  --leopard:   #f3eee3;
+  --leopard-line: #241f1a;
+  --hit-wash:  rgba(43, 125, 88, 0.14);
+  --miss-wash: rgba(160, 149, 133, 0.14);
+}
+
+:root[data-theme="dark"] {
+  --rock:      #2a251b;
+  --rock-far:  #211d15;
+  --snow:      #d9d2c3;
+  --leopard:   #e4dccb;
+  --leopard-line: #17150f;
+  --hit-wash:  rgba(134, 208, 164, 0.13);
+  --miss-wash: rgba(160, 149, 133, 0.09);
+}
+
+/* A class with its own `display` beats the UA sheet's [hidden] rule, so
+   say it once and mean it. */
+[hidden] { display: none !important; }
+
+.tally { order: 2; color: var(--ink-faint); font-weight: 500; }
+.section-label::after { order: 1; }
+
+/* --- 16. Buttons ----------------------------------------- */
+
+/* No borders anywhere: a button is a soft blob of warm paper. */
+.btn {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ink);
+  background: var(--paper-warm);
+  border: 0;
+  border-radius: var(--radius-blob);
+  padding: 0.6rem 1.1rem 0.5rem;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease),
+              transform var(--dur) var(--ease-bounce);
+}
+
+.btn:hover { background: var(--accent-wash); color: var(--accent); transform: translateY(-1px); }
+
+.btn--go { background: var(--accent); color: var(--paper); }
+.btn--go:hover { background: var(--accent); color: var(--paper); filter: brightness(1.08); }
+
+.btn--quiet { background: transparent; color: var(--ink-muted); }
+
+/* --- 17. The mountain ------------------------------------ */
+
+.climb { margin-bottom: var(--space-md); }
+
+.mountain { margin: var(--space-xs) 0 0; }
+
+.mountain__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* While a round is on, the mountain shrinks so it stays on screen
+   above the prompt and the leopard can be watched climbing. */
+.is-playing .mountain__svg {
+  width: auto;
+  max-width: 100%;
+  height: 34vh;
+  margin: 0 auto;
+}
+
+.mountain__far  { fill: var(--rock-far); }
+
+.mountain__rock {
+  fill: var(--rock);
+  stroke: var(--rule-strong);
+  stroke-width: 1.4;
+  stroke-linejoin: round;
+}
+
+.mountain__snow {
+  fill: var(--snow);
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.mountain__route {
+  fill: none;
+  stroke: var(--ink-faint);
+  stroke-width: 1.4;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The ink trail behind the leopard: the accent's job here is "the ink". */
+.mountain__trail {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-opacity: 0.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mountain__flag path { stroke: var(--ink-muted); stroke-width: 1.4; fill: none; }
+.mountain__flag .mountain__pennant { fill: var(--ink-muted); stroke: none; }
+
+.camp__dot { fill: var(--paper); stroke: var(--ink-muted); stroke-width: 1.3; }
+.camp__dot.is-passed { fill: var(--accent); stroke: var(--accent); }
+
+.camp__label {
+  font-family: var(--font-hand);
+  font-size: 15px;
+  fill: var(--ink-muted);
+}
+
+.leopard {
+  transition: transform 1.4s var(--ease-expo);
+}
+
+.leopard__body { transition: transform var(--dur) var(--ease); }
+
+.leopard__coat,
+.leopard__leg {
+  fill: var(--leopard);
+  stroke: var(--leopard-line);
+  stroke-width: 1.1;
+}
+
+.leopard__tail,
+.leopard__tail-fur {
+  fill: none;
+  stroke: var(--leopard-line);
+  stroke-width: 6.4;
+  stroke-linecap: round;
+}
+
+/* Snow leopard tails are thick and pale: an ink outline with fur inside. */
+.leopard__tail-fur { stroke: var(--leopard); stroke-width: 4.2; }
+
+.leopard__spot { fill: none; stroke: var(--leopard-line); stroke-width: 0.9; }
+.leopard__eye  { fill: var(--leopard-line); }
+
+.altitude {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-xs);
+  margin-top: var(--space-2xs);
+}
+
+.altitude__metres {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 2rem;
+  font-weight: 450;
+  line-height: 1.1;
+}
+
+.altitude__where {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+/* --- 18. Intro ------------------------------------------- */
+
+.intro {
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  padding: var(--space-sm) var(--space-sm) var(--space-xs);
+  margin-bottom: var(--space-lg);
+}
+
+.intro__list {
+  list-style: none;
+  max-width: var(--measure);
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.intro__list li {
+  position: relative;
+  padding-left: 1.1rem;
+  line-height: var(--leading-snug);
+  margin-bottom: var(--space-2xs);
+  color: var(--ink-muted);
+}
+
+.intro__list li::before {
+  content: "~";
+  position: absolute;
+  left: 0;
+  font-family: var(--font-hand);
+  color: var(--ink-faint);
+}
+
+.tiers {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-2xs) var(--space-sm);
+  margin-bottom: var(--space-sm);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  line-height: 1.3;
+}
+
+.tiers li { display: flex; align-items: baseline; gap: var(--space-2xs); }
+.tiers__glyph { font-size: 1.05rem; }
+.tiers__m { color: var(--ink-muted); margin-left: auto; }
+
+.intro__go { margin-bottom: var(--space-2xs); }
+
+/* --- 19. Play -------------------------------------------- */
+
+.play { margin-bottom: var(--space-lg); }
+
+.prompt {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(1.625rem, 4.6vw, 2.25rem);
+  font-weight: 450;
+  line-height: 1.18;
+  margin: var(--space-xs) 0 var(--space-sm);
+  max-width: 30rem;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-sm);
+}
+
+/* The time left is the same wobbly line as every rule on the site,
+   drawn in ink and drained from the right. */
+.timer__track {
+  position: relative;
+  flex: 1;
+  height: 8px;
+  max-width: 24rem;
+}
+
+.timer__track::before,
+.timer__fill {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-mask-image: var(--wave-mask);
+  mask-image: var(--wave-mask);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 40px 8px;
+  mask-size: 40px 8px;
+}
+
+.timer__track::before { background: var(--rule); }
+
+.timer__fill {
+  background: var(--accent);
+  transform-origin: left;
+}
+
+.timer.is-low .timer__fill { background: var(--ink); }
+
+.timer__secs {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+  min-width: 2ch;
+  line-height: 1;
+}
+
+.timer.is-low .timer__secs { color: var(--ink); }
+
+.timer { transition: opacity var(--dur) var(--ease); }
+.timer.is-paused { opacity: 0.35; }
+
+.answerbar {
+  display: flex;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-sm);
+}
+
+.answerbar__input {
+  flex: 1;
+  min-width: 0;
+  max-width: 24rem;
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  color: var(--ink);
+  background: var(--paper-warm);
+  border: 0;
+  border-radius: var(--radius-soft);
+  padding: 0.7rem 0.9rem;
+  transition: background var(--dur) var(--ease);
+}
+
+.answerbar__input::placeholder { color: var(--ink-faint); font-style: italic; }
+.answerbar__input:focus { background: var(--paper-sunk); outline-offset: 2px; }
+.answerbar__input:disabled { opacity: 0.6; }
+
+.verdict {
+  border-radius: var(--radius-blob);
+  padding: var(--space-sm);
+  background: var(--miss-wash);
+  max-width: var(--measure);
+  animation: settle var(--dur-slow) var(--ease-expo);
+}
+
+.verdict.is-hit { background: var(--hit-wash); }
+
+@keyframes settle {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.verdict__line {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.5rem;
+  font-weight: 450;
+  line-height: 1.25;
+}
+
+.verdict__note {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+  line-height: 1.25;
+  margin-top: 0.15rem;
+}
+
+.verdict__rarer {
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: var(--leading-snug);
+  margin-top: var(--space-xs);
+}
+
+.verdict__rarer:empty { display: none; }
+
+.verdict__tools,
+.summary__tools,
+.stats__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-sm);
+}
+
+/* --- 20. Summary ----------------------------------------- */
+
+.summary { margin-bottom: var(--space-lg); }
+
+.summary__line {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.5rem;
+  font-weight: 450;
+  line-height: 1.3;
+  max-width: var(--measure);
+  margin: var(--space-xs) 0 var(--space-sm);
+}
+
+.summary__rows { list-style: none; }
+
+.row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr auto;
+  column-gap: var(--space-xs);
+  align-items: baseline;
+  padding: var(--space-xs) 0;
+}
+
+.row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  background: var(--rule);
+  -webkit-mask-image: var(--wave-mask);
+  mask-image: var(--wave-mask);
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+  -webkit-mask-size: 40px 6px;
+  mask-size: 40px 6px;
+}
+
+.row__glyph { font-size: 1.1rem; }
+
+.row__q {
+  color: var(--ink-muted);
+  font-style: italic;
+  line-height: var(--leading-snug);
+}
+
+.row__a {
+  grid-column: 2 / 3;
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.row__a.is-empty { color: var(--ink-faint); font-style: italic; }
+
+.row__tier {
+  grid-column: 2 / 3;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  line-height: 1.25;
+}
+
+.row__m {
+  grid-column: 3 / 4;
+  grid-row: 1 / 4;
+  align-self: center;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand);
+  color: var(--ink-muted);
+}
+
+.row__m.is-up { color: var(--accent); }
+
+.summary__status,
+.stats__status {
+  min-height: 1.6rem;
+  margin-top: var(--space-2xs);
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+}
+
+.sharebox {
+  display: block;
+  width: 100%;
+  max-width: 24rem;
+  margin-top: var(--space-2xs);
+  font-family: var(--font-text);
+  font-size: var(--size-body);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+  background: var(--paper-warm);
+  border: 0;
+  border-radius: var(--radius-soft);
+  padding: 0.7rem 0.9rem;
+  resize: none;
+}
+
+/* --- 21. Stats ------------------------------------------- */
+
+.stats__grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs) var(--space-md);
+  margin: var(--space-sm) 0 0;
+}
+
+.stats__grid dt {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+.stats__grid dd {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+/* --- 22. Reduced motion, game additions ------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .leopard, .leopard__body { transition: none; }
+  .verdict { animation: none; }
+  .btn:hover { transform: none; }
+}
+
+/* --- 23. Narrow viewports, game additions ---------------- */
+
+@media (max-width: 40rem) {
+  .camp__label { font-size: 17px; }
+}
+
+@media (max-width: 30rem) {
+  .answerbar { flex-wrap: wrap; }
+  .answerbar__input { flex-basis: 100%; max-width: none; }
+}

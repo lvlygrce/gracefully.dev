@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mount Ever-Rarest</title>
+  <meta name="description" content="Climb Everest as a snow leopard by giving answers that are right but rare. Seven prompts a round, as many rounds as you like." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="Mount Ever-Rarest" />
+  <meta property="og:description" content="Right but rare answers carry a snow leopard up Everest. Seven prompts a round, no daily limit." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gracefully.dev/mount-ever-rarest/" />
+
+  <link rel="canonical" href="https://gracefully.dev/mount-ever-rarest/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9B%B0%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="mount-ever-rarest.css" />
+
+  <script>
+    // Before first paint, so there is no flash. Light is the default:
+    // the system preference is deliberately not consulted.
+    try {
+      var t = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* blocked storage — stay on light */ }
+
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
+  </script>
+</head>
+<body>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.25" />
+      <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
+    </svg>
+  </button>
+
+  <main class="page">
+    <header class="masthead">
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">a game of rare answers, played at altitude</p>
+
+      <h1 class="wordmark reveal reveal--display" style="--i:1">Mount Ever&#8209;Rarest<span class="wordmark__mark">.</span></h1>
+
+      <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
+        <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
+          <path class="penstroke__ink" pathLength="1"
+                d="M10 30 C 74 8 132 40 198 26 C 258 13 312 34 366 22 C 384 18 398 22 410 32" />
+          <g class="penstroke__pen">
+            <g transform="rotate(-26) scale(0.86)">
+              <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+              <path class="penstroke__slit" d="M0 -4 V-15" />
+              <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+              <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+              <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lede reveal" style="--i:4">
+        You are a snow leopard, the <em>ghost of the mountains</em>, and the only way up is to
+        say what nobody else would. Right answers climb. <em>Rare</em> right answers fly.
+      </p>
+    </header>
+
+    <section class="climb reveal" style="--i:5" aria-labelledby="climb-heading">
+      <h2 class="section-label reveal reveal--rule" id="climb-heading" style="--i:5">
+        <span>The climb</span>
+        <span class="tally" id="summits"></span>
+      </h2>
+
+      <figure class="mountain" id="mountain">
+        <svg class="mountain__svg" id="mountain-svg" viewBox="0 0 600 400" role="img" aria-labelledby="altitude-text">
+          <path class="mountain__far" d="M0 316 C 60 292 110 300 150 270 C 190 246 220 258 262 214 L 300 230 C 340 214 380 226 420 196 C 470 168 520 180 560 160 L 600 150 L 600 400 L 0 400 Z" />
+          <path class="mountain__rock" d="M0 400 L0 338 C30 330 60 326 90 318 L150 268 L190 232 L232 150 L258 176 L284 140 L306 92 L330 40 L352 64 L372 80 L400 118 L428 96 L452 80 L478 108 L520 150 L560 176 L600 190 L600 400 Z" />
+          <path class="mountain__snow" d="M284 140 L306 92 L330 40 L352 64 L372 80 L400 118 L428 96 L452 80 L478 108 L464 114 L450 104 L432 124 L406 140 L388 116 L366 106 L350 88 L336 82 L322 104 L302 130 Z" />
+          <path class="mountain__snow" d="M208 194 L232 150 L258 176 L246 182 L234 168 L222 192 Z" />
+          <path class="mountain__route" id="route" />
+          <path class="mountain__trail" id="trail" />
+          <g id="camps"></g>
+          <g class="mountain__flag" transform="translate(330 40)" aria-hidden="true">
+            <path d="M0 0 V-22" />
+            <path class="mountain__pennant" d="M0 -22 L14 -18 L0 -13 Z" />
+          </g>
+          <g class="leopard" id="leopard" aria-hidden="true">
+            <g class="leopard__body" id="leopard-body">
+              <path class="leopard__tail" d="M-12 -8 C -25 -6 -30 -18 -22 -26 C -19 -29 -14 -27 -16 -23" />
+              <path class="leopard__tail-fur" d="M-12 -8 C -25 -6 -30 -18 -22 -26 C -19 -29 -14 -27 -16 -23" />
+              <circle class="leopard__spot" cx="-21" cy="-9.6" r="1" />
+              <circle class="leopard__spot" cx="-26" cy="-16" r="1" />
+              <circle class="leopard__eye" cx="-16.2" cy="-23.6" r="1.6" />
+              <rect class="leopard__leg" x="-11" y="-7" width="3.6" height="7" rx="1.6" />
+              <rect class="leopard__leg" x="-6" y="-7" width="3.6" height="7" rx="1.6" />
+              <rect class="leopard__leg" x="4" y="-7" width="3.6" height="7" rx="1.6" />
+              <rect class="leopard__leg" x="9" y="-7" width="3.6" height="7" rx="1.6" />
+              <ellipse class="leopard__coat" cx="0" cy="-10" rx="13.5" ry="6" />
+              <circle class="leopard__coat" cx="14.5" cy="-15" r="5.2" />
+              <circle class="leopard__coat" cx="12" cy="-20" r="1.8" />
+              <circle class="leopard__coat" cx="16.6" cy="-20" r="1.8" />
+              <ellipse class="leopard__coat" cx="18.6" cy="-13.4" rx="2.6" ry="2" />
+              <circle class="leopard__spot" cx="-7" cy="-11" r="1.4" />
+              <circle class="leopard__spot" cx="-2" cy="-8" r="1.3" />
+              <circle class="leopard__spot" cx="3" cy="-12" r="1.4" />
+              <circle class="leopard__spot" cx="8" cy="-8.5" r="1.2" />
+              <circle class="leopard__spot" cx="-10" cy="-7.5" r="1" />
+              <circle class="leopard__eye" cx="16.4" cy="-16" r="0.8" />
+            </g>
+          </g>
+        </svg>
+        <figcaption class="altitude" id="altitude-text" aria-live="polite">
+          <span class="altitude__metres" id="altitude-metres">5,364 m</span>
+          <span class="altitude__where" id="altitude-where">Base camp</span>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="intro" id="intro" aria-labelledby="intro-heading">
+      <h2 class="section-label" id="intro-heading">How the climb works</h2>
+      <ul class="intro__list">
+        <li>Seven prompts a round, twenty seconds each, one answer apiece.</li>
+        <li>Common answers creep you up the trail. Answers almost nobody gives carry you a hundred metres at a time.</li>
+        <li>A wrong answer, a blank or a timeout earns nothing, but costs nothing either.</li>
+        <li>Base camp sits at 5,364 metres. The summit is 8,849. Play as many rounds as the mountain takes.</li>
+      </ul>
+      <ul class="tiers" aria-label="What each kind of answer is worth">
+        <li><span class="tiers__glyph" aria-hidden="true">🥾</span> the tourist trail <span class="tiers__m">10 m</span></li>
+        <li><span class="tiers__glyph" aria-hidden="true">⛰️</span> a quieter ridge <span class="tiers__m">30 m</span></li>
+        <li><span class="tiers__glyph" aria-hidden="true">🐐</span> a goat track <span class="tiers__m">60 m</span></li>
+        <li><span class="tiers__glyph" aria-hidden="true">🐆</span> ghost of the mountains <span class="tiers__m">100 m</span></li>
+      </ul>
+      <p class="intro__go">
+        <button class="btn btn--go" type="button" id="start-btn">Start climbing</button>
+      </p>
+    </section>
+
+    <section class="play" id="play" aria-labelledby="prompt-text" hidden>
+      <h2 class="section-label section-label--play">
+        <span id="play-count">Prompt 1 of 7</span>
+        <span class="tally" id="play-category"></span>
+      </h2>
+
+      <p class="prompt" id="prompt-text"></p>
+
+      <div class="timer" id="timer" aria-hidden="true">
+        <div class="timer__track"><div class="timer__fill" id="timer-fill"></div></div>
+        <span class="timer__secs" id="timer-secs">20</span>
+      </div>
+
+      <form class="answerbar" id="answer-form" autocomplete="off">
+        <input class="answerbar__input" id="answer-input" type="text" name="answer"
+               placeholder="Your answer…" aria-label="Your answer"
+               autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" />
+        <button class="btn btn--go" type="submit">Answer</button>
+      </form>
+
+      <div class="verdict" id="verdict" role="status" aria-live="polite" hidden>
+        <p class="verdict__line" id="verdict-line"></p>
+        <p class="verdict__note" id="verdict-note"></p>
+        <p class="verdict__rarer" id="verdict-rarer"></p>
+        <p class="verdict__tools">
+          <button class="btn btn--go" type="button" id="next-btn">Next prompt</button>
+          <button class="btn btn--quiet" type="button" id="vouch-btn" hidden>I'm sure it's right, count it</button>
+        </p>
+      </div>
+    </section>
+
+    <section class="summary" id="summary" aria-labelledby="summary-heading" hidden>
+      <h2 class="section-label" id="summary-heading">
+        <span id="summary-title">Round over</span>
+        <span class="tally" id="summary-gain"></span>
+      </h2>
+      <p class="summary__line" id="summary-line"></p>
+      <ol class="summary__rows" id="summary-rows"></ol>
+      <p class="summary__tools">
+        <button class="btn btn--go" type="button" id="keep-btn">Keep climbing</button>
+        <button class="btn" type="button" id="share-btn">Share result</button>
+        <button class="btn btn--quiet" type="button" id="restart-btn">Start again from base</button>
+      </p>
+      <p class="summary__status" id="share-status" role="status" aria-live="polite"></p>
+      <textarea class="sharebox" id="share-text" rows="4" readonly aria-label="Your result, to copy" hidden></textarea>
+    </section>
+
+    <section class="stats" aria-labelledby="stats-heading">
+      <h2 class="section-label reveal reveal--rule" id="stats-heading" style="--i:6">Your record</h2>
+      <dl class="stats__grid" id="stats-grid"></dl>
+      <p class="stats__tools">
+        <button class="btn btn--quiet" type="button" id="export-btn">Save your record to a file</button>
+        <button class="btn btn--quiet" type="button" id="import-btn">Load one back in</button>
+        <input type="file" id="import-file" accept="application/json" hidden />
+      </p>
+      <p class="stats__status" id="stats-status" role="status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="colophon reveal" style="--i:8">
+    <span><a href="/">Gracefully</a> &middot; Mount Ever-Rarest &middot; after Krillion, with less oxygen</span>
+    <span>&copy; <span id="year"></span> Grace Piddington &middot; no server, no database, no sherpas</span>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
