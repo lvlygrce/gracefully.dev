@@ -35,14 +35,17 @@
   };
 
   let state = store.get(KEY, null);
-  if (state && (state.version !== 1 || !U[state.universe])) state = null;
+  if (state && state.version === 1 && U[state.universe]) state = migrate(state);
+  if (state && (state.version !== 2 || !state.worlds.every(w => U[w]))) state = null;
   if (state && state.passes === undefined) {
     state.passes = DEFAULT_PASSES;
     state.players.forEach(p => { p.passes = DEFAULT_PASSES; });
   }
 
-  let prefs = store.get(PREFS_KEY, { names: ["Player one", "Player two"], universe: "westeros" });
-  if (!U[prefs.universe]) prefs.universe = "westeros";
+  let prefs = store.get(PREFS_KEY, { names: ["Player one", "Player two"], worlds: ["westeros"] });
+  if (!Array.isArray(prefs.worlds)) prefs.worlds = U[prefs.universe] ? [prefs.universe] : ["westeros"];
+  prefs.worlds = prefs.worlds.filter(w => U[w]);
+  if (!prefs.worlds.length) prefs.worlds = ["westeros"];
   if (!PASS_OPTIONS.includes(prefs.passes)) prefs.passes = DEFAULT_PASSES;
 
   let pendingBid = 1;      // the number on the stepper; not worth persisting
@@ -53,7 +56,28 @@
   const esc = s => String(s).replace(/[&<>"']/g, c =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  const char = i => U[state.universe].characters[i];
+  // A character is "world:index", so a deck can mix worlds. Returns
+  // [name, note, world].
+  function char(id) {
+    const [w, i] = id.split(":");
+    const [name, note] = U[w].characters[Number(i)];
+    return [name, note, w];
+  }
+
+  const worldsName = worlds => worlds.map(w => U[w].name).join(" + ");
+
+  // Drafts saved before mixing existed held one world and bare indices.
+  function migrate(old) {
+    const id = i => `${old.universe}:${i}`;
+    const s = { ...old, version: 2, worlds: [old.universe] };
+    delete s.universe;
+    s.deck = old.deck.map(id);
+    s.players = old.players.map(p => ({ ...p, roster: p.roster.map(r => ({ ...r, i: id(r.i) })) }));
+    if (old.lot) s.lot = { ...old.lot, i: id(old.lot.i) };
+    if (old.last) s.last = { ...old.last, i: id(old.last.i) };
+    s.history = [];
+    return s;
+  }
   const other = p => 1 - p;
   const canAct = p => p.roster.length < TEAM && p.budget >= 1;
 
@@ -101,12 +125,13 @@
      have to open. Once someone opens, it's raise or pass until one of you
      lets it go, and declining to raise costs nothing. */
 
-  function startDraft(names, universe, passes) {
-    const all = U[universe].characters.map((_, i) => i);
+  function startDraft(names, worlds, passes) {
+    const all = worlds.flatMap(w => U[w].characters.map((_, i) => `${w}:${i}`));
     const first = Math.random() < 0.5 ? 0 : 1;
     state = {
-      version: 1,
-      universe,
+      version: 2,
+      worlds,
+      total: all.length,
       phase: "draft",
       passes,
       players: names.map(name => ({ name, budget: BUDGET, roster: [], passes })),
@@ -226,8 +251,8 @@
   // Names rather than indices, so a link survives edits to the pools.
   function shareCode() {
     const data = {
-      u: state.universe,
-      p: state.players.map(p => [p.name, p.budget, p.roster.map(r => [char(r.i)[0], r.price])]),
+      w: state.worlds,
+      p: state.players.map(p => [p.name, p.budget, p.roster.map(r => [char(r.i)[0], r.price, char(r.i)[2]])]),
     };
     const bytes = new TextEncoder().encode(JSON.stringify(data));
     let bin = "";
@@ -242,16 +267,17 @@
       const bin = atob(m[1].replace(/-/g, "+").replace(/_/g, "/"));
       const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
       const data = JSON.parse(new TextDecoder().decode(bytes));
-      if (!U[data.u] || !Array.isArray(data.p)) return null;
+      if (data.u && !data.w) data.w = [data.u];
+      if (!Array.isArray(data.w) || !data.w.every(w => U[w]) || !Array.isArray(data.p)) return null;
       return data;
     } catch { return null; }
   }
 
-  function teamsAsText(universe, teams) {
-    const lines = [`Character Draft — ${U[universe].name}`, ""];
+  function teamsAsText(worlds, teams) {
+    const lines = [`Character Draft — ${worldsName(worlds)}`, ""];
     teams.forEach(t => {
       lines.push(`${t.name} ($${t.left} left)`);
-      t.roster.forEach(r => lines.push(`  ${r.name} — $${r.price}`));
+      t.roster.forEach(r => lines.push(`  ${r.name}${worlds.length > 1 ? ` (${U[r.world].name})` : ""} — $${r.price}`));
       lines.push("");
     });
     return lines.join("\n").trim();
@@ -272,9 +298,9 @@
   /* --- Views --------------------------------------------------------- */
 
   function render() {
-    if (shared) return renderTeams(shared.u, fromShared(shared), true);
+    if (shared) return renderTeams(shared.w, fromShared(shared), true);
     if (!state) return renderSetup();
-    if (state.phase === "done") return renderTeams(state.universe, fromState(), false);
+    if (state.phase === "done") return renderTeams(state.worlds, fromState(), false);
     renderDraft();
   }
 
@@ -282,22 +308,27 @@
     return state.players.map(p => ({
       name: p.name,
       left: p.budget,
-      roster: p.roster.map(r => ({ name: char(r.i)[0], note: char(r.i)[1], price: r.price })),
+      roster: p.roster.map(r => {
+        const [name, note, world] = char(r.i);
+        return { name, note, world, price: r.price };
+      }),
     }));
   }
 
   function fromShared(data) {
-    const notes = Object.fromEntries(U[data.u].characters);
+    const noteOf = (w, n) => (U[w].characters.find(c => c[0] === n) || [])[1] || "";
     return data.p.map(([name, left, roster]) => ({
       name, left,
-      roster: roster.map(([n, price]) => ({ name: n, note: notes[n] || "", price })),
+      roster: roster.map(([n, price, w = data.w[0]]) => ({
+        name: n, world: U[w] ? w : data.w[0], note: U[w] ? noteOf(w, n) : "", price,
+      })),
     }));
   }
 
   function renderSetup() {
     const worlds = Object.entries(U).map(([key, u]) => `
       <label class="choice">
-        <input type="radio" name="universe" value="${key}" ${prefs.universe === key ? "checked" : ""} />
+        <input type="checkbox" name="worlds" value="${key}" ${prefs.worlds.includes(key) ? "checked" : ""} />
         <span class="choice__body">
           <span class="choice__name">${esc(u.name)}</span>
           <span class="choice__note">${esc(u.blurb)} · ${u.characters.length} characters</span>
@@ -314,8 +345,9 @@
             <input class="field__input" name="p1" value="${esc(prefs.names[1])}" maxlength="24" required autocomplete="off" /></label>
         </div>
 
-        <h2 class="section-label">Pick a world</h2>
-        <fieldset class="choices"><legend class="visually-hidden">World</legend>${worlds}</fieldset>
+        <h2 class="section-label">Pick your worlds</h2>
+        <fieldset class="choices"><legend class="visually-hidden">Worlds</legend>${worlds}</fieldset>
+        <p class="choices__note" id="worlds-note"></p>
 
         <h2 class="section-label">Passes each</h2>
         <fieldset class="chips"><legend class="visually-hidden">Passes each</legend>${PASS_OPTIONS.map(n => `
@@ -328,7 +360,8 @@
 
         <p class="rules">
           Each of you starts with <em>$${BUDGET}</em> and room for <em>${TEAM}</em>.
-          The whole world is shuffled into a deck and turned over one character at a time.
+          Everything in the worlds you pick is shuffled into one deck and turned over one character at a time.
+          Pick more than one for a mixed draft.
           Whoever's turn it is opens the bidding or spends a pass; if you both pass, that character is gone for good.
           Run out of passes and you have to open, even on a dud.
           Highest bid takes them. The draft ends when you're both full or broke.
@@ -337,14 +370,33 @@
         <button class="btn btn--primary" type="submit">Shuffle and begin</button>
       </form>`;
 
-    document.getElementById("setup").addEventListener("submit", e => {
+    const form = document.getElementById("setup");
+    const note = document.getElementById("worlds-note");
+    const countWorlds = () => {
+      const picked = [...form.querySelectorAll('[name="worlds"]:checked')].map(i => i.value);
+      const total = picked.reduce((n, w) => n + U[w].characters.length, 0);
+      note.classList.remove("choices__note--warn");
+      note.textContent = !picked.length ? "Pick at least one world."
+        : picked.length === 1 ? `${total} characters in the deck. Tick another world to mix them.`
+        : `A mixed deck: ${worldsName(picked)}, ${total} characters.`;
+    };
+    form.addEventListener("change", countWorlds);
+    countWorlds();
+
+    form.addEventListener("submit", e => {
       e.preventDefault();
       const f = new FormData(e.target);
       const names = [f.get("p0"), f.get("p1")].map((n, k) => String(n).trim() || `Player ${k + 1}`);
       if (names[0] === names[1]) names[1] += " too";
-      prefs = { names, universe: f.get("universe"), passes: Number(f.get("passes")) };
+      const worlds = f.getAll("worlds");
+      if (!worlds.length) {
+        note.textContent = "Pick at least one world.";
+        note.classList.add("choices__note--warn");
+        return;
+      }
+      prefs = { names, worlds, passes: Number(f.get("passes")) };
       store.set(PREFS_KEY, prefs);
-      startDraft(names, prefs.universe, prefs.passes);
+      startDraft(names, worlds, prefs.passes);
     });
   }
 
@@ -353,8 +405,8 @@
       `<span class="slot ${s < p.roster.length ? "slot--full" : ""}"></span>`).join("");
     const roster = p.roster.length
       ? p.roster.map(r => {
-          const name = char(r.i)[0];
-          return `<li>${portrait(state.universe, name, "sm")}<span class="roster__name">${esc(name)}</span><span class="price">$${r.price}</span></li>`;
+          const [name, , world] = char(r.i);
+          return `<li>${portrait(world, name, "sm")}<span class="roster__name">${esc(name)}</span><span class="price">$${r.price}</span></li>`;
         }).join("")
       : `<li class="roster__empty">nobody yet</li>`;
     const status = !canAct(p)
@@ -390,7 +442,7 @@
     let block;
 
     if (lot) {
-      const [name, note] = char(lot.i);
+      const [name, note, world] = char(lot.i);
       const r = players[lot.turn];
       const opened = lot.bid > 0;
       const solo = !canAct(players[other(lot.turn)]);
@@ -414,9 +466,9 @@
 
       block = `
         <div class="reveal-card" data-key="${lot.i}">
-          ${portrait(state.universe, name, "lg")}
+          ${portrait(world, name, "lg")}
           <div class="reveal-card__text">
-            <p class="block__kicker">character ${U[state.universe].characters.length - state.deck.length} turned over</p>
+            <p class="block__kicker">character ${state.total - state.deck.length} turned over${state.worlds.length > 1 ? `, from ${esc(U[world].name)}` : ""}</p>
             <h2 class="block__name">${esc(name)}</h2>
             <p class="block__note">${esc(note)}</p>
             ${opened
@@ -434,7 +486,7 @@
       const n = players[opener];
       const lastBit = last ? `
         <div class="last">
-          ${portrait(state.universe, char(last.i)[0], "md")}
+          ${portrait(char(last.i)[2], char(last.i)[0], "md")}
           <p class="last__text">${esc(last.text)}</p>
         </div>` : "";
       block = `
@@ -449,7 +501,7 @@
     const log = state.log.slice().reverse().map(l => `<li>${esc(l)}</li>`).join("");
 
     app.innerHTML = `
-      <p class="world">${esc(U[state.universe].name)}</p>
+      <p class="world">${esc(worldsName(state.worlds))}</p>
       <div class="players">${players.map((p, k) => playerCard(p, k === mover)).join("")}</div>
 
       <section class="block" aria-label="Auction">${block}</section>
@@ -500,16 +552,16 @@
     if (el) el.addEventListener("click", fn);
   }
 
-  function renderTeams(universe, teams, isShared) {
+  function renderTeams(worlds, teams, isShared) {
     const cards = teams.map(t => {
       const spent = BUDGET - t.left;
       const rows = t.roster.length
         ? t.roster.map(r => `
             <li class="final__row">
-              ${portrait(universe, r.name, "md")}
+              ${portrait(r.world, r.name, "md")}
               <span class="final__body">
                 <span class="final__name">${esc(r.name)}</span>
-                <span class="final__note">${esc(r.note)}</span>
+                <span class="final__note">${esc(r.note)}${worlds.length > 1 ? ` · ${esc(U[r.world].name)}` : ""}</span>
               </span>
               <span class="price">$${r.price}</span>
             </li>`).join("")
@@ -523,7 +575,7 @@
     }).join("");
 
     app.innerHTML = `
-      <p class="world">${esc(U[universe].name)}</p>
+      <p class="world">${esc(worldsName(worlds))}</p>
       <h2 class="done__title">${isShared ? "Someone shared their teams" : "The teams are in"}<span class="wordmark__mark">.</span></h2>
       <p class="done__lede">Now argue about who wins.</p>
       <div class="finals">${cards}</div>
@@ -537,8 +589,8 @@
       </div>`;
 
     on("undo", undo);
-    on("again", () => startDraft(state.players.map(p => p.name), state.universe, state.passes));
-    on("copy-text", e => copy(teamsAsText(universe, teams), e.currentTarget, "Copied"));
+    on("again", () => startDraft(state.players.map(p => p.name), state.worlds, state.passes));
+    on("copy-text", e => copy(teamsAsText(worlds, teams), e.currentTarget, "Copied"));
     on("copy-link", e => {
       const url = `${location.href.split("#")[0]}#teams=${shareCode()}`;
       copy(url, e.currentTarget, "Link copied");

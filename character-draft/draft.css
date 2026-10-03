@@ -176,6 +176,16 @@ fieldset { border: 0; min-width: 0; }
   outline-offset: 3px;
 }
 
+.choices__note {
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+  margin-top: var(--space-2xs);
+  min-height: 1.6em;
+}
+
+.choices__note--warn { color: var(--ink); }
+
 .chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-xs); }
 
 .chip span {
