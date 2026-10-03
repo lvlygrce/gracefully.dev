@@ -80,6 +80,17 @@ window.UNIVERSES = {
       ["Nymeria", "Direwolf, leader of the pack"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
+    // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
+    arenas: [
+      ["The Wall", "A seven-hundred-foot cliff of ice with Castle Black at its foot, a single tunnel gate, lifts and stairs up the face, and frozen forest beyond. Brutal cold; the high ground is everything.", "https://static.wikia.nocookie.net/gameofthrones/images/7/7b/Castle_Black.jpg/revision/latest/scale-to-width-down/800?cb=20110920111941"],
+      ["Highgarden", "Golden fields and orchards around a castle of concentric walls on the River Mander. Open ground for cavalry, hedge mazes for ambushes, granaries worth burning.", "https://static.wikia.nocookie.net/gameofthrones/images/a/a2/704_Highgarden.png/revision/latest/scale-to-width-down/800?cb=20170807030944"],
+      ["King's Landing", "Narrow, crowded streets climbing three hills to the Red Keep, with secret tunnels beneath, caches of wildfire, and Blackwater Bay at its feet.", "https://static.wikia.nocookie.net/gameofthrones/images/8/83/King%27s_Landing_HotD.png/revision/latest/scale-to-width-down/800?cb=20220805155800"],
+      ["Winterfell", "A great castle of double walls and a moat in deep snow, with the crypts below, the godswood within, and hot springs keeping the keep warm.", "https://static.wikia.nocookie.net/gameofthrones/images/1/1f/801_Winterfell_Overview.png/revision/latest/scale-to-width-down/800?cb=20190415031728"],
+      ["Harrenhal", "A vast, half-melted ruin of five towers, mostly empty and said to be cursed. Endless corridors to hide in, walls too big to defend.", "https://static.wikia.nocookie.net/gameofthrones/images/9/9b/Harrenhal.jpg/revision/latest/scale-to-width-down/800?cb=20150328214605"],
+      ["Dragonstone", "A volcanic island fortress carved like dragons, ringed by sea cliffs, with a hidden mine of dragonglass beneath it.", "https://static.wikia.nocookie.net/gameofthrones/images/a/a4/Dragonstone-season7-low.png/revision/latest/scale-to-width-down/800?cb=20170717082952"],
+      ["The Eyrie", "A castle on a mountain peak, reached by one narrow, deadly path. The Moon Door opens onto a sheer drop. Impregnable, if you're already inside.", "https://static.wikia.nocookie.net/gameofthrones/images/5/59/The_Eyrie.jpg/revision/latest/scale-to-width-down/800?cb=20110615190250"],
+      ["Meereen", "A city of stepped pyramids above the Slaver's Bay docks, with Daznak's fighting pit at its heart and plenty of people with knives in the alleys.", "https://static.wikia.nocookie.net/gameofthrones/images/8/89/Meereen.png/revision/latest/scale-to-width-down/800?cb=20150328211743"],
+    ],
     strategists: ["Tywin Lannister", "Tyrion Lannister", "Stannis Baratheon", "Robb Stark", "Petyr Baelish", "Varys", "Olenna Tyrell", "Cersei Lannister", "Bronn", "Davos Seaworth", "Sansa Stark", "Bran Stark", "Jaime Lannister", "Ramsay Bolton", "Euron Greyjoy", "The Night King", "Grey Worm", "Barristan Selmy", "Margaery Tyrell", "Jaqen H'ghar", "Daemon Targaryen", "Otto Hightower", "Larys Strong", "Corlys Velaryon", "Criston Cole", "Aemond Targaryen", "Cregan Stark", "Mysaria", "Rhaenys Targaryen"],
   },
 
@@ -235,6 +246,17 @@ window.UNIVERSES = {
       ["Leech", "Shuts off powers nearby"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
+    // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
+    arenas: [
+      ["Wakanda", "The Golden City of Birnin Zana, with vibranium tech, maglev trains and force-field defences, plus the cliffs of Warrior Falls and dense jungle at its edge.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/5/58/Golden_city_wakanda.png/revision/latest/scale-to-width-down/800?cb=20221112021631"],
+      ["Asgard", "A floating realm of golden palaces, the rainbow Bifrost bridge and the edge of the world, where falling means falling forever.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/26/AsgardFull.jpg/revision/latest/scale-to-width-down/800?cb=20220709021326"],
+      ["New York City", "Skyscrapers, crowded avenues, subway tunnels and rooftops. Plenty of cover, plenty of bystanders, and police on the way.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/f/f5/City_that_never_sleeps.png/revision/latest/scale-to-width-down/800?cb=20250416223202"],
+      ["Knowhere", "A mining colony built inside the severed head of a Celestial: dark, lawless, cramped tunnels and a Collector's museum full of oddities.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/d9/Knowhere_-_movie.png/revision/latest/scale-to-width-down/800?cb=20260203235948"],
+      ["Sakaar", "A junk planet ringed by wormholes, ruled by the Grandmaster, with a gladiatorial arena, scrap heaps and anything-goes spaceships.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/d/d5/Sakaar.png/revision/latest/scale-to-width-down/800?cb=20180419174030"],
+      ["Titan", "Thanos's ruined homeworld: broken spires, wrecked moons hanging in the sky and scattered debris that can become a weapon.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/5/54/AW_1_Trailer_pic.png/revision/latest/scale-to-width-down/800?cb=20220205173457"],
+      ["Kamar-Taj", "A mountain temple of the mystic arts in Nepal, with libraries of spells, portals to anywhere and sorcerers who don't like intruders.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/2e/Doctor_Strange_Final_Trailer_07.png/revision/latest/scale-to-width-down/800?cb=20211016142921"],
+      ["Avengers Compound", "Wide fields, a lake and a high-tech base upstate, with hangars, labs and plenty of room for an all-out war.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/20/AvengersEndgame_06.png/revision/latest/scale-to-width-down/800?cb=20190326194352"],
+    ],
     strategists: ["Captain America", "Nick Fury", "Professor X", "Magneto", "Doctor Doom", "Mister Fantastic", "Black Widow", "Thanos", "Loki", "Kang the Conqueror", "Red Skull", "Kingpin", "Cyclops", "Black Panther", "Taskmaster", "Baron Zemo", "Cable", "Okoye", "Storm", "Emma Frost", "Mystique", "Iron Man", "Doctor Strange", "Ultron", "Apocalypse", "Killmonger", "The Punisher", "Rocket", "Arnim Zola", "The Leader", "MODOK", "Daredevil", "Kitty Pryde", "Agatha Harkness", "Mephisto", "Grandmaster", "Domino", "Bullseye", "Elektra"],
   },
 
@@ -318,6 +340,17 @@ window.UNIVERSES = {
       ["Gwen", "Shadow Isles · the Hallowed Seamstress"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
+    // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
+    arenas: [
+      ["Summoner's Rift", "Three lanes guarded by towers, a jungle full of monsters and a river between, with Baron Nashor's pit and the Dragon's lair to fight over.", "https://static.wikia.nocookie.net/leagueoflegends/images/3/3e/Summoner%27s_Rift_Intro_Art.jpg/revision/latest?cb=20110922005730"],
+      ["Howling Abyss", "A single narrow bridge of ice and stone over a bottomless chasm in the Freljord. Nowhere to hide and nowhere to run, only forward.", "https://static.wikia.nocookie.net/leagueoflegends/images/b/b5/Howling_Abyss_Landscape.png/revision/latest/scale-to-width-down/800?cb=20170303155408"],
+      ["Piltover", "The City of Progress: gleaming towers, hextech gadgets, the Hexgates on the sea cliffs and an Enforcer on every corner.", "https://static.wikia.nocookie.net/leagueoflegends/images/8/83/Piltover_Arcane_01.jpg/revision/latest/scale-to-width-down/800?cb=20220203165523"],
+      ["Zaun", "The undercity below Piltover, choked with chem-fumes, shimmer labs, chem-barons' gangs and a maze of pipes and lifts.", "https://static.wikia.nocookie.net/leagueoflegends/images/6/66/Zaun_Arcane_01.jpg/revision/latest/scale-to-width-down/800?cb=20220203174607"],
+      ["Bilgewater", "A lawless port of rickety docks, pirate ships, sea serpent hunters and bounty boards, where everyone can be bought.", "https://static.wikia.nocookie.net/leagueoflegends/images/a/a3/Bilgewater_Bilgewater_Bay_01.jpg/revision/latest/scale-to-width-down/800?cb=20190807010828"],
+      ["Shurima", "An endless desert around a risen golden city and its Sun Disc, with buried tombs, sandstorms and ancient ascended power.", "https://static.wikia.nocookie.net/leagueoflegends/images/4/4e/Shurima_Atop_The_Dormun_01.jpg/revision/latest/scale-to-width-down/800?cb=20180917152707"],
+      ["Shadow Isles", "Islands smothered in the Black Mist, where the dead don't stay dead and the living slowly lose themselves.", "https://static.wikia.nocookie.net/leagueoflegends/images/6/6f/Shadow_Isles_Beyond_The_Isles.jpg/revision/latest/scale-to-width-down/800?cb=20190126160819"],
+      ["Mount Targon", "The tallest mountain in Runeterra, a deadly climb to a summit where celestial powers choose their champions.", "https://static.wikia.nocookie.net/leagueoflegends/images/f/f4/Targon_Around_The_Mountain.jpg/revision/latest/scale-to-width-down/800?cb=20180515050333"],
+    ],
     strategists: ["Swain", "Jarvan IV", "Azir", "Darius", "LeBlanc", "Twisted Fate", "Gangplank", "Miss Fortune", "Sejuani", "Ashe", "Lissandra", "Caitlyn", "Heimerdinger", "Viktor", "Ekko", "Zed", "Shen", "Pyke", "Thresh", "Xerath", "Nasus", "Mordekaiser", "Xin Zhao", "Garen", "Bard", "Graves", "Sylas", "Jayce", "Viego"],
   },
 };

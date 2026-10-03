@@ -39,6 +39,8 @@ A battle is not decided by raw power alone. Weigh all of these, and give the non
 - Skill, experience and instinct: veterans, assassins and sellswords who know when to strike and when to run.
 - Raw power and abilities: strength, magic, technology, creatures.
 - Synergy: how well the team's members cover each other's weaknesses.
+Use the battlefield. Terrain, weather and home ground matter: characters who know the place or whose powers
+suit it get an edge, and good strategists use its features.
 Characters marked [strategist] are renowned for strategy, leadership or cunning. Make their plans matter:
 a clever, well-led team can and often should beat a stronger but leaderless one, unless the power gap is
 truly overwhelming (a cosmic being against ordinary humans). Show the thinking, not only the punching.
@@ -62,9 +64,12 @@ Be decisive: no draws. Be vivid but brief. For "winner", give the player's name 
     }).join("\n\n");
   }
 
-  function prompt(teams, worldName) {
-    return `Two teams fight to the finish on a varied battlefield: open ground, woods, a river crossing and a ruined
-keep on a hill. Both arrive at dusk with a day to scout, plan, set traps or try tricks before the clash.
+  function prompt(teams, worldName, arena) {
+    const where = arena
+      ? `The battlefield is ${arena.name} (${worldName(arena.world)}): ${arena.terrain}`
+      : "The battlefield is varied: open ground, woods, a river crossing and a ruined keep on a hill.";
+    return `Two teams fight to the finish. ${where}
+Both arrive at dusk with a day to scout, plan, set traps or try tricks before the clash.
 
 ${describe(teams, worldName)}
 
@@ -204,7 +209,7 @@ Reply as JSON with these fields:
       return last && pool.includes(last) ? [last, ...pool.filter(n => n !== last)] : pool;
     },
 
-    async judge(teams, worldName, onStatus) {
+    async judge(teams, worldName, onStatus, arena) {
       onStatus("Finding a Gemini model…");
       const pool = (await gemini.models()).slice(0, 5);
       const short = n => n.replace("models/", "");
@@ -216,7 +221,7 @@ Reply as JSON with these fields:
         try {
           const data = await gemini.request(`${model}:generateContent`, {
             systemInstruction: { parts: [{ text: SYSTEM }] },
-            contents: [{ role: "user", parts: [{ text: prompt(teams, worldName) }] }],
+            contents: [{ role: "user", parts: [{ text: prompt(teams, worldName, arena) }] }],
             generationConfig: { responseMimeType: "application/json", responseSchema: schemaFor(teams), temperature: 0.9 },
           });
           const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
@@ -274,7 +279,7 @@ Reply as JSON with these fields:
       }
     },
 
-    async judge(teams, worldName, onStatus, modelId) {
+    async judge(teams, worldName, onStatus, modelId, arena) {
       if (!local.supported()) {
         throw new Error("This browser doesn't have WebGPU, so it can't run a model locally. Try Chrome or Edge, or use Gemini.");
       }
@@ -311,7 +316,7 @@ Reply as JSON with these fields:
       const reply = await engine.chat.completions.create({
         messages: [
           { role: "system", content: SYSTEM },
-          { role: "user", content: prompt(teams, worldName) },
+          { role: "user", content: prompt(teams, worldName, arena) },
         ],
         temperature: 0.5,
         max_tokens: 1800,

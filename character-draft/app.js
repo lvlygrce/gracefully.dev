@@ -69,6 +69,21 @@
 
   const worldsName = worlds => worlds.map(w => U[w].name).join(" + ");
 
+  // Battlefields come from the worlds in the draft, so a mixed draft can land
+  // anywhere. Stored as [world, name] so a share link survives list edits.
+  function drawArena(worlds, not) {
+    const all = worlds.flatMap(w => (U[w].arenas || []).map(a => [w, a[0]]));
+    const pool = all.filter(a => !not || a[0] !== not[0] || a[1] !== not[1]);
+    const from = pool.length ? pool : all;
+    return from.length ? from[Math.floor(Math.random() * from.length)] : null;
+  }
+
+  function arenaInfo(ref) {
+    if (!ref || !U[ref[0]]) return null;
+    const a = (U[ref[0]].arenas || []).find(x => x[0] === ref[1]);
+    return a ? { world: ref[0], name: a[0], terrain: a[1], image: a[2] } : null;
+  }
+
   // Drafts saved before mixing existed held one world and bare indices.
   function migrate(old) {
     const id = i => `${old.universe}:${i}`;
@@ -228,6 +243,7 @@
 
     if (next === null || state.deck.length === 0) {
       state.phase = "done";
+      state.arena = drawArena(state.worlds);
       state.log.push(next === null ? "That's the draft." : "The deck ran out. That's the draft.");
     } else {
       state.opener = next;
@@ -255,6 +271,7 @@
   function shareCode() {
     const data = {
       w: state.worlds,
+      a: state.arena || undefined,
       p: state.players.map(p => [p.name, p.budget, p.roster.map(r => [char(r.i)[0], r.price, char(r.i)[2]])]),
     };
     const bytes = new TextEncoder().encode(JSON.stringify(data));
@@ -277,7 +294,8 @@
   }
 
   function teamsAsText(worlds, teams) {
-    const lines = [`Character Draft — ${worldsName(worlds)}`, ""];
+    const field = arenaInfo(shared ? shared.a : state && state.arena);
+    const lines = [`Character Draft — ${worldsName(worlds)}`, ...(field ? [`Battlefield: ${field.name}`] : []), ""];
     teams.forEach(t => {
       lines.push(`${t.name} ($${t.left} left)`);
       t.roster.forEach(r => lines.push(`  ${r.name}${worlds.length > 1 ? ` (${U[r.world].name})` : ""} — $${r.price}`));
@@ -303,9 +321,15 @@
   /* --- Views --------------------------------------------------------- */
 
   function render() {
-    if (shared) return renderTeams(shared.w, fromShared(shared), true);
+    if (shared) {
+      if (!arenaInfo(shared.a)) shared.a = drawArena(shared.w);
+      return renderTeams(shared.w, fromShared(shared), true);
+    }
     if (!state) return renderSetup();
-    if (state.phase === "done") return renderTeams(state.worlds, fromState(), false);
+    if (state.phase === "done") {
+      if (!arenaInfo(state.arena)) { state.arena = drawArena(state.worlds); save(); }
+      return renderTeams(state.worlds, fromState(), false);
+    }
     renderDraft();
   }
 
@@ -585,6 +609,10 @@
       <h2 class="done__title">${isShared ? "Someone shared their teams" : "The teams are in"}<span class="wordmark__mark">.</span></h2>
       <p class="done__lede">Now argue about who wins.</p>
       <div class="finals">${cards}</div>
+      <section class="arena" aria-labelledby="arena-h">
+        <h2 class="section-label" id="arena-h">The battlefield</h2>
+        <div id="arena-body"></div>
+      </section>
       <section class="judge" aria-labelledby="judge-h">
         <h2 class="section-label" id="judge-h">Who wins?</h2>
         <div id="judge-body" aria-live="polite"></div>
@@ -599,6 +627,7 @@
       </div>`;
 
     on("undo", undo);
+    renderArena(worlds, teams, isShared);
     renderJudge(worlds, teams, isShared);
 
     on("again", () => {
@@ -749,9 +778,11 @@
       };
       const worldName = w => U[w].name;
       try {
+        const field = arenaInfo(isShared ? shared.a : state.arena);
         const v = mode === "gemini"
-          ? await J.gemini.judge(teams, worldName, onStatus)
-          : await J.local.judge(teams, worldName, onStatus, prefs.localModel || J.local.models[0].id);
+          ? await J.gemini.judge(teams, worldName, onStatus, field)
+          : await J.local.judge(teams, worldName, onStatus, prefs.localModel || J.local.models[0].id, field);
+        if (field) v.arena = field.name;
         judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
         announce(`${v.winner} wins. ${v.verdict}`);
@@ -759,6 +790,31 @@
         judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null };
       }
       if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
+    });
+  }
+
+  function renderArena(worlds, teams, isShared) {
+    const ref = isShared ? shared.a : state.arena;
+    const field = arenaInfo(ref);
+    const body = document.getElementById("arena-body");
+    if (!field) { body.innerHTML = ""; return; }
+    body.innerHTML = `
+      <figure class="arena__card">
+        <span class="arena__img"><img src="${esc(field.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+        <figcaption>
+          <p class="block__kicker">${worlds.length > 1 ? `from ${esc(U[field.world].name)}` : "drawn at random"}</p>
+          <h3 class="arena__name">${esc(field.name)}</h3>
+          <p class="arena__terrain">${esc(field.terrain)}</p>
+          <button class="btn btn--quiet btn--inline" type="button" id="reroll-arena">Fight somewhere else</button>
+        </figcaption>
+      </figure>`;
+    on("reroll-arena", () => {
+      if (judging.busy) return;
+      const next = drawArena(worlds, ref);
+      if (isShared) { shared.a = next; judging.verdict = null; }
+      else { state.arena = next; state.verdict = null; save(); }
+      announce(`The battle moves to ${arenaInfo(next).name}.`);
+      render();
     });
   }
 
@@ -799,7 +855,7 @@
         <p class="verdict__mvp verdict__step" style="--i:4"><span class="verdict__label">most valuable</span> ${esc(v.mvp)}</p>
         <h3 class="verdict__winner verdict__step" style="--i:5"><em>${esc(v.winner)}</em> wins<span class="wordmark__mark">.</span></h3>
         <p class="verdict__line verdict__step" style="--i:6">${esc(v.verdict)}</p>
-        <p class="verdict__by verdict__step" style="--i:6">judged by ${esc(v.by || "the judge")}</p>
+        <p class="verdict__by verdict__step" style="--i:6">judged by ${esc(v.by || "the judge")}${v.arena ? `, at ${esc(v.arena)}` : ""}</p>
       </div>`;
   }
 
