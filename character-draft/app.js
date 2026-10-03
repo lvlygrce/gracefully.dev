@@ -7,6 +7,8 @@
 
   const BUDGET = 20;
   const TEAM = 5;
+  const PASS_OPTIONS = [0, 1, 2, 3];
+  const DEFAULT_PASSES = 2;
   const KEY = "character-draft:v1:state";
   const PREFS_KEY = "character-draft:v1:prefs";
 
@@ -34,9 +36,14 @@
 
   let state = store.get(KEY, null);
   if (state && (state.version !== 1 || !U[state.universe])) state = null;
+  if (state && state.passes === undefined) {
+    state.passes = DEFAULT_PASSES;
+    state.players.forEach(p => { p.passes = DEFAULT_PASSES; });
+  }
 
   let prefs = store.get(PREFS_KEY, { names: ["Player one", "Player two"], universe: "westeros" });
   if (!U[prefs.universe]) prefs.universe = "westeros";
+  if (!PASS_OPTIONS.includes(prefs.passes)) prefs.passes = DEFAULT_PASSES;
 
   let pendingBid = 1;      // the number on the stepper; not worth persisting
   let shared = readShared();
@@ -89,17 +96,20 @@
   /* --- The rules -----------------------------------------------------
      The deck is the whole world, shuffled. One character is turned over
      at a time. The opener bids or passes; if they pass the other player
-     may open instead. Both pass and the character is gone for good. Once
-     someone opens, it's raise or pass until one of you lets it go. */
+     may open instead. Both pass and the character is gone for good. Each
+     player has only a few passes for the whole draft; with none left, you
+     have to open. Once someone opens, it's raise or pass until one of you
+     lets it go, and declining to raise costs nothing. */
 
-  function startDraft(names, universe) {
+  function startDraft(names, universe, passes) {
     const all = U[universe].characters.map((_, i) => i);
     const first = Math.random() < 0.5 ? 0 : 1;
     state = {
       version: 1,
       universe,
       phase: "draft",
-      players: names.map(name => ({ name, budget: BUDGET, roster: [] })),
+      passes,
+      players: names.map(name => ({ name, budget: BUDGET, roster: [], passes })),
       deck: shuffle(all),
       opener: first,
       lot: null,
@@ -139,6 +149,10 @@
     const lot = state.lot;
     snapshot();
     if (lot.bid) return sell();
+    const passer = state.players[lot.turn];
+    if (passer.passes <= 0) { state.history.pop(); return; }
+    passer.passes -= 1;
+    state.log.push(`${passer.name} passes on ${char(lot.i)[0]} (${passer.passes} ${passer.passes === 1 ? "pass" : "passes"} left).`);
     lot.passes += 1;
     const next = other(lot.turn);
     if (lot.passes >= 2 || !canAct(state.players[next])) return discard();
@@ -303,10 +317,20 @@
         <h2 class="section-label">Pick a world</h2>
         <fieldset class="choices"><legend class="visually-hidden">World</legend>${worlds}</fieldset>
 
+        <h2 class="section-label">Passes each</h2>
+        <fieldset class="chips"><legend class="visually-hidden">Passes each</legend>${PASS_OPTIONS.map(n => `
+          <label class="chip">
+            <input type="radio" name="passes" value="${n}" ${prefs.passes === n ? "checked" : ""} />
+            <span>${n}</span>
+          </label>`).join("")}
+          <span class="chips__note">times you can say no to a character; after that you must bid</span>
+        </fieldset>
+
         <p class="rules">
           Each of you starts with <em>$${BUDGET}</em> and room for <em>${TEAM}</em>.
           The whole world is shuffled into a deck and turned over one character at a time.
-          Whoever's turn it is opens the bidding or passes; if you both pass, that character is gone for good.
+          Whoever's turn it is opens the bidding or spends a pass; if you both pass, that character is gone for good.
+          Run out of passes and you have to open, even on a dud.
           Highest bid takes them. The draft ends when you're both full or broke.
         </p>
 
@@ -318,9 +342,9 @@
       const f = new FormData(e.target);
       const names = [f.get("p0"), f.get("p1")].map((n, k) => String(n).trim() || `Player ${k + 1}`);
       if (names[0] === names[1]) names[1] += " too";
-      prefs = { names, universe: f.get("universe") };
+      prefs = { names, universe: f.get("universe"), passes: Number(f.get("passes")) };
       store.set(PREFS_KEY, prefs);
-      startDraft(names, prefs.universe);
+      startDraft(names, prefs.universe, prefs.passes);
     });
   }
 
@@ -344,6 +368,7 @@
           <span class="player__status">${status}</span>
         </header>
         <p class="player__budget"><span class="money">$${p.budget}</span> <span class="muted">left</span></p>
+        <p class="player__passes">${p.passes === 1 ? "1 pass" : `${p.passes} passes`} left</p>
         <div class="slots" aria-label="${p.roster.length} of ${TEAM} drafted">${slots}</div>
         <ul class="roster">${roster}</ul>
       </article>`;
@@ -381,8 +406,10 @@
           ? `${esc(players[other(lot.turn)].name)} passed. <em>${esc(r.name)}</em>, open or pass? You have $${r.budget}.`
           : `<em>${esc(r.name)}</em>, open the bidding or pass? You have $${r.budget}.`;
         if (solo) prompt += ` ${esc(players[other(lot.turn)].name)} is out, so whatever you open at is what you pay.`;
+        if (r.passes <= 0) prompt += " You're out of passes, so you have to open.";
         verb = "Open at";
-        passLabel = firstPassed || solo ? "Pass — they're gone for good" : "Pass";
+        passLabel = r.passes <= 0 ? null
+          : `${firstPassed || solo ? "Pass — they're gone for good" : "Pass"} (${r.passes} left)`;
       }
 
       block = `
@@ -401,7 +428,7 @@
         <div class="block__actions">
           ${stepper(lot.bid + 1, r.budget)}
           <button class="btn btn--primary" type="button" id="bid">${verb} $${pendingBid}</button>
-          <button class="btn" type="button" id="pass">${passLabel}</button>
+          ${passLabel ? `<button class="btn" type="button" id="pass">${passLabel}</button>` : ""}
         </div>`;
     } else {
       const n = players[opener];
@@ -510,7 +537,7 @@
       </div>`;
 
     on("undo", undo);
-    on("again", () => startDraft(state.players.map(p => p.name), state.universe));
+    on("again", () => startDraft(state.players.map(p => p.name), state.universe, state.passes));
     on("copy-text", e => copy(teamsAsText(universe, teams), e.currentTarget, "Copied"));
     on("copy-link", e => {
       const url = `${location.href.split("#")[0]}#teams=${shareCode()}`;
