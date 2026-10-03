@@ -146,6 +146,8 @@
   function startDraft(names, worlds, passes) {
     const all = worlds.flatMap(w => U[w].characters.map((_, i) => `${w}:${i}`));
     const first = Math.random() < 0.5 ? 0 : 1;
+    // The battlefield is drawn up front, so you can draft for it.
+    const arena = drawArena(worlds);
     state = {
       version: 2,
       worlds,
@@ -157,11 +159,15 @@
       opener: first,
       lot: null,
       last: null,
-      log: [`The coin says ${names[first]} opens first.`],
+      arena,
+      log: [
+        `The coin says ${names[first]} opens first.`,
+        ...(arena ? [`The battle will be fought at ${arenaInfo(arena).name}.`] : []),
+      ],
       history: [],
     };
     save();
-    announce(state.log[0]);
+    announce(state.log.join(" "));
     render();
   }
 
@@ -243,7 +249,7 @@
 
     if (next === null || state.deck.length === 0) {
       state.phase = "done";
-      state.arena = drawArena(state.worlds);
+      if (!arenaInfo(state.arena)) state.arena = drawArena(state.worlds);
       state.log.push(next === null ? "That's the draft." : "The deck ran out. That's the draft.");
     } else {
       state.opener = next;
@@ -391,6 +397,7 @@
           Each of you starts with <em>$${BUDGET}</em> and room for <em>${TEAM}</em>.
           Everything in the worlds you pick is shuffled into one deck and turned over one character at a time.
           Pick more than one for a mixed draft.
+          A battlefield is drawn as you begin, so you can draft for it.
           Whoever's turn it is opens the bidding or spends a pass; if you both pass, that character is gone for good.
           Run out of passes and you have to open, even on a dud.
           Highest bid takes them. The draft ends when you're both full or broke.
@@ -465,7 +472,22 @@
       </div>`;
   }
 
+  // The battlefield, small, at the top of the board for the whole draft.
+  function arenaStrip() {
+    const field = arenaInfo(state.arena);
+    if (!field) return "";
+    return `
+      <div class="arena-strip">
+        <span class="arena-strip__img"><img src="${esc(field.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+        <p><span class="block__kicker">the battle will be fought at</span>
+          <span class="arena-strip__name">${esc(field.name)}</span>
+          <span class="arena-strip__terrain">${esc(field.terrain)}</span></p>
+      </div>`;
+  }
+
   function renderDraft() {
+    // Drafts started before battlefields were drawn up front get one now.
+    if (!arenaInfo(state.arena)) { state.arena = drawArena(state.worlds); save(); }
     const { players, lot, last, opener } = state;
     const mover = lot ? lot.turn : opener;
     let block;
@@ -532,6 +554,7 @@
 
     app.innerHTML = `
       <p class="world">${esc(worldsName(state.worlds))}</p>
+      ${arenaStrip()}
       <div class="players">${players.map((p, k) => playerCard(p, k === mover)).join("")}</div>
 
       <section class="block" aria-label="Auction">${block}</section>
@@ -802,20 +825,11 @@
       <figure class="arena__card">
         <span class="arena__img"><img src="${esc(field.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
         <figcaption>
-          <p class="block__kicker">${worlds.length > 1 ? `from ${esc(U[field.world].name)}` : "drawn at random"}</p>
+          <p class="block__kicker">${worlds.length > 1 ? `from ${esc(U[field.world].name)}` : "drawn at the start"}</p>
           <h3 class="arena__name">${esc(field.name)}</h3>
           <p class="arena__terrain">${esc(field.terrain)}</p>
-          <button class="btn btn--quiet btn--inline" type="button" id="reroll-arena">Fight somewhere else</button>
         </figcaption>
       </figure>`;
-    on("reroll-arena", () => {
-      if (judging.busy) return;
-      const next = drawArena(worlds, ref);
-      if (isShared) { shared.a = next; judging.verdict = null; }
-      else { state.arena = next; state.verdict = null; save(); }
-      announce(`The battle moves to ${arenaInfo(next).name}.`);
-      render();
-    });
   }
 
   function rolesHtml(v) {

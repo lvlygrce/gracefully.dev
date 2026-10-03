@@ -604,6 +604,40 @@ fieldset { border: 0; min-width: 0; }
 
 .arena__card .btn--inline { padding-left: 0; }
 
+.arena-strip {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: var(--space-sm);
+  align-items: center;
+  margin-bottom: var(--space-sm);
+  padding: var(--space-2xs);
+  padding-right: var(--space-sm);
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+}
+
+.arena-strip__img {
+  display: block;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--paper-sunk);
+  border-radius: 12px 14px 10px 15px;
+}
+
+.arena-strip__img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.arena-strip p { line-height: var(--leading-snug); }
+.arena-strip .block__kicker { display: block; line-height: 1.1; }
+
+.arena-strip__name {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.35rem;
+  margin-right: 0.35rem;
+}
+
+.arena-strip__terrain { color: var(--ink-muted); font-style: italic; font-size: 0.98rem; }
+
 /* --- The judge ------------------------------------------ */
 
 .judge { margin-bottom: var(--space-lg); }
@@ -767,6 +801,8 @@ fieldset { border: 0; min-width: 0; }
   .edges { grid-template-columns: 1fr; }
   .roles { grid-template-columns: 1fr; }
   .arena__card { grid-template-columns: 1fr; gap: var(--space-sm); }
+  .arena-strip { grid-template-columns: 5.5rem 1fr; }
+  .arena-strip__terrain { display: none; }
   .reveal-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .portrait--lg { width: min(15rem, 70vw); }
 }
