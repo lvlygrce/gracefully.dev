@@ -25,87 +25,60 @@
     remove(k) { try { localStorage.removeItem(k); } catch { /* no-op */ } },
   };
 
-  /* --- The question ------------------------------------------------ */
+  /* --- The questions ----------------------------------------------
+     Three calls. Each team's war council plans and gears up on its own,
+     knowing the battlefield and the enemy roster but not the enemy's plan.
+     Then the judge pits the two preparations against each other. */
 
-  const SYSTEM = `You are the judge of a fantasy team battle between two drafted teams of fictional characters.
-Judge as a knowledgeable fan: use what the characters can actually do in their source material
-(games, shows, films, comics, books). When teams mix worlds, scale power fairly and say how you did.
+  const CHARACTER_RULES = `Use what the characters can actually do in their source material (games, shows, films,
+comics, books). When teams mix worlds, scale power fairly. Stick to what each character really is and can do;
+never invent powers they don't have. The two players only drafted the teams; they are not in the fight.`;
 
-A battle is not decided by raw power alone. Weigh all of these, and give the non-physical ones real weight:
-- Strategy and leadership: a proven general or commander makes the whole team fight as one, picks the ground,
-  sets the timing and exploits the enemy's weaknesses. A team without one fights as scattered individuals.
-- Cunning and deception: schemers, spymasters, tricksters and survivors win through traps, lies, bribes,
-  betrayal, misdirection, ambushes and simply refusing to fight on the enemy's terms.
-- Skill, experience and instinct: veterans, assassins and sellswords who know when to strike and when to run.
-- Raw power and abilities: strength, magic, technology, creatures.
-- Synergy: how well the team's members cover each other's weaknesses.
-Use the battlefield. Terrain, weather and home ground matter: characters who know the place or whose powers
-suit it get an edge, and good strategists use its features.
-Characters marked [strategist] are renowned for strategy, leadership or cunning. Make their plans matter:
-a clever, well-led team can and often should beat a stronger but leaderless one, unless the power gap is
-truly overwhelming (a cosmic being against ordinary humans). Show the thinking, not only the punching.
-The two players only drafted the teams; they are not in the fight. Only the listed characters fight.
-Stick to what each character really is and can do; never invent powers or weapons they don't have.
-Every character on both teams must play a part: mention each of them by name in the fight, and give each one
-their own line in "roles". Nobody sits out.
-Be decisive: no draws. Be vivid but brief. For "winner", give the player's name exactly as given.`;
+  const PREP_SYSTEM = `You are the war council for one team in a fantasy battle between two drafted teams of
+fictional characters. Your job is to prepare your team to win: pick a leader, make a plan, gear up and give
+everyone a job. You know the battlefield and who is on the enemy team, but not what they are planning.
+${CHARACTER_RULES}
+Characters marked [strategist] are renowned for strategy, leadership or cunning: let them shape the plan.
+Characters marked [maker] are engineers, smiths, inventors or alchemists. Each maker can build ONE new device,
+weapon, potion or piece of armour in the time before the battle, suited to their real skills, the battlefield
+and the enemy they'll face. A team with no maker cannot build anything new: its gear can only be what its members
+already carry or could scavenge from the battlefield, at most two items.
+Plan around the terrain and around specific enemies. Be concrete and brief.`;
 
-  function isStrategist(r) {
-    const u = (window.UNIVERSES || {})[r.world];
-    return !!(u && u.strategists && u.strategists.includes(r.name));
-  }
+  const BATTLE_SYSTEM = `You are the judge of a fantasy battle between two drafted teams of fictional characters.
+${CHARACTER_RULES}
+Each team has already prepared in secret: a leader, a plan, gear and jobs. Pit the two preparations against each
+other. Teams act on their plans and use their gear, but no plan survives contact unchanged: decide whose plan
+anticipated the other, whose gear counters what, where a plan breaks, and whether spymasters or schemers saw
+through the enemy's tricks. Devices can fail, be stolen or be turned against their makers.
+A battle is not decided by raw power alone. Weigh strategy and leadership, cunning and deception, skill and
+experience, raw power, the battlefield and home ground, and how well each team works together. A clever,
+well-led, well-equipped team can and often should beat a stronger but disorganised one, unless the power gap is
+truly overwhelming (a cosmic being against ordinary humans).
+Every character on both teams must play a part: mention each by name in the fight and give each their own line
+in "roles". Nobody sits out. Be decisive: no draws. Be vivid but brief. For "winner", give the player's name
+exactly as given.`;
 
-  function describe(teams, worldName) {
-    return teams.map(t => {
-      const rows = t.roster.length
-        ? t.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}${isStrategist(r) ? " [strategist]" : ""}`).join("\n")
-        : "- nobody";
-      return `Team drafted by ${t.name}:\n${rows}`;
-    }).join("\n\n");
-  }
-
-  function prompt(teams, worldName, arena) {
-    const where = arena
-      ? `The battlefield is ${arena.name} (${worldName(arena.world)}): ${arena.terrain}`
-      : "The battlefield is varied: open ground, woods, a river crossing and a ruined keep on a hill.";
-    return `Two teams fight to the finish. ${where}
-Both arrive at dusk with a day to scout, plan, set traps or try tricks before the clash.
-
-${describe(teams, worldName)}
-
-Reply as JSON with these fields:
-- "edges": for each team, who leads it and its plan, its biggest strength and its biggest weakness, one sentence each (array of {"team", "plan", "strength", "weakness"}, where "team" is the player's name)
-- "fight": the battle in three short paragraphs, naming every character at least once, with their abilities and the tactics or tricks they use
-- "roles": one sentence for every character, saying what they did in the fight and how it went for them (an object with one key per character name, exactly as listed)
-- "turning_point": the single moment that decided it, one sentence (a clever move counts as much as a big hit)
-- "mvp": the character who mattered most
-- "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
-- "verdict": one punchy line explaining why the winner won`;
-  }
-
-  const SCHEMA = {
-    type: "OBJECT",
-    properties: {
-      edges: {
-        type: "ARRAY",
-        items: {
-          type: "OBJECT",
-          properties: { team: { type: "STRING" }, plan: { type: "STRING" }, strength: { type: "STRING" }, weakness: { type: "STRING" } },
-          required: ["team", "plan", "strength", "weakness"],
-        },
-      },
-      fight: { type: "STRING" },
-      turning_point: { type: "STRING" },
-      mvp: { type: "STRING" },
-      winner: { type: "STRING" },
-      verdict: { type: "STRING" },
-    },
-    required: ["edges", "fight", "turning_point", "mvp", "winner", "verdict"],
+  const tagsFor = r => {
+    const u = (window.UNIVERSES || {})[r.world] || {};
+    return [
+      (u.strategists || []).includes(r.name) ? " [strategist]" : "",
+      (u.makers || []).includes(r.name) ? " [maker]" : "",
+    ].join("");
   };
 
-  // One key per character, so the model's structured output can't leave
-  // anyone out. A name drafted twice (Ghost the direwolf and Ghost of Marvel)
-  // gets its world added.
+  const isMaker = r => (((window.UNIVERSES || {})[r.world] || {}).makers || []).includes(r.name);
+
+  const rows = (team, worldName) => team.roster.length
+    ? team.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}${tagsFor(r)}`).join("\n")
+    : "- nobody";
+
+  const battlefield = (arena, worldName) => arena
+    ? `The battlefield is ${arena.name} (${worldName(arena.world)}): ${arena.terrain}`
+    : "The battlefield is varied: open ground, woods, a river crossing and a ruined keep on a hill.";
+
+  // One key per character, so structured output can't leave anyone out. A
+  // name drafted twice (Ghost the direwolf, Ghost of Marvel) gets its world.
   function roleKeys(teams) {
     const all = teams.flatMap(t => t.roster.map(r => ({ team: t.name, ...r })));
     return all.map(c => ({
@@ -114,20 +87,91 @@ Reply as JSON with these fields:
     }));
   }
 
-  function schemaFor(teams) {
-    const keys = roleKeys(teams).map(c => c.key);
-    return {
-      ...SCHEMA,
+  const keyedObject = keys => ({
+    type: "OBJECT",
+    properties: Object.fromEntries(keys.map(k => [k, { type: "STRING" }])),
+    required: keys,
+  });
+
+  function prepQuestion(teams, i, worldName, arena) {
+    const us = teams[i], them = teams[1 - i];
+    const keys = roleKeys(teams).filter(c => c.team === us.name);
+    const makers = us.roster.filter(isMaker).map(r => r.name);
+    const gearRule = makers.length
+      ? `Your makers are ${makers.join(", ")}. Each can build ONE new item; everyone else can only bring what they already carry.`
+      : "Your team has no makers, so you cannot build anything new: list at most two things your members already carry or could scavenge.";
+    const user = `${battlefield(arena, worldName)}
+Both teams arrive at dusk with a day to scout, build, plan and set traps before the clash.
+
+Your team, drafted by ${us.name}:
+${rows(us, worldName)}
+
+The enemy, drafted by ${them.name}:
+${rows(them, worldName)}
+
+Reply as JSON:
+- "leader": the character who leads your team
+- "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
+- "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged".
+- "jobs": one short sentence per character on your team, saying their job in the plan (an object with one key per character name, exactly as listed)`;
+    const schema = {
+      type: "OBJECT",
       properties: {
-        ...SCHEMA.properties,
-        roles: {
-          type: "OBJECT",
-          properties: Object.fromEntries(keys.map(k => [k, { type: "STRING" }])),
-          required: keys,
+        leader: { type: "STRING" },
+        plan: { type: "STRING" },
+        gear: {
+          type: "ARRAY",
+          items: {
+            type: "OBJECT",
+            properties: {
+              name: { type: "STRING" },
+              made_by: { type: "STRING", enum: [...makers, "already theirs", "scavenged"] },
+              effect: { type: "STRING" },
+            },
+            required: ["name", "made_by", "effect"],
+          },
         },
+        jobs: keyedObject(keys.map(c => c.key)),
       },
-      required: [...SCHEMA.required, "roles"],
+      required: ["leader", "plan", "gear", "jobs"],
     };
+    return { system: PREP_SYSTEM, user, schema, maxTokens: 900 };
+  }
+
+  function prepText(prep) {
+    const gear = prep.gear.length
+      ? prep.gear.map(g => `  - ${g.name} (${g.made_by}): ${g.effect}`).join("\n")
+      : "  - nothing beyond what they carry";
+    const jobs = prep.jobs.map(j => `  - ${j.name}: ${j.job}`).join("\n");
+    return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nJobs:\n${jobs}`;
+  }
+
+  function battleQuestion(teams, preps, worldName, arena) {
+    const keys = roleKeys(teams).map(c => c.key);
+    const user = `${battlefield(arena, worldName)}
+
+${teams.map((t, i) => `Team drafted by ${t.name}:\n${rows(t, worldName)}\nTheir preparation:\n${prepText(preps[i])}`).join("\n\n")}
+
+Reply as JSON:
+- "fight": the battle in three short paragraphs: how each plan played out, which gear mattered, naming every character at least once
+- "roles": one sentence for every character on both teams, saying what they did and how it went for them (an object with one key per character name, exactly as listed)
+- "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
+- "mvp": the character who mattered most
+- "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
+- "verdict": one punchy line explaining why the winner won`;
+    const schema = {
+      type: "OBJECT",
+      properties: {
+        fight: { type: "STRING" },
+        roles: keyedObject(keys),
+        turning_point: { type: "STRING" },
+        mvp: { type: "STRING" },
+        winner: { type: "STRING" },
+        verdict: { type: "STRING" },
+      },
+      required: ["fight", "roles", "turning_point", "mvp", "winner", "verdict"],
+    };
+    return { system: BATTLE_SYSTEM, user, schema, maxTokens: 1500 };
   }
 
   // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
@@ -141,24 +185,58 @@ Reply as JSON with these fields:
     return out;
   }
 
-  function parse(text, teams) {
+  function json(text) {
     const start = text.indexOf("{");
     const end = text.lastIndexOf("}");
-    const data = JSON.parse(text.slice(start, end + 1));
+    return JSON.parse(text.slice(start, end + 1));
+  }
+
+  function tidyPrep(data, teams, i) {
+    const us = teams[i];
+    const given = data.jobs && typeof data.jobs === "object" ? data.jobs : {};
+    const keys = roleKeys(teams).filter(c => c.team === us.name);
+    // Hold the model to the gear rules: one build per maker on this team,
+    // and at most two carried or scavenged things. Anything credited to
+    // someone who can't build is dropped, so it can't decide the battle.
+    const makers = us.roster.filter(isMaker).map(r => r.name);
+    const built = new Set();
+    let carried = 0;
+    const gear = [];
+    for (const g of Array.isArray(data.gear) ? data.gear : []) {
+      const item = { name: String(g.name || "").trim(), made_by: String(g.made_by || "").trim(), effect: String(g.effect || "").trim() };
+      if (!item.name) continue;
+      const maker = makers.find(m => m.toLowerCase() === item.made_by.toLowerCase());
+      if (maker) {
+        if (built.has(maker)) continue;
+        built.add(maker);
+        gear.push({ ...item, made_by: maker });
+      } else if (/^(already theirs|scavenged)$/i.test(item.made_by) && carried < 2) {
+        carried++;
+        gear.push({ ...item, made_by: item.made_by.toLowerCase() });
+      }
+    }
+    return {
+      team: us.name,
+      leader: String(data.leader || ""),
+      plan: String(data.plan || ""),
+      gear,
+      jobs: keys.map(c => ({ name: c.name, world: c.world, job: String(given[c.key] || given[c.name] || "").trim() })),
+    };
+  }
+
+  function tidyBattle(data, teams) {
     // Small models sometimes paraphrase the winner; snap to a real name.
     const names = teams.map(t => t.name);
     if (!names.includes(data.winner)) {
-      const lowerWinner = String(data.winner || "").toLowerCase();
-      data.winner = names.find(n => lowerWinner.includes(n.toLowerCase())) || names[0];
+      const w = String(data.winner || "").toLowerCase();
+      data.winner = names.find(n => w.includes(n.toLowerCase())) || names[0];
     }
-    // Turn the roles object into a list grouped by team, in draft order.
     const given = data.roles && typeof data.roles === "object" ? data.roles : {};
     data.roles = roleKeys(teams).map(c => ({
       team: c.team, name: c.name, world: c.world,
       role: String(given[c.key] || given[c.name] || "").trim(),
     }));
-    if (typeof data.fight !== "string") data.fight = String(data.fight || "");
-    if (!Array.isArray(data.edges)) data.edges = [];
+    data.fight = String(data.fight || "");
     return data;
   }
 
@@ -209,28 +287,27 @@ Reply as JSON with these fields:
       return last && pool.includes(last) ? [last, ...pool.filter(n => n !== last)] : pool;
     },
 
-    async judge(teams, worldName, onStatus, arena) {
-      onStatus("Finding a Gemini model…");
-      const pool = (await gemini.models()).slice(0, 5);
+    // One structured question, falling back across models when one is busy.
+    async ask(q, onStatus, what) {
+      const pool = (gemini.pool = gemini.pool || (await gemini.models()).slice(0, 5));
       const short = n => n.replace("models/", "");
       const tried = [];
       for (const model of pool) {
-        onStatus(tried.length
-          ? `${short(tried[tried.length - 1])} is busy, so asking ${short(model)} instead…`
-          : `The judge is reasoning it through (${short(model)})…`);
+        if (tried.length) onStatus(`${short(tried[tried.length - 1])} is busy, so ${what} goes to ${short(model)}…`);
         try {
           const data = await gemini.request(`${model}:generateContent`, {
-            systemInstruction: { parts: [{ text: SYSTEM }] },
-            contents: [{ role: "user", parts: [{ text: prompt(teams, worldName, arena) }] }],
-            generationConfig: { responseMimeType: "application/json", responseSchema: schemaFor(teams), temperature: 0.9 },
+            systemInstruction: { parts: [{ text: q.system }] },
+            contents: [{ role: "user", parts: [{ text: q.user }] }],
+            generationConfig: { responseMimeType: "application/json", responseSchema: q.schema, temperature: 0.9 },
           });
           const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
             && data.candidates[0].content.parts) || [];
           const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("");
           if (!text) throw Object.assign(new Error("Gemini came back empty."), { retry: true });
-          const verdict = { ...parse(text, teams), by: short(model) };
+          const out = json(text);
           safe.set(MODEL_STORE, model);
-          return verdict;
+          gemini.used = short(model);
+          return out;
         } catch (err) {
           if (!err.retry && !(err instanceof SyntaxError)) throw err;
           tried.push(model);
@@ -240,6 +317,15 @@ Reply as JSON with these fields:
       throw new Error(`Gemini is swamped right now. I tried ${tried.map(short).join(", ")}, and they're all busy. `
         + "Give it a minute and try again, or use the judge on this device.");
     },
+
+    async prepare(onStatus) {
+      gemini.pool = null;
+      onStatus("Finding a Gemini model…");
+      gemini.pool = (await gemini.models()).slice(0, 5);
+    },
+
+    label: () => gemini.used || "Gemini",
+    parallel: true,
   };
 
   /* --- WebLLM ------------------------------------------------------ */
@@ -279,55 +365,92 @@ Reply as JSON with these fields:
       }
     },
 
-    async judge(teams, worldName, onStatus, modelId, arena) {
+    modelId: LOCAL_MODELS[0].id,
+    parallel: false,
+
+    async prepare(onStatus) {
+      const modelId = local.modelId;
       if (!local.supported()) {
         throw new Error("This browser doesn't have WebGPU, so it can't run a model locally. Try Chrome or Edge, or use Gemini.");
       }
-      if (!engine || engineModel !== modelId) {
-        onStatus("Loading WebLLM…");
-        const webllm = await import(WEBLLM_URL);
-        const info = LOCAL_MODELS.find(m => m.id === modelId) || { bytes: 0 };
-        const cached = await webllm.hasModelInCache(modelId).catch(() => false);
-        if (!cached) {
-          // Ask to be kept, so the browser doesn't evict gigabytes it just fetched.
-          if (navigator.storage && navigator.storage.persist) await navigator.storage.persist().catch(() => {});
-          const space = await local.storage();
-          if (space && space.free < info.bytes * 1.1) {
-            throw new Error(`This model needs about ${gb(info.bytes)} of storage, but your browser will only give this site `
-              + `about ${gb(space.free)} more. ${SPACE_TIPS}`);
-          }
+      if (engine && engineModel === modelId) return;
+      onStatus("Loading WebLLM…");
+      const webllm = await import(WEBLLM_URL);
+      const info = LOCAL_MODELS.find(m => m.id === modelId) || { bytes: 0 };
+      const cached = await webllm.hasModelInCache(modelId).catch(() => false);
+      if (!cached) {
+        // Ask to be kept, so the browser doesn't evict gigabytes it just fetched.
+        if (navigator.storage && navigator.storage.persist) await navigator.storage.persist().catch(() => {});
+        const space = await local.storage();
+        if (space && space.free < info.bytes * 1.1) {
+          throw new Error(`This model needs about ${gb(info.bytes)} of storage, but your browser will only give this site `
+            + `about ${gb(space.free)} more. ${SPACE_TIPS}`);
         }
-        if (engine) { await engine.unload(); engine = null; }
-        try {
-          engine = await webllm.CreateMLCEngine(modelId, {
-            initProgressCallback: p => {
-              const pct = Math.round((p.progress || 0) * 100);
-              onStatus(`Getting the model ready, ${pct}%. The first time downloads it; after that it's cached.`, p.progress);
-            },
-          });
-        } catch (err) {
-          engine = null;
-          if (isQuota(err)) throw new Error(QUOTA_HELP);
-          throw err;
-        }
-        engineModel = modelId;
       }
-      onStatus("The judge is reasoning it through on your GPU…");
+      if (engine) { await engine.unload(); engine = null; }
+      try {
+        engine = await webllm.CreateMLCEngine(modelId, {
+          initProgressCallback: p => {
+            const pct = Math.round((p.progress || 0) * 100);
+            onStatus(`Getting the model ready, ${pct}%. The first time downloads it; after that it's cached.`, p.progress);
+          },
+        });
+      } catch (err) {
+        engine = null;
+        if (isQuota(err)) throw new Error(QUOTA_HELP);
+        throw err;
+      }
+      engineModel = modelId;
+    },
+
+    async ask(q) {
       const reply = await engine.chat.completions.create({
-        messages: [
-          { role: "system", content: SYSTEM },
-          { role: "user", content: prompt(teams, worldName, arena) },
-        ],
-        temperature: 0.5,
-        max_tokens: 1800,
-        response_format: { type: "json_object", schema: JSON.stringify(lower(schemaFor(teams))) },
+        messages: [{ role: "system", content: q.system }, { role: "user", content: q.user }],
+        temperature: 0.6,
+        max_tokens: q.maxTokens,
+        response_format: { type: "json_object", schema: JSON.stringify(lower(q.schema)) },
         extra_body: { enable_thinking: false },
       });
-      const text = reply.choices[0].message.content || "";
-      const label = (LOCAL_MODELS.find(m => m.id === modelId) || {}).label || modelId;
-      return { ...parse(text, teams), by: `${label}, on this device` };
+      return json(reply.choices[0].message.content || "");
     },
+
+    label: () => `${(LOCAL_MODELS.find(m => m.id === local.modelId) || {}).label || local.modelId}, on this device`,
   };
 
-  window.Judge = { gemini, local };
+  /* --- The run ------------------------------------------------------
+     Both war councils, then the battle. Preparations already made (say, the
+     battle call failed last time) are reused rather than asked for again. */
+
+  async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep }) {
+    const backend = kind === "gemini" ? gemini : local;
+    await backend.prepare(onStatus);
+    const done = [preps[0] || null, preps[1] || null];
+
+    const prepOne = async i => {
+      if (done[i]) return done[i];
+      const q = prepQuestion(teams, i, worldName, arena);
+      const data = await backend.ask(q, onStatus, `${teams[i].name}'s war council`);
+      done[i] = tidyPrep(data, teams, i);
+      onPrep(i, done[i]);
+      return done[i];
+    };
+
+    if (backend.parallel) {
+      onStatus("Both war councils are planning…");
+      await Promise.all([prepOne(0), prepOne(1)]);
+    } else {
+      for (const i of [0, 1]) {
+        if (done[i]) continue;
+        onStatus(`${teams[i].name}'s war council is planning on your GPU…`);
+        await prepOne(i);
+      }
+    }
+
+    onStatus("Both sides are ready. The battle is being fought…");
+    const q = battleQuestion(teams, done, worldName, arena);
+    const battle = tidyBattle(await backend.ask(q, onStatus, "the battle"), teams);
+    return { ...battle, preps: done, by: backend.label() };
+  }
+
+  window.Judge = { gemini, local, run };
 })();

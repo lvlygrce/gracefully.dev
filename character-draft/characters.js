@@ -92,6 +92,8 @@ window.UNIVERSES = {
       ["Meereen", "A city of stepped pyramids above the Slaver's Bay docks, with Daznak's fighting pit at its heart and plenty of people with knives in the alleys.", "https://static.wikia.nocookie.net/gameofthrones/images/8/89/Meereen.png/revision/latest/scale-to-width-down/800?cb=20150328211743"],
     ],
     strategists: ["Tywin Lannister", "Tyrion Lannister", "Stannis Baratheon", "Robb Stark", "Petyr Baelish", "Varys", "Olenna Tyrell", "Cersei Lannister", "Bronn", "Davos Seaworth", "Sansa Stark", "Bran Stark", "Jaime Lannister", "Ramsay Bolton", "Euron Greyjoy", "The Night King", "Grey Worm", "Barristan Selmy", "Margaery Tyrell", "Jaqen H'ghar", "Daemon Targaryen", "Otto Hightower", "Larys Strong", "Corlys Velaryon", "Criston Cole", "Aemond Targaryen", "Cregan Stark", "Mysaria", "Rhaenys Targaryen"],
+    // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    makers: ["Gendry", "Samwell Tarly", "Melisandre", "Alys Rivers", "Tyrion Lannister"],
   },
 
   marvel: {
@@ -258,6 +260,8 @@ window.UNIVERSES = {
       ["Avengers Compound", "Wide fields, a lake and a high-tech base upstate, with hangars, labs and plenty of room for an all-out war.", "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/2/20/AvengersEndgame_06.png/revision/latest/scale-to-width-down/800?cb=20190326194352"],
     ],
     strategists: ["Captain America", "Nick Fury", "Professor X", "Magneto", "Doctor Doom", "Mister Fantastic", "Black Widow", "Thanos", "Loki", "Kang the Conqueror", "Red Skull", "Kingpin", "Cyclops", "Black Panther", "Taskmaster", "Baron Zemo", "Cable", "Okoye", "Storm", "Emma Frost", "Mystique", "Iron Man", "Doctor Strange", "Ultron", "Apocalypse", "Killmonger", "The Punisher", "Rocket", "Arnim Zola", "The Leader", "MODOK", "Daredevil", "Kitty Pryde", "Agatha Harkness", "Mephisto", "Grandmaster", "Domino", "Bullseye", "Elektra"],
+    // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    makers: ["Iron Man", "Mister Fantastic", "Forge", "Shuri", "Rocket", "Doctor Doom", "Doctor Octopus", "Green Goblin", "Ultron", "Arnim Zola", "MODOK", "The Leader", "Ant-Man", "The Wasp", "Mysterio", "Vulture", "Beast", "Hulk", "Spider-Man", "Kang the Conqueror", "Moon Girl", "Cable", "War Machine"],
   },
 
   league: {
@@ -352,5 +356,7 @@ window.UNIVERSES = {
       ["Mount Targon", "The tallest mountain in Runeterra, a deadly climb to a summit where celestial powers choose their champions.", "https://static.wikia.nocookie.net/leagueoflegends/images/f/f4/Targon_Around_The_Mountain.jpg/revision/latest/scale-to-width-down/800?cb=20180515050333"],
     ],
     strategists: ["Swain", "Jarvan IV", "Azir", "Darius", "LeBlanc", "Twisted Fate", "Gangplank", "Miss Fortune", "Sejuani", "Ashe", "Lissandra", "Caitlyn", "Heimerdinger", "Viktor", "Ekko", "Zed", "Shen", "Pyke", "Thresh", "Xerath", "Nasus", "Mordekaiser", "Xin Zhao", "Garen", "Bard", "Graves", "Sylas", "Jayce", "Viego"],
+    // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    makers: ["Ornn", "Heimerdinger", "Viktor", "Jayce", "Ekko", "Singed", "Jinx", "Teemo", "Gangplank", "Caitlyn"],
   },
 };

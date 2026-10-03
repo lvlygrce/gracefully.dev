@@ -50,7 +50,7 @@
 
   // The judge's progress on the current finished draft. Not persisted; the
   // verdict itself is saved on the draft once it arrives.
-  let judging = { busy: false, status: "", progress: null, error: "", verdict: null };
+  let judging = { busy: false, status: "", progress: null, error: "", verdict: null, preps: [] };
   let pendingBid = 1;      // the number on the stepper; not worth persisting
   let shared = readShared();
 
@@ -523,6 +523,7 @@
             <h2 class="block__name">${esc(name)}</h2>
             <p class="block__note">${esc(note)}</p>
             ${(U[world].strategists || []).includes(name) ? `<p class="block__tag">known for strategy</p>` : ""}
+            ${(U[world].makers || []).includes(name) ? `<p class="block__tag">builds gear</p>` : ""}
             ${opened
               ? `<p class="block__bid"><span class="money">$${lot.bid}</span> held by ${esc(players[lot.leader].name)}</p>`
               : `<p class="block__bid block__bid--none">no bids yet</p>`}
@@ -654,7 +655,7 @@
     renderJudge(worlds, teams, isShared);
 
     on("again", () => {
-      judging = { busy: false, status: "", progress: null, error: "", verdict: null };
+      judging = { busy: false, status: "", progress: null, error: "", verdict: null, preps: [] };
       startDraft(state.players.map(p => p.name), state.worlds, state.passes);
     });
     on("copy-text", e => copy(teamsAsText(worlds, teams), e.currentTarget, "Copied"));
@@ -663,7 +664,7 @@
       copy(url, e.currentTarget, "Link copied");
     });
     on("new", () => {
-      judging = { busy: false, status: "", progress: null, error: "", verdict: null };
+      judging = { busy: false, status: "", progress: null, error: "", verdict: null, preps: [] };
       if (isShared) {
         shared = null;
         history.replaceState(null, "", location.pathname + location.search);
@@ -686,21 +687,38 @@
     const verdict = isShared ? judging.verdict : (state.verdict || null);
     const playable = teams.every(t => t.roster.length);
 
+    // While the judge works, the war councils fill in as each is ready, and
+    // only the status line changes in between, so nothing arrives twice.
     if (judging.busy) {
-      body.innerHTML = `
-        <p class="judge__status">${esc(judging.status)}</p>
-        ${judging.progress != null
-          ? `<div class="judge__bar"><span style="width:${Math.round(judging.progress * 100)}%"></span></div>`
-          : ""}`;
+      if (!body.querySelector(".judge__live")) {
+        body.innerHTML = `
+          <div class="judge__live">
+            <div class="wars" id="wars"></div>
+            <p class="judge__status" id="judge-status"></p>
+            <div id="judge-bar"></div>
+          </div>`;
+      }
+      const wars = document.getElementById("wars");
+      const drawn = wars.dataset.drawn || "";
+      const now = judging.preps.map(p => (p ? "1" : "0")).join("");
+      if (drawn !== now) {
+        wars.innerHTML = warsHtml(judging.preps, teams, drawn);
+        wars.dataset.drawn = now;
+      }
+      document.getElementById("judge-status").textContent = judging.status;
+      document.getElementById("judge-bar").innerHTML = judging.progress != null
+        ? `<div class="judge__bar"><span style="width:${Math.round(judging.progress * 100)}%"></span></div>` : "";
       return;
     }
 
     if (verdict) {
-      body.innerHTML = verdictHtml(verdict) + `
+      body.innerHTML = (verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : "")
+        + verdictHtml(verdict) + `
         <div class="tools tools--loud judge__again">
           <button class="btn" type="button" id="judge-again">Ask for a second opinion</button>
         </div>`;
       on("judge-again", () => {
+        judging.preps = [];
         if (isShared) judging.verdict = null; else { state.verdict = null; save(); }
         render();
       });
@@ -717,8 +735,10 @@
     const localModel = prefs.localModel || J.local.models[0].id;
     const gpu = J.local.supported();
 
+    const partial = judging.preps.some(Boolean);
     body.innerHTML = `
-      <p class="judge__lede">Let an AI judge reason through the fight and pick a winner.</p>
+      ${partial ? `<div class="wars">${warsHtml(judging.preps, teams, "11")}</div>` : ""}
+      <p class="judge__lede">Each team's war council makes a plan and gears up, separately. Then the judge pits the two against each other and picks a winner.</p>
       <fieldset class="choices choices--judge"><legend class="visually-hidden">Judge</legend>
         <label class="choice">
           <input type="radio" name="judge" value="gemini" ${mode === "gemini" ? "checked" : ""} />
@@ -792,7 +812,8 @@
         J.gemini.saveKey(typed);
       }
       const draftAtStart = state;
-      judging = { busy: true, status: "Calling the judge…", progress: null, error: "", verdict: null };
+      const kept = judging.preps.length ? judging.preps : [null, null];
+      judging = { busy: true, status: "Calling the judge…", progress: null, error: "", verdict: null, preps: kept };
       renderJudge(worlds, teams, isShared);
       const onStatus = (text, progress) => {
         judging.status = text;
@@ -802,15 +823,22 @@
       const worldName = w => U[w].name;
       try {
         const field = arenaInfo(isShared ? shared.a : state.arena);
-        const v = mode === "gemini"
-          ? await J.gemini.judge(teams, worldName, onStatus, field)
-          : await J.local.judge(teams, worldName, onStatus, prefs.localModel || J.local.models[0].id, field);
+        J.local.modelId = prefs.localModel || J.local.models[0].id;
+        const v = await J.run(mode, {
+          teams, worldName, arena: field, preps: judging.preps, onStatus,
+          onPrep: (i, prep) => {
+            judging.preps[i] = prep;
+            announce(`${prep.team}'s war council is ready. Led by ${prep.leader}. ${prep.plan}`);
+            if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
+          },
+        });
         if (field) v.arena = field.name;
-        judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null };
+        judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null, preps: [] };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
         announce(`${v.winner} wins. ${v.verdict}`);
       } catch (err) {
-        judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null };
+        // Keep any war council that finished, so trying again goes straight on.
+        judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null, preps: judging.preps };
       }
       if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
     });
@@ -850,6 +878,37 @@
       </div>`;
   }
 
+  // One team's preparation. "fresh" marks a council that has just arrived.
+  function warHtml(prep, fresh) {
+    const gear = prep.gear.length
+      ? prep.gear.map(g => {
+          const built = !/^(already theirs|scavenged)$/i.test(g.made_by.trim());
+          return `<li><span class="gear__name">${esc(g.name)}</span>
+            ${built ? `<span class="gear__maker">built by ${esc(g.made_by)}</span>` : `<span class="gear__maker gear__maker--plain">${esc(g.made_by || "already theirs")}</span>`}
+            <span class="gear__effect">${esc(g.effect)}</span></li>`;
+        }).join("")
+      : `<li class="gear__none">Nothing but what they carry.</li>`;
+    const jobs = prep.jobs.filter(j => j.job).map(j => `
+      <li>${portrait(j.world, j.name, "sm")}<p><span class="roles__name">${esc(j.name)}</span> ${esc(j.job)}</p></li>`).join("");
+    return `
+      <article class="war ${fresh ? "war--fresh" : ""}">
+        <p class="edge__team">${esc(prep.team)}'s war council</p>
+        <p class="war__leader"><span class="verdict__label">led by</span> ${esc(prep.leader)}</p>
+        <p class="war__plan">${esc(prep.plan)}</p>
+        <span class="verdict__label">gear</span>
+        <ul class="gear">${gear}</ul>
+        ${jobs ? `<span class="verdict__label">jobs</span><ul class="war__jobs">${jobs}</ul>` : ""}
+      </article>`;
+  }
+
+  function warsHtml(preps, teams, drawnBefore) {
+    return teams.map((t, i) => {
+      const p = preps[i];
+      if (!p) return `<article class="war war--waiting"><p class="edge__team">${esc(t.name)}'s war council</p><p class="judge__status">planning…</p></article>`;
+      return warHtml(p, (drawnBefore || "")[i] !== "1");
+    }).join("");
+  }
+
   function verdictHtml(v) {
     const paras = String(v.fight).split(/\n+/).filter(Boolean)
       .map(p => `<p>${esc(p)}</p>`).join("");
@@ -862,7 +921,7 @@
       </div>`).join("");
     return `
       <div class="verdict">
-        <div class="edges verdict__step" style="--i:0">${edges}</div>
+        ${edges ? `<div class="edges verdict__step" style="--i:0">${edges}</div>` : `<p class="verdict__label verdict__step" style="--i:0">the battle</p>`}
         <div class="verdict__fight verdict__step" style="--i:1">${paras}</div>
         ${rolesHtml(v)}
         <p class="verdict__turn verdict__step" style="--i:3"><span class="verdict__label">the turning point</span> ${esc(v.turning_point)}</p>
