@@ -23,8 +23,11 @@ Numbering and entrance animation are generated — don't write them by hand.
 
 Apps live in their own folder off the root (`riftle/`, and so on) and are served at
 `/<folder>/`. Each one loads the shared `/style.css` first, then its own stylesheet for
-whatever it adds — never a second copy of the design system. Link back to `/` from its
-colophon, then add it to the `apps` array above.
+whatever it adds — never a second copy of the design system. Put the home button
+(`<a class="home-button" href="/">`, copied from any existing app) before the theme toggle,
+link back to `/` from its colophon, then add it to the `apps` array above. When the shared
+`style.css` changes, bump the `?v=` on its link in every page so returning visitors
+don't pair new markup with a cached stylesheet.
 
 **One app deliberately breaks that rule.** `bts-album-match/` is a Spotify pastiche —
 dark, Figtree, Spotify green — because the look *is* the puzzle: the page reads as an

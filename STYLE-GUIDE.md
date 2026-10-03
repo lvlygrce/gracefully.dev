@@ -242,6 +242,7 @@ shape would read as a mistake.
 | `.empty` | Italic note shown when the index is empty. Wrap the text in a `<span>` — the measure is capped on the span so the closing rule still spans the full column. |
 | `.colophon` | Footer. Handwritten, space-between, wraps on narrow screens. |
 | `.theme-toggle` | Fixed wobbly circle, top right. Swaps sun/moon by `[data-theme]`. |
+| `.home-button` | The toggle's twin, top left, on every app page. A house icon linking to `/`, labelled "Back to Gracefully". |
 | `.rule-wave` | A standalone wobbly hairline, for anywhere the shared pseudo-element doesn't reach. |
 
 ---

@@ -50,6 +50,13 @@ input{font:inherit;color:inherit}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em}
 .brand svg{flex:none}
 .brand small{display:block;font-weight:500;font-size:12px;color:var(--ink-2);letter-spacing:0}
+.home-btn{
+  flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;
+  background:var(--bg-3);color:var(--ink-2);transition:color .18s ease,background .18s ease,transform .18s ease;
+}
+.home-btn:hover,.home-btn:focus-visible{color:var(--ink);background:var(--hover);transform:scale(1.06)}
+.home-btn svg{width:17px;height:17px;display:block}
+@media (prefers-reduced-motion: reduce){ .home-btn:hover,.home-btn:focus-visible{transform:none} }
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .ghost{
   padding:7px 15px;border-radius:999px;font-size:13px;font-weight:700;
@@ -252,6 +259,13 @@ body.nowbar-open .shell{padding-bottom:80px}
 <div class="shell">
 
   <header class="topbar">
+    <a class="home-btn" href="/" aria-label="Back to Gracefully" title="Back to Gracefully">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3.5 11.2 12 4l8.5 7.2" />
+        <path d="M5.8 9.6V19.3c0 .4.3.7.7.7h3.9v-5.4h3.2V20h3.9c.4 0 .7-.3.7-.7V9.6" />
+      </svg>
+    </a>
     <div class="brand">
       <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#1ed760"/><path d="M6.8 9.4c3.4-1 7-.7 10 .9M7.4 12.3c2.8-.8 5.8-.5 8.3.8M8 15.1c2.2-.6 4.5-.4 6.5.6" stroke="#000" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
       <div>Guess the album
