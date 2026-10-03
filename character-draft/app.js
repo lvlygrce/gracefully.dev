@@ -699,7 +699,9 @@
                 <input type="radio" name="local-model" value="${m.id}" ${m.id === localModel ? "checked" : ""} />
                 <span>${esc(m.label)} <em>${esc(m.note)}</em></span>
               </label>`).join("")}
-          </fieldset>`}
+          </fieldset>
+          <p class="judge__fine"><span id="storage-line"></span>
+            <button class="btn btn--quiet btn--inline" type="button" id="clear-models">Clear downloaded models</button></p>`}
       </div>
 
       ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
@@ -712,6 +714,23 @@
       prefs.localModel = i.value; store.set(PREFS_KEY, prefs);
     }));
     on("forget-key", () => { J.gemini.forgetKey(); renderJudge(worlds, teams, isShared); });
+
+    const storageLine = document.getElementById("storage-line");
+    if (storageLine) {
+      J.local.storage().then(space => {
+        if (space && storageLine.isConnected) {
+          storageLine.textContent = `This site is using ${(space.usage / 1e9).toFixed(1)}GB; `
+            + `your browser allows about ${(space.free / 1e9).toFixed(1)}GB more.`;
+        }
+      });
+    }
+    on("clear-models", async e => {
+      e.currentTarget.disabled = true;
+      e.currentTarget.textContent = "Clearing…";
+      try { await J.local.clear(); judging.error = ""; announce("Downloaded models cleared."); }
+      catch (err) { judging.error = `Couldn't clear them: ${err.message}`; }
+      renderJudge(worlds, teams, isShared);
+    });
 
     on("judge-go", async () => {
       if (mode === "gemini" && !key) {

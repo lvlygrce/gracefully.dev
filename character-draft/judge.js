@@ -15,8 +15,8 @@
   const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm";
 
   const LOCAL_MODELS = [
-    { id: "Qwen3.5-4B-q4f16_1-MLC", label: "Qwen 3.5 4B", note: "sharper, about a 2.4GB download, needs 4GB of graphics memory" },
-    { id: "Qwen3.5-2B-q4f16_1-MLC", label: "Qwen 3.5 2B", note: "quicker, about a 1.1GB download, needs 2.3GB, but it gets facts wrong more often" },
+    { id: "Qwen3.5-4B-q4f16_1-MLC", label: "Qwen 3.5 4B", bytes: 2.39e9, note: "sharper, about a 2.4GB download, needs 4GB of graphics memory" },
+    { id: "Qwen3.5-2B-q4f16_1-MLC", label: "Qwen 3.5 2B", bytes: 1.08e9, note: "quicker, about a 1.1GB download, needs 2.3GB, but it gets facts wrong more often" },
   ];
 
   const safe = {
@@ -120,44 +120,67 @@ Reply as JSON with these fields:
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         const msg = (data.error && data.error.message) || `Gemini said ${res.status}.`;
-        if (res.status === 400 && /api key/i.test(msg)) throw new Error("Gemini didn't accept that API key.");
-        if (res.status === 429) throw new Error("Gemini says you're out of quota for now. Try again shortly.");
-        throw new Error(msg);
+        const bad = (res.status === 400 && /api key/i.test(msg)) || res.status === 401 || res.status === 403;
+        const err = new Error(bad ? "Gemini didn't accept that API key." : msg);
+        err.status = res.status;
+        // Busy, rate-limited or briefly broken: another model may well answer.
+        err.retry = !bad && (res.status === 429 || res.status >= 500 || res.status === 404);
+        throw err;
       }
       return data;
     },
 
-    // Pick the newest stable Flash model this key can use, so the app keeps
-    // working as Google retires old versions.
-    async model() {
-      const cached = safe.get(MODEL_STORE);
-      if (cached) return cached;
+    // Every model this key can use, best first: stable Flash, then Flash
+    // Lite, then previews, newest version first within each. Looked up live so
+    // the app keeps working as Google adds and retires versions. The one that
+    // last worked goes to the front.
+    async models() {
       const data = await gemini.request("models?pageSize=1000");
-      const usable = (data.models || []).filter(m =>
-        (m.supportedGenerationMethods || []).includes("generateContent"));
-      const version = n => (n.match(/gemini-(\d+(?:\.\d+)?)/) || [0, 0])[1] * 1;
-      const stable = usable.filter(m => /^models\/gemini-\d+(\.\d+)?-flash$/.test(m.name));
-      const pool = stable.length ? stable : usable.filter(m => /^models\/gemini-.*flash/.test(m.name));
+      const names = (data.models || [])
+        .filter(m => (m.supportedGenerationMethods || []).includes("generateContent"))
+        .map(m => m.name);
+      const version = n => Number((n.match(/gemini-(\d+(?:\.\d+)?)/) || [0, 0])[1]);
+      const tier = n =>
+        /^models\/gemini-[\d.]+-flash$/.test(n) ? 0 :
+        /^models\/gemini-[\d.]+-flash-lite$/.test(n) ? 1 :
+        /^models\/gemini-[\d.]+-flash(-lite)?-preview/.test(n) ? 2 : 9;
+      const pool = names.filter(n => tier(n) < 9)
+        .sort((a, b) => tier(a) - tier(b) || version(b) - version(a));
       if (!pool.length) throw new Error("This API key can't use any Gemini Flash models.");
-      pool.sort((a, b) => version(b.name) - version(a.name));
-      safe.set(MODEL_STORE, pool[0].name);
-      return pool[0].name;
+      const last = safe.get(MODEL_STORE);
+      return last && pool.includes(last) ? [last, ...pool.filter(n => n !== last)] : pool;
     },
 
     async judge(teams, worldName, onStatus) {
       onStatus("Finding a Gemini model…");
-      const model = await gemini.model();
-      onStatus(`The judge is reasoning it through (${model.replace("models/", "")})…`);
-      const data = await gemini.request(`${model}:generateContent`, {
-        systemInstruction: { parts: [{ text: SYSTEM }] },
-        contents: [{ role: "user", parts: [{ text: prompt(teams, worldName) }] }],
-        generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.9 },
-      });
-      const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
-        && data.candidates[0].content.parts) || [];
-      const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("");
-      if (!text) throw new Error("Gemini came back empty. Try again.");
-      return { ...parse(text, teams), by: model.replace("models/", "") };
+      const pool = (await gemini.models()).slice(0, 5);
+      const short = n => n.replace("models/", "");
+      const tried = [];
+      for (const model of pool) {
+        onStatus(tried.length
+          ? `${short(tried[tried.length - 1])} is busy, so asking ${short(model)} instead…`
+          : `The judge is reasoning it through (${short(model)})…`);
+        try {
+          const data = await gemini.request(`${model}:generateContent`, {
+            systemInstruction: { parts: [{ text: SYSTEM }] },
+            contents: [{ role: "user", parts: [{ text: prompt(teams, worldName) }] }],
+            generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.9 },
+          });
+          const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
+            && data.candidates[0].content.parts) || [];
+          const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("");
+          if (!text) throw Object.assign(new Error("Gemini came back empty."), { retry: true });
+          const verdict = { ...parse(text, teams), by: short(model) };
+          safe.set(MODEL_STORE, model);
+          return verdict;
+        } catch (err) {
+          if (!err.retry && !(err instanceof SyntaxError)) throw err;
+          tried.push(model);
+          await new Promise(r => setTimeout(r, 1200));
+        }
+      }
+      throw new Error(`Gemini is swamped right now. I tried ${tried.map(short).join(", ")}, and they're all busy. `
+        + "Give it a minute and try again, or use the judge on this device.");
     },
   };
 
@@ -166,9 +189,37 @@ Reply as JSON with these fields:
   let engine = null;
   let engineModel = null;
 
+  const gb = b => `${(b / 1e9).toFixed(1)}GB`;
+
+  function isQuota(err) {
+    return err && (err.name === "QuotaExceededError" || /quota/i.test(String(err.message || err)));
+  }
+
+  const SPACE_TIPS = "That usually means the disk is nearly full, "
+    + "you're in a private or incognito window, or an earlier model download is taking the space. "
+    + "Try “Clear downloaded models” below, free some disk space, or use a normal window.";
+  const QUOTA_HELP = `Your browser wouldn't let this site store the model. ${SPACE_TIPS}`;
+
   const local = {
     models: LOCAL_MODELS,
     supported: () => "gpu" in navigator,
+
+    // How much this site has stored, and roughly how much more it may store.
+    async storage() {
+      if (!navigator.storage || !navigator.storage.estimate) return null;
+      try {
+        const { usage = 0, quota = 0 } = await navigator.storage.estimate();
+        return { usage, free: Math.max(0, quota - usage) };
+      } catch { return null; }
+    },
+
+    async clear() {
+      const webllm = await import(WEBLLM_URL);
+      if (engine) { await engine.unload(); engine = null; engineModel = null; }
+      for (const m of LOCAL_MODELS) {
+        try { await webllm.deleteModelAllInfoInCache(m.id); } catch { /* not cached */ }
+      }
+    },
 
     async judge(teams, worldName, onStatus, modelId) {
       if (!local.supported()) {
@@ -177,13 +228,30 @@ Reply as JSON with these fields:
       if (!engine || engineModel !== modelId) {
         onStatus("Loading WebLLM…");
         const webllm = await import(WEBLLM_URL);
-        if (engine) await engine.unload();
-        engine = await webllm.CreateMLCEngine(modelId, {
-          initProgressCallback: p => {
-            const pct = Math.round((p.progress || 0) * 100);
-            onStatus(`Getting the model ready, ${pct}%. The first time downloads it; after that it's cached.`, p.progress);
-          },
-        });
+        const info = LOCAL_MODELS.find(m => m.id === modelId) || { bytes: 0 };
+        const cached = await webllm.hasModelInCache(modelId).catch(() => false);
+        if (!cached) {
+          // Ask to be kept, so the browser doesn't evict gigabytes it just fetched.
+          if (navigator.storage && navigator.storage.persist) await navigator.storage.persist().catch(() => {});
+          const space = await local.storage();
+          if (space && space.free < info.bytes * 1.1) {
+            throw new Error(`This model needs about ${gb(info.bytes)} of storage, but your browser will only give this site `
+              + `about ${gb(space.free)} more. ${SPACE_TIPS}`);
+          }
+        }
+        if (engine) { await engine.unload(); engine = null; }
+        try {
+          engine = await webllm.CreateMLCEngine(modelId, {
+            initProgressCallback: p => {
+              const pct = Math.round((p.progress || 0) * 100);
+              onStatus(`Getting the model ready, ${pct}%. The first time downloads it; after that it's cached.`, p.progress);
+            },
+          });
+        } catch (err) {
+          engine = null;
+          if (isQuota(err)) throw new Error(QUOTA_HELP);
+          throw err;
+        }
         engineModel = modelId;
       }
       onStatus("The judge is reasoning it through on your GPU…");
