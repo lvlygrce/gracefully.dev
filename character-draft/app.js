@@ -476,6 +476,7 @@
             <p class="block__kicker">character ${state.total - state.deck.length} turned over${state.worlds.length > 1 ? `, from ${esc(U[world].name)}` : ""}</p>
             <h2 class="block__name">${esc(name)}</h2>
             <p class="block__note">${esc(note)}</p>
+            ${(U[world].strategists || []).includes(name) ? `<p class="block__tag">known for strategy</p>` : ""}
             ${opened
               ? `<p class="block__bid"><span class="money">$${lot.bid}</span> held by ${esc(players[lot.leader].name)}</p>`
               : `<p class="block__bid block__bid--none">no bids yet</p>`}
@@ -761,12 +762,31 @@
     });
   }
 
+  function rolesHtml(v) {
+    const roles = (v.roles || []).filter(r => r.role);
+    if (!roles.length) return "";
+    const teams = [...new Set(roles.map(r => r.team))];
+    return `
+      <div class="roles verdict__step" style="--i:2">
+        ${teams.map(t => `
+          <div class="roles__team">
+            <p class="edge__team">${esc(t)}</p>
+            <ul class="roles__list">
+              ${roles.filter(r => r.team === t).map(r => `
+                <li>${portrait(r.world, r.name, "md")}
+                  <p><span class="roles__name">${esc(r.name)}</span> ${esc(r.role)}</p></li>`).join("")}
+            </ul>
+          </div>`).join("")}
+      </div>`;
+  }
+
   function verdictHtml(v) {
     const paras = String(v.fight).split(/\n+/).filter(Boolean)
       .map(p => `<p>${esc(p)}</p>`).join("");
     const edges = (v.edges || []).map(e => `
       <div class="edge">
         <p class="edge__team">${esc(e.team)}</p>
+        ${e.plan ? `<p><em>The plan:</em> ${esc(e.plan)}</p>` : ""}
         <p><em>Strength:</em> ${esc(e.strength)}</p>
         <p><em>Weakness:</em> ${esc(e.weakness)}</p>
       </div>`).join("");
@@ -774,11 +794,12 @@
       <div class="verdict">
         <div class="edges verdict__step" style="--i:0">${edges}</div>
         <div class="verdict__fight verdict__step" style="--i:1">${paras}</div>
-        <p class="verdict__turn verdict__step" style="--i:2"><span class="verdict__label">the turning point</span> ${esc(v.turning_point)}</p>
-        <p class="verdict__mvp verdict__step" style="--i:3"><span class="verdict__label">most valuable</span> ${esc(v.mvp)}</p>
-        <h3 class="verdict__winner verdict__step" style="--i:4"><em>${esc(v.winner)}</em> wins<span class="wordmark__mark">.</span></h3>
-        <p class="verdict__line verdict__step" style="--i:5">${esc(v.verdict)}</p>
-        <p class="verdict__by verdict__step" style="--i:5">judged by ${esc(v.by || "the judge")}</p>
+        ${rolesHtml(v)}
+        <p class="verdict__turn verdict__step" style="--i:3"><span class="verdict__label">the turning point</span> ${esc(v.turning_point)}</p>
+        <p class="verdict__mvp verdict__step" style="--i:4"><span class="verdict__label">most valuable</span> ${esc(v.mvp)}</p>
+        <h3 class="verdict__winner verdict__step" style="--i:5"><em>${esc(v.winner)}</em> wins<span class="wordmark__mark">.</span></h3>
+        <p class="verdict__line verdict__step" style="--i:6">${esc(v.verdict)}</p>
+        <p class="verdict__by verdict__step" style="--i:6">judged by ${esc(v.by || "the judge")}</p>
       </div>`;
   }
 

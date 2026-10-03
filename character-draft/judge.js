@@ -30,29 +30,49 @@
   const SYSTEM = `You are the judge of a fantasy team battle between two drafted teams of fictional characters.
 Judge as a knowledgeable fan: use what the characters can actually do in their source material
 (games, shows, films, comics, books). When teams mix worlds, scale power fairly and say how you did.
-Weigh raw power, abilities, intelligence, experience, and how well each team works together.
+
+A battle is not decided by raw power alone. Weigh all of these, and give the non-physical ones real weight:
+- Strategy and leadership: a proven general or commander makes the whole team fight as one, picks the ground,
+  sets the timing and exploits the enemy's weaknesses. A team without one fights as scattered individuals.
+- Cunning and deception: schemers, spymasters, tricksters and survivors win through traps, lies, bribes,
+  betrayal, misdirection, ambushes and simply refusing to fight on the enemy's terms.
+- Skill, experience and instinct: veterans, assassins and sellswords who know when to strike and when to run.
+- Raw power and abilities: strength, magic, technology, creatures.
+- Synergy: how well the team's members cover each other's weaknesses.
+Characters marked [strategist] are renowned for strategy, leadership or cunning. Make their plans matter:
+a clever, well-led team can and often should beat a stronger but leaderless one, unless the power gap is
+truly overwhelming (a cosmic being against ordinary humans). Show the thinking, not only the punching.
 The two players only drafted the teams; they are not in the fight. Only the listed characters fight.
 Stick to what each character really is and can do; never invent powers or weapons they don't have.
+Every character on both teams must play a part: mention each of them by name in the fight, and give each one
+their own line in "roles". Nobody sits out.
 Be decisive: no draws. Be vivid but brief. For "winner", give the player's name exactly as given.`;
+
+  function isStrategist(r) {
+    const u = (window.UNIVERSES || {})[r.world];
+    return !!(u && u.strategists && u.strategists.includes(r.name));
+  }
 
   function describe(teams, worldName) {
     return teams.map(t => {
       const rows = t.roster.length
-        ? t.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}`).join("\n")
+        ? t.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}${isStrategist(r) ? " [strategist]" : ""}`).join("\n")
         : "- nobody";
       return `Team drafted by ${t.name}:\n${rows}`;
     }).join("\n\n");
   }
 
   function prompt(teams, worldName) {
-    return `Two teams fight to the finish, all at once, in a neutral arena.
+    return `Two teams fight to the finish on a varied battlefield: open ground, woods, a river crossing and a ruined
+keep on a hill. Both arrive at dusk with a day to scout, plan, set traps or try tricks before the clash.
 
 ${describe(teams, worldName)}
 
 Reply as JSON with these fields:
-- "edges": for each team, one sentence on its biggest strength and one weakness (array of {"team", "strength", "weakness"}, where "team" is the player's name)
-- "fight": the battle in three short paragraphs, naming specific characters and abilities
-- "turning_point": the single moment that decided it, one sentence
+- "edges": for each team, who leads it and its plan, its biggest strength and its biggest weakness, one sentence each (array of {"team", "plan", "strength", "weakness"}, where "team" is the player's name)
+- "fight": the battle in three short paragraphs, naming every character at least once, with their abilities and the tactics or tricks they use
+- "roles": one sentence for every character, saying what they did in the fight and how it went for them (an object with one key per character name, exactly as listed)
+- "turning_point": the single moment that decided it, one sentence (a clever move counts as much as a big hit)
 - "mvp": the character who mattered most
 - "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
 - "verdict": one punchy line explaining why the winner won`;
@@ -65,8 +85,8 @@ Reply as JSON with these fields:
         type: "ARRAY",
         items: {
           type: "OBJECT",
-          properties: { team: { type: "STRING" }, strength: { type: "STRING" }, weakness: { type: "STRING" } },
-          required: ["team", "strength", "weakness"],
+          properties: { team: { type: "STRING" }, plan: { type: "STRING" }, strength: { type: "STRING" }, weakness: { type: "STRING" } },
+          required: ["team", "plan", "strength", "weakness"],
         },
       },
       fight: { type: "STRING" },
@@ -77,6 +97,33 @@ Reply as JSON with these fields:
     },
     required: ["edges", "fight", "turning_point", "mvp", "winner", "verdict"],
   };
+
+  // One key per character, so the model's structured output can't leave
+  // anyone out. A name drafted twice (Ghost the direwolf and Ghost of Marvel)
+  // gets its world added.
+  function roleKeys(teams) {
+    const all = teams.flatMap(t => t.roster.map(r => ({ team: t.name, ...r })));
+    return all.map(c => ({
+      ...c,
+      key: all.filter(o => o.name === c.name).length > 1 ? `${c.name} (${c.world})` : c.name,
+    }));
+  }
+
+  function schemaFor(teams) {
+    const keys = roleKeys(teams).map(c => c.key);
+    return {
+      ...SCHEMA,
+      properties: {
+        ...SCHEMA.properties,
+        roles: {
+          type: "OBJECT",
+          properties: Object.fromEntries(keys.map(k => [k, { type: "STRING" }])),
+          required: keys,
+        },
+      },
+      required: [...SCHEMA.required, "roles"],
+    };
+  }
 
   // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
   function lower(s) {
@@ -99,6 +146,12 @@ Reply as JSON with these fields:
       const lowerWinner = String(data.winner || "").toLowerCase();
       data.winner = names.find(n => lowerWinner.includes(n.toLowerCase())) || names[0];
     }
+    // Turn the roles object into a list grouped by team, in draft order.
+    const given = data.roles && typeof data.roles === "object" ? data.roles : {};
+    data.roles = roleKeys(teams).map(c => ({
+      team: c.team, name: c.name, world: c.world,
+      role: String(given[c.key] || given[c.name] || "").trim(),
+    }));
     if (typeof data.fight !== "string") data.fight = String(data.fight || "");
     if (!Array.isArray(data.edges)) data.edges = [];
     return data;
@@ -164,7 +217,7 @@ Reply as JSON with these fields:
           const data = await gemini.request(`${model}:generateContent`, {
             systemInstruction: { parts: [{ text: SYSTEM }] },
             contents: [{ role: "user", parts: [{ text: prompt(teams, worldName) }] }],
-            generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.9 },
+            generationConfig: { responseMimeType: "application/json", responseSchema: schemaFor(teams), temperature: 0.9 },
           });
           const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
             && data.candidates[0].content.parts) || [];
@@ -261,8 +314,8 @@ Reply as JSON with these fields:
           { role: "user", content: prompt(teams, worldName) },
         ],
         temperature: 0.5,
-        max_tokens: 1100,
-        response_format: { type: "json_object", schema: JSON.stringify(lower(SCHEMA)) },
+        max_tokens: 1800,
+        response_format: { type: "json_object", schema: JSON.stringify(lower(schemaFor(teams))) },
         extra_body: { enable_thinking: false },
       });
       const text = reply.choices[0].message.content || "";

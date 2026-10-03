@@ -25,7 +25,7 @@ window.UNIVERSES = {
       ["Gregor Clegane", "The Mountain"],
       ["Brienne of Tarth", "Knight of the Seven Kingdoms"],
       ["Podrick Payne", "Squire with hidden talents"],
-      ["Bronn", "Sellsword, eventually a lord"],
+      ["Bronn", "Ser Bronn of the Blackwater, sellsword who always backs the winner"],
       ["Samwell Tarly", "Maester-in-training"],
       ["Jorah Mormont", "Exiled knight, sworn shield"],
       ["Davos Seaworth", "The Onion Knight"],
@@ -79,6 +79,8 @@ window.UNIVERSES = {
       ["Ghost", "Silent white direwolf"],
       ["Nymeria", "Direwolf, leader of the pack"],
     ],
+    // Known for strategy, leadership or cunning; the judge weighs this.
+    strategists: ["Tywin Lannister", "Tyrion Lannister", "Stannis Baratheon", "Robb Stark", "Petyr Baelish", "Varys", "Olenna Tyrell", "Cersei Lannister", "Bronn", "Davos Seaworth", "Sansa Stark", "Bran Stark", "Jaime Lannister", "Ramsay Bolton", "Euron Greyjoy", "The Night King", "Grey Worm", "Barristan Selmy", "Margaery Tyrell", "Jaqen H'ghar", "Daemon Targaryen", "Otto Hightower", "Larys Strong", "Corlys Velaryon", "Criston Cole", "Aemond Targaryen", "Cregan Stark", "Mysaria", "Rhaenys Targaryen"],
   },
 
   marvel: {
@@ -232,6 +234,8 @@ window.UNIVERSES = {
       ["Kingo", "Eternal and film star"],
       ["Leech", "Shuts off powers nearby"],
     ],
+    // Known for strategy, leadership or cunning; the judge weighs this.
+    strategists: ["Captain America", "Nick Fury", "Professor X", "Magneto", "Doctor Doom", "Mister Fantastic", "Black Widow", "Thanos", "Loki", "Kang the Conqueror", "Red Skull", "Kingpin", "Cyclops", "Black Panther", "Taskmaster", "Baron Zemo", "Cable", "Okoye", "Storm", "Emma Frost", "Mystique", "Iron Man", "Doctor Strange", "Ultron", "Apocalypse", "Killmonger", "The Punisher", "Rocket", "Arnim Zola", "The Leader", "MODOK", "Daredevil", "Kitty Pryde", "Agatha Harkness", "Mephisto", "Grandmaster", "Domino", "Bullseye", "Elektra"],
   },
 
   league: {
@@ -313,5 +317,7 @@ window.UNIVERSES = {
       ["Malphite", "Ixtal · Shard of the Monolith"],
       ["Gwen", "Shadow Isles · the Hallowed Seamstress"],
     ],
+    // Known for strategy, leadership or cunning; the judge weighs this.
+    strategists: ["Swain", "Jarvan IV", "Azir", "Darius", "LeBlanc", "Twisted Fate", "Gangplank", "Miss Fortune", "Sejuani", "Ashe", "Lissandra", "Caitlyn", "Heimerdinger", "Viktor", "Ekko", "Zed", "Shen", "Pyke", "Thresh", "Xerath", "Nasus", "Mordekaiser", "Xin Zhao", "Garen", "Bard", "Graves", "Sylas", "Jayce", "Viego"],
   },
 };

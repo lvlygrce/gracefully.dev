@@ -460,6 +460,17 @@ fieldset { border: 0; min-width: 0; }
   to   { opacity: 1; transform: none; }
 }
 
+.block__tag {
+  display: inline-block;
+  margin-top: var(--space-2xs);
+  padding: 0 0.6rem;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--accent);
+  background: var(--accent-wash);
+  border-radius: var(--radius-blob);
+}
+
 .block__bid--none { font-family: var(--font-hand); font-size: var(--size-hand); }
 
 .last {
@@ -644,6 +655,30 @@ fieldset { border: 0; min-width: 0; }
 .verdict__fight { max-width: var(--measure); }
 .verdict__fight p + p { margin-top: var(--space-xs); }
 
+.roles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+}
+
+.roles__list { list-style: none; margin-top: var(--space-xs); }
+
+.roles__list li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-xs);
+  align-items: start;
+  padding: 0.45rem 0;
+  line-height: var(--leading-snug);
+}
+
+.roles__name {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  margin-right: 0.2rem;
+}
+
 .verdict__turn, .verdict__mvp { margin-top: var(--space-sm); max-width: var(--measure); }
 
 .verdict__label {
@@ -691,6 +726,7 @@ fieldset { border: 0; min-width: 0; }
   .player__budget .money { font-size: 2rem; }
   .finals { grid-template-columns: 1fr; }
   .edges { grid-template-columns: 1fr; }
+  .roles { grid-template-columns: 1fr; }
   .reveal-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .portrait--lg { width: min(15rem, 70vw); }
 }
