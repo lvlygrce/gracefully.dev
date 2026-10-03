@@ -555,11 +555,132 @@ fieldset { border: 0; min-width: 0; }
   line-height: 1.35;
 }
 
+/* --- The judge ------------------------------------------ */
+
+.judge { margin-bottom: var(--space-lg); }
+.judge .section-label { margin-bottom: var(--space-sm); }
+
+.judge__lede { color: var(--ink-muted); margin-bottom: var(--space-sm); max-width: var(--measure); }
+
+.choices--judge { grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+
+.judge__opts { margin: var(--space-sm) 0; max-width: 36rem; }
+
+.field__input--key { font-family: var(--font-text); font-size: 1.05rem; }
+
+.judge__fine, .judge__key {
+  color: var(--ink-muted);
+  font-size: 0.98rem;
+  margin-top: var(--space-2xs);
+}
+
+.judge__fine a { color: var(--ink); text-decoration-color: var(--rule-strong); text-underline-offset: 3px; }
+.judge__fine a:hover { color: var(--accent); }
+
+.btn--inline { font-size: var(--size-hand-sm); padding: 0.1rem 0.5rem; }
+
+.judge__warn { color: var(--ink); font-style: italic; margin: var(--space-xs) 0; max-width: var(--measure); }
+
+.chips--stack { flex-direction: column; align-items: stretch; }
+
+.chip--wide span {
+  display: block;
+  text-align: left;
+  font-size: 1.1rem;
+  border-radius: var(--radius-blob);
+  padding: 0.5rem 0.9rem;
+}
+
+.chip--wide em { font-family: var(--font-text); font-size: 0.95rem; color: var(--ink-muted); margin-left: 0.35rem; }
+
+.judge__status { font-family: var(--font-hand); font-size: var(--size-hand); color: var(--ink-muted); }
+
+.judge__bar {
+  height: 0.5rem;
+  max-width: 24rem;
+  margin-top: var(--space-xs);
+  background: var(--paper-sunk);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.judge__bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width var(--dur) var(--ease);
+}
+
+/* The verdict arrives in steps, the winner last. */
+.verdict__step {
+  opacity: 0;
+  animation: settle var(--dur-slow) var(--ease-expo) forwards;
+  animation-delay: calc(var(--i) * 700ms);
+}
+
+.edges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.edge {
+  padding: var(--space-sm);
+  background: var(--paper-warm);
+  border-radius: var(--radius-blob);
+  line-height: var(--leading-snug);
+}
+
+.edge p + p { margin-top: var(--space-2xs); }
+
+.edge__team {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.25rem;
+}
+
+.verdict__fight { max-width: var(--measure); }
+.verdict__fight p + p { margin-top: var(--space-xs); }
+
+.verdict__turn, .verdict__mvp { margin-top: var(--space-sm); max-width: var(--measure); }
+
+.verdict__label {
+  display: block;
+  font-family: var(--font-hand);
+  font-size: var(--size-hand-sm);
+  color: var(--ink-muted);
+}
+
+.verdict__mvp {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: 1.4rem;
+}
+
+.verdict__winner {
+  margin-top: var(--space-md);
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: clamp(2.5rem, 8vw, 4.25rem);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+}
+
+.verdict__line { font-size: var(--size-lede); font-style: italic; color: var(--ink-muted); max-width: var(--measure); margin-top: var(--space-2xs); }
+
+.verdict__by { font-family: var(--font-hand); font-size: var(--size-hand-sm); color: var(--ink-faint); margin-top: var(--space-xs); }
+
+.judge__again { margin-top: var(--space-md); }
+
 /* --- Motion and narrow viewports ------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .block__name, .done__title { animation: none; }
   .reveal-card .portrait { animation: none; }
+  .verdict__step { opacity: 1; animation: none; }
   .player--active, .btn:hover:not(:disabled),
   .choice:hover .choice__body { transform: none; }
 }
@@ -569,6 +690,7 @@ fieldset { border: 0; min-width: 0; }
   .player { padding: var(--space-xs); }
   .player__budget .money { font-size: 2rem; }
   .finals { grid-template-columns: 1fr; }
+  .edges { grid-template-columns: 1fr; }
   .reveal-card { grid-template-columns: 1fr; justify-items: center; text-align: center; }
   .portrait--lg { width: min(15rem, 70vw); }
 }

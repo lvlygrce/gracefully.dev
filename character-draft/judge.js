@@ -1,0 +1,207 @@
+/* The judge — reasons through who wins. Two ways to run it, both with no server:
+   Gemini, called straight from the browser with the player's own API key, or a
+   small model running on this device's GPU through WebLLM.
+
+   The key lives in localStorage, not a cookie: cookies ride along on every
+   request to this site, while localStorage never leaves the browser. It is only
+   ever sent to Google, in a header. */
+
+(function () {
+  "use strict";
+
+  const KEY_STORE = "character-draft:v1:gemini-key";
+  const MODEL_STORE = "character-draft:v1:gemini-model";
+  const GEMINI = "https://generativelanguage.googleapis.com/v1beta";
+  const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm";
+
+  const LOCAL_MODELS = [
+    { id: "Qwen3.5-4B-q4f16_1-MLC", label: "Qwen 3.5 4B", note: "sharper, about a 2.4GB download, needs 4GB of graphics memory" },
+    { id: "Qwen3.5-2B-q4f16_1-MLC", label: "Qwen 3.5 2B", note: "quicker, about a 1.1GB download, needs 2.3GB, but it gets facts wrong more often" },
+  ];
+
+  const safe = {
+    get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch { /* no-op */ } },
+    remove(k) { try { localStorage.removeItem(k); } catch { /* no-op */ } },
+  };
+
+  /* --- The question ------------------------------------------------ */
+
+  const SYSTEM = `You are the judge of a fantasy team battle between two drafted teams of fictional characters.
+Judge as a knowledgeable fan: use what the characters can actually do in their source material
+(games, shows, films, comics, books). When teams mix worlds, scale power fairly and say how you did.
+Weigh raw power, abilities, intelligence, experience, and how well each team works together.
+The two players only drafted the teams; they are not in the fight. Only the listed characters fight.
+Stick to what each character really is and can do; never invent powers or weapons they don't have.
+Be decisive: no draws. Be vivid but brief. For "winner", give the player's name exactly as given.`;
+
+  function describe(teams, worldName) {
+    return teams.map(t => {
+      const rows = t.roster.length
+        ? t.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}`).join("\n")
+        : "- nobody";
+      return `Team drafted by ${t.name}:\n${rows}`;
+    }).join("\n\n");
+  }
+
+  function prompt(teams, worldName) {
+    return `Two teams fight to the finish, all at once, in a neutral arena.
+
+${describe(teams, worldName)}
+
+Reply as JSON with these fields:
+- "edges": for each team, one sentence on its biggest strength and one weakness (array of {"team", "strength", "weakness"}, where "team" is the player's name)
+- "fight": the battle in three short paragraphs, naming specific characters and abilities
+- "turning_point": the single moment that decided it, one sentence
+- "mvp": the character who mattered most
+- "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
+- "verdict": one punchy line explaining why the winner won`;
+  }
+
+  const SCHEMA = {
+    type: "OBJECT",
+    properties: {
+      edges: {
+        type: "ARRAY",
+        items: {
+          type: "OBJECT",
+          properties: { team: { type: "STRING" }, strength: { type: "STRING" }, weakness: { type: "STRING" } },
+          required: ["team", "strength", "weakness"],
+        },
+      },
+      fight: { type: "STRING" },
+      turning_point: { type: "STRING" },
+      mvp: { type: "STRING" },
+      winner: { type: "STRING" },
+      verdict: { type: "STRING" },
+    },
+    required: ["edges", "fight", "turning_point", "mvp", "winner", "verdict"],
+  };
+
+  // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
+  function lower(s) {
+    if (Array.isArray(s)) return s.map(lower);
+    if (!s || typeof s !== "object") return s;
+    const out = {};
+    for (const [k, v] of Object.entries(s)) {
+      out[k] = k === "type" ? String(v).toLowerCase() : lower(v);
+    }
+    return out;
+  }
+
+  function parse(text, teams) {
+    const start = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    const data = JSON.parse(text.slice(start, end + 1));
+    // Small models sometimes paraphrase the winner; snap to a real name.
+    const names = teams.map(t => t.name);
+    if (!names.includes(data.winner)) {
+      const lowerWinner = String(data.winner || "").toLowerCase();
+      data.winner = names.find(n => lowerWinner.includes(n.toLowerCase())) || names[0];
+    }
+    if (typeof data.fight !== "string") data.fight = String(data.fight || "");
+    if (!Array.isArray(data.edges)) data.edges = [];
+    return data;
+  }
+
+  /* --- Gemini ------------------------------------------------------ */
+
+  const gemini = {
+    key: () => safe.get(KEY_STORE),
+    saveKey: k => { safe.set(KEY_STORE, k.trim()); safe.remove(MODEL_STORE); },
+    forgetKey: () => { safe.remove(KEY_STORE); safe.remove(MODEL_STORE); },
+
+    async request(path, body) {
+      const res = await fetch(`${GEMINI}/${path}`, {
+        method: body ? "POST" : "GET",
+        headers: { "x-goog-api-key": gemini.key(), ...(body ? { "content-type": "application/json" } : {}) },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const msg = (data.error && data.error.message) || `Gemini said ${res.status}.`;
+        if (res.status === 400 && /api key/i.test(msg)) throw new Error("Gemini didn't accept that API key.");
+        if (res.status === 429) throw new Error("Gemini says you're out of quota for now. Try again shortly.");
+        throw new Error(msg);
+      }
+      return data;
+    },
+
+    // Pick the newest stable Flash model this key can use, so the app keeps
+    // working as Google retires old versions.
+    async model() {
+      const cached = safe.get(MODEL_STORE);
+      if (cached) return cached;
+      const data = await gemini.request("models?pageSize=1000");
+      const usable = (data.models || []).filter(m =>
+        (m.supportedGenerationMethods || []).includes("generateContent"));
+      const version = n => (n.match(/gemini-(\d+(?:\.\d+)?)/) || [0, 0])[1] * 1;
+      const stable = usable.filter(m => /^models\/gemini-\d+(\.\d+)?-flash$/.test(m.name));
+      const pool = stable.length ? stable : usable.filter(m => /^models\/gemini-.*flash/.test(m.name));
+      if (!pool.length) throw new Error("This API key can't use any Gemini Flash models.");
+      pool.sort((a, b) => version(b.name) - version(a.name));
+      safe.set(MODEL_STORE, pool[0].name);
+      return pool[0].name;
+    },
+
+    async judge(teams, worldName, onStatus) {
+      onStatus("Finding a Gemini model…");
+      const model = await gemini.model();
+      onStatus(`The judge is reasoning it through (${model.replace("models/", "")})…`);
+      const data = await gemini.request(`${model}:generateContent`, {
+        systemInstruction: { parts: [{ text: SYSTEM }] },
+        contents: [{ role: "user", parts: [{ text: prompt(teams, worldName) }] }],
+        generationConfig: { responseMimeType: "application/json", responseSchema: SCHEMA, temperature: 0.9 },
+      });
+      const parts = (data.candidates && data.candidates[0] && data.candidates[0].content
+        && data.candidates[0].content.parts) || [];
+      const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("");
+      if (!text) throw new Error("Gemini came back empty. Try again.");
+      return { ...parse(text, teams), by: model.replace("models/", "") };
+    },
+  };
+
+  /* --- WebLLM ------------------------------------------------------ */
+
+  let engine = null;
+  let engineModel = null;
+
+  const local = {
+    models: LOCAL_MODELS,
+    supported: () => "gpu" in navigator,
+
+    async judge(teams, worldName, onStatus, modelId) {
+      if (!local.supported()) {
+        throw new Error("This browser doesn't have WebGPU, so it can't run a model locally. Try Chrome or Edge, or use Gemini.");
+      }
+      if (!engine || engineModel !== modelId) {
+        onStatus("Loading WebLLM…");
+        const webllm = await import(WEBLLM_URL);
+        if (engine) await engine.unload();
+        engine = await webllm.CreateMLCEngine(modelId, {
+          initProgressCallback: p => {
+            const pct = Math.round((p.progress || 0) * 100);
+            onStatus(`Getting the model ready, ${pct}%. The first time downloads it; after that it's cached.`, p.progress);
+          },
+        });
+        engineModel = modelId;
+      }
+      onStatus("The judge is reasoning it through on your GPU…");
+      const reply = await engine.chat.completions.create({
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: prompt(teams, worldName) },
+        ],
+        temperature: 0.5,
+        max_tokens: 1100,
+        response_format: { type: "json_object", schema: JSON.stringify(lower(SCHEMA)) },
+        extra_body: { enable_thinking: false },
+      });
+      const text = reply.choices[0].message.content || "";
+      const label = (LOCAL_MODELS.find(m => m.id === modelId) || {}).label || modelId;
+      return { ...parse(text, teams), by: `${label}, on this device` };
+    },
+  };
+
+  window.Judge = { gemini, local };
+})();

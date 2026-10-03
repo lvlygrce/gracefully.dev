@@ -48,6 +48,9 @@
   if (!prefs.worlds.length) prefs.worlds = ["westeros"];
   if (!PASS_OPTIONS.includes(prefs.passes)) prefs.passes = DEFAULT_PASSES;
 
+  // The judge's progress on the current finished draft. Not persisted; the
+  // verdict itself is saved on the draft once it arrives.
+  let judging = { busy: false, status: "", progress: null, error: "", verdict: null };
   let pendingBid = 1;      // the number on the stepper; not worth persisting
   let shared = readShared();
 
@@ -280,6 +283,8 @@
       t.roster.forEach(r => lines.push(`  ${r.name}${worlds.length > 1 ? ` (${U[r.world].name})` : ""} — $${r.price}`));
       lines.push("");
     });
+    const v = state && !shared && state.verdict;
+    if (v) lines.push("", `The judge says ${v.winner} wins. ${v.verdict}`, `MVP: ${v.mvp}`);
     return lines.join("\n").trim();
   }
 
@@ -579,6 +584,10 @@
       <h2 class="done__title">${isShared ? "Someone shared their teams" : "The teams are in"}<span class="wordmark__mark">.</span></h2>
       <p class="done__lede">Now argue about who wins.</p>
       <div class="finals">${cards}</div>
+      <section class="judge" aria-labelledby="judge-h">
+        <h2 class="section-label" id="judge-h">Who wins?</h2>
+        <div id="judge-body" aria-live="polite"></div>
+      </section>
       <div class="tools tools--loud">
         ${isShared ? "" : `
           <button class="btn btn--primary" type="button" id="again">Draft again, fresh shuffle</button>
@@ -589,13 +598,19 @@
       </div>`;
 
     on("undo", undo);
-    on("again", () => startDraft(state.players.map(p => p.name), state.worlds, state.passes));
+    renderJudge(worlds, teams, isShared);
+
+    on("again", () => {
+      judging = { busy: false, status: "", progress: null, error: "", verdict: null };
+      startDraft(state.players.map(p => p.name), state.worlds, state.passes);
+    });
     on("copy-text", e => copy(teamsAsText(worlds, teams), e.currentTarget, "Copied"));
     on("copy-link", e => {
       const url = `${location.href.split("#")[0]}#teams=${shareCode()}`;
       copy(url, e.currentTarget, "Link copied");
     });
     on("new", () => {
+      judging = { busy: false, status: "", progress: null, error: "", verdict: null };
       if (isShared) {
         shared = null;
         history.replaceState(null, "", location.pathname + location.search);
@@ -605,6 +620,147 @@
       }
       render();
     });
+  }
+
+  /* --- The judge -----------------------------------------------------
+     judge.js does the asking; this draws the settings, the wait and the
+     reveal. A verdict on your own draft is saved with it; one on a shared
+     link lives only until you leave. */
+
+  function renderJudge(worlds, teams, isShared) {
+    const body = document.getElementById("judge-body");
+    const J = window.Judge;
+    const verdict = isShared ? judging.verdict : (state.verdict || null);
+    const playable = teams.every(t => t.roster.length);
+
+    if (judging.busy) {
+      body.innerHTML = `
+        <p class="judge__status">${esc(judging.status)}</p>
+        ${judging.progress != null
+          ? `<div class="judge__bar"><span style="width:${Math.round(judging.progress * 100)}%"></span></div>`
+          : ""}`;
+      return;
+    }
+
+    if (verdict) {
+      body.innerHTML = verdictHtml(verdict) + `
+        <div class="tools tools--loud judge__again">
+          <button class="btn" type="button" id="judge-again">Ask for a second opinion</button>
+        </div>`;
+      on("judge-again", () => {
+        if (isShared) judging.verdict = null; else { state.verdict = null; save(); }
+        render();
+      });
+      return;
+    }
+
+    if (!playable) {
+      body.innerHTML = `<p class="muted"><em>Someone has no team, so there's nothing to judge.</em></p>`;
+      return;
+    }
+
+    const mode = prefs.judge || "gemini";
+    const key = J.gemini.key();
+    const localModel = prefs.localModel || J.local.models[0].id;
+    const gpu = J.local.supported();
+
+    body.innerHTML = `
+      <p class="judge__lede">Let an AI judge reason through the fight and pick a winner.</p>
+      <fieldset class="choices choices--judge"><legend class="visually-hidden">Judge</legend>
+        <label class="choice">
+          <input type="radio" name="judge" value="gemini" ${mode === "gemini" ? "checked" : ""} />
+          <span class="choice__body">
+            <span class="choice__name">Gemini</span>
+            <span class="choice__note">Google's model, with your own free API key. Quick and sharp.</span>
+          </span>
+        </label>
+        <label class="choice">
+          <input type="radio" name="judge" value="local" ${mode === "local" ? "checked" : ""} />
+          <span class="choice__body">
+            <span class="choice__name">On this device</span>
+            <span class="choice__note">A small model on your GPU. Private and free, but a big first download.</span>
+          </span>
+        </label>
+      </fieldset>
+
+      <div class="judge__opts">
+        ${mode === "gemini" ? (key ? `
+          <p class="judge__key">Your Gemini key is saved in this browser only.
+            <button class="btn btn--quiet btn--inline" type="button" id="forget-key">Forget it</button></p>` : `
+          <label class="field"><span class="field__label">Gemini API key</span>
+            <input class="field__input field__input--key" id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key" /></label>
+          <p class="judge__fine">Get one free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+            It stays in this browser and is only ever sent to Google.</p>`)
+        : `
+          ${gpu ? "" : `<p class="judge__warn">This browser doesn't have WebGPU, so it can't run a model here. Chrome or Edge on a laptop or desktop usually can.</p>`}
+          <fieldset class="chips chips--stack"><legend class="visually-hidden">Model</legend>
+            ${J.local.models.map(m => `
+              <label class="chip chip--wide">
+                <input type="radio" name="local-model" value="${m.id}" ${m.id === localModel ? "checked" : ""} />
+                <span>${esc(m.label)} <em>${esc(m.note)}</em></span>
+              </label>`).join("")}
+          </fieldset>`}
+      </div>
+
+      ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
+      <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>Reveal the winner</button>`;
+
+    body.querySelectorAll('[name="judge"]').forEach(i => i.addEventListener("change", () => {
+      prefs.judge = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
+    }));
+    body.querySelectorAll('[name="local-model"]').forEach(i => i.addEventListener("change", () => {
+      prefs.localModel = i.value; store.set(PREFS_KEY, prefs);
+    }));
+    on("forget-key", () => { J.gemini.forgetKey(); renderJudge(worlds, teams, isShared); });
+
+    on("judge-go", async () => {
+      if (mode === "gemini" && !key) {
+        const typed = document.getElementById("key-input").value.trim();
+        if (!typed) { judging.error = "Paste a Gemini API key first."; return renderJudge(worlds, teams, isShared); }
+        J.gemini.saveKey(typed);
+      }
+      const draftAtStart = state;
+      judging = { busy: true, status: "Calling the judge…", progress: null, error: "", verdict: null };
+      renderJudge(worlds, teams, isShared);
+      const onStatus = (text, progress) => {
+        judging.status = text;
+        judging.progress = progress == null ? null : progress;
+        if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
+      };
+      const worldName = w => U[w].name;
+      try {
+        const v = mode === "gemini"
+          ? await J.gemini.judge(teams, worldName, onStatus)
+          : await J.local.judge(teams, worldName, onStatus, prefs.localModel || J.local.models[0].id);
+        judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null };
+        if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
+        announce(`${v.winner} wins. ${v.verdict}`);
+      } catch (err) {
+        judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null };
+      }
+      if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
+    });
+  }
+
+  function verdictHtml(v) {
+    const paras = String(v.fight).split(/\n+/).filter(Boolean)
+      .map(p => `<p>${esc(p)}</p>`).join("");
+    const edges = (v.edges || []).map(e => `
+      <div class="edge">
+        <p class="edge__team">${esc(e.team)}</p>
+        <p><em>Strength:</em> ${esc(e.strength)}</p>
+        <p><em>Weakness:</em> ${esc(e.weakness)}</p>
+      </div>`).join("");
+    return `
+      <div class="verdict">
+        <div class="edges verdict__step" style="--i:0">${edges}</div>
+        <div class="verdict__fight verdict__step" style="--i:1">${paras}</div>
+        <p class="verdict__turn verdict__step" style="--i:2"><span class="verdict__label">the turning point</span> ${esc(v.turning_point)}</p>
+        <p class="verdict__mvp verdict__step" style="--i:3"><span class="verdict__label">most valuable</span> ${esc(v.mvp)}</p>
+        <h3 class="verdict__winner verdict__step" style="--i:4"><em>${esc(v.winner)}</em> wins<span class="wordmark__mark">.</span></h3>
+        <p class="verdict__line verdict__step" style="--i:5">${esc(v.verdict)}</p>
+        <p class="verdict__by verdict__step" style="--i:5">judged by ${esc(v.by || "the judge")}</p>
+      </div>`;
   }
 
   window.addEventListener("hashchange", () => { shared = readShared(); render(); });
