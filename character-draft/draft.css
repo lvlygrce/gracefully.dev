@@ -176,6 +176,14 @@ fieldset { border: 0; min-width: 0; }
   outline-offset: 3px;
 }
 
+.choices__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--space-sm);
+}
+
 .choices__note {
   font-family: var(--font-hand);
   font-size: var(--size-hand-sm);

@@ -383,7 +383,10 @@
 
         <h2 class="section-label">Pick your worlds</h2>
         <fieldset class="choices"><legend class="visually-hidden">Worlds</legend>${worlds}</fieldset>
-        <p class="choices__note" id="worlds-note"></p>
+        <div class="choices__bar">
+          <p class="choices__note" id="worlds-note"></p>
+          <button class="btn btn--quiet btn--inline" type="button" id="select-all">Select all</button>
+        </div>
 
         <h2 class="section-label">Passes each</h2>
         <fieldset class="chips"><legend class="visually-hidden">Passes each</legend>${PASS_OPTIONS.map(n => `
@@ -415,8 +418,17 @@
       note.classList.remove("choices__note--warn");
       note.textContent = !picked.length ? "Pick at least one world."
         : picked.length === 1 ? `${total} characters in the deck. Tick another world to mix them.`
+        : picked.length === boxes.length ? `Everything: all ${boxes.length} worlds, ${total} characters.`
         : `A mixed deck: ${worldsName(picked)}, ${total} characters.`;
+      selectAll.textContent = picked.length === boxes.length ? "Clear all" : "Select all";
     };
+    const boxes = [...form.querySelectorAll('[name="worlds"]')];
+    const selectAll = document.getElementById("select-all");
+    selectAll.addEventListener("click", () => {
+      const all = boxes.every(b => b.checked);
+      boxes.forEach(b => { b.checked = !all; });
+      countWorlds();
+    });
     form.addEventListener("change", countWorlds);
     countWorlds();
 
