@@ -649,5 +649,7 @@ em { font-style: italic; }
   .entry__link { grid-template-columns: 1.875rem 1fr auto; }
   .theme-toggle { top: var(--space-xs); right: var(--space-xs); }
   .home-button { top: var(--space-xs); left: var(--space-xs); }
+  /* On a phone they'd sit over the text as you scroll, so they stay at the top of the page instead. */
+  .theme-toggle, .home-button { position: absolute; }
   .penstroke { max-width: 100%; }
 }

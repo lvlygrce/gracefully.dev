@@ -42,7 +42,10 @@
     state.players.forEach(p => { p.passes = DEFAULT_PASSES; });
   }
 
-  let prefs = store.get(PREFS_KEY, { names: ["Player one", "Player two"], worlds: ["westeros"] });
+  // Saved preferences can be partial (say, a judge picked while viewing a
+  // shared result), so fill in whatever's missing.
+  let prefs = Object.assign({ names: ["Player one", "Player two"], worlds: ["westeros"] }, store.get(PREFS_KEY, {}) || {});
+  if (!Array.isArray(prefs.names) || prefs.names.length < 2) prefs.names = ["Player one", "Player two"];
   if (!Array.isArray(prefs.worlds)) prefs.worlds = U[prefs.universe] ? [prefs.universe] : ["westeros"];
   prefs.worlds = prefs.worlds.filter(w => U[w]);
   if (!prefs.worlds.length) prefs.worlds = ["westeros"];
