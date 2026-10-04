@@ -4,7 +4,9 @@
 (function () {
   "use strict";
 
-  const { connect, clock, safe, esc, picture } = window.Party;
+  const { connect, clock, safe, esc, picture, fitter } = window.Party;
+  // Fit the phone's screen where possible; long lists may still scroll below 12px.
+  const fit = fitter(() => 16, 12);
   const app = document.getElementById("app");
   const announcer = document.getElementById("announce");
   const ME_KEY = "character-draft:party:me";
@@ -63,7 +65,7 @@
     const s = state;
     if (s.phase === "auction") return `auction:${s.lots}:${s.lot.stage}:${s.lot.bid}:${s.lot.leader}:${me.admin}`;
     if (s.phase === "sold") return `sold:${s.lots}:${me.admin}`;
-    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}:${me.admin}:${(s.match.aftermath || []).length}`;
+    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}:${me.admin}:${(s.match.aftermath || []).length}:${s.match.film}`;
     if (s.phase === "bracket") return `bracket:${s.bracketRound}:${me.admin}`;
     if (s.phase === "lobby") return `lobby:${s.players.length}:${me.admin}`;
     return `${s.phase}:${me.admin}`;
@@ -78,6 +80,7 @@
     ({ lobby: lobbyView, auction: auctionView, sold: soldView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
     adminBar();
     tick();
+    fit();
   }
 
   const header = () => {
@@ -161,6 +164,21 @@
           <button class="btn btn--primary btn--big btn--wide" type="button" id="open">Open at $${openAmount.amount}</button>
           <button class="btn btn--wide" type="button" id="skip" ${p.skips ? "" : "disabled"}>Skip (${p.skips} left)</button>
         </div>`;
+    } else if (lot.stage === "open-all" && lot.skippedBy === me.id) {
+      body = `<p class="big-note">You skipped this one. Everyone else gets a chance to open the bidding.</p>`;
+    } else if (lot.stage === "open-all") {
+      if (openAmount.lot !== s.lots) openAmount = { lot: s.lots, amount: 1 };
+      openAmount.amount = Math.min(Math.max(1, openAmount.amount), p.budget);
+      body = `<h1 class="title title--lg">Up for grabs<span class="accent">.</span></h1>
+        <p class="big-note">${esc(player(lot.skippedBy).name)} skipped. Open the bidding if you want them, or let them go.</p>
+        <div class="dock">
+          <div class="stepper" role="group" aria-label="Opening bid">
+            <button type="button" data-step="-1" aria-label="Lower">−</button>
+            <output id="amount">$${openAmount.amount}</output>
+            <button type="button" data-step="1" aria-label="Higher">+</button>
+          </div>
+          <button class="btn btn--primary btn--big btn--wide" type="button" id="open">Open at $${openAmount.amount}</button>
+        </div>`;
     } else if (lot.stage === "open") {
       body = `<p class="big-note">${esc(player(lot.opener).name)} is deciding whether to open the bidding.</p>`;
     } else if (lot.leader === me.id) {
@@ -203,10 +221,14 @@
     let label = null, msg = "admin:next", extra = "";
     if (s.phase === "lobby") { label = s.players.length < 2 ? null : `Start the draft (${s.players.length} players)`; msg = "admin:start"; }
     else if (s.phase === "auction" && s.lot.stage === "bidding") label = "Sold! Close the bidding";
+    else if (s.phase === "auction" && s.lot.stage === "open-all") label = "Nobody wants them: move on";
     else if (s.phase === "sold") label = "Next card";
     else if (s.phase === "teams") label = "Start the tournament";
     else if (s.phase === "bracket") label = "Start the fight";
     else if (s.phase === "match" && m.stage === "vote") label = "Close the vote";
+    else if (s.phase === "match" && m.stage === "judging" && m.film === "ready") { label = "Play the film on the TV"; msg = "admin:film:play"; }
+    else if (s.phase === "match" && m.stage === "judging" && m.film === "playing") { label = "Skip to the result"; msg = "admin:film:skip"; }
+    else if (s.phase === "match" && m.stage === "judging" && m.film === "making") label = null;
     else if (s.phase === "match" && m.stage === "judging") { label = "Let the crowd decide instead"; msg = "admin:crowd"; }
     else if (s.phase === "match" && m.stage === "result") label = "Next fight";
     else if (s.phase === "champion") { label = "Play again with everyone"; msg = "admin:again"; }
@@ -216,7 +238,11 @@
     bar.className = "admin-bar";
     bar.innerHTML = `<span class="hand">you're running the show</span>${label ? `<button class="btn btn--primary btn--wide" type="button" id="admin-go">${esc(label)}</button>` : ""}${extra}`;
     app.prepend(bar);
-    on("admin-go", () => { net.send({ t: msg }); buzz(20); });
+    on("admin-go", () => {
+      if (msg.startsWith("admin:film:")) net.send({ t: "admin:film", action: msg.split(":")[2] });
+      else net.send({ t: msg });
+      buzz(20);
+    });
   }
 
   function myTeam() {
@@ -286,9 +312,10 @@
         }).join("")}</ul>` : ""}${fighting ? myTeam() : ""}`;
       return;
     }
+    const judgingNote = m.film === "making" ? "The judge has decided, and the film is being made. Look at the TV."
+      : m.film ? "The film's on the TV." : "The judge is deciding. Look at the TV.";
     app.innerHTML = `${header()}<h1 class="title title--xl">${fighting ? "You're up" : `${esc(a.name)} vs ${esc(b.name)}`}<span class="accent">.</span></h1>
-      <p class="big-note">${fighting ? (m.stage === "vote" ? "Everyone else is voting. Make your case, out loud." : "The judge is deciding. Look at the TV.")
-        : "The judge is deciding. Look at the TV."}</p>${fighting ? myTeam() : ""}`;
+      <p class="big-note">${fighting && m.stage === "vote" ? "Everyone else is voting. Make your case, out loud." : judgingNote}</p>${fighting ? myTeam() : ""}`;
   }
 
   function championView() {

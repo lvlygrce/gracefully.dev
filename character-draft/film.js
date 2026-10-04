@@ -88,7 +88,7 @@
 
   /* The player: the shots in order, a caption under each, chapter titles
      between prep and battle, and a callback when the last shot ends. */
-  function player(container, film, { onEnd } = {}) {
+  function player(container, film, { onEnd, onState } = {}) {
     const shots = film.shots.filter(s => s.url);
     if (!shots.length) { container.innerHTML = `<p class="judge__warn">None of the shots came back, so there's no film this time.</p>`; return; }
     container.innerHTML = `
@@ -98,6 +98,7 @@
           <video id="film-video" playsinline preload="auto"></video>
           <button class="film__play" id="film-play" type="button">Play the film</button>
         </div>
+        <div class="film__progress"><span class="film__bar"><span id="film-bar"></span></span><span class="film__time" id="film-time">0:00</span></div>
         <p class="film__caption" id="film-caption" aria-live="polite"></p>
         <p class="film__line" id="film-line"></p>
         <div class="film__dots">${shots.map((s, i) => `<button type="button" class="film__dot" data-shot="${i}" aria-label="Shot ${i + 1}"></button>`).join("")}</div>
@@ -109,8 +110,22 @@
     const line = container.querySelector("#film-line");
     const play = container.querySelector("#film-play");
     let i = 0, ended = false;
+    const bar = container.querySelector("#film-bar");
+    const time = container.querySelector("#film-time");
+    // Shot lengths for the overall bar: known from the tier, else learned as they load.
+    const lens = shots.map(s => Number(s.duration) || 0);
+    const mmss = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+    function progress() {
+      if (!lens[i] && video.duration) lens[i] = video.duration;
+      const total = lens.reduce((a, b) => a + (b || 0), 0) || video.duration || 1;
+      const done = lens.slice(0, i).reduce((a, b) => a + (b || 0), 0) + (video.currentTime || 0);
+      bar.style.width = `${Math.min(100, (done / total) * 100)}%`;
+      time.textContent = `${mmss(done)} / ${mmss(total)}`;
+    }
+    video.addEventListener("timeupdate", progress);
+    video.addEventListener("loadedmetadata", progress);
 
-    const finish = () => { if (ended) return; ended = true; onEnd && onEnd(); };
+    const finish = () => { if (ended) return; ended = true; onState && onState("ended"); onEnd && onEnd(); };
     function show(k, autoplay) {
       i = k;
       const s = shots[k];
@@ -119,14 +134,49 @@
       line.textContent = s.line ? `${s.speaker ? `${s.speaker}: ` : ""}“${s.line}”` : "";
       chapter.textContent = s.label || "";
       container.querySelectorAll(".film__dot").forEach((d, n) => d.classList.toggle("film__dot--on", n === k));
-      if (autoplay) video.play().catch(() => { play.hidden = false; });
+      if (autoplay) start();
+    }
+    // Play with sound if the browser allows; otherwise play muted and say so.
+    function start() {
+      play.hidden = true;
+      video.muted = false;
+      video.play().then(() => onState && onState("playing")).catch(() => {
+        video.muted = true;
+        video.play().then(() => { onState && onState("muted"); }).catch(() => { play.hidden = false; });
+      });
     }
     video.addEventListener("ended", () => { if (i + 1 < shots.length) show(i + 1, true); else finish(); });
-    play.addEventListener("click", () => { play.hidden = true; show(i, true); });
+    play.addEventListener("click", () => { show(i, true); });
+    video.addEventListener("click", () => { if (video.muted) { video.muted = false; onState && onState("playing"); } });
     container.querySelectorAll(".film__dot").forEach(d => d.addEventListener("click", () => { play.hidden = true; show(Number(d.dataset.shot), true); }));
     container.querySelector("#film-skip").addEventListener("click", () => { video.pause(); finish(); });
     show(0, false);
+    return {
+      play: () => (video.paused ? start() : null),
+      pause: () => { video.pause(); onState && onState("paused"); },
+      skip: () => { video.pause(); finish(); },
+    };
   }
+
+  // While a film is being made: time so far against a rough estimate. Shots
+  // render in parallel, so it's mostly the queue; longer films take longer.
+  function makingBar(startedAt, shotCount) {
+    const est = 150 + shotCount * 30;
+    const secs = Math.max(0, (Date.now() - startedAt) / 1000);
+    const pct = Math.min(95, (secs / est) * 100);
+    const mm = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+    return `<div class="film__progress film__progress--making" data-started="${startedAt}" data-shots="${shotCount}">
+      <span class="film__bar"><span style="width:${pct}%"></span></span>
+      <span class="film__time">${mm(secs)} so far · usually about ${Math.round(est / 60)} minutes</span></div>`;
+  }
+  // Keep any "making" bars on the page ticking.
+  setInterval(() => {
+    document.querySelectorAll(".film__progress--making").forEach(el => {
+      const tmp = document.createElement("div");
+      tmp.innerHTML = makingBar(Number(el.dataset.started), Number(el.dataset.shots));
+      el.replaceWith(tmp.firstElementChild);
+    });
+  }, 1000);
 
   const ownKey = {
     get: () => safe.get(HF_STORE),
@@ -215,5 +265,5 @@
     setTimeout(() => URL.revokeObjectURL(url), 5000);
   }
 
-  window.Film = { quote, nzdRate, nz, start, wait, status, player, esc, TEXT_USD, ownKey, safe, battles };
+  window.Film = { quote, nzdRate, nz, start, wait, status, player, makingBar, esc, TEXT_USD, ownKey, safe, battles };
 })();

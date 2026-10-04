@@ -984,7 +984,7 @@
     const prompts = Object.fromEntries(t.shots.map(x => [x.key, board.shots[x.key].prompt]));
     const job = await Film.start({ tier, prompts });
     return {
-      tier, id: job.id, usd: job.usd, style: board.style, watched: false,
+      tier, id: job.id, usd: job.usd, style: board.style, watched: false, startedAt: Date.now(),
       shots: t.shots.map(x => ({
         key: x.key, duration: x.duration, label: shotLabel(x.key, teams),
         caption: board.shots[x.key].caption, url: null, status: "queued",
@@ -1004,7 +1004,8 @@
       body.innerHTML = `
         ${verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : ""}
         <div class="filming">
-          <p class="judge__status">Filming: ${done} of ${film.shots.length} shots ready. This takes a few minutes; the winner is revealed at the end.</p>
+          <p class="judge__status">Filming: ${done} of ${film.shots.length} shots ready. The winner is revealed at the end.</p>
+          ${Film.makingBar(film.startedAt || Date.now(), film.shots.length)}
           <ol class="shotlist">${film.shots.map(x => `
             <li class="${x.url ? "shot--done" : ""}"><span class="verdict__label">${esc(x.label)} · ${x.duration}s · ${x.url ? "ready" : esc(x.status.replace("_", " "))}</span>${esc(x.caption)}</li>`).join("")}</ol>
           <button class="btn btn--quiet btn--inline" type="button" id="film-skip-wait">Skip the film and show the winner</button>

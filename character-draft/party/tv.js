@@ -6,7 +6,9 @@
 (function () {
   "use strict";
 
-  const { connect, clock, safe, esc, picture } = window.Party;
+  const { connect, clock, safe, esc, picture, fitter } = window.Party;
+  // Everything fits the TV: text and pictures shrink rather than scroll.
+  const fit = fitter(() => Math.min(30, Math.max(15, window.innerWidth * 0.0112)), 8);
   const U = window.UNIVERSES;
   const IMAGES = window.CHARACTER_IMAGES || {};
   const J = window.Judge;
@@ -30,6 +32,15 @@
   let view = null;
   let status = "connecting";
   let error = "";
+  // Browsers only allow sound after someone has clicked the page once.
+  let soundOk = false;
+  document.addEventListener("pointerdown", () => {
+    soundOk = true;
+    const n = document.getElementById("sound-note");
+    if (n) n.textContent = "";
+  }, { once: true });
+  let filmCtl = null;
+
   let judging = { matchId: null, preps: [null, null], status: "", error: "", film: null };
   const Film = window.Film;
 
@@ -52,6 +63,12 @@
       if (msg.t === "hosting") { pin = msg.pin; safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
       else if (msg.t === "gone") { safe.remove(HOST_KEY); createRoom(); }
       else if (msg.t === "admin-start") { if (state && state.phase === "lobby") startDraft(); }
+      else if (msg.t === "film") {   // the admin's phone controls the film on this screen
+        if (!filmCtl) return;
+        if (msg.action === "play") filmCtl.play();
+        else if (msg.action === "pause") filmCtl.pause();
+        else if (msg.action === "skip") filmCtl.skip();
+      }
       else if (msg.t === "replaced") { error = "This party is now being shown on another screen."; render(true); }
       else if (msg.t === "error") { error = msg.message; render(true); }
       else if (msg.t === "state") {
@@ -113,6 +130,7 @@
     const s = state;
     ({ lobby: lobbyView, auction: auctionView, sold: soldView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
     tick();
+    fit();
   }
 
   function partial() {
@@ -121,6 +139,7 @@
     if (s.phase === "auction") updateAuction();
     // The reasoned aftermath of a crowd fight arrives a few seconds after the result.
     if (s.phase === "match" && s.match.stage === "result" && (s.match.aftermath || []).length && !document.querySelector(".aftermath")) full();
+    fit();
     if (s.phase === "match" && s.match.stage === "vote") {
       const el = document.getElementById("voted");
       if (el) el.textContent = `${s.match.voted} of ${s.match.voters} voted`;
@@ -168,6 +187,7 @@
             </div>
           </div>
           <p class="hand" id="count" style="margin-top: var(--space-md)"></p>
+          <p class="muted" id="sound-note">${soundOk ? "" : "Click anywhere on this screen once, so films can play with sound."}</p>
           <div class="roster-cloud" id="cloud"></div>
           ${foot(`<button class="btn btn--primary btn--big" type="button" id="start">Start the draft</button>`)}
         </section>
@@ -388,6 +408,10 @@
       return `<p class="hand">${esc(player(lot.opener).name)}'s turn</p>
         <p class="title title--lg">Open the bidding, or skip<span class="accent">.</span></p>`;
     }
+    if (lot.stage === "open-all") {
+      return `<p class="hand">${esc(player(lot.skippedBy).name)} skipped</p>
+        <p class="title title--lg">Anyone else can open the bidding<span class="accent">.</span></p>`;
+    }
     const lead = player(lot.leader);
     return `<p class="hand">highest bid</p>
       <p class="lot__bid"><span class="money">$${lot.bid}</span> <span class="title title--md">${esc(lead ? lead.name : "")}</span></p>
@@ -408,11 +432,12 @@
           <div id="lot-status">${lotStatus()}</div>
           <span class="timer lot__timer" data-ends="${lot.endsAt}" data-fmt="{s}" id="lot-timer"></span>
           <div class="bar"><span data-bar="${lot.endsAt}" data-total="${total}" id="lot-bar"></span></div>
-          <p class="hand">${lot.stage === "open" ? "on their phone" : "raise from your phone"}</p>
+          <p class="hand">${lot.stage === "open" ? "on their phone" : lot.stage === "open-all" ? "open from your phone" : "raise from your phone"}</p>
         </div>
       </div>
       <div class="players-bar" id="players-bar">${playerChips()}</div>
-      ${foot(lot.stage === "bidding" ? `<button class="btn btn--quiet" type="button" id="next">Sold! Close the bidding now</button>` : "")}`;
+      ${foot(lot.stage === "bidding" ? `<button class="btn btn--quiet" type="button" id="next">Sold! Close the bidding now</button>`
+        : lot.stage === "open-all" ? `<button class="btn btn--quiet" type="button" id="next">Nobody wants them: move on</button>` : "")}`;
     on("next", () => net.send({ t: "host:next" }));
     if (lot.stage === "open") announce(`${c.name} is up. ${player(lot.opener).name} opens or skips.`);
   }
@@ -438,7 +463,7 @@
       ? `<h1 class="title title--xl arrive">Sold to <em>${esc(w.name)}</em><span class="accent">.</span></h1>
          <p class="title title--lg">for $${r.amount}</p>`
       : `<h1 class="title title--xl arrive">Skipped<span class="accent">.</span></h1>
-         <p class="big-note">${skipper ? `${esc(skipper.name)} sent them away.` : ""} Gone for good.</p>`;
+         <p class="big-note">${skipper ? `${esc(skipper.name)} skipped, and nobody else opened the bidding.` : ""} Gone for good.</p>`;
     app.innerHTML = `
       <div class="lot">
         <div class="lot__card">${cardHtml(c, 0)}</div>
@@ -521,7 +546,8 @@
     const m = state.match;
     const cards = p.roster.map(r => card(r.card)).filter(Boolean);
     const won = m.stage === "result" ? (m.winner === id ? "side--won" : "side--lost") : "";
-    const prep = (m.stage === "result" && m.verdict && m.verdict.preps && m.verdict.preps[k]) || (m.stage === "judging" && judging.matchId === m.id && judging.preps[k]);
+    // Plans show while the councils work; the result screen keeps to the result.
+    const prep = m.stage === "judging" && judging.matchId === m.id && judging.preps[k];
     return `<section class="side ${won}" id="side-${k}">
       <p class="hand">${k === 0 ? "in this corner" : "and in this corner"}</p>
       <h2 class="title title--lg">${esc(p.name)}</h2>
@@ -540,11 +566,23 @@
         <span class="timer" data-ends="${m.endsAt}" data-fmt="{s}"></span></div>
         <div class="bar"><span data-bar="${m.endsAt}" data-total="${s.settings.voteSeconds}"></span></div>`;
     } else if (m.stage === "judging" && judging.matchId === m.id && judging.film && judging.film.ready) {
-      middle = `<div id="tv-film" class="tv-film"></div>`;
+      // The film gets the whole screen.
+      app.innerHTML = `<p class="hand">${esc(player(m.a).name)} vs ${esc(player(m.b).name)} · press play here, or on the admin's phone</p>
+        <div id="tv-film" class="tv-film tv-film--full"></div>`;
+      filmCtl = Film.player(document.getElementById("tv-film"), judging.film, {
+        onEnd: () => { filmCtl = null; net.send({ t: "host:film", matchId: m.id, film: null }); finishJudged(); },
+        onState: st => {
+          if (st === "playing" || st === "muted") net.send({ t: "host:film", matchId: m.id, film: "playing" });
+          if (st === "paused") net.send({ t: "host:film", matchId: m.id, film: "ready" });
+          const note = app.querySelector(".hand");
+          if (note && st === "muted") note.textContent = "Sound is off: click the screen once to turn it on.";
+        },
+      });
+      return;
     } else if (m.stage === "judging") {
       const f = judging.matchId === m.id && judging.film;
       middle = `<p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
-        ${f ? `<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
+        ${f ? `${Film.makingBar(f.startedAt, f.shots.length)}<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
           <button class="btn btn--quiet" type="button" id="skip-film">Skip the film</button>` : ""}
         ${judging.matchId === m.id && judging.error ? `<p class="warn">${esc(judging.error)}</p>
           <div class="controls"><button class="btn btn--primary" type="button" id="retry">Try the judge again</button>
@@ -564,8 +602,7 @@
         ${m.verdict ? `<div class="verdict arrive" style="--i:2"><p class="big-note"><em>${esc(m.verdict.verdict)}</em></p>
           <p><span class="hand">turning point</span> ${esc(m.verdict.turning_point)}</p>
           <p><span class="hand">most valuable</span> ${esc(m.verdict.mvp)}</p>
-          ${String(m.verdict.fight).split(/\n+/).filter(Boolean).map(p => `<p class="muted">${esc(p)}</p>`).join("")}
-          <p class="hand">judged by ${esc(m.verdict.by)}</p></div>` : ""}
+          <p class="hand">judged by ${esc(m.verdict.by)} · the whole story is in recent battles</p></div>` : ""}
         <div class="controls">${countdown(s.endsAt, "next fight in {s}")}<button class="btn btn--primary" type="button" id="next">Next</button></div>`;
     }
     app.innerHTML = `
@@ -578,13 +615,7 @@
     on("close-vote", () => net.send({ t: "host:next" }));
     on("retry", () => { judging.matchId = null; maybeJudge(); });
     on("crowd", () => net.send({ t: "host:crowd" }));
-    on("skip-film", () => { if (judging.film) judging.film.skip = true; finishJudged(); });
-    const filmBox = document.getElementById("tv-film");
-    if (filmBox && judging.film) {
-      Film.player(filmBox, judging.film, { onEnd: finishJudged });
-      const play = filmBox.querySelector("#film-play");
-      if (play) play.click();
-    }
+    on("skip-film", () => { if (judging.film) judging.film.skip = true; net.send({ t: "host:film", matchId: m.id, film: null }); finishJudged(); });
     if (m.stage === "vote") announce(`${player(m.a).name} against ${player(m.b).name}. Vote on your phones.`);
     if (m.stage === "result") announce(`${player(m.winner).name} wins.`);
   }
@@ -677,7 +708,8 @@
           setStatus("Sending the storyboard to the studio…");
           const job = await Film.start({ tier: tier.id, prompts: Object.fromEntries(tier.shots.map(x => [x.key, board.shots[x.key].prompt])) });
           const label = k => k.startsWith("prep_a") ? `${teams[0].name}'s war council prepares` : k.startsWith("prep_b") ? `${teams[1].name}'s war council prepares` : "The battle";
-          judging.film = { shots: tier.shots.map(x => ({ key: x.key, label: label(x.key), caption: board.shots[x.key].caption, speaker: board.shots[x.key].speaker, line: board.shots[x.key].line, url: null, status: "queued" })) };
+          judging.film = { startedAt: Date.now(), shots: tier.shots.map(x => ({ key: x.key, duration: x.duration, label: label(x.key), caption: board.shots[x.key].caption, speaker: board.shots[x.key].speaker, line: board.shots[x.key].line, url: null, status: "queued" })) };
+          net.send({ t: "host:film", matchId, film: "making" });
           setStatus("Filming the fight. This takes a few minutes; the winner is revealed when it ends.");
           render(true);
           await Film.wait(job.id, st => {
@@ -689,7 +721,8 @@
           v.film = { shots: judging.film.shots };
           judging.film.ready = judging.film.shots.some(x => x.url);
           keepParty(teams, v);
-          if (!judging.film.ready) return finishJudged();
+          if (!judging.film.ready) { net.send({ t: "host:film", matchId, film: null }); return finishJudged(); }
+          net.send({ t: "host:film", matchId, film: "ready" });
           return render(true);   // the film plays, then finishJudged sends the result
         } catch (err) {
           judging.film = null;

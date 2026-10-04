@@ -978,6 +978,11 @@ fieldset { border: 0; min-width: 0; }
 
 .film__line { font-family: var(--font-hand); font-size: var(--size-hand); color: var(--ink-muted); min-height: 1.3em; }
 
+.film__progress { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.4rem; }
+.film__bar { flex: 1; height: 0.4rem; background: var(--paper-sunk); border-radius: 999px; overflow: hidden; }
+.film__bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width 0.3s linear; }
+.film__time { font-family: var(--font-hand); font-size: var(--size-hand-sm); color: var(--ink-muted); white-space: nowrap; }
+
 .film__dots { display: flex; gap: 0.4rem; margin-top: var(--space-2xs); }
 
 .film__dot {

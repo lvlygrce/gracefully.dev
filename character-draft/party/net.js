@@ -79,5 +79,30 @@
       ? `<span class="pic__badge"><img src="${esc(badge)}" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.remove()" /></span>` : ""}</span>`;
   }
 
-  window.Party = { connect, clock, safe, esc, picture, SERVER };
+  /* Fit to the screen: shrink the root font size (everything is sized in
+     rem) until the page needs no scrolling, but never below a readable
+     minimum. Re-runs on resize and as pictures finish loading. */
+  function fitter(base, min) {
+    const root = document.documentElement;
+    let queued = false;
+    const fits = () => root.scrollHeight <= window.innerHeight + 1;
+    function run() {
+      queued = false;
+      let hi = base(), lo = min;
+      root.style.fontSize = `${hi}px`;
+      if (fits()) return;
+      for (let i = 0; i < 8; i++) {
+        const mid = (lo + hi) / 2;
+        root.style.fontSize = `${mid}px`;
+        if (fits()) lo = mid; else hi = mid;
+      }
+      root.style.fontSize = `${lo}px`;
+    }
+    const soon = () => { if (!queued) { queued = true; setTimeout(run, 30); } };
+    window.addEventListener("resize", soon);
+    document.addEventListener("load", e => { if (e.target.tagName === "IMG") soon(); }, true);
+    return soon;
+  }
+
+  window.Party = { connect, clock, safe, esc, picture, fitter, SERVER };
 })();
