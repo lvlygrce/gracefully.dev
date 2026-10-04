@@ -416,6 +416,8 @@
         </p>
 
         <button class="btn btn--primary" type="submit">Shuffle and begin</button>
+        <p class="party-link">More than two of you? <a href="party/">Party mode</a> puts the game on a TV,
+          with up to 24 players joining on their phones and a knockout tournament at the end.</p>
       </form>`;
 
     const form = document.getElementById("setup");

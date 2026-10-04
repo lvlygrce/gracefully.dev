@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="phone">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Join Character Draft</title>
+  <meta name="description" content="Join a Character Draft party on your phone with the PIN on the TV." />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#fbf7ef" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/style.css?v=2" />
+  <!-- Bump ?v= on every release so browsers drop their cached copies. -->
+  <link rel="stylesheet" href="/character-draft/party/party.css?v=1" />
+
+  <script>
+    try {
+      var t = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* blocked storage — stay on light */ }
+  </script>
+</head>
+<body>
+  <a class="home-button" href="/" aria-label="Back to Gracefully" title="Back to Gracefully">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3.5 11.2 12 4l8.5 7.2" />
+      <path d="M5.8 9.6V19.3c0 .4.3.7.7.7h3.9v-5.4h3.2V20h3.9c.4 0 .7-.3.7-.7V9.6" />
+    </svg>
+  </a>
+
+  <main class="stage" id="app"></main>
+  <p id="announce" class="visually-hidden" aria-live="polite"></p>
+
+  <script src="/character-draft/party/net.js?v=1"></script>
+  <script src="/character-draft/party/phone.js?v=1"></script>
+</body>
+</html>
