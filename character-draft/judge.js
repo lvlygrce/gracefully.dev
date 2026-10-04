@@ -10,6 +10,10 @@
   "use strict";
 
   const KEY_STORE = "character-draft:v1:gemini-key";
+  const PIN_STORE = "character-draft:v1:pin";
+  const SERVER = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+    ? "http://localhost:8080"
+    : "https://party-server-production-d0f7.up.railway.app";
   const MODEL_STORE = "character-draft:v1:gemini-model";
   const GEMINI = "https://generativelanguage.googleapis.com/v1beta";
   const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm";
@@ -240,19 +244,46 @@ Reply as JSON:
     return data;
   }
 
+  /* --- The PIN -----------------------------------------------------
+     Grace's PIN unlocks the Gemini and video keys held on the party server.
+     The keys never come to the browser: requests go through the server with
+     the PIN, which it checks (and locks out guessers). */
+
+  const pin = {
+    get: () => safe.get(PIN_STORE),
+    clear: () => safe.remove(PIN_STORE),
+    async verify(p) {
+      const r = await fetch(`${SERVER}/pin`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ pin: p }) });
+      const d = await r.json().catch(() => ({}));
+      if (r.status === 429) throw new Error(d.error || "Too many wrong PINs. Try again in 15 minutes.");
+      if (!d.ok) return false;
+      safe.set(PIN_STORE, p);
+      safe.remove(MODEL_STORE);
+      return true;
+    },
+    looksLike: v => /^\d{4}$/.test(String(v).trim()),
+  };
+
   /* --- Gemini ------------------------------------------------------ */
 
   const gemini = {
     key: () => safe.get(KEY_STORE),
+    ready: () => !!(safe.get(KEY_STORE) || pin.get()),
     saveKey: k => { safe.set(KEY_STORE, k.trim()); safe.remove(MODEL_STORE); },
-    forgetKey: () => { safe.remove(KEY_STORE); safe.remove(MODEL_STORE); },
+    forgetKey: () => { safe.remove(KEY_STORE); pin.clear(); safe.remove(MODEL_STORE); },
 
     async request(path, body) {
-      const res = await fetch(`${GEMINI}/${path}`, {
+      // Your own key goes straight to Google; with the PIN, through the server.
+      const viaPin = !gemini.key() && pin.get();
+      const res = await fetch(viaPin ? `${SERVER}/gemini/${path}` : `${GEMINI}/${path}`, {
         method: body ? "POST" : "GET",
-        headers: { "x-goog-api-key": gemini.key(), ...(body ? { "content-type": "application/json" } : {}) },
+        headers: {
+          ...(viaPin ? { "x-draft-pin": pin.get() } : { "x-goog-api-key": gemini.key() }),
+          ...(body ? { "content-type": "application/json" } : {}),
+        },
         body: body ? JSON.stringify(body) : undefined,
       });
+      if (viaPin && res.status === 403) { pin.clear(); throw new Error("That PIN isn't right any more. Enter it again, or use your own Gemini key."); }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         const msg = (data.error && data.error.message) || `Gemini said ${res.status}.`;
@@ -563,5 +594,5 @@ The ${battleShots.length} battle shots tell the fight from first clash to the tu
     return board;
   }
 
-  window.Judge = { gemini, local, run, storyboard };
+  window.Judge = { gemini, local, run, storyboard, pin, SERVER };
 })();

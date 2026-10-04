@@ -191,6 +191,17 @@ html.tv { font-size: clamp(15px, 1.12vw, 30px); }
 
 .players-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: var(--space-md); }
 
+.lot { display: grid; grid-template-columns: minmax(14rem, 22rem) 1fr; gap: var(--space-lg); align-items: center; margin: var(--space-sm) 0; }
+.lot__card .card__name { font-size: 2rem; }
+.lot__card .card__note { font-size: 1.1rem; }
+.lot__side { min-width: 0; }
+.lot__bid { display: flex; align-items: baseline; gap: var(--space-sm); flex-wrap: wrap; }
+.lot__bid .money { font-size: clamp(4rem, 9vw, 8rem); line-height: 1; }
+.lot__bids { list-style: none; display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; color: var(--ink-muted); font-family: var(--font-hand); font-size: var(--size-hand); margin-top: var(--space-2xs); }
+.lot__timer { font-size: 4rem; display: block; margin-top: var(--space-sm); }
+.strip--slim { grid-template-columns: 5rem 1fr; padding: 0.3rem; margin: 0; max-width: 34rem; }
+.strip--slim .muted { display: none; }
+
 /* --- TV: teams, bracket, match, champion ------------------- */
 
 .teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: var(--space-sm); }
@@ -278,10 +289,29 @@ html.tv { font-size: clamp(15px, 1.12vw, 30px); }
 
 .big-note { font-size: 1.25rem; line-height: 1.45; margin-top: var(--space-xs); }
 
+/* The admin's controls, pinned to the top of their phone. */
+.admin-bar {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0 0 var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  background: var(--accent-wash);
+  border-radius: var(--radius-blob);
+}
+.admin-bar .hand { font-size: var(--size-hand-sm); }
+
+.raises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+.raise { font-size: 1.5rem; padding: 0.9rem 0.4rem; }
+.raise small { display: block; font-family: var(--font-text); font-size: 0.85rem; color: inherit; opacity: 0.75; }
+
+.phone-lot { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-sm); }
+.phone-lot .pic { width: 6.5rem; }
+.phone-lot .money { font-size: 3rem; line-height: 1; }
+
 /* --- Small screens and motion ------------------------------ */
 
 @media (max-width: 52rem) {
-  .lobby, .versus { grid-template-columns: 1fr; }
+  .lobby, .versus, .lot { grid-template-columns: 1fr; }
   .versus__vs { padding-top: 0; text-align: center; }
   .join { grid-template-columns: 1fr; text-align: center; justify-items: center; }
 }

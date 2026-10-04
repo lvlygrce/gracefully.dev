@@ -14,7 +14,7 @@
   let state = null, me = null;
   let view = null;
   let flash = "";                           // a one-off message on the join screen
-  let choice = { round: 0, card: null, amount: 1 };
+  let openAmount = { lot: 0, amount: 1 };
   let joining = false;
 
   const announce = t => { announcer.textContent = ""; requestAnimationFrame(() => { announcer.textContent = t; }); };
@@ -38,7 +38,7 @@
         const was = state;
         state = msg.state; me = msg.me;
         if (was && was.phase !== state.phase) {
-          if (state.phase === "market") buzz(60);
+          if (state.phase === "auction" && state.lot && state.lot.opener === me.id) buzz([60, 40, 60]);
           if (state.phase === "match" && state.match && (state.match.a === me.id || state.match.b === me.id || me.canVote)) buzz([40, 60, 40]);
         }
         render();
@@ -61,12 +61,12 @@
   function keyFor() {
     if (!state || !me) return `join:${joining}`;
     const s = state;
-    if (s.phase === "market") return `market:${s.round}:${me.bid ? me.bid.card + me.bid.amount : "-"}:${(mine() || {}).active}`;
-    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}`;
-    if (s.phase === "bracket") return `bracket:${s.bracketRound}`;
-    if (s.phase === "results") return `results:${s.round}`;
-    if (s.phase === "lobby") return `lobby:${s.players.length}`;
-    return s.phase;
+    if (s.phase === "auction") return `auction:${s.lots}:${s.lot.stage}:${s.lot.bid}:${s.lot.leader}:${me.admin}`;
+    if (s.phase === "sold") return `sold:${s.lots}:${me.admin}`;
+    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}:${me.admin}`;
+    if (s.phase === "bracket") return `bracket:${s.bracketRound}:${me.admin}`;
+    if (s.phase === "lobby") return `lobby:${s.players.length}:${me.admin}`;
+    return `${s.phase}:${me.admin}`;
   }
 
   function render(force) {
@@ -75,7 +75,8 @@
     view = key;
     if (!state || !me) return joinView();
     const s = state;
-    ({ lobby: lobbyView, market: marketView, results: resultsView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
+    ({ lobby: lobbyView, auction: auctionView, sold: soldView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
+    adminBar();
     tick();
   }
 
@@ -83,7 +84,7 @@
     const p = mine();
     if (!p) return "";
     return `<div class="me-bar"><span class="title title--md">${esc(p.name)}</span>
-      <span><span class="money">$${p.budget}</span> <span class="hand">${p.roster.length}/${state.settings.team}</span></span></div>`;
+      <span><span class="money">$${p.budget}</span> <span class="hand">${p.roster.length}/${state.settings.team} · ${p.skips} skip${p.skips === 1 ? "" : "s"}</span></span></div>`;
   };
 
   function joinView() {
@@ -122,76 +123,100 @@
       <h1 class="title title--xl arrive">You're in<span class="accent">.</span></h1>
       <p class="big-note arrive" style="--i:1">Watch the TV. The draft starts when the host is ready.</p>
       <p class="hand arrive" style="--i:2">${state.players.length} players so far</p>
-      <p class="muted" style="margin-top: var(--space-md)">How it works: each round, cards appear on the TV and here. Bid on one, in secret.
-        Highest bid takes it. You have $${state.settings.budget} for ${state.settings.team} characters.</p>
+      <p class="muted" style="margin-top: var(--space-md)">How it works: one character at a time goes up for auction. On your turn,
+        open the bidding or use a skip to send them away; you have ${state.settings.skips} skip${state.settings.skips === 1 ? "" : "s"}.
+        Anyone can raise, and every bid resets the clock. You have $${state.settings.budget} for ${state.settings.team} characters.</p>
       <div class="controls"><button class="btn btn--quiet" type="button" id="leave">Leave this game</button></div>`;
     on("leave", () => { net.send({ t: "leave" }); });
   }
 
-  function marketView() {
-    const s = state, p = mine();
-    if (choice.round !== s.round) choice = { round: s.round, card: null, amount: 1 };
-    if (!p.active) {
-      app.innerHTML = `${header()}<h1 class="title title--lg">${p.roster.length >= s.settings.team ? "Your team's full" : "You're out of money"}<span class="accent">.</span></h1>
-        <p class="big-note">Watch the others fight over the rest on the TV.</p>${myTeam()}`;
-      return;
-    }
-    if (me.bid && me.bid.card && !choice.card) { choice.card = me.bid.card; choice.amount = me.bid.amount; }
-    choice.amount = Math.min(Math.max(1, choice.amount), p.budget);
-    const locked = me.bid;
-    const lockedCard = locked && locked.card && card(locked.card);
-    app.innerHTML = `${header()}
-      <div class="topline"><p class="hand">round ${s.round} · pick one, bid in secret</p>
-        <span class="timer" data-ends="${s.endsAt}" data-fmt="{s}"></span></div>
-      <div class="bar"><span data-bar="${s.endsAt}" data-total="${s.settings.roundSeconds}"></span></div>
-      ${locked ? `<p class="big-note">${lockedCard ? `Locked in: <em>$${locked.amount}</em> on ${esc(lockedCard.name)}.` : "You're sitting this round out."}
-        <span class="muted">You can change it until time's up.</span></p>` : ""}
-      <div class="pick">${s.market.map(cid => {
-        const c = card(cid);
-        return `<button class="pick__card" type="button" data-card="${cid}" aria-pressed="${choice.card === cid}">
-          ${picture(c)}<span><span class="card__name">${esc(c.name)}</span><br /><span class="card__note">${esc(c.worldName)} · ${esc(c.note)}</span>
-          ${(c.tags || []).map(t => `<br /><span class="card__tag">${esc(t)}</span>`).join("")}</span></button>`;
-      }).join("")}</div>
-      <div class="dock">
-        <div class="stepper" role="group" aria-label="Bid amount">
-          <button type="button" data-step="-1" aria-label="Lower bid">−</button>
-          <output id="amount">$${choice.amount}</output>
-          <button type="button" data-step="1" aria-label="Raise bid">+</button>
-        </div>
-        <button class="btn btn--primary btn--big btn--wide" type="button" id="bid" ${choice.card ? "" : "disabled"}>${choice.card ? `Bid $${choice.amount} on ${esc(card(choice.card).name)}` : "Tap a card to bid"}</button>
-        <button class="btn btn--quiet" type="button" id="skip">Skip this round</button>
-      </div>`;
-    app.querySelectorAll("[data-card]").forEach(b => b.addEventListener("click", () => {
-      choice.card = b.dataset.card; view = null; render();
-    }));
-    app.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
-      choice.amount = Math.min(Math.max(1, choice.amount + Number(b.dataset.step)), p.budget);
-      document.getElementById("amount").textContent = `$${choice.amount}`;
-      const bid = document.getElementById("bid");
-      if (choice.card) bid.textContent = `Bid $${choice.amount} on ${card(choice.card).name}`;
-    }));
-    on("bid", () => { net.send({ t: "bid", card: choice.card, amount: choice.amount }); buzz(30); });
-    on("skip", () => { choice.card = null; net.send({ t: "bid", card: null }); });
+  function lotCard(c, extra) {
+    return `<div class="phone-lot">${picture(c)}<div><span class="card__name">${esc(c.name)}</span><br />
+      <span class="card__note">${esc(c.worldName)} · ${esc(c.note)}</span>
+      ${(c.tags || []).map(t => `<br /><span class="card__tag">${esc(t)}</span>`).join("")}${extra || ""}</div></div>`;
   }
 
-  function resultsView() {
-    const s = state;
-    const won = s.lastRound.results.filter(r => r.winner === me.id);
-    const lost = s.lastRound.results.filter(r => r.winner !== me.id && r.bids.some(b => b.player === me.id));
+  function auctionView() {
+    const s = state, lot = s.lot, p = mine(), c = card(lot.card);
+    const total = lot.stage === "open" ? s.settings.openSeconds : s.settings.bidSeconds;
+    const clock = `<div class="topline"><p class="hand">card ${s.lots}</p><span class="timer" data-ends="${lot.endsAt}" data-fmt="{s}"></span></div>
+      <div class="bar"><span data-bar="${lot.endsAt}" data-total="${total}"></span></div>`;
+    const lead = player(lot.leader);
+    const bidLine = lot.stage === "bidding"
+      ? `<br /><span class="money">$${lot.bid}</span> <span class="hand">${lot.leader === me.id ? "you" : esc(lead ? lead.name : "")}</span>` : "";
     let body;
-    if (won.length) {
-      const r = won[0], c = card(r.card);
-      body = `<h1 class="title title--xl arrive">Yours<span class="accent">.</span></h1>
-        <div class="pick__card arrive" style="--i:1">${picture(c)}<span><span class="card__name">${esc(c.name)}</span><br /><span class="hand">for $${r.amount}</span></span></div>`;
-      buzz([30, 40, 30]);
-    } else if (lost.length) {
-      const r = lost[0], c = card(r.card), w = player(r.winner);
-      body = `<h1 class="title title--xl arrive">Outbid<span class="accent">.</span></h1>
-        <p class="big-note">${esc(w ? w.name : "Someone")} took ${esc(c.name)} for $${r.amount}.</p>`;
+    if (!p.active) {
+      body = `<p class="big-note">${p.roster.length >= s.settings.team ? "Your team's full." : "You're out of money."} Watch the others fight over the rest.</p>`;
+    } else if (lot.stage === "open" && lot.opener === me.id) {
+      if (openAmount.lot !== s.lots) openAmount = { lot: s.lots, amount: 1 };
+      openAmount.amount = Math.min(Math.max(1, openAmount.amount), p.budget);
+      body = `<h1 class="title title--lg">Your turn<span class="accent">.</span></h1>
+        <p class="big-note">Open the bidding, or skip and they're gone for good.${p.skips ? "" : " You're out of skips, so you have to open."}</p>
+        <div class="dock">
+          <div class="stepper" role="group" aria-label="Opening bid">
+            <button type="button" data-step="-1" aria-label="Lower">−</button>
+            <output id="amount">$${openAmount.amount}</output>
+            <button type="button" data-step="1" aria-label="Higher">+</button>
+          </div>
+          <button class="btn btn--primary btn--big btn--wide" type="button" id="open">Open at $${openAmount.amount}</button>
+          <button class="btn btn--wide" type="button" id="skip" ${p.skips ? "" : "disabled"}>Skip (${p.skips} left)</button>
+        </div>`;
+    } else if (lot.stage === "open") {
+      body = `<p class="big-note">${esc(player(lot.opener).name)} is deciding whether to open the bidding.</p>`;
+    } else if (lot.leader === me.id) {
+      body = `<h1 class="title title--lg">You're winning<span class="accent">.</span></h1>
+        <p class="big-note">If nobody raises before the clock runs out, they're yours.</p>`;
+    } else if (p.budget <= lot.bid) {
+      body = `<p class="big-note">That's more than your $${p.budget}. Sit this one out.</p>`;
     } else {
-      body = `<h1 class="title title--lg arrive">No bid this round<span class="accent">.</span></h1>`;
+      const steps = [1, 2, 5].map(n => lot.bid + n).filter(a => a <= p.budget);
+      if (!steps.includes(p.budget) && p.budget > lot.bid && steps.length < 3) steps.push(p.budget);
+      body = `<div class="raises">${steps.map(a => `<button class="btn btn--primary raise" type="button" data-raise="${a}">$${a}<small>${a === p.budget ? "all in" : `+$${a - lot.bid}`}</small></button>`).join("")}</div>
+        <p class="hand" style="margin-top:.5rem">tap to raise; every bid resets the clock</p>`;
     }
-    app.innerHTML = `${header()}${body}<p class="hand" style="margin-top: var(--space-md)">next round soon. Watch the TV.</p>${myTeam()}`;
+    app.innerHTML = `${header()}${clock}${lotCard(c, bidLine)}${body}${myTeam()}`;
+    app.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+      openAmount.amount = Math.min(Math.max(1, openAmount.amount + Number(b.dataset.step)), p.budget);
+      document.getElementById("amount").textContent = `$${openAmount.amount}`;
+      document.getElementById("open").textContent = `Open at $${openAmount.amount}`;
+    }));
+    on("open", () => { net.send({ t: "open", amount: openAmount.amount }); buzz(30); });
+    on("skip", () => net.send({ t: "skip" }));
+    app.querySelectorAll("[data-raise]").forEach(b => b.addEventListener("click", () => {
+      net.send({ t: "raise", amount: Number(b.dataset.raise) }); buzz(25);
+    }));
+  }
+
+  function soldView() {
+    const r = state.sold, c = card(r.card), w = player(r.winner);
+    const title = !w ? "Skipped" : w.id === me.id ? "Yours" : `${w.name} got them`;
+    if (w && w.id === me.id) buzz([30, 40, 30]);
+    app.innerHTML = `${header()}<h1 class="title title--xl arrive">${esc(title)}<span class="accent">.</span></h1>
+      ${lotCard(c, w ? `<br /><span class="hand">for $${r.amount}</span>` : `<br /><span class="hand">gone for good</span>`)}
+      <p class="hand">next card in a moment</p>${myTeam()}`;
+  }
+
+  // The first to join runs the show: a button for whatever comes next.
+  function adminBar() {
+    if (!me || !me.admin || !state) return;
+    const s = state, m = s.match;
+    let label = null, msg = "admin:next", extra = "";
+    if (s.phase === "lobby") { label = s.players.length < 2 ? null : `Start the draft (${s.players.length} players)`; msg = "admin:start"; }
+    else if (s.phase === "auction" && s.lot.stage === "bidding") label = "Sold! Close the bidding";
+    else if (s.phase === "sold") label = "Next card";
+    else if (s.phase === "teams") label = "Start the tournament";
+    else if (s.phase === "bracket") label = "Start the fight";
+    else if (s.phase === "match" && m.stage === "vote") label = "Close the vote";
+    else if (s.phase === "match" && m.stage === "judging") { label = "Let the crowd decide instead"; msg = "admin:crowd"; }
+    else if (s.phase === "match" && m.stage === "result") label = "Next fight";
+    else if (s.phase === "champion") { label = "Play again with everyone"; msg = "admin:again"; }
+    if (s.phase === "lobby" && s.players.length < 2) extra = `<span class="muted">Waiting for someone else to join.</span>`;
+    if (!label && !extra) return;
+    const bar = document.createElement("div");
+    bar.className = "admin-bar";
+    bar.innerHTML = `<span class="hand">you're running the show</span>${label ? `<button class="btn btn--primary btn--wide" type="button" id="admin-go">${esc(label)}</button>` : ""}${extra}`;
+    app.prepend(bar);
+    on("admin-go", () => { net.send({ t: msg }); buzz(20); });
   }
 
   function myTeam() {

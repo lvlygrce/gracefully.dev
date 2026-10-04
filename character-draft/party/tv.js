@@ -19,7 +19,7 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "crowd", roundSeconds: 40, voteSeconds: 20 },
+    { worlds: Object.keys(U), judge: "crowd", team: 5, skips: 2, bidSeconds: 10, voteSeconds: 20 },
     safe.get(PREFS_KEY) || {},
   );
   prefs.worlds = (prefs.worlds || []).filter(w => U[w]);
@@ -50,6 +50,7 @@
     onMessage(msg) {
       if (msg.t === "hosting") { pin = msg.pin; safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
       else if (msg.t === "gone") { safe.remove(HOST_KEY); createRoom(); }
+      else if (msg.t === "admin-start") { if (state && state.phase === "lobby") startDraft(); }
       else if (msg.t === "replaced") { error = "This party is now being shown on another screen."; render(true); }
       else if (msg.t === "error") { error = msg.message; render(true); }
       else if (msg.t === "state") {
@@ -70,7 +71,9 @@
   function serverSettings() {
     return {
       judge: judgeMode(),
-      roundSeconds: prefs.roundSeconds,
+      team: prefs.team,
+      skips: prefs.skips,
+      bidSeconds: prefs.bidSeconds,
       voteSeconds: prefs.voteSeconds,
       worldsLabel: prefs.worlds.map(w => U[w].name).join(" + "),
     };
@@ -83,7 +86,8 @@
   function keyFor(s) {
     if (!s) return "none";
     switch (s.phase) {
-      case "market": case "results": return `${s.phase}:${s.round}`;
+      case "auction": return `auction:${s.lots}:${s.lot.stage}`;
+      case "sold": return `sold:${s.lots}`;
       case "bracket": return `bracket:${s.bracketRound}`;
       case "match": return `match:${s.match.id}:${s.match.stage}`;
       default: return s.phase;
@@ -102,14 +106,14 @@
       return;
     }
     const s = state;
-    ({ lobby: lobbyView, market: marketView, results: resultsView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
+    ({ lobby: lobbyView, auction: auctionView, sold: soldView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
     tick();
   }
 
   function partial() {
     const s = state;
     if (s.phase === "lobby") { updateCloud(); updateStart(); }
-    if (s.phase === "market") document.getElementById("players-bar").innerHTML = playerChips();
+    if (s.phase === "auction") updateAuction();
     if (s.phase === "match" && s.match.stage === "vote") {
       const el = document.getElementById("voted");
       if (el) el.textContent = `${s.match.voted} of ${s.match.voters} voted`;
@@ -140,7 +144,7 @@
     const worlds = Object.entries(U).map(([k, u]) => `
       <label class="opt"><input type="checkbox" name="world" value="${k}" ${prefs.worlds.includes(k) ? "checked" : ""} /><span>${esc(u.name)}</span></label>`).join("");
     const opt = (name, value, label, on) => `<label class="opt"><input type="radio" name="${name}" value="${value}" ${on ? "checked" : ""} /><span>${label}</span></label>`;
-    const key = J.gemini.key();
+    const key = J.gemini.ready();
 
     app.innerHTML = `
       <div class="lobby">
@@ -175,17 +179,27 @@
               ${opt("judge", "local", "AI judge: on this computer", prefs.judge === "local")}
             </div>
             ${prefs.judge === "gemini" ? (key
-              ? `<p class="muted" style="margin-top:.4rem">Gemini key saved on this computer. <button class="btn btn--quiet" type="button" id="forget-key">Forget it</button></p>`
-              : `<label class="field" style="margin-top:.5rem"><span class="field__label">Gemini API key, free from Google AI Studio</span>
-                   <input class="field__input" id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key" /></label>`)
+              ? `<p class="muted" style="margin-top:.4rem">${J.gemini.key() ? "Gemini key saved on this computer." : "Using Grace's PIN for Gemini."} <button class="btn btn--quiet" type="button" id="forget-key">Forget it</button></p>`
+              : `<label class="field" style="margin-top:.5rem"><span class="field__label">Gemini API key (free from Google AI Studio), or Grace's PIN</span>
+                   <input class="field__input" id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>`)
               : prefs.judge === "local" ? `<p class="muted" style="margin-top:.4rem">Runs Qwen 3.5 on this computer's graphics card: a 2.4GB download the first time, and a minute or two per fight.</p>` : ""}
           </fieldset>
           <fieldset>
-            <legend>Time to bid each round</legend>
-            <div class="opts">${[30, 40, 60].map(n => opt("round", n, `${n} seconds`, prefs.roundSeconds === n)).join("")}</div>
+            <legend>Team size</legend>
+            <div class="opts">${[3, 4, 5].map(n => opt("team", n, `${n} each`, prefs.team === n)).join("")}</div>
           </fieldset>
-          <p class="muted">Everyone gets $${state.settings.budget} and room for ${state.settings.team}. Each round deals one card per player;
-            bid on one from your phone, in secret. Highest bid takes it. Then it's a knockout tournament on this screen.</p>
+          <fieldset>
+            <legend>Skips each</legend>
+            <div class="opts">${[0, 1, 2, 3].map(n => opt("skips", n, String(n), prefs.skips === n)).join("")}</div>
+          </fieldset>
+          <fieldset>
+            <legend>Clock after each bid</legend>
+            <div class="opts">${[8, 10, 15].map(n => opt("bidsecs", n, `${n} seconds`, prefs.bidSeconds === n)).join("")}</div>
+          </fieldset>
+          <p class="muted">Everyone gets $${state.settings.budget}. One character at a time goes up for auction: whoever's turn it is
+            opens the bidding or spends a skip to send it away. Then anyone can raise from their phone, and every bid resets the clock.
+            Highest bid when it runs out takes them. Then it's a knockout tournament on this screen.</p>
+          <p class="hand" id="estimate"></p>
         </section>
       </div>`;
 
@@ -206,9 +220,11 @@
     app.querySelectorAll('[name="judge"]').forEach(i => i.addEventListener("change", () => {
       prefs.judge = i.value; savePrefs(); sendSettings(); render(true);
     }));
-    app.querySelectorAll('[name="round"]').forEach(i => i.addEventListener("change", () => {
-      prefs.roundSeconds = Number(i.value); savePrefs(); sendSettings();
-    }));
+    [["team", "team"], ["skips", "skips"], ["bidsecs", "bidSeconds"]].forEach(([name, key]) => {
+      app.querySelectorAll(`[name="${name}"]`).forEach(i => i.addEventListener("change", () => {
+        prefs[key] = Number(i.value); savePrefs(); sendSettings(); updateStart();
+      }));
+    });
     on("forget-key", () => { J.gemini.forgetKey(); render(true); });
     const keyInput = document.getElementById("key");
     if (keyInput) keyInput.addEventListener("input", updateStart);
@@ -224,8 +240,8 @@
     if (!cloud) return;
     const ps = state.players;
     document.getElementById("count").textContent = ps.length
-      ? `${ps.length} of 24 in. Waiting for more, or start when you're ready.`
-      : "Waiting for players to join…";
+      ? `${ps.length} of 24 in. ${esc(ps[0].name)} joined first, so they can run the show from their phone.`
+      : "Waiting for players to join… the first to join runs the show from their phone.";
     // Only names that have just joined get the arrival; the rest stay put.
     const seen = new Set((cloud.dataset.seen || "").split(",").filter(Boolean));
     cloud.dataset.seen = ps.map(p => p.id).join(",");
@@ -238,9 +254,17 @@
   function updateStart() {
     const b = document.getElementById("start");
     if (!b) return;
-    const needKey = prefs.judge === "gemini" && !J.gemini.key() && !(document.getElementById("key") || {}).value;
+    const needKey = prefs.judge === "gemini" && !J.gemini.ready() && !(document.getElementById("key") || {}).value;
     b.disabled = state.players.length < 2 || !prefs.worlds.length || needKey;
     b.textContent = state.players.length < 2 ? "Waiting for 2 players" : needKey ? "Add a Gemini key first" : "Start the draft";
+    // Roughly how long the draft will run: each card takes the opener's
+    // moment plus a few rounds of bidding.
+    const est = document.getElementById("estimate");
+    if (est && state.players.length >= 2) {
+      const cards = Math.ceil(state.players.length * prefs.team * 1.25);
+      const mins = Math.max(1, Math.round(cards * (8 + prefs.bidSeconds * 2.2) / 60));
+      est.textContent = `about ${mins} minutes of drafting for ${state.players.length} players`;
+    }
   }
 
   function buildDeck() {
@@ -262,19 +286,27 @@
     return all.length ? all[Math.floor(Math.random() * all.length)] : null;
   }
 
-  function startDraft() {
+  async function startDraft() {
     const keyInput = document.getElementById("key");
-    if (keyInput && keyInput.value.trim()) J.gemini.saveKey(keyInput.value.trim());
+    const typed = keyInput && keyInput.value.trim();
+    if (typed && J.pin.looksLike(typed)) {
+      let ok = false;
+      try { ok = await J.pin.verify(typed); } catch (err) { error = err.message; return render(true); }
+      if (!ok) { error = "That PIN isn't right."; return render(true); }
+    } else if (typed) J.gemini.saveKey(typed);
     net.send({ t: "host:start", settings: serverSettings(), deck: buildDeck(), arena: drawArena() });
   }
 
-  /* Market: the cards on offer, who has bid, and the clock. */
+  /* The auction: one card on the block, the bids, and the clock. */
 
   function playerChips() {
+    const lot = state.lot;
     return state.players.map(p => {
-      const out = p.active === false;
-      return `<span class="chip ${p.locked ? "chip--locked" : ""} ${out || !p.connected ? "chip--off" : ""}">${esc(p.name)}
-        <span class="chip__meta">$${p.budget} · ${p.roster.length}/${state.settings.team}${out ? " · done" : p.locked ? " · bid in" : ""}</span></span>`;
+      const out = !p.active;
+      const turn = lot && lot.stage === "open" && lot.opener === p.id;
+      const lead = lot && lot.leader === p.id;
+      return `<span class="chip ${turn || lead ? "chip--locked" : ""} ${out || !p.connected ? "chip--off" : ""}">${esc(p.name)}
+        <span class="chip__meta">$${p.budget} · ${p.roster.length}/${state.settings.team} · ${p.skips} skip${p.skips === 1 ? "" : "s"}${out ? " · done" : lead ? " · leading" : turn ? " · to open" : ""}</span></span>`;
     }).join("");
   }
 
@@ -286,42 +318,72 @@
       ${extra}</article>`;
   }
 
-  function marketView() {
-    const s = state;
-    app.innerHTML = `
-      <div class="topline">
-        <div><p class="hand">round ${s.round} · bid on one card from your phone, in secret</p>
-          <h1 class="title title--lg">Highest bid takes it<span class="accent">.</span></h1></div>
-        <span class="timer" data-ends="${s.endsAt}" data-fmt="{s}"></span>
-      </div>
-      <div class="bar"><span data-bar="${s.endsAt}" data-total="${s.settings.roundSeconds}"></span></div>
-      <div class="market">${s.market.map((c, k) => cardHtml(card(c), k)).join("")}</div>
-      <div class="players-bar" id="players-bar">${playerChips()}</div>
-      ${foot(`<button class="btn btn--quiet" type="button" id="next">Close bidding now</button>`)}`;
-    on("next", () => net.send({ t: "host:next" }));
-    announce(`Round ${s.round}. ${s.market.length} cards on offer. Bid on your phones.`);
+  function lotStatus() {
+    const lot = state.lot;
+    if (lot.stage === "open") {
+      return `<p class="hand">${esc(player(lot.opener).name)}'s turn</p>
+        <p class="title title--lg">Open the bidding, or skip<span class="accent">.</span></p>`;
+    }
+    const lead = player(lot.leader);
+    return `<p class="hand">highest bid</p>
+      <p class="lot__bid"><span class="money">$${lot.bid}</span> <span class="title title--md">${esc(lead ? lead.name : "")}</span></p>
+      <ul class="lot__bids">${lot.bids.slice(0, -1).reverse().map(b => `<li>${esc((player(b.player) || {}).name || "?")} $${b.amount}</li>`).join("")}</ul>`;
   }
 
-  function resultsView() {
-    const s = state;
-    const rows = s.lastRound.results.map((r, k) => {
-      const c = card(r.card);
-      const w = player(r.winner);
-      const others = r.bids.slice(1).map(b => `${esc((player(b.player) || {}).name || "?")} $${b.amount}`).join(", ");
-      const line = w
-        ? `<span class="card__win"><em>${esc(w.name)}</em> for $${r.amount}</span>${others ? `<span class="card__lost">also bid: ${others}</span>` : ""}`
-        : `<span class="card__win muted">nobody wanted them</span>`;
-      return cardHtml(c, k, line).replace('class="card ', `class="card ${w ? "" : "card--gone "}`);
-    }).join("");
+  function auctionView() {
+    const s = state, lot = s.lot, c = card(lot.card);
+    const total = lot.stage === "open" ? s.settings.openSeconds : s.settings.bidSeconds;
     app.innerHTML = `
       <div class="topline">
-        <div><p class="hand">round ${s.lastRound.round} results</p>
-          <h1 class="title title--lg">Sold<span class="accent">.</span></h1></div>
-        ${countdown(s.endsAt, "next round in {s}")}
+        <p class="hand">card ${s.lots} · ${s.deckLeft} left in the deck · every bid resets the clock</p>
+        ${strip().replace('class="strip"', 'class="strip strip--slim"')}
       </div>
-      <div class="market">${rows}</div>
-      ${foot(`<button class="btn btn--primary" type="button" id="next">Next round</button>`)}`;
+      <div class="lot">
+        <div class="lot__card">${cardHtml(c, 0)}</div>
+        <div class="lot__side">
+          <div id="lot-status">${lotStatus()}</div>
+          <span class="timer lot__timer" data-ends="${lot.endsAt}" data-fmt="{s}" id="lot-timer"></span>
+          <div class="bar"><span data-bar="${lot.endsAt}" data-total="${total}" id="lot-bar"></span></div>
+          <p class="hand">${lot.stage === "open" ? "on their phone" : "raise from your phone"}</p>
+        </div>
+      </div>
+      <div class="players-bar" id="players-bar">${playerChips()}</div>
+      ${foot(lot.stage === "bidding" ? `<button class="btn btn--quiet" type="button" id="next">Sold! Close the bidding now</button>` : "")}`;
     on("next", () => net.send({ t: "host:next" }));
+    if (lot.stage === "open") announce(`${c.name} is up. ${player(lot.opener).name} opens or skips.`);
+  }
+
+  // A new bid doesn't redraw the card: just the bid, the clock and the chips.
+  function updateAuction() {
+    const lot = state.lot;
+    const st = document.getElementById("lot-status");
+    if (!st) return;
+    st.innerHTML = lotStatus();
+    const t = document.getElementById("lot-timer"), b = document.getElementById("lot-bar");
+    if (t) t.dataset.ends = lot.endsAt;
+    if (b) b.dataset.bar = lot.endsAt;
+    document.getElementById("players-bar").innerHTML = playerChips();
+    const lead = player(lot.leader);
+    if (lead) announce(`$${lot.bid}, ${lead.name}.`);
+  }
+
+  function soldView() {
+    const s = state, r = s.sold, c = card(r.card);
+    const w = player(r.winner), skipper = player(r.skippedBy);
+    const line = w
+      ? `<h1 class="title title--xl arrive">Sold to <em>${esc(w.name)}</em><span class="accent">.</span></h1>
+         <p class="title title--lg">for $${r.amount}</p>`
+      : `<h1 class="title title--xl arrive">Skipped<span class="accent">.</span></h1>
+         <p class="big-note">${skipper ? `${esc(skipper.name)} sent them away.` : ""} Gone for good.</p>`;
+    app.innerHTML = `
+      <div class="lot">
+        <div class="lot__card">${cardHtml(c, 0)}</div>
+        <div class="lot__side">${line}<p class="hand">${countdown(s.endsAt, "next card in {s}")}</p></div>
+      </div>
+      <div class="players-bar">${playerChips()}</div>
+      ${foot(`<button class="btn btn--primary" type="button" id="next">Next card</button>`)}`;
+    on("next", () => net.send({ t: "host:next" }));
+    announce(w ? `Sold to ${w.name} for $${r.amount}.` : "Skipped.");
   }
 
   /* Teams, then the bracket. */
@@ -414,7 +476,7 @@
       const w = player(m.winner);
       const total = m.tally ? m.tally[0] + m.tally[1] : 0;
       middle = `<h1 class="title title--xl arrive"><em>${esc(w.name)}</em> wins<span class="accent">.</span></h1>
-        ${s.settings.judge === "crowd" && total ? `<div class="tally"><span style="width:${(m.tally[0] / total) * 100}%"></span><span style="width:${(m.tally[1] / total) * 100}%"></span></div>
+        ${total ? `<div class="tally"><span style="width:${(m.tally[0] / total) * 100}%"></span><span style="width:${(m.tally[1] / total) * 100}%"></span></div>
           <p class="hand">${m.tally[0]} votes to ${m.tally[1]}${m.tie ? ", a tie, so a coin decided it" : ""}</p>` : ""}
         ${m.tie && !total ? `<p class="hand">nobody voted, so a coin decided it</p>` : ""}
         ${m.verdict ? `<div class="verdict arrive" style="--i:2"><p class="big-note"><em>${esc(m.verdict.verdict)}</em></p>

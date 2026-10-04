@@ -789,10 +789,12 @@
       <div class="judge__opts">
         ${mode === "gemini" ? (key ? `
           <p class="judge__key">Your Gemini key is saved in this browser only.
+            <button class="btn btn--quiet btn--inline" type="button" id="forget-key">Forget it</button></p>` : J.pin.get() ? `
+          <p class="judge__key">Using Grace's PIN for Gemini and films.
             <button class="btn btn--quiet btn--inline" type="button" id="forget-key">Forget it</button></p>` : `
-          <label class="field"><span class="field__label">Gemini API key</span>
-            <input class="field__input field__input--key" id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key" /></label>
-          <p class="judge__fine">Get one free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
+          <label class="field"><span class="field__label">Gemini API key, or Grace's PIN</span>
+            <input class="field__input field__input--key" id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key, or the PIN" /></label>
+          <p class="judge__fine">Get a key free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
             It stays in this browser and is only ever sent to Google.</p>`)
         : `
           ${gpu ? "" : `<p class="judge__warn">This browser doesn't have WebGPU, so it can't run a model here. Chrome or Edge on a laptop or desktop usually can.</p>`}
@@ -813,10 +815,12 @@
         ${FILM_TIERS.map(t => formatOption(t.id, t.label, t.blurb, format)).join("")}
       </fieldset>
       <p class="judge__fine" id="format-note"></p>
-      ${format !== "text" ? `
-        <label class="field field--code"><span class="field__label">Video code</span>
-          <input class="field__input field__input--key" id="code-input" type="password" autocomplete="off" spellcheck="false"
-                 placeholder="The code from Grace" value="${esc(Film.safe.get(Film.CODE_KEY) || "")}" /></label>` : ""}
+      ${format === "text" ? "" : J.pin.get() ? `<p class="judge__key">Films use Grace's PIN.</p>`
+        : Film.ownKey.get() ? `<p class="judge__key">Your Higgsfield key is saved in this browser.
+            <button class="btn btn--quiet btn--inline" type="button" id="forget-hf">Forget it</button></p>`
+        : `<label class="field field--code"><span class="field__label">Higgsfield API key (key id:secret), or Grace's PIN</span>
+            <input class="field__input field__input--key" id="code-input" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>
+          <p class="judge__fine">Your own key is kept in this browser and passed to Higgsfield through the party server for each film; it's never stored there.</p>`}
 
       ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
       <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>${format === "text" ? "Reveal the winner" : "Make the film"}</button>`;
@@ -833,6 +837,7 @@
       prefs.localModel = i.value; store.set(PREFS_KEY, prefs);
     }));
     on("forget-key", () => { J.gemini.forgetKey(); renderJudge(worlds, teams, isShared); });
+    on("forget-hf", () => { Film.ownKey.clear(); renderJudge(worlds, teams, isShared); });
 
     const storageLine = document.getElementById("storage-line");
     if (storageLine) {
@@ -852,17 +857,29 @@
     });
 
     on("judge-go", async () => {
-      if (mode === "gemini" && !key) {
+      const fail = msg => { judging.error = msg; renderJudge(worlds, teams, isShared); };
+      // A four-digit entry is the PIN; anything else is the player's own key.
+      const usePin = async typed => {
+        try { return await J.pin.verify(typed); } catch (err) { fail(err.message); return null; }
+      };
+      if (mode === "gemini" && !J.gemini.ready()) {
         const typed = document.getElementById("key-input").value.trim();
-        if (!typed) { judging.error = "Paste a Gemini API key first."; return renderJudge(worlds, teams, isShared); }
-        J.gemini.saveKey(typed);
+        if (!typed) return fail("Paste a Gemini API key, or enter Grace's PIN.");
+        if (J.pin.looksLike(typed)) {
+          const ok = await usePin(typed);
+          if (ok === null) return;
+          if (!ok) return fail("That PIN isn't right.");
+        } else J.gemini.saveKey(typed);
       }
-      let code = "";
-      if (format !== "text") {
-        code = (document.getElementById("code-input") || {}).value || "";
-        code = code.trim();
-        if (!code) { judging.error = "Enter the video code to make a film."; return renderJudge(worlds, teams, isShared); }
-        Film.safe.set(Film.CODE_KEY, code);
+      if (format !== "text" && !J.pin.get() && !Film.ownKey.get()) {
+        const typed = ((document.getElementById("code-input") || {}).value || "").trim();
+        if (!typed) return fail("Enter your Higgsfield key, or Grace's PIN, to make a film.");
+        if (J.pin.looksLike(typed)) {
+          const ok = await usePin(typed);
+          if (ok === null) return;
+          if (!ok) return fail("That PIN isn't right.");
+        } else if (Film.ownKey.looksLike(typed)) Film.ownKey.set(typed);
+        else return fail("That doesn't look like a Higgsfield key. It's two parts joined by a colon: key id:secret.");
       }
       const draftAtStart = state;
       const kept = judging.preps.length ? judging.preps : [null, null];
@@ -889,7 +906,7 @@
         if (format !== "text") {
           // The verdict is in but stays hidden: the director storyboards it,
           // then the film is made, and the winner is revealed at the end.
-          v.film = await makeFilm({ tier: format, mode, teams, verdict: v, field, worldName, code, onStatus });
+          v.film = await makeFilm({ tier: format, mode, teams, verdict: v, field, worldName, onStatus });
         }
         judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null, preps: [] };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
@@ -938,7 +955,7 @@
       if (note) note.textContent = why;
     };
     if (realPeople) return disable("Films aren't made for battles with real people in them, so this one is words only.");
-    if (!q || !q.enabled) return disable("Films aren't available right now.");
+    if (!q) return disable("Films aren't available right now.");
     for (const t of FILM_TIERS) {
       const tier = q.tiers.find(x => x.id === t.id);
       if (!tier) continue;
@@ -953,14 +970,14 @@
   const shotLabel = (key, teams) => key.startsWith("prep_a") ? `${teams[0].name}'s war council prepares`
     : key.startsWith("prep_b") ? `${teams[1].name}'s war council prepares` : "The battle";
 
-  async function makeFilm({ tier, mode, teams, verdict, field, worldName, code, onStatus }) {
+  async function makeFilm({ tier, mode, teams, verdict, field, worldName, onStatus }) {
     const q = await Film.quote();
     const t = q.tiers.find(x => x.id === tier);
     if (!t) throw new Error("That film length isn't available.");
     const board = await window.Judge.storyboard(mode, { teams, verdict, arena: field, worldName, shots: t.shots, onStatus });
     onStatus("Sending the storyboard to the studio…");
     const prompts = Object.fromEntries(t.shots.map(x => [x.key, board.shots[x.key].prompt]));
-    const job = await Film.start({ tier, prompts, code });
+    const job = await Film.start({ tier, prompts });
     return {
       tier, id: job.id, usd: job.usd, style: board.style, watched: false,
       shots: t.shots.map(x => ({

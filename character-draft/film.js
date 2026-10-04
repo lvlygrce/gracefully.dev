@@ -11,7 +11,7 @@
   const SERVER = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
     ? "http://localhost:8080"
     : "https://party-server-production-d0f7.up.railway.app";
-  const CODE_KEY = "character-draft:v1:video-code";
+  const HF_STORE = "character-draft:v1:higgsfield-key";
   const RATE_KEY = "character-draft:v1:usd-nzd";
   const FALLBACK_RATE = 1.7;
 
@@ -49,11 +49,15 @@
 
   const nz = (usd, rate) => usd <= 0 ? "free" : `NZ$${(usd * rate).toFixed(2)}`;
 
-  async function start({ tier, prompts, code, seed }) {
+  // With the PIN, the server's Higgsfield key and budget; otherwise the
+  // player's own key, passed through for this one film and never stored there.
+  async function start({ tier, prompts, seed }) {
+    const p = window.Judge && window.Judge.pin.get();
+    const own = safe.get(HF_STORE);
     const r = await fetch(`${SERVER}/video/start`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ tier, prompts, code, seed }),
+      body: JSON.stringify({ tier, prompts, seed, ...(own ? { hfKey: own } : { code: p }) }),
     });
     const d = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(d.error || "The film couldn't be started.");
@@ -121,5 +125,12 @@
     show(0, false);
   }
 
-  window.Film = { quote, nzdRate, nz, start, wait, status, player, esc, TEXT_USD, CODE_KEY, safe };
+  const ownKey = {
+    get: () => safe.get(HF_STORE),
+    set: k => safe.set(HF_STORE, k.trim()),
+    clear: () => safe.remove(HF_STORE),
+    looksLike: k => /^[\w-]{8,}:[\w-]{16,}$/.test(String(k).trim()),
+  };
+
+  window.Film = { quote, nzdRate, nz, start, wait, status, player, esc, TEXT_USD, ownKey, safe };
 })();
