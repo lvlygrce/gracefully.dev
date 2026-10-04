@@ -311,16 +311,19 @@ Reply as JSON:
         /^models\/gemini-[\d.]+-flash$/.test(n) ? 0 :
         /^models\/gemini-[\d.]+-flash-lite$/.test(n) ? 1 :
         /^models\/gemini-[\d.]+-flash(-lite)?-preview/.test(n) ? 2 : 9;
-      const pool = names.filter(n => tier(n) < 9)
+      const sorted = names.filter(n => tier(n) < 9 && !gemini.spent.has(n))
         .sort((a, b) => tier(a) - tier(b) || version(b) - version(a));
-      if (!pool.length) throw new Error("This API key can't use any Gemini Flash models.");
+      // A few of each kind, so a busy or used-up Flash still leaves Flash-Lite
+      // (which has far more free calls a day) to fall back on.
+      const pool = [0, 1, 2].flatMap(t => sorted.filter(n => tier(n) === t).slice(0, t === 2 ? 1 : 3));
+      if (!pool.length) throw new Error("Gemini has run out of free calls on every model for today. Try tomorrow, or use the judge on this device.");
       const last = safe.get(MODEL_STORE);
       return last && pool.includes(last) ? [last, ...pool.filter(n => n !== last)] : pool;
     },
 
     // One structured question, falling back across models when one is busy.
     async ask(q, onStatus, what) {
-      const pool = (gemini.pool = gemini.pool || (await gemini.models()).slice(0, 5));
+      const pool = (gemini.pool = gemini.pool || await gemini.models());
       const short = n => n.replace("models/", "");
       const tried = [];
       for (const model of pool) {
@@ -341,6 +344,8 @@ Reply as JSON:
           return out;
         } catch (err) {
           if (!err.retry && !(err instanceof SyntaxError)) throw err;
+          // Out of free calls for the day: don't ask this model again this visit.
+          if (err.status === 429 && /per ?day|quota/i.test(err.message)) gemini.spent.add(model);
           tried.push(model);
           await new Promise(r => setTimeout(r, 1200));
         }
@@ -352,10 +357,11 @@ Reply as JSON:
     async prepare(onStatus) {
       gemini.pool = null;
       onStatus("Finding a Gemini model…");
-      gemini.pool = (await gemini.models()).slice(0, 5);
+      gemini.pool = await gemini.models();
     },
 
     label: () => gemini.used || "Gemini",
+    spent: new Set(),
     parallel: true,
   };
 
