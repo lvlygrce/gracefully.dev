@@ -313,6 +313,7 @@ html.tv { font-size: clamp(15px, 1.12vw, 30px); }
 
 .tv-film .film { max-width: 70rem; margin: 0 auto; }
 .tv-film .film__caption { font-size: 2rem; }
+.tv-film .film__line { font-family: var(--font-hand); font-size: 1.8rem; color: var(--ink-muted); }
 .shotlist { list-style: none; margin: var(--space-sm) 0; display: grid; gap: 0.4rem; }
 .shotlist li { color: var(--ink-muted); line-height: 1.35; }
 .shotlist .shot--done { color: var(--ink); }

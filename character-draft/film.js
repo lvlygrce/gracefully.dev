@@ -99,12 +99,14 @@
           <button class="film__play" id="film-play" type="button">Play the film</button>
         </div>
         <p class="film__caption" id="film-caption" aria-live="polite"></p>
+        <p class="film__line" id="film-line"></p>
         <div class="film__dots">${shots.map((s, i) => `<button type="button" class="film__dot" data-shot="${i}" aria-label="Shot ${i + 1}"></button>`).join("")}</div>
         <div class="film__tools"><button class="btn btn--quiet btn--inline" type="button" id="film-skip">Skip to the result</button></div>
       </div>`;
     const video = container.querySelector("#film-video");
     const caption = container.querySelector("#film-caption");
     const chapter = container.querySelector("#film-chapter");
+    const line = container.querySelector("#film-line");
     const play = container.querySelector("#film-play");
     let i = 0, ended = false;
 
@@ -114,6 +116,7 @@
       const s = shots[k];
       video.src = s.url;
       caption.textContent = s.caption || "";
+      line.textContent = s.line ? `${s.speaker ? `${s.speaker}: ` : ""}“${s.line}”` : "";
       chapter.textContent = s.label || "";
       container.querySelectorAll(".film__dot").forEach((d, n) => d.classList.toggle("film__dot--on", n === k));
       if (autoplay) video.play().catch(() => { play.hidden = false; });

@@ -677,7 +677,7 @@
           setStatus("Sending the storyboard to the studio…");
           const job = await Film.start({ tier: tier.id, prompts: Object.fromEntries(tier.shots.map(x => [x.key, board.shots[x.key].prompt])) });
           const label = k => k.startsWith("prep_a") ? `${teams[0].name}'s war council prepares` : k.startsWith("prep_b") ? `${teams[1].name}'s war council prepares` : "The battle";
-          judging.film = { shots: tier.shots.map(x => ({ key: x.key, label: label(x.key), caption: board.shots[x.key].caption, url: null, status: "queued" })) };
+          judging.film = { shots: tier.shots.map(x => ({ key: x.key, label: label(x.key), caption: board.shots[x.key].caption, speaker: board.shots[x.key].speaker, line: board.shots[x.key].line, url: null, status: "queued" })) };
           setStatus("Filming the fight. This takes a few minutes; the winner is revealed when it ends.");
           render(true);
           await Film.wait(job.id, st => {
@@ -737,7 +737,7 @@
       arena: a ? { name: a.name, image: a.image } : null,
       teams: teams.map(t => ({ name: t.name, roster: t.roster.map(r => ({ name: r.name, world: r.world, note: r.note, price: r.price })) })),
       verdict: story,
-      film: film ? { shots: film.shots.map(x => ({ label: x.label, caption: x.caption, url: x.url })) } : null,
+      film: film ? { shots: film.shots.map(x => ({ label: x.label, caption: x.caption, speaker: x.speaker, line: x.line, url: x.url })) } : null,
     });
   }
 

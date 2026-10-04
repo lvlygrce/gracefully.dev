@@ -537,7 +537,10 @@ The film is made by a text-to-video model, one shot at a time, so:
   characters only by their tag, never by name. Keep the action playful and theatrical, like a family adventure
   film: dazzling clashes, near misses, clever tricks and comic moments; nobody is seriously hurt.
   Each "caption" is a trailer-style line shown under the shot, under 14 words, present tense.
-  "who" lists the characters on screen, using their names exactly as given.`;
+  "who" lists the characters on screen, using their names exactly as given.
+- Every shot has one spoken line: "speaker" is the character who says it (one of "who"), and "line" is what they
+  say out loud, in character, under 12 words: a taunt, a battle cry, a plan, a joke. It must sound like them.
+  The line is spoken aloud in the film, so no stage directions, no names of real actors.`;
 
   function directorQuestion(teams, verdict, arena, worldName, shots) {
     const names = roleKeys(teams).map(c => c.key);
@@ -566,8 +569,10 @@ The ${battleShots.length} battle shots tell the fight from first clash to the tu
         who: { type: "ARRAY", items: { type: "STRING", enum: names } },
         action: { type: "STRING" },
         caption: { type: "STRING" },
+        speaker: { type: "STRING", enum: names },
+        line: { type: "STRING" },
       },
-      required: ["who", "action", "caption"],
+      required: ["who", "action", "caption", "speaker", "line"],
     };
     const schema = {
       type: "OBJECT",
@@ -600,7 +605,10 @@ The ${battleShots.length} battle shots tell the fight from first clash to the tu
       return c ? `${c.tag}: ${c.look}.` : "";
     }).filter(Boolean).join(" ");
     const where = arena ? `Setting: ${arena.name}, ${arena.terrain}` : "";
-    return [board.style, where, cast, `Action: ${shot.action}`, SAFE].filter(Boolean).join(" ").replace(/\s+/g, " ").slice(0, 1750);
+    // The spoken line, quoted, so the video model voices it.
+    const sp = shot.speaker && board.cast[shot.speaker];
+    const speech = shot.line ? `${sp ? sp.tag : "One of them"} says clearly: "${shot.line.replace(/"/g, "'")}"` : "";
+    return [board.style, where, cast, `Action: ${shot.action}`, speech, SAFE].filter(Boolean).join(" ").replace(/\s+/g, " ").slice(0, 1750);
   }
 
   async function storyboard(kind, { teams, verdict, arena, worldName, shots, onStatus }) {
@@ -622,6 +630,9 @@ The ${battleShots.length} battle shots tell the fight from first clash to the tu
         who: Array.isArray(sh.who) ? sh.who.map(String) : [],
         action: unname(String(sh.action || "")),
         caption: String(sh.caption || ""),
+        speaker: String(sh.speaker || ""),
+        // Names spoken in a line are fine as dialogue, but keep it short.
+        line: String(sh.line || "").split(/\s+/).slice(0, 16).join(" "),
       };
       board.shots[x.key].prompt = shotPrompt(board, board.shots[x.key], arena);
     }

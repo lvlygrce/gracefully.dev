@@ -988,6 +988,7 @@
       shots: t.shots.map(x => ({
         key: x.key, duration: x.duration, label: shotLabel(x.key, teams),
         caption: board.shots[x.key].caption, url: null, status: "queued",
+        speaker: board.shots[x.key].speaker, line: board.shots[x.key].line,
       })),
     };
   }
@@ -1043,7 +1044,7 @@
   /* --- Recent battles ---------------------------------------------------- */
 
   const filmForList = film => film && {
-    shots: film.shots.map(x => ({ key: x.key, label: x.label, caption: x.caption, url: x.url, status: x.status })),
+    shots: film.shots.map(x => ({ key: x.key, label: x.label, caption: x.caption, speaker: x.speaker, line: x.line, url: x.url, status: x.status })),
   };
 
   function keepBattle(worlds, teams, field, v) {
