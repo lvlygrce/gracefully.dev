@@ -49,7 +49,7 @@ the house style, and do not treat it as a precedent.
 | `bts-album-match/` | **BTS Album Match** — an album guessing game in Spotify's clothes, at [/bts-album-match/](https://gracefully.dev/bts-album-match/) |
 | `asoifle/` | **asoifle** — a daily A Song of Ice and Fire character deduction game, at [/asoifle/](https://gracefully.dev/asoifle/) |
 | `mount-ever-rarest/` | **Mount Ever-Rarest** — an unlimited rare-answers trivia climb up Everest, after Krillion, at [/mount-ever-rarest/](https://gracefully.dev/mount-ever-rarest/) |
-| `character-draft/` | **Character Draft** — a two-player blind auction draft across Westeros, Marvel and League of Legends, at [/character-draft/](https://gracefully.dev/character-draft/) |
+| `character-draft/` | **Character Draft** — a two-player blind auction draft across Westeros, Marvel, League of Legends, Pokémon, Warrior Cats and anime, at [/character-draft/](https://gracefully.dev/character-draft/) |
 
 ## Working on it locally
 

@@ -424,6 +424,8 @@ fieldset { border: 0; min-width: 0; }
   object-position: center 18%;
 }
 
+.portrait--contain img { object-fit: contain; object-position: center; padding: 6%; }
+
 .portrait__letters {
   font-family: var(--font-display);
   font-variation-settings: "SOFT" 100, "WONK" 1;

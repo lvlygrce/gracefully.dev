@@ -117,7 +117,8 @@
   function portrait(universe, name, size) {
     const src = (IMAGES[universe] || {})[name];
     const fallback = `<span class="portrait__letters" aria-hidden="true">${esc(initials(name))}</span>`;
-    return `<span class="portrait portrait--${size}">${fallback}${src
+    const contain = (U[universe] || {}).fit === "contain" ? " portrait--contain" : "";
+    return `<span class="portrait portrait--${size}${contain}">${fallback}${src
       ? `<img src="${esc(src)}" alt="" loading="${size === "lg" ? "eager" : "lazy"}"
              referrerpolicy="no-referrer" onerror="this.remove()" />`
       : ""}</span>`;
