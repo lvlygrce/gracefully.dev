@@ -63,7 +63,7 @@
     const s = state;
     if (s.phase === "auction") return `auction:${s.lots}:${s.lot.stage}:${s.lot.bid}:${s.lot.leader}:${me.admin}`;
     if (s.phase === "sold") return `sold:${s.lots}:${me.admin}`;
-    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}:${me.admin}`;
+    if (s.phase === "match") return `match:${s.match.id}:${s.match.stage}:${me.vote}:${me.canVote}:${me.admin}:${(s.match.aftermath || []).length}`;
     if (s.phase === "bracket") return `bracket:${s.bracketRound}:${me.admin}`;
     if (s.phase === "lobby") return `lobby:${s.players.length}:${me.admin}`;
     return `${s.phase}:${me.admin}`;
@@ -225,7 +225,10 @@
     return `<span class="rule"></span><p class="hand">your team</p>
       <div class="pick">${p.roster.map(r => {
         const c = card(r.card);
-        return `<div class="pick__card">${picture(c)}<span><span class="card__name">${esc(c.name)}</span><br /><span class="hand">$${r.price}</span></span></div>`;
+        const k = (state.conditions || {})[r.card];
+        const word = !k ? "" : k.status === "dead" ? "fallen" : k.status === "broken" ? "gear broken" : "injured";
+        return `<div class="pick__card ${k && k.status === "dead" ? "pick__card--dead" : ""}">${picture(c)}<span><span class="card__name">${esc(c.name)}</span><br />
+          <span class="hand">$${r.price}${k ? ` · ${word}` : ""}</span>${k ? `<br /><span class="card__note">${esc(k.note)}</span>` : ""}</span></div>`;
       }).join("")}</div>`;
   }
 
@@ -274,8 +277,13 @@
       const w = player(m.winner);
       const msg = fighting ? (m.winner === me.id ? "You win" : "You're out") : `${w.name} wins`;
       if (fighting) buzz(m.winner === me.id ? [40, 50, 40, 50, 80] : 120);
+      const mineHurt = (m.aftermath || []).filter(a => mine().roster.some(r => r.card === a.card));
       app.innerHTML = `${header()}<h1 class="title title--xl arrive">${esc(msg)}<span class="accent">.</span></h1>
-        <p class="big-note">${m.verdict ? `<em>${esc(m.verdict.verdict)}</em>` : m.tally ? `${m.tally[0]} votes to ${m.tally[1]}${m.tie ? ", settled by a coin" : ""}.` : ""}</p>`;
+        <p class="big-note">${m.verdict ? `<em>${esc(m.verdict.verdict)}</em>` : m.tally ? `${m.tally[0]} votes to ${m.tally[1]}${m.tie ? ", settled by a coin" : ""}.` : ""}</p>
+        ${mineHurt.length ? `<p class="hand">what it cost you</p><ul class="big-note" style="list-style:none">${mineHurt.map(a => {
+          const c = card(a.card);
+          return `<li><em>${esc(c ? c.name : "?")}</em> ${a.status === "dead" ? "fell" : a.status === "broken" ? "lost their gear" : "was injured"}: ${esc(a.note)}</li>`;
+        }).join("")}</ul>` : ""}${fighting ? myTeam() : ""}`;
       return;
     }
     app.innerHTML = `${header()}<h1 class="title title--xl">${fighting ? "You're up" : `${esc(a.name)} vs ${esc(b.name)}`}<span class="accent">.</span></h1>

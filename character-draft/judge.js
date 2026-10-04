@@ -47,6 +47,8 @@ Characters marked [maker] are engineers, smiths, inventors or alchemists. Each m
 weapon, potion or piece of armour in the time before the battle, suited to their real skills, the battlefield
 and the enemy they'll face. A team with no maker cannot build anything new: its gear can only be what its members
 already carry or could scavenge from the battlefield, at most two items.
+Characters marked [injured] are hurt from an earlier fight and weaker; [gear broken] means their signature weapon
+or gear is gone, so plan around that.
 Plan around the terrain and around specific enemies. Be concrete and brief.`;
 
   const BATTLE_SYSTEM = `You are the judge of a fantasy battle between two drafted teams of fictional characters.
@@ -59,6 +61,7 @@ A battle is not decided by raw power alone. Weigh strategy and leadership, cunni
 experience, raw power, the battlefield and home ground, and how well each team works together. A clever,
 well-led, well-equipped team can and often should beat a stronger but disorganised one, unless the power gap is
 truly overwhelming (a cosmic being against ordinary humans).
+Characters marked [injured] fight at reduced strength; [gear broken] means they can't use their signature weapon.
 Every character on both teams must play a part: mention each by name in the fight and give each their own line
 in "roles". Nobody sits out. Be decisive: no draws. Be vivid but brief. For "winner", give the player's name
 exactly as given.`;
@@ -73,8 +76,13 @@ exactly as given.`;
 
   const isMaker = r => (((window.UNIVERSES || {})[r.world] || {}).makers || []).includes(r.name);
 
+  // Earlier fights in a tournament can leave someone hurt or unarmed.
+  const hurt = r => !r.condition ? ""
+    : r.condition.status === "injured" ? ` [injured: ${r.condition.note}]`
+    : r.condition.status === "broken" ? ` [gear broken: ${r.condition.note}]` : "";
+
   const rows = (team, worldName) => team.roster.length
-    ? team.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}${tagsFor(r)}`).join("\n")
+    ? team.roster.map(r => `- ${r.name} (${worldName(r.world)}): ${r.note}${tagsFor(r)}${hurt(r)}`).join("\n")
     : "- nobody";
 
   const battlefield = (arena, worldName) => arena
@@ -150,7 +158,7 @@ Reply as JSON:
     return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nJobs:\n${jobs}`;
   }
 
-  function battleQuestion(teams, preps, worldName, arena) {
+  function battleQuestion(teams, preps, worldName, arena, aftermath) {
     const keys = roleKeys(teams).map(c => c.key);
     const user = `${battlefield(arena, worldName)}
 
@@ -162,10 +170,23 @@ Reply as JSON:
 - "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
 - "mvp": the character who mattered most
 - "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
-- "verdict": one punchy line explaining why the winner won`;
+- "verdict": one punchy line explaining why the winner won${aftermath ? `
+- "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
+  "gear_broken" or "dead", with a short note (an object with one key per character name). Most characters should
+  come out "fine" or "injured"; only kill a character if the fight clearly did. Losers are likelier to be hurt.` : ""}`;
+    const afterSchema = {
+      type: "OBJECT",
+      properties: Object.fromEntries(keys.map(k => [k, {
+        type: "OBJECT",
+        properties: { status: { type: "STRING", enum: ["fine", "injured", "gear_broken", "dead"] }, note: { type: "STRING" } },
+        required: ["status", "note"],
+      }])),
+      required: keys,
+    };
     const schema = {
       type: "OBJECT",
       properties: {
+        ...(aftermath ? { aftermath: afterSchema } : {}),
         fight: { type: "STRING" },
         roles: keyedObject(keys),
         turning_point: { type: "STRING" },
@@ -173,9 +194,9 @@ Reply as JSON:
         winner: { type: "STRING" },
         verdict: { type: "STRING" },
       },
-      required: ["fight", "roles", "turning_point", "mvp", "winner", "verdict"],
+      required: ["fight", "roles", "turning_point", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])],
     };
-    return { system: BATTLE_SYSTEM, user, schema, maxTokens: 1500 };
+    return { system: BATTLE_SYSTEM, user, schema, maxTokens: aftermath ? 2000 : 1500 };
   }
 
   // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
@@ -241,6 +262,13 @@ Reply as JSON:
       role: String(given[c.key] || given[c.name] || "").trim(),
     }));
     data.fight = String(data.fight || "");
+    if (data.aftermath && typeof data.aftermath === "object") {
+      const given = data.aftermath;
+      data.aftermath = roleKeys(teams).map(c => {
+        const a = given[c.key] || given[c.name] || {};
+        return { team: c.team, name: c.name, world: c.world, id: c.id, status: String(a.status || "fine"), note: String(a.note || "") };
+      });
+    }
     return data;
   }
 
@@ -458,7 +486,7 @@ Reply as JSON:
      Both war councils, then the battle. Preparations already made (say, the
      battle call failed last time) are reused rather than asked for again. */
 
-  async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep }) {
+  async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep, aftermath = false }) {
     const backend = kind === "gemini" ? gemini : local;
     await backend.prepare(onStatus);
     const done = [preps[0] || null, preps[1] || null];
@@ -484,7 +512,7 @@ Reply as JSON:
     }
 
     onStatus("Both sides are ready. The battle is being fought…");
-    const q = battleQuestion(teams, done, worldName, arena);
+    const q = battleQuestion(teams, done, worldName, arena, aftermath);
     const battle = tidyBattle(await backend.ask(q, onStatus, "the battle"), teams);
     return { ...battle, preps: done, by: backend.label() };
   }
@@ -600,5 +628,49 @@ The ${battleShots.length} battle shots tell the fight from first clash to the tu
     return board;
   }
 
-  window.Judge = { gemini, local, run, storyboard, pin, SERVER };
+  /* --- What a crowd-decided fight cost ---------------------------------
+     The crowd picks a winner but says nothing about how it went, so for
+     lasting harm in a tournament this reasons it out: given the teams, the
+     ground and who won, what would the fight have done to each character? */
+
+  async function aftermathOf(kind, { teams, winner, arena, worldName, onStatus = () => {} }) {
+    const backend = kind === "gemini" ? gemini : local;
+    await backend.prepare(onStatus);
+    const keys = roleKeys(teams).map(c => c.key);
+    const user = `${battlefield(arena, worldName)}
+
+${teams.map(t => `Team drafted by ${t.name}:\n${rows(t, worldName)}`).join("\n\n")}
+
+The crowd watched this fight and decided that ${winner}'s team won. Reason through how a fight between these
+teams, here, would most likely have gone given that result, then say what it did to each character.
+
+Reply as JSON:
+- "aftermath": for each character, "fine", "injured", "gear_broken" or "dead", with a short note on why
+  (an object with one key per character name). Base it only on what these characters can do against each other
+  and on who won: a mismatch or a brutal fight hurts more, an easy win hurts less, and a character only dies if
+  the fight would really have killed them.`;
+    const schema = {
+      type: "OBJECT",
+      properties: {
+        aftermath: {
+          type: "OBJECT",
+          properties: Object.fromEntries(keys.map(k => [k, {
+            type: "OBJECT",
+            properties: { status: { type: "STRING", enum: ["fine", "injured", "gear_broken", "dead"] }, note: { type: "STRING" } },
+            required: ["status", "note"],
+          }])),
+          required: keys,
+        },
+      },
+      required: ["aftermath"],
+    };
+    const data = await backend.ask({ system: BATTLE_SYSTEM, user, schema, maxTokens: 900 }, onStatus, "the medic");
+    const given = (data && data.aftermath) || {};
+    return roleKeys(teams).map(c => {
+      const a = given[c.key] || given[c.name] || {};
+      return { id: c.id, name: c.name, status: String(a.status || "fine"), note: String(a.note || "") };
+    });
+  }
+
+  window.Judge = { gemini, local, run, storyboard, aftermathOf, pin, SERVER };
 })();

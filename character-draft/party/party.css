@@ -264,6 +264,7 @@ html.tv { font-size: clamp(15px, 1.12vw, 30px); }
 }
 .pick__card[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-wash); }
 .pick__card .pic { width: 4.2rem; }
+.pick__card--dead .pic { filter: grayscale(1); opacity: 0.5; }
 
 .dock {
   position: sticky; bottom: 0; z-index: 5;
@@ -288,6 +289,33 @@ html.tv { font-size: clamp(15px, 1.12vw, 30px); }
 .vote__btn .team__pics .pic { width: 2.6rem; }
 
 .big-note { font-size: 1.25rem; line-height: 1.45; margin-top: var(--space-xs); }
+
+/* Characters hurt, disarmed or fallen in earlier fights. */
+.cpic { position: relative; display: inline-block; line-height: 0; }
+.cpic .pic { width: 100%; }
+.side__pics .cpic, .vote__btn .cpic { width: 100%; }
+.cpic--dead .pic { filter: grayscale(1); opacity: 0.45; }
+.cpic--injured .pic, .cpic--broken .pic { filter: saturate(0.6); }
+.cpic__tag {
+  position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%);
+  white-space: nowrap; line-height: 1.2;
+  font-family: var(--font-hand); font-size: 0.85rem;
+  padding: 0 0.4rem; border-radius: var(--radius-blob);
+  background: var(--paper); color: var(--ink);
+}
+.cpic--dead .cpic__tag { background: var(--ink); color: var(--paper); }
+.cond { font-family: var(--font-hand); color: var(--ink-muted); }
+
+.aftermath { margin-top: var(--space-sm); }
+.aftermath ul { list-style: none; display: grid; gap: 0.3rem; margin-top: 0.3rem; }
+.aftermath li { display: flex; gap: 0.6rem; align-items: center; }
+.aftermath .cpic { width: 2.2rem; flex: none; }
+
+.tv-film .film { max-width: 70rem; margin: 0 auto; }
+.tv-film .film__caption { font-size: 2rem; }
+.shotlist { list-style: none; margin: var(--space-sm) 0; display: grid; gap: 0.4rem; }
+.shotlist li { color: var(--ink-muted); line-height: 1.35; }
+.shotlist .shot--done { color: var(--ink); }
 
 /* The admin's controls, pinned to the top of their phone. */
 .admin-bar {

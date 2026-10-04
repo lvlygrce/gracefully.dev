@@ -19,7 +19,7 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "crowd", team: 5, skips: 2, bidSeconds: 10, voteSeconds: 20 },
+    { worlds: Object.keys(U), judge: "crowd", team: 5, skips: 2, bidSeconds: 10, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
     safe.get(PREFS_KEY) || {},
   );
   prefs.worlds = (prefs.worlds || []).filter(w => U[w]);
@@ -30,7 +30,8 @@
   let view = null;
   let status = "connecting";
   let error = "";
-  let judging = { matchId: null, preps: [null, null], status: "", error: "" };
+  let judging = { matchId: null, preps: [null, null], status: "", error: "", film: null };
+  const Film = window.Film;
 
   const announce = t => { announcer.textContent = ""; requestAnimationFrame(() => { announcer.textContent = t; }); };
   const savePrefs = () => safe.set(PREFS_KEY, prefs);
@@ -60,6 +61,7 @@
         if (!was || was.phase !== state.phase) error = "";
         render();
         maybeJudge();
+        maybeReason();
       }
     },
   });
@@ -72,6 +74,9 @@
     return {
       judge: judgeMode(),
       team: prefs.team,
+      casualties: prefs.casualties,
+      film: judgeMode() === "ai" ? prefs.film : "off",
+      filmTier: prefs.filmTier,
       skips: prefs.skips,
       bidSeconds: prefs.bidSeconds,
       voteSeconds: prefs.voteSeconds,
@@ -114,6 +119,8 @@
     const s = state;
     if (s.phase === "lobby") { updateCloud(); updateStart(); }
     if (s.phase === "auction") updateAuction();
+    // The reasoned aftermath of a crowd fight arrives a few seconds after the result.
+    if (s.phase === "match" && s.match.stage === "result" && (s.match.aftermath || []).length && !document.querySelector(".aftermath")) full();
     if (s.phase === "match" && s.match.stage === "vote") {
       const el = document.getElementById("voted");
       if (el) el.textContent = `${s.match.voted} of ${s.match.voters} voted`;
@@ -178,7 +185,7 @@
               ${opt("judge", "gemini", "AI judge: Gemini", prefs.judge === "gemini")}
               ${opt("judge", "local", "AI judge: on this computer", prefs.judge === "local")}
             </div>
-            ${prefs.judge === "gemini" ? (key
+            ${prefs.judge === "gemini" || (prefs.judge === "crowd" && prefs.casualties) ? (key
               ? `<p class="muted" style="margin-top:.4rem">${J.gemini.key() ? "Gemini key saved on this computer." : "Using Grace's PIN for Gemini."} <button class="btn btn--quiet" type="button" id="forget-key">Forget it</button></p>`
               : `<label class="field" style="margin-top:.5rem"><span class="field__label">Gemini API key (free from Google AI Studio), or Grace's PIN</span>
                    <input class="field__input" id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>`)
@@ -195,6 +202,27 @@
           <fieldset>
             <legend>Clock after each bid</legend>
             <div class="opts">${[8, 10, 15].map(n => opt("bidsecs", n, `${n} seconds`, prefs.bidSeconds === n)).join("")}</div>
+          </fieldset>
+          <fieldset>
+            <legend>Lasting harm, with three or more players</legend>
+            <div class="opts">
+              ${opt("casualties", "on", "Injuries, broken gear and deaths carry on", prefs.casualties)}
+              ${opt("casualties", "off", "Everyone starts each fight fresh", !prefs.casualties)}
+            </div>
+            ${prefs.casualties ? `<p class="muted" style="margin-top:.3rem">Harm is always reasoned, never random: the AI judge says what each fight did${prefs.judge === "crowd"
+              ? ", and after a crowd vote Gemini works out what the result cost (add a key or the PIN above; without one, crowd fights leave everyone unhurt)" : ""}.</p>` : ""}
+          </fieldset>
+          <fieldset>
+            <legend>Film the fights</legend>
+            <div class="opts">
+              ${opt("film", "off", "No films", prefs.film === "off")}
+              ${opt("film", "final", "Just the final", prefs.film === "final")}
+              ${opt("film", "all", "Every fight", prefs.film === "all")}
+            </div>
+            ${prefs.film !== "off" ? `<div class="opts" style="margin-top:.4rem">${["quick", "feature", "epic"].map(t => opt("filmtier", t, `${t[0].toUpperCase() + t.slice(1)} <span class="chip__meta" data-tierprice="${t}"></span>`, prefs.filmTier === t)).join("")}</div>
+              <p class="muted" id="film-note" style="margin-top:.3rem"></p>
+              ${J.pin.get() ? "" : Film.ownKey.get() ? `<p class="muted">Films use your Higgsfield key.</p>` : `<label class="field" style="margin-top:.4rem"><span class="field__label">Higgsfield key (key id:secret), or Grace's PIN</span>
+                <input class="field__input" id="hf-key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>`}` : ""}
           </fieldset>
           <p class="muted">Everyone gets $${state.settings.budget}. One character at a time goes up for auction: whoever's turn it is
             opens the bidding or spends a skip to send it away. Then anyone can raise from their phone, and every bid resets the clock.
@@ -220,6 +248,16 @@
     app.querySelectorAll('[name="judge"]').forEach(i => i.addEventListener("change", () => {
       prefs.judge = i.value; savePrefs(); sendSettings(); render(true);
     }));
+    app.querySelectorAll('[name="casualties"]').forEach(i => i.addEventListener("change", () => {
+      prefs.casualties = i.value === "on"; savePrefs(); sendSettings(); render(true);
+    }));
+    app.querySelectorAll('[name="film"]').forEach(i => i.addEventListener("change", () => {
+      prefs.film = i.value; savePrefs(); sendSettings(); render(true);
+    }));
+    app.querySelectorAll('[name="filmtier"]').forEach(i => i.addEventListener("change", () => {
+      prefs.filmTier = i.value; savePrefs(); sendSettings(); priceFilms();
+    }));
+    if (prefs.film !== "off") priceFilms();
     [["team", "team"], ["skips", "skips"], ["bidsecs", "bidSeconds"]].forEach(([name, key]) => {
       app.querySelectorAll(`[name="${name}"]`).forEach(i => i.addEventListener("change", () => {
         prefs[key] = Number(i.value); savePrefs(); sendSettings(); updateStart();
@@ -234,6 +272,22 @@
   }
 
   function sendSettings() { net.send({ t: "host:settings", settings: serverSettings() }); }
+
+  // What filming will cost, per fight and for the whole tournament.
+  async function priceFilms() {
+    let q = null, rate = 1.7;
+    try { [q, rate] = await Promise.all([Film.quote(), Film.nzdRate()]); } catch { /* shown below */ }
+    const note = document.getElementById("film-note");
+    if (!q) { if (note) note.textContent = "Films aren't available right now."; return; }
+    q.tiers.forEach(t => { const el = document.querySelector(`[data-tierprice="${t.id}"]`); if (el) el.textContent = `NZ$${(t.usd * rate).toFixed(2)} a fight`; });
+    const tier = q.tiers.find(t => t.id === prefs.filmTier) || q.tiers[0];
+    const fights = prefs.film === "final" ? 1 : Math.max(1, state.players.length - 1);
+    if (note) {
+      note.textContent = (judgeMode() === "crowd" ? "Films need an AI judge, so pick Gemini or this computer above. " : "")
+        + `${fights === 1 ? "One film" : `About ${fights} films`}: around NZ$${(tier.usd * rate * fights).toFixed(2)} in all. `
+        + "Each takes a few minutes to make; the winner is revealed when it ends.";
+    }
+  }
 
   function updateCloud() {
     const cloud = document.getElementById("cloud");
@@ -287,6 +341,16 @@
   }
 
   async function startDraft() {
+    const hfInput = document.getElementById("hf-key");
+    const hfTyped = hfInput && hfInput.value.trim();
+    if (hfTyped && J.pin.looksLike(hfTyped)) {
+      let ok = false;
+      try { ok = await J.pin.verify(hfTyped); } catch (err) { error = err.message; return render(true); }
+      if (!ok) { error = "That PIN isn't right."; return render(true); }
+    } else if (hfTyped) {
+      if (!Film.ownKey.looksLike(hfTyped)) { error = "That doesn't look like a Higgsfield key (key id:secret)."; return render(true); }
+      Film.ownKey.set(hfTyped);
+    }
     const keyInput = document.getElementById("key");
     const typed = keyInput && keyInput.value.trim();
     if (typed && J.pin.looksLike(typed)) {
@@ -388,12 +452,20 @@
 
   /* Teams, then the bracket. */
 
+  // A character's picture, marked if an earlier fight hurt, disarmed or killed them.
+  const condition = cid => (state.conditions || {})[cid];
+  const condWord = c => !c ? "" : c.status === "dead" ? "fallen" : c.status === "broken" ? "gear broken" : "injured";
+  function marked(c, size) {
+    const k = condition(c.id);
+    return `<span class="cpic ${k ? `cpic--${k.status}` : ""}" title="${k ? esc(`${condWord(k)}: ${k.note}`) : ""}">${picture(c, size)}${k ? `<span class="cpic__tag">${condWord(k)}</span>` : ""}</span>`;
+  }
+
   function teamHtml(p, k) {
     const cards = p.roster.map(r => card(r.card)).filter(Boolean);
     return `<article class="team arrive" style="--i:${k}">
       <p class="team__name">${esc(p.name)} <span class="chip__meta">$${p.budget} left</span></p>
-      <div class="team__pics">${cards.map(c => picture(c, "pic--sm")).join("") || `<span class="muted">nobody</span>`}</div>
-      <ul class="team__list">${cards.map(c => `<li>${esc(c.name)}</li>`).join("")}</ul></article>`;
+      <div class="team__pics">${cards.map(c => marked(c, "pic--sm")).join("") || `<span class="muted">nobody</span>`}</div>
+      <ul class="team__list">${cards.map(c => { const x = condition(c.id); return `<li>${esc(c.name)}${x ? ` <span class="cond">(${condWord(x)})</span>` : ""}</li>`; }).join("")}</ul></article>`;
   }
 
   function teamsView() {
@@ -453,8 +525,8 @@
     return `<section class="side ${won}" id="side-${k}">
       <p class="hand">${k === 0 ? "in this corner" : "and in this corner"}</p>
       <h2 class="title title--lg">${esc(p.name)}</h2>
-      <div class="side__pics">${cards.map(c => picture(c, "pic--lg")).join("")}</div>
-      <p class="side__names">${cards.map(c => esc(c.name)).join(" · ")}</p>
+      <div class="side__pics">${cards.map(c => marked(c, "pic--lg")).join("")}</div>
+      <p class="side__names">${cards.map(c => { const x = condition(c.id); return esc(c.name) + (x ? ` <span class="cond">(${condWord(x)})</span>` : ""); }).join(" · ")}</p>
       ${prep ? `<div class="side__plan"><span class="hand">led by ${esc(prep.leader)}</span><br />${esc(prep.plan)}
         ${(prep.gear || []).length ? `<br /><span class="hand">gear:</span> ${prep.gear.map(g => esc(g.name)).join(", ")}` : ""}</div>` : ""}
     </section>`;
@@ -467,8 +539,13 @@
       middle = `<div class="topline"><p class="title title--md">Vote on your phones<span class="accent">.</span> <span class="hand" id="voted">${m.voted} of ${m.voters} voted</span></p>
         <span class="timer" data-ends="${m.endsAt}" data-fmt="{s}"></span></div>
         <div class="bar"><span data-bar="${m.endsAt}" data-total="${s.settings.voteSeconds}"></span></div>`;
+    } else if (m.stage === "judging" && judging.matchId === m.id && judging.film && judging.film.ready) {
+      middle = `<div id="tv-film" class="tv-film"></div>`;
     } else if (m.stage === "judging") {
+      const f = judging.matchId === m.id && judging.film;
       middle = `<p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
+        ${f ? `<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
+          <button class="btn btn--quiet" type="button" id="skip-film">Skip the film</button>` : ""}
         ${judging.matchId === m.id && judging.error ? `<p class="warn">${esc(judging.error)}</p>
           <div class="controls"><button class="btn btn--primary" type="button" id="retry">Try the judge again</button>
           <button class="btn" type="button" id="crowd">Let the crowd decide this one</button></div>` : ""}`;
@@ -479,6 +556,11 @@
         ${total ? `<div class="tally"><span style="width:${(m.tally[0] / total) * 100}%"></span><span style="width:${(m.tally[1] / total) * 100}%"></span></div>
           <p class="hand">${m.tally[0]} votes to ${m.tally[1]}${m.tie ? ", a tie, so a coin decided it" : ""}</p>` : ""}
         ${m.tie && !total ? `<p class="hand">nobody voted, so a coin decided it</p>` : ""}
+        ${(m.aftermath || []).length ? `<div class="aftermath arrive" style="--i:1"><span class="hand">${m.walkover ? "" : "what the fight cost"}</span><ul>${m.aftermath.map(a => {
+          const c = card(a.card);
+          return `<li>${c ? marked(c, "pic--xs") : ""}<span><em>${esc(c ? c.name : "?")}</em> ${a.status === "dead" ? "fell" : a.status === "broken" ? "lost their gear" : "was injured"}: ${esc(a.note)}</span></li>`;
+        }).join("")}</ul></div>` : ""}
+        ${m.walkover ? `<p class="big-note">${esc(player(m.winner === m.a ? m.b : m.a).name)}'s team has nobody left standing, so ${esc(w.name)} goes through.</p>` : ""}
         ${m.verdict ? `<div class="verdict arrive" style="--i:2"><p class="big-note"><em>${esc(m.verdict.verdict)}</em></p>
           <p><span class="hand">turning point</span> ${esc(m.verdict.turning_point)}</p>
           <p><span class="hand">most valuable</span> ${esc(m.verdict.mvp)}</p>
@@ -496,6 +578,13 @@
     on("close-vote", () => net.send({ t: "host:next" }));
     on("retry", () => { judging.matchId = null; maybeJudge(); });
     on("crowd", () => net.send({ t: "host:crowd" }));
+    on("skip-film", () => { if (judging.film) judging.film.skip = true; finishJudged(); });
+    const filmBox = document.getElementById("tv-film");
+    if (filmBox && judging.film) {
+      Film.player(filmBox, judging.film, { onEnd: finishJudged });
+      const play = filmBox.querySelector("#film-play");
+      if (play) play.click();
+    }
     if (m.stage === "vote") announce(`${player(m.a).name} against ${player(m.b).name}. Vote on your phones.`);
     if (m.stage === "result") announce(`${player(m.winner).name} wins.`);
   }
@@ -520,16 +609,28 @@
 
   /* --- The AI judge, run here on the TV --------------------------------- */
 
+  // The fallen don't fight; the hurt fight on, marked for the judge.
   function teamFor(id) {
     const p = player(id);
     return {
       name: p.name,
       left: p.budget,
-      roster: p.roster.map(r => {
+      roster: p.roster.filter(r => !(condition(r.card) && condition(r.card).status === "dead")).map(r => {
         const c = card(r.card);
-        return { name: c.name, note: c.note, world: c.world, price: r.price };
+        return { id: c.id, name: c.name, note: c.note, world: c.world, price: r.price, condition: condition(r.card) || null };
       }),
     };
+  }
+
+  const lasting = () => state.settings.casualties && state.players.filter(p => p.roster.length).length >= 3;
+  const filmsThis = m => state.settings.film === "all" || (state.settings.film === "final" && m.final);
+
+  // Send the verdict once the film (if any) has played or been skipped.
+  function finishJudged() {
+    const j = judging;
+    if (!j.pending || j.sent) return;
+    j.sent = true;
+    net.send(j.pending);
   }
 
   async function maybeJudge() {
@@ -537,7 +638,7 @@
     if (!m || state.phase !== "match" || m.stage !== "judging") return;
     if (judging.matchId === m.id) return;
     const matchId = m.id;
-    judging = { matchId, preps: [null, null], status: "The war councils are meeting…", error: "" };
+    judging = { matchId, preps: [null, null], status: "The war councils are meeting…", error: "", film: null, pending: null, sent: false };
     render(true);
     const teams = [teamFor(m.a), teamFor(m.b)];
     const a = state.arena;
@@ -550,8 +651,9 @@
     };
     try {
       J.local.modelId = J.local.models[0].id;
-      const v = await J.run(prefs.judge === "local" ? "local" : "gemini", {
-        teams, arena,
+      const kind = prefs.judge === "local" ? "local" : "gemini";
+      const v = await J.run(kind, {
+        teams, arena, aftermath: lasting(),
         worldName: w => (U[w] || {}).name || w,
         onStatus: setStatus,
         onPrep: (i, prep) => {
@@ -563,12 +665,80 @@
       });
       if (!state.match || state.match.id !== matchId) return;
       const side = v.winner === teams[1].name ? 1 : 0;
-      net.send({ t: "host:result", matchId, side, verdict: v });
+      const aftermath = (v.aftermath || []).filter(a => a.status !== "fine")
+        .map(a => ({ card: a.id, status: a.status === "gear_broken" ? "broken" : a.status, note: a.note }));
+      judging.pending = { t: "host:result", matchId, side, verdict: v, aftermath };
+
+      if (filmsThis(m)) {
+        try {
+          const q = await Film.quote();
+          const tier = q.tiers.find(t => t.id === state.settings.filmTier) || q.tiers[0];
+          const board = await J.storyboard(kind, { teams, verdict: v, arena, worldName: w => (U[w] || {}).name || w, shots: tier.shots, onStatus: setStatus });
+          setStatus("Sending the storyboard to the studio…");
+          const job = await Film.start({ tier: tier.id, prompts: Object.fromEntries(tier.shots.map(x => [x.key, board.shots[x.key].prompt])) });
+          const label = k => k.startsWith("prep_a") ? `${teams[0].name}'s war council prepares` : k.startsWith("prep_b") ? `${teams[1].name}'s war council prepares` : "The battle";
+          judging.film = { shots: tier.shots.map(x => ({ key: x.key, label: label(x.key), caption: board.shots[x.key].caption, url: null, status: "queued" })) };
+          setStatus("Filming the fight. This takes a few minutes; the winner is revealed when it ends.");
+          render(true);
+          await Film.wait(job.id, st => {
+            if (judging.matchId !== matchId || !judging.film || judging.film.skip) return;
+            st.shots.forEach(x => { const sh = judging.film.shots.find(y => y.key === x.key); if (sh) { sh.status = x.status; sh.url = x.url || sh.url; } });
+            if (!judging.film.ready) render(true);
+          });
+          if (judging.matchId !== matchId || judging.film.skip) return;
+          v.film = { shots: judging.film.shots };
+          judging.film.ready = judging.film.shots.some(x => x.url);
+          keepParty(teams, v);
+          if (!judging.film.ready) return finishJudged();
+          return render(true);   // the film plays, then finishJudged sends the result
+        } catch (err) {
+          judging.film = null;
+          setStatus(`No film this time (${err.message}). Here's the verdict.`);
+        }
+      }
+      keepParty(teams, v);
+      finishJudged();
     } catch (err) {
       if (judging.matchId !== matchId) return;
       judging.error = err.message || "The judge couldn't decide.";
       render(true);
     }
+  }
+
+  // After a crowd vote, reason out what the fight cost (never rolled).
+  let reasonedFor = null;
+  async function maybeReason() {
+    const m = state && state.match;
+    if (!m || state.phase !== "match" || m.stage !== "result" || m.verdict || m.walkover) return;
+    if (!lasting() || (m.aftermath || []).length || reasonedFor === m.id) return;
+    const kind = prefs.judge === "local" ? "local" : J.gemini.ready() ? "gemini" : null;
+    if (!kind) return;
+    reasonedFor = m.id;
+    const winner = player(m.winner).name;
+    const a = state.arena;
+    try {
+      const list = await J.aftermathOf(kind, {
+        teams: [teamFor(m.a), teamFor(m.b)], winner,
+        arena: a ? { name: a.name, terrain: a.terrain, world: a.world } : null,
+        worldName: w => (U[w] || {}).name || w,
+      });
+      net.send({ t: "host:aftermath", matchId: m.id, aftermath: list.filter(x => x.status !== "fine")
+        .map(x => ({ card: x.id, status: x.status === "gear_broken" ? "broken" : x.status, note: x.note })) });
+    } catch { /* no reasoning, no harm */ }
+  }
+
+  // AI-judged fights go into this browser's recent battles, like the two-player game's.
+  function keepParty(teams, v) {
+    if (!Film || !Film.battles) return;
+    const { film, aftermath, ...story } = v;
+    const a = state.arena;
+    Film.battles.save({
+      id: Math.random().toString(36).slice(2, 10), at: Date.now(), worlds: prefs.worlds,
+      arena: a ? { name: a.name, image: a.image } : null,
+      teams: teams.map(t => ({ name: t.name, roster: t.roster.map(r => ({ name: r.name, world: r.world, note: r.note, price: r.price })) })),
+      verdict: story,
+      film: film ? { shots: film.shots.map(x => ({ label: x.label, caption: x.caption, url: x.url })) } : null,
+    });
   }
 
   /* --- Clock ----------------------------------------------------------- */
