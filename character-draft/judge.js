@@ -452,5 +452,116 @@ Reply as JSON:
     return { ...battle, preps: done, by: backend.label() };
   }
 
-  window.Judge = { gemini, local, run };
+  /* --- The director ------------------------------------------------
+     Turns a decided battle into a storyboard for a short film: one visual
+     style, one fixed description per character, and a shot list. The shot
+     prompts are assembled here, not by the model, so every shot repeats the
+     same style and the same character descriptions word for word. That
+     repetition is what keeps characters looking like themselves. */
+
+  const DIRECTOR_SYSTEM = `You are the director of a very short film about a fantasy battle that has already been decided.
+Never change the outcome, the plans or the gear: film what happened. Make it exciting, clear and a little funny.
+The film is made by a text-to-video model, one shot at a time, so:
+- "style": one line describing the look of the whole film (medium, lighting, palette), chosen to suit these characters.
+  Keep it family-friendly blockbuster: stylised action, no blood, no gore.
+- "cast": for every character, a "look": a purely visual description of 15 to 30 words (species or build, face,
+  hair, outfit and its colours, signature weapon or prop; no names, no actors), and a "tag": a 2 to 4 word visual
+  nickname such as "the armoured inventor" or "the blue-haired archer". The look is reused word for word in every shot.
+- "shots": each "action" is one continuous moment that can be filmed in the shot's length: who is in frame,
+  what they do, and the camera move. At most three characters in focus. Under 60 words. In "action", call
+  characters only by their tag, never by name. Keep the action playful and theatrical, like a family adventure
+  film: dazzling clashes, near misses, clever tricks and comic moments; nobody is seriously hurt.
+  Each "caption" is a trailer-style line shown under the shot, under 14 words, present tense.
+  "who" lists the characters on screen, using their names exactly as given.`;
+
+  function directorQuestion(teams, verdict, arena, worldName, shots) {
+    const names = roleKeys(teams).map(c => c.key);
+    const purpose = k => k.startsWith("prep_a") ? `${teams[0].name}'s team preparing: their plan in action, the makers building their gear`
+      : k.startsWith("prep_b") ? `${teams[1].name}'s team preparing: their plan in action, the makers building their gear`
+      : "the battle, in order";
+    const prepText2 = (p, t) => p ? `${t.name}'s team, led by ${p.leader}. Plan: ${p.plan} Gear: ${(p.gear || []).map(g => `${g.name} (${g.made_by}): ${g.effect}`).join("; ") || "none"}` : "";
+    const battleShots = shots.filter(x => x.key.startsWith("battle"));
+    const user = `${battlefield(arena, worldName)}
+
+${teams.map(t => `Team drafted by ${t.name}:\n${rows(t, worldName)}`).join("\n\n")}
+
+What happened:
+${(verdict.preps || []).map((p, i) => prepText2(p, teams[i])).filter(Boolean).join("\n")}
+The fight: ${verdict.fight}
+Turning point: ${verdict.turning_point}
+Most valuable: ${verdict.mvp}
+Winner: ${verdict.winner}'s team. ${verdict.verdict}
+
+Shots to write, in order:
+${shots.map(x => `- ${x.key} (${x.duration} seconds): ${purpose(x.key)}`).join("\n")}
+The ${battleShots.length} battle shots tell the fight from first clash to the turning point, and the last one shows ${verdict.winner}'s team victorious.`;
+    const shotSchema = {
+      type: "OBJECT",
+      properties: {
+        who: { type: "ARRAY", items: { type: "STRING", enum: names } },
+        action: { type: "STRING" },
+        caption: { type: "STRING" },
+      },
+      required: ["who", "action", "caption"],
+    };
+    const schema = {
+      type: "OBJECT",
+      properties: {
+        style: { type: "STRING" },
+        cast: {
+          type: "OBJECT",
+          properties: Object.fromEntries(names.map(n => [n, {
+            type: "OBJECT",
+            properties: { look: { type: "STRING" }, tag: { type: "STRING" } },
+            required: ["look", "tag"],
+          }])),
+          required: names,
+        },
+        shots: { type: "OBJECT", properties: Object.fromEntries(shots.map(x => [x.key, shotSchema])), required: shots.map(x => x.key) },
+      },
+      required: ["style", "cast", "shots"],
+    };
+    return { system: DIRECTOR_SYSTEM, user, schema, maxTokens: 2200 };
+  }
+
+  const SAFE = "Playful, theatrical, bloodless action like a family adventure film; nobody is seriously hurt. "
+    + "No on-screen text or logos. Consistent character designs throughout.";
+
+  // Names never reach the video model: they can trip its content filter, and
+  // it draws from the descriptions anyway. Each character is "tag: look".
+  function shotPrompt(board, shot, arena) {
+    const cast = (shot.who || []).map(n => {
+      const c = board.cast[n];
+      return c ? `${c.tag}: ${c.look}.` : "";
+    }).filter(Boolean).join(" ");
+    const where = arena ? `Setting: ${arena.name}, ${arena.terrain}` : "";
+    return [board.style, where, cast, `Action: ${shot.action}`, SAFE].filter(Boolean).join(" ").replace(/\s+/g, " ").slice(0, 1750);
+  }
+
+  async function storyboard(kind, { teams, verdict, arena, worldName, shots, onStatus }) {
+    const backend = kind === "gemini" ? gemini : local;
+    await backend.prepare(onStatus);
+    onStatus("The director is writing the storyboard…");
+    const data = await backend.ask(directorQuestion(teams, verdict, arena, worldName, shots), onStatus, "the director");
+    const board = { style: String(data.style || ""), cast: {}, shots: {} };
+    for (const [n, c] of Object.entries(data.cast || {})) {
+      board.cast[n] = typeof c === "string" ? { look: c, tag: "a fighter" } : { look: String(c.look || ""), tag: String(c.tag || "a fighter") };
+    }
+    // Any name that slipped into an action becomes that character's tag.
+    const unname = text => Object.entries(board.cast)
+      .sort((a, b) => b[0].length - a[0].length)
+      .reduce((t, [n, c]) => t.split(n).join(c.tag), text);
+    for (const x of shots) {
+      const sh = (data.shots || {})[x.key] || {};
+      board.shots[x.key] = {
+        who: Array.isArray(sh.who) ? sh.who.map(String) : [],
+        action: unname(String(sh.action || "")),
+        caption: String(sh.caption || ""),
+      };
+      board.shots[x.key].prompt = shotPrompt(board, board.shots[x.key], arena);
+    }
+    return board;
+  }
+
+  window.Judge = { gemini, local, run, storyboard };
 })();

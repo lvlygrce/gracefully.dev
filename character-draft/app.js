@@ -734,12 +734,17 @@
       return;
     }
 
+    if (verdict && verdict.film && !verdict.film.watched) return renderFilm(worlds, teams, isShared, verdict);
+
     if (verdict) {
       body.innerHTML = (verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : "")
-        + verdictHtml(verdict) + `
+        + verdictHtml(verdict)
+        + (verdict.film && verdict.film.shots.some(x => x.url) ? `<div class="judge__again"><button class="btn" type="button" id="film-replay">Watch the film again</button></div>` : "")
+        + `
         <div class="tools tools--loud judge__again">
           <button class="btn" type="button" id="judge-again">Ask for a second opinion</button>
         </div>`;
+      on("film-replay", () => { verdict.film.watched = false; if (!isShared) save(); render(); });
       on("judge-again", () => {
         judging.preps = [];
         if (isShared) judging.verdict = null; else { state.verdict = null; save(); }
@@ -754,6 +759,8 @@
     }
 
     const mode = prefs.judge || "gemini";
+    const realPeople = teams.some(t => t.roster.some(r => r.world === "famous"));
+    const format = realPeople ? "text" : (prefs.format || "text");
     const key = J.gemini.key();
     const localModel = prefs.localModel || J.local.models[0].id;
     const gpu = J.local.supported();
@@ -800,8 +807,24 @@
             <button class="btn btn--quiet btn--inline" type="button" id="clear-models">Clear downloaded models</button></p>`}
       </div>
 
+      <h3 class="judge__sub">How do you want to see it?</h3>
+      <fieldset class="formats"><legend class="visually-hidden">Format</legend>
+        ${formatOption("text", "Just the story", "War councils, the fight and the winner, in words.", format)}
+        ${FILM_TIERS.map(t => formatOption(t.id, t.label, t.blurb, format)).join("")}
+      </fieldset>
+      <p class="judge__fine" id="format-note"></p>
+      ${format !== "text" ? `
+        <label class="field field--code"><span class="field__label">Video code</span>
+          <input class="field__input field__input--key" id="code-input" type="password" autocomplete="off" spellcheck="false"
+                 placeholder="The code from Grace" value="${esc(Film.safe.get(Film.CODE_KEY) || "")}" /></label>` : ""}
+
       ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
-      <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>Reveal the winner</button>`;
+      <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>${format === "text" ? "Reveal the winner" : "Make the film"}</button>`;
+
+    body.querySelectorAll('[name="format"]').forEach(i => i.addEventListener("change", () => {
+      prefs.format = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
+    }));
+    priceFormats(mode, worlds, teams);
 
     body.querySelectorAll('[name="judge"]').forEach(i => i.addEventListener("change", () => {
       prefs.judge = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
@@ -834,6 +857,13 @@
         if (!typed) { judging.error = "Paste a Gemini API key first."; return renderJudge(worlds, teams, isShared); }
         J.gemini.saveKey(typed);
       }
+      let code = "";
+      if (format !== "text") {
+        code = (document.getElementById("code-input") || {}).value || "";
+        code = code.trim();
+        if (!code) { judging.error = "Enter the video code to make a film."; return renderJudge(worlds, teams, isShared); }
+        Film.safe.set(Film.CODE_KEY, code);
+      }
       const draftAtStart = state;
       const kept = judging.preps.length ? judging.preps : [null, null];
       judging = { busy: true, status: "Calling the judge…", progress: null, error: "", verdict: null, preps: kept };
@@ -856,14 +886,134 @@
           },
         });
         if (field) v.arena = field.name;
+        if (format !== "text") {
+          // The verdict is in but stays hidden: the director storyboards it,
+          // then the film is made, and the winner is revealed at the end.
+          v.film = await makeFilm({ tier: format, mode, teams, verdict: v, field, worldName, code, onStatus });
+        }
         judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null, preps: [] };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
-        announce(`${v.winner} wins. ${v.verdict}`);
+        if (!v.film) announce(`${v.winner} wins. ${v.verdict}`);
       } catch (err) {
         // Keep any war council that finished, so trying again goes straight on.
         judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null, preps: judging.preps };
       }
       if (document.getElementById("judge-body")) renderJudge(worlds, teams, isShared);
+    });
+  }
+
+  /* --- Films -----------------------------------------------------------
+     Optional: after the verdict, the director storyboards it and WAN 3.0
+     makes a short film through the party server, which holds the video key
+     and the budget. Prices come live from the server, shown in NZ dollars. */
+
+  const FILM_TIERS = [
+    { id: "quick", label: "Quick film", blurb: "One prep shot per team, then the clash." },
+    { id: "feature", label: "Feature", blurb: "Both teams gear up, then three battle shots." },
+    { id: "epic", label: "Epic", blurb: "Two prep shots per team and a five-shot battle." },
+  ];
+
+  const formatOption = (id, label, blurb, current) => `
+    <label class="format">
+      <input type="radio" name="format" value="${id}" ${current === id ? "checked" : ""} />
+      <span class="format__body">
+        <span class="format__name">${label}</span>
+        <span class="format__price" data-price="${id}">…</span>
+        <span class="format__note">${blurb}</span>
+      </span>
+    </label>`;
+
+  async function priceFormats(mode, worlds, teams) {
+    const note = document.getElementById("format-note");
+    const textUsd = Film.TEXT_USD[mode] || 0;
+    const setPrice = (id, html) => { const el = document.querySelector(`[data-price="${id}"]`); if (el) el.innerHTML = html; };
+    const realPeople = teams.some(t => t.roster.some(r => r.world === "famous"));
+    const rate = await Film.nzdRate();
+    setPrice("text", mode === "local" ? "free" : `about ${Film.nz(textUsd, rate)} <em>or free within Gemini's free allowance</em>`);
+    let q = null;
+    try { q = await Film.quote(); } catch { /* shown below */ }
+    const disable = why => {
+      document.querySelectorAll('[name="format"]').forEach(i => { if (i.value !== "text") i.disabled = true; });
+      FILM_TIERS.forEach(t => setPrice(t.id, "unavailable"));
+      if (note) note.textContent = why;
+    };
+    if (realPeople) return disable("Films aren't made for battles with real people in them, so this one is words only.");
+    if (!q || !q.enabled) return disable("Films aren't available right now.");
+    for (const t of FILM_TIERS) {
+      const tier = q.tiers.find(x => x.id === t.id);
+      if (!tier) continue;
+      setPrice(t.id, `${Film.nz(tier.usd + textUsd, rate)} <em>${tier.seconds} seconds, ${tier.shots.length} shots</em>`);
+    }
+    if (note) {
+      note.textContent = `Film prices include writing the story and making the video with ${q.model}, at about NZ$${(q.perSecondUsd * rate).toFixed(3)} a second `
+        + `(US$1 = NZ$${rate.toFixed(2)} today). Films take a few minutes to make, and the winner stays hidden until the end.`;
+    }
+  }
+
+  const shotLabel = (key, teams) => key.startsWith("prep_a") ? `${teams[0].name}'s war council prepares`
+    : key.startsWith("prep_b") ? `${teams[1].name}'s war council prepares` : "The battle";
+
+  async function makeFilm({ tier, mode, teams, verdict, field, worldName, code, onStatus }) {
+    const q = await Film.quote();
+    const t = q.tiers.find(x => x.id === tier);
+    if (!t) throw new Error("That film length isn't available.");
+    const board = await window.Judge.storyboard(mode, { teams, verdict, arena: field, worldName, shots: t.shots, onStatus });
+    onStatus("Sending the storyboard to the studio…");
+    const prompts = Object.fromEntries(t.shots.map(x => [x.key, board.shots[x.key].prompt]));
+    const job = await Film.start({ tier, prompts, code });
+    return {
+      tier, id: job.id, usd: job.usd, style: board.style, watched: false,
+      shots: t.shots.map(x => ({
+        key: x.key, duration: x.duration, label: shotLabel(x.key, teams),
+        caption: board.shots[x.key].caption, url: null, status: "queued",
+      })),
+    };
+  }
+
+  let filmWatch = null;   // the film id being polled, so there's only ever one poller
+
+  function renderFilm(worlds, teams, isShared, verdict) {
+    const body = document.getElementById("judge-body");
+    const film = verdict.film;
+    const ready = film.shots.every(x => x.url || ["failed", "nsfw", "canceled"].includes(x.status));
+    if (!ready) {
+      const done = film.shots.filter(x => x.url).length;
+      body.innerHTML = `
+        ${verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : ""}
+        <div class="filming">
+          <p class="judge__status">Filming: ${done} of ${film.shots.length} shots ready. This takes a few minutes; the winner is revealed at the end.</p>
+          <ol class="shotlist">${film.shots.map(x => `
+            <li class="${x.url ? "shot--done" : ""}"><span class="verdict__label">${esc(x.label)} · ${x.duration}s · ${x.url ? "ready" : esc(x.status.replace("_", " "))}</span>${esc(x.caption)}</li>`).join("")}</ol>
+          <button class="btn btn--quiet btn--inline" type="button" id="film-skip-wait">Skip the film and show the winner</button>
+        </div>`;
+      on("film-skip-wait", () => { film.watched = true; if (!isShared) save(); render(); });
+      if (filmWatch !== film.id) {
+        filmWatch = film.id;
+        Film.wait(film.id, st => {
+          st.shots.forEach(s => {
+            const shot = film.shots.find(x => x.key === s.key);
+            if (shot) { shot.status = s.status; shot.url = s.url || shot.url; }
+          });
+          if (!isShared) save();
+          if (document.getElementById("judge-body") && !film.watched) renderFilm(worlds, teams, isShared, verdict);
+        }).catch(err => {
+          filmWatch = null;
+          // The server can forget a film after a restart; mark what's missing and move on.
+          if (err.gone) { film.shots.forEach(x => { if (!x.url) x.status = "failed"; }); if (!isShared) save(); }
+          if (document.getElementById("judge-body") && !film.watched) renderFilm(worlds, teams, isShared, verdict);
+        });
+      }
+      return;
+    }
+    if (filmWatch === film.id) filmWatch = null;
+    body.innerHTML = `${verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : ""}<div id="film-box"></div>`;
+    Film.player(document.getElementById("film-box"), film, {
+      onEnd: () => {
+        film.watched = true;
+        if (!isShared) save();
+        announce(`${verdict.winner} wins. ${verdict.verdict}`);
+        render();
+      },
     });
   }
 
