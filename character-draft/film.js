@@ -132,5 +132,85 @@
     looksLike: k => /^[\w-]{8,}:[\w-]{16,}$/.test(String(k).trim()),
   };
 
-  window.Film = { quote, nzdRate, nz, start, wait, status, player, esc, TEXT_USD, ownKey, safe };
+  /* --- Recent battles ------------------------------------------------
+     Every judged battle is kept in this browser for a week (as long as
+     Higgsfield keeps the films): the teams, the story and the film's shots.
+     Each can be watched again, or downloaded as a story or one joined film. */
+
+  const BATTLES_KEY = "character-draft:v1:battles";
+  const WEEK = 7 * 24 * 60 * 60 * 1000;
+
+  const battles = {
+    list() {
+      const all = safe.get(BATTLES_KEY) || [];
+      const fresh = all.filter(b => Date.now() - b.at < WEEK);
+      if (fresh.length !== all.length) safe.set(BATTLES_KEY, fresh);
+      return fresh;
+    },
+    save(entry) {
+      const all = battles.list().filter(b => b.id !== entry.id);
+      all.unshift(entry);
+      // Keep the newest 40, and drop the oldest if storage gets tight.
+      for (let n = Math.min(all.length, 40); n > 0; n--) {
+        try { localStorage.setItem(BATTLES_KEY, JSON.stringify(all.slice(0, n))); return; } catch { /* trim and retry */ }
+      }
+    },
+    update(id, patch) {
+      const all = battles.list();
+      const b = all.find(x => x.id === id);
+      if (!b) return;
+      Object.assign(b, patch);
+      try { localStorage.setItem(BATTLES_KEY, JSON.stringify(all)); } catch { /* no-op */ }
+    },
+    remove(id) { safe.set(BATTLES_KEY, battles.list().filter(b => b.id !== id)); },
+    daysLeft: b => Math.max(0, Math.ceil((b.at + WEEK - Date.now()) / 86400000)),
+    title: b => `${b.teams[0].name} vs ${b.teams[1].name}`,
+
+    story(b) {
+      const v = b.verdict || {};
+      const lines = [battles.title(b), new Date(b.at).toLocaleString(), b.arena ? `At ${b.arena.name}` : "", ""];
+      b.teams.forEach((t, i) => {
+        lines.push(`${t.name}'s team: ${t.roster.map(r => r.name).join(", ")}`);
+        const p = (v.preps || [])[i];
+        if (p) {
+          lines.push(`  Led by ${p.leader}. ${p.plan}`);
+          (p.gear || []).forEach(g => lines.push(`  Gear: ${g.name} (${g.made_by}): ${g.effect}`));
+        }
+        lines.push("");
+      });
+      if (v.fight) lines.push("The fight", v.fight, "");
+      (v.roles || []).filter(r => r.role).forEach(r => lines.push(`${r.name}: ${r.role}`));
+      if (v.turning_point) lines.push("", `Turning point: ${v.turning_point}`);
+      if (v.mvp) lines.push(`Most valuable: ${v.mvp}`);
+      lines.push("", `${v.winner || "?"} wins. ${v.verdict || ""}`, v.by ? `Judged by ${v.by}.` : "");
+      return lines.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+    },
+
+    downloadStory(b) {
+      saveBlob(new Blob([battles.story(b)], { type: "text/plain" }), `${battles.title(b)}.txt`);
+    },
+
+    async downloadFilm(b) {
+      const urls = ((b.film && b.film.shots) || []).map(x => x.url).filter(Boolean);
+      if (!urls.length) throw new Error("This battle doesn't have a film.");
+      const r = await fetch(`${SERVER}/video/stitch`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ urls, name: battles.title(b) }),
+      });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || "Couldn't join the film."); }
+      saveBlob(await r.blob(), `${battles.title(b)}.mp4`);
+    },
+  };
+
+  function saveBlob(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = Object.assign(document.createElement("a"), { href: url, download: name.replace(/[\\/:*?"<>|]+/g, "") });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  window.Film = { quote, nzdRate, nz, start, wait, status, player, esc, TEXT_USD, ownKey, safe, battles };
 })();

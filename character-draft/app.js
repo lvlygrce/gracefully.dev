@@ -339,6 +339,7 @@
   /* --- Views --------------------------------------------------------- */
 
   function render() {
+    renderRecent();
     if (shared) {
       if (!arenaInfo(shared.a)) shared.a = drawArena(shared.w);
       return renderTeams(shared.w, fromShared(shared), true);
@@ -911,6 +912,7 @@
           // then the film is made, and the winner is revealed at the end.
           v.film = await makeFilm({ tier: format, mode, teams, verdict: v, field, worldName, onStatus });
         }
+        v.battleId = keepBattle(worlds, teams, field, v);
         judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null, preps: [] };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
         if (!v.film) announce(`${v.winner} wins. ${v.verdict}`);
@@ -1015,6 +1017,7 @@
             if (shot) { shot.status = s.status; shot.url = s.url || shot.url; }
           });
           if (!isShared) save();
+          if (verdict.battleId) Film.battles.update(verdict.battleId, { film: filmForList(film) });
           if (document.getElementById("judge-body") && !film.watched) renderFilm(worlds, teams, isShared, verdict);
         }).catch(err => {
           filmWatch = null;
@@ -1035,6 +1038,90 @@
         render();
       },
     });
+  }
+
+  /* --- Recent battles ---------------------------------------------------- */
+
+  const filmForList = film => film && {
+    shots: film.shots.map(x => ({ key: x.key, label: x.label, caption: x.caption, url: x.url, status: x.status })),
+  };
+
+  function keepBattle(worlds, teams, field, v) {
+    const id = Math.random().toString(36).slice(2, 10);
+    const { film, ...story } = v;
+    Film.battles.save({
+      id, at: Date.now(), worlds,
+      arena: field ? { name: field.name, image: field.image } : null,
+      teams: teams.map(t => ({ name: t.name, roster: t.roster.map(r => ({ name: r.name, world: r.world, note: r.note, price: r.price })) })),
+      verdict: story,
+      film: filmForList(film),
+    });
+    return id;
+  }
+
+  function renderRecent() {
+    const box = document.getElementById("recent");
+    if (!box) return;
+    const showing = !state || state.phase === "done" || shared;
+    const list = showing ? Film.battles.list() : [];
+    if (!list.length) { box.innerHTML = ""; return; }
+    box.innerHTML = `
+      <h2 class="section-label">Recent battles</h2>
+      <p class="judge__fine">Kept in this browser for a week, as long as the films stay online.</p>
+      <ol class="recent__list">${list.map(b => {
+        const hasFilm = b.film && b.film.shots.some(x => x.url);
+        const pics = b.teams.flatMap(t => t.roster.slice(0, 3)).map(r => portrait(r.world, r.name, "sm")).join("");
+        return `<li class="recent__item">
+          <div class="recent__pics">${pics}</div>
+          <div class="recent__body">
+            <p class="recent__title">${esc(Film.battles.title(b))}</p>
+            <p class="recent__meta">${esc(b.verdict.winner)} won${b.arena ? ` at ${esc(b.arena.name)}` : ""} · ${hasFilm ? "film · " : ""}${Film.battles.daysLeft(b)} day${Film.battles.daysLeft(b) === 1 ? "" : "s"} left</p>
+            <div class="recent__tools">
+              <button class="btn btn--inline" type="button" data-watch="${b.id}">${hasFilm ? "Watch" : "Read"}</button>
+              <button class="btn btn--quiet btn--inline" type="button" data-story="${b.id}">Download the story</button>
+              ${hasFilm ? `<button class="btn btn--quiet btn--inline" type="button" data-film="${b.id}">Download the film</button>` : ""}
+              <button class="btn btn--quiet btn--inline" type="button" data-forget="${b.id}" aria-label="Remove ${esc(Film.battles.title(b))}">Remove</button>
+            </div>
+          </div>
+        </li>`;
+      }).join("")}</ol>`;
+    const find = id => Film.battles.list().find(b => b.id === id);
+    box.querySelectorAll("[data-watch]").forEach(b => b.addEventListener("click", () => openBattle(find(b.dataset.watch))));
+    box.querySelectorAll("[data-story]").forEach(b => b.addEventListener("click", () => Film.battles.downloadStory(find(b.dataset.story))));
+    box.querySelectorAll("[data-forget]").forEach(b => b.addEventListener("click", () => { Film.battles.remove(b.dataset.forget); renderRecent(); }));
+    box.querySelectorAll("[data-film]").forEach(btn => btn.addEventListener("click", async () => {
+      const was = btn.textContent;
+      btn.disabled = true; btn.textContent = "Joining the shots…";
+      try { await Film.battles.downloadFilm(find(btn.dataset.film)); btn.textContent = was; }
+      catch (err) { btn.textContent = err.message; setTimeout(() => { btn.textContent = was; }, 4000); }
+      btn.disabled = false;
+    }));
+  }
+
+  function openBattle(b) {
+    if (!b) return;
+    let dlg = document.getElementById("battle-view");
+    if (!dlg) {
+      dlg = document.createElement("dialog");
+      dlg.id = "battle-view";
+      dlg.className = "battle-view";
+      document.body.appendChild(dlg);
+      dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+    }
+    const v = b.verdict;
+    const hasFilm = b.film && b.film.shots.some(x => x.url);
+    dlg.innerHTML = `
+      <div class="battle-view__inner">
+        <div class="battle-view__top"><h2 class="done__title">${esc(Film.battles.title(b))}<span class="wordmark__mark">.</span></h2>
+          <button class="btn btn--quiet" type="button" id="battle-close">Close</button></div>
+        <p class="judge__fine">${new Date(b.at).toLocaleString()}${b.arena ? ` · ${esc(b.arena.name)}` : ""}</p>
+        ${hasFilm ? `<div id="battle-film"></div>` : ""}
+        ${v.preps ? `<div class="wars">${warsHtml(v.preps, b.teams, "11")}</div>` : ""}
+        ${verdictHtml(v)}
+      </div>`;
+    dlg.querySelector("#battle-close").addEventListener("click", () => dlg.close());
+    if (hasFilm) Film.player(dlg.querySelector("#battle-film"), { shots: b.film.shots }, {});
+    dlg.showModal();
   }
 
   function renderArena(worlds, teams, isShared) {
