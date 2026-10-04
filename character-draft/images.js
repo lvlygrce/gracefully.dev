@@ -1044,5 +1044,215 @@ window.CHARACTER_IMAGES = {
     "James Potter": "https://static.wikia.nocookie.net/harrypotter/images/1/10/James_Potter_I_Deathly_Hallows.jpg/revision/latest/scale-to-width-down/400?cb=20180601015416",
     "Regulus Black": "https://static.wikia.nocookie.net/harrypotter/images/7/73/Regulus_PM.png/revision/latest/scale-to-width-down/400?cb=20180102200304",
     "Aberforth Dumbledore": "https://static.wikia.nocookie.net/harrypotter/images/4/40/Aberforth_Dumbledore.jpg/revision/latest/scale-to-width-down/400?cb=20170911160033"
+  },
+  "armed": {
+    "Gorilla with Excalibur": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Male_gorilla_in_SF_zoo.jpg/500px-Male_gorilla_in_SF_zoo.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Arthur-Pyle_Excalibur_the_Sword.JPG/330px-Arthur-Pyle_Excalibur_the_Sword.JPG"
+    ],
+    "Honey Badger with Mjölnir": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Honey_Badger.jpg/500px-Honey_Badger.jpg",
+      "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/c/c9/Reformed_Mjolnir.png/revision/latest/scale-to-width-down/400?cb=20221026062139"
+    ],
+    "Goose with a Lightsaber": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Canada_goose_on_Seedskadee_NWR_%2827826185489%29.jpg/500px-Canada_goose_on_Seedskadee_NWR_%2827826185489%29.jpg",
+      "https://static.wikia.nocookie.net/starwars/images/c/cc/Lightsabers-SWYBYNE.png/revision/latest/scale-to-width-down/400?cb=20240116010539"
+    ],
+    "Octopus with Eight Katanas": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/57/Octopus2.jpg/500px-Octopus2.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Katana_-_Motoshige.JPG/330px-Katana_-_Motoshige.JPG"
+    ],
+    "Grizzly Bear with the Infinity Gauntlet": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a9/GrizzlyBearJeanBeaufort.jpg/500px-GrizzlyBearJeanBeaufort.jpg",
+      "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/0/00/InfinityGauntletProfilePicture.jpg/revision/latest/scale-to-width-down/400?cb=20210816221827"
+    ],
+    "Hamster with the Master Sword": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Golden_hamster_front_1.jpg/500px-Golden_hamster_front_1.jpg",
+      "https://static.wikia.nocookie.net/zelda_gamepedia_en/images/0/0a/TotK_Decayed_Master_Sword_Artwork.png/revision/latest/scale-to-width-down/400?cb=20240224011642"
+    ],
+    "Crow with the Elder Wand": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Corvus_corax_clarionensis%2C_Point_Reyes_National_Seashore.jpg/500px-Corvus_corax_clarionensis%2C_Point_Reyes_National_Seashore.jpg",
+      "https://static.wikia.nocookie.net/harrypotter/images/5/59/Elder_Wand.png/revision/latest/scale-to-width-down/400?cb=20241227040818"
+    ],
+    "House Cat with the Buster Sword": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/Siam_lilacpoint.jpg/500px-Siam_lilacpoint.jpg",
+      "https://static.wikia.nocookie.net/finalfantasy/images/4/47/Sld-1865-umezawa-s-jitte.png/revision/latest/scale-to-width-down/400?cb=20260906172232"
+    ],
+    "Shiba Inu with a Keyblade": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6b/Taka_Shiba.jpg/500px-Taka_Shiba.jpg",
+      "https://static.wikia.nocookie.net/kingdomhearts/images/3/30/Kingdom_Key_KH.png/revision/latest/scale-to-width-down/400?cb=20260110172028"
+    ],
+    "Kangaroo with Captain America's Shield": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Red_kangaroo_-_melbourne_zoo.jpg/500px-Red_kangaroo_-_melbourne_zoo.jpg",
+      "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/3/36/Captain_America_Shield.png/revision/latest/scale-to-width-down/400?cb=20190316204818"
+    ],
+    "Elephant with a Minigun": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg/500px-178_Male_African_bush_elephant_in_Etosha_National_Park_Photo_by_Giles_Laurent.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/HH-60G_M134.jpg/330px-HH-60G_M134.jpg"
+    ],
+    "Pigeon with a Portal Gun": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Columba_livia_%28Rock_Dove%2C_wild%29%2C_Duncansby_Head%2C_Caithness%2C_Scotland_1.jpg/500px-Columba_livia_%28Rock_Dove%2C_wild%29%2C_Duncansby_Head%2C_Caithness%2C_Scotland_1.jpg",
+      "https://static.wikia.nocookie.net/half-life/images/b/bb/Aperture_Science_Handheld_Portal_Device_Portal.jpg/revision/latest/scale-to-width-down/300?cb=20110519012833&path-prefix=en"
+    ],
+    "Chimpanzee with the Gravity Hammer": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/015_Chimpanzee_at_Kibale_forest_National_Park_Photo_by_Giles_Laurent.jpg/500px-015_Chimpanzee_at_Kibale_forest_National_Park_Photo_by_Giles_Laurent.jpg",
+      "https://static.wikia.nocookie.net/halo/images/8/86/H5G_Render_GravityHammer.png/revision/latest/scale-to-width-down/400?cb=20160501010107"
+    ],
+    "Capybara with the Leviathan Axe": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/71/Capybaracropped.jpg/500px-Capybaracropped.jpg",
+      "https://static.wikia.nocookie.net/godofwar/images/c/cc/3315204-5756977229-latest.png/revision/latest/scale-to-width-down/400?cb=20230113070756"
+    ],
+    "Duck with Sting": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bf/Anas_platyrhynchos_male_female_quadrat.jpg/500px-Anas_platyrhynchos_male_female_quadrat.jpg",
+      "https://static.wikia.nocookie.net/lotr/images/5/5d/Sting_with_scabbard.jpg/revision/latest/scale-to-width-down/400?cb=20140527085852"
+    ],
+    "Great White Shark with a Frickin' Laser Beam": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/56/White_shark.jpg/500px-White_shark.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/Guiding_the_Milky_Way_%28potw2222a%29.jpg/330px-Guiding_the_Milky_Way_%28potw2222a%29.jpg"
+    ],
+    "Penguin with a Freeze Gun": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg/500px-Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg",
+      "https://static.wikia.nocookie.net/marvel_dc/images/5/5a/Icicle_-_Joar_Mahkent_01.jpg/revision/latest/scale-to-width-down/400?cb=20230810185242"
+    ],
+    "Hippopotamus with the Blades of Chaos": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Portrait_Hippopotamus_in_the_water.jpg/500px-Portrait_Hippopotamus_in_the_water.jpg",
+      "https://static.wikia.nocookie.net/godofwar/images/6/61/BladeOfChaos_%28GodOfWarAscension%29.png/revision/latest/scale-to-width-down/400?cb=20240523231521"
+    ],
+    "Bat with Batarangs": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Pipistrellus_female-1.jpg/500px-Pipistrellus_female-1.jpg",
+      "https://static.wikia.nocookie.net/marvel_dc/images/f/f5/Batarang_01.jpg/revision/latest/scale-to-width-down/400?cb=20160629225709"
+    ],
+    "Ostrich with Stormbreaker": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/Struthio_camelus_-_Etosha_2014_%283%29.jpg/500px-Struthio_camelus_-_Etosha_2014_%283%29.jpg",
+      "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/f/f8/Stormbreaker_png.png/revision/latest/scale-to-width-down/400?cb=20220716224110"
+    ],
+    "Sloth with the Death Note": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Bradypus.jpg/500px-Bradypus.jpg",
+      "https://static.wikia.nocookie.net/deathnote/images/0/08/Death_Note_title_white.png/revision/latest/scale-to-width-down/400?cb=20180119023014"
+    ],
+    "Llama with Glamdring": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f7/Llamas%2C_Vernagt-Stausee%2C_Italy.jpg/500px-Llamas%2C_Vernagt-Stausee%2C_Italy.jpg",
+      "https://static.wikia.nocookie.net/lotr/images/2/28/Glamdring.jpg/revision/latest/scale-to-width-down/400?cb=20110311214742"
+    ],
+    "Frog with the Dragon Slayer": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/39/European_Common_Frog_Rana_temporaria.jpg/500px-European_Common_Frog_Rana_temporaria.jpg",
+      "https://static.wikia.nocookie.net/berserk/images/c/c8/Manga_E1.png/revision/latest/scale-to-width-down/400?cb=20190501221451"
+    ],
+    "Owl with the Sword of Gryffindor": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/SnowyOwlAmericanBlackDuck.jpg/500px-SnowyOwlAmericanBlackDuck.jpg",
+      "https://static.wikia.nocookie.net/harrypotter/images/7/7f/GryffindorsSword_PM.jpg/revision/latest/scale-to-width-down/400?cb=20210829025525"
+    ],
+    "Monkey with Ruyi Jingu Bang": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c8/Golden_Snub-nosed_Monkeys%2C_Qinling_Mountains_-_China.jpg/500px-Golden_Snub-nosed_Monkeys%2C_Qinling_Mountains_-_China.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Xiyou.PNG/330px-Xiyou.PNG"
+    ],
+    "Seal with the Lasso of Truth": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Common_seal_%28Phoca_vitulina%29_2.jpg/500px-Common_seal_%28Phoca_vitulina%29_2.jpg",
+      "https://static.wikia.nocookie.net/marvel_dc/images/d/d8/Wonder_Woman_0060.jpg/revision/latest/scale-to-width-down/400?cb=20100105204722"
+    ],
+    "Horse with the Lance of Longinus": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/de/Nokota_Horses_cropped.jpg/500px-Nokota_Horses_cropped.jpg",
+      "https://static.wikia.nocookie.net/evangelion/images/5/5d/Lance_of_Longinus.png/revision/latest/scale-to-width-down/400?cb=20120320234343"
+    ],
+    "Wolf with Andúril": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/500px-Eurasian_wolf_2.jpg",
+      "https://static.wikia.nocookie.net/lotr/images/1/10/Anduril2.png/revision/latest/scale-to-width-down/400?cb=20130120174607"
+    ],
+    "Rabbit with the Holy Hand Grenade": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Oryctolagus_cuniculus_-_euqirneto_-_419737670_%28cropped%29.jpeg/500px-Oryctolagus_cuniculus_-_euqirneto_-_419737670_%28cropped%29.jpeg",
+      "https://static.wikia.nocookie.net/montypython/images/a/a6/Holy_hand_grenade.png/revision/latest/scale-to-width-down/400?cb=20250607203753"
+    ],
+    "Squirrel with the BFG 9000": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/15/EasternGraySquirrel_GAm.jpg/500px-EasternGraySquirrel_GAm.jpg",
+      "https://static.wikia.nocookie.net/doom/images/d/de/BFG9000.png/revision/latest/scale-to-width-down/400?cb=20080711083032"
+    ],
+    "Bee with Needle": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4d/Apis_mellifera_Western_honey_bee.jpg/500px-Apis_mellifera_Western_honey_bee.jpg",
+      "https://static.wikia.nocookie.net/gameofthrones/images/c/c5/AryawithNeedle.jpg/revision/latest/scale-to-width-down/400?cb=20190404014817"
+    ],
+    "Moose with the Monado": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Alaska_moose.jpg/500px-Alaska_moose.jpg",
+      "https://static.wikia.nocookie.net/xenoblade/images/2/22/Monado.png/revision/latest/scale-to-width-down/400?cb=20170122212439"
+    ],
+    "Parrot with the Trident of Poseidon": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/47/Scarlet_macaw_%28Ara_macao_cyanopterus%29_Copan.jpg/500px-Scarlet_macaw_%28Ara_macao_cyanopterus%29_Copan.jpg",
+      "https://static.wikia.nocookie.net/pirates/images/7/73/Trident_of_Poseidon.png/revision/latest/scale-to-width-down/400?cb=20171111141531"
+    ],
+    "Snake with Scorpion's Spear": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Crotalus_cerastes_mesquite_springs_CA-2.jpg/500px-Crotalus_cerastes_mesquite_springs_CA-2.jpg",
+      "https://static.wikia.nocookie.net/mkwikia/images/4/4f/Kunai.jpg/revision/latest/scale-to-width-down/400?cb=20110405102942"
+    ],
+    "Turtle with a Blue Shell": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Green_sea_turtle_%28Chelonia_mydas%29_Moorea.jpg/500px-Green_sea_turtle_%28Chelonia_mydas%29_Moorea.jpg",
+      "https://static.wikia.nocookie.net/mariokart/images/1/10/SpinyShellMK8.png/revision/latest/scale-to-width-down/400?cb=20140520034125"
+    ],
+    "Cow with the Golden Gun": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8c/Cow_%28Fleckvieh_breed%29_Oeschinensee_Slaunger_2009-07-07.jpg/500px-Cow_%28Fleckvieh_breed%29_Oeschinensee_Slaunger_2009-07-07.jpg",
+      "https://static.wikia.nocookie.net/jamesbond/images/5/52/Scaramanga%27s_Golden_Gun.jpg/revision/latest/scale-to-width-down/400?cb=20121030205430"
+    ],
+    "Axolotl with a Trident": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/00/Axolotl_ganz.jpg/500px-Axolotl_ganz.jpg",
+      "https://minecraft.wiki/images/Trident.png?f6cb9"
+    ],
+    "Polar Bear with Frostmourne": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Polar_Bear_-_Alaska_%28cropped%29.jpg/500px-Polar_Bear_-_Alaska_%28cropped%29.jpg",
+      "https://static.wikia.nocookie.net/wowpedia/images/3/31/Frostmourne_ingame.jpg/revision/latest/scale-to-width-down/400?cb=20090124213205"
+    ],
+    "Rooster with Nunchucks": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Male_and_female_chicken_sitting_together.jpg/500px-Male_and_female_chicken_sitting_together.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7c/Nunchaku.JPG/330px-Nunchaku.JPG"
+    ],
+    "Giraffe with Gungnir": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Giraffe_Mikumi_National_Park.jpg/500px-Giraffe_Mikumi_National_Park.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/db/Del_av_hj%C3%A4lm_vendel_vendeltid_m%C3%B6jligen_oden.jpg/330px-Del_av_hj%C3%A4lm_vendel_vendeltid_m%C3%B6jligen_oden.jpg"
+    ],
+    "Snail with the The One Ring": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Snail1web.jpg/500px-Snail1web.jpg",
+      "https://static.wikia.nocookie.net/lotr/images/0/0d/The_One_Ring_on_a_map_of_Middle-earth.jpg/revision/latest/scale-to-width-down/400?cb=20200305221819"
+    ],
+    "Mantis with Adamantium Claws": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/European_praying_mantis_%28Mantis_religiosa%29_green_female_Dobruja.jpg/500px-European_praying_mantis_%28Mantis_religiosa%29_green_female_Dobruja.jpg",
+      "https://static.wikia.nocookie.net/marveldatabase/images/a/a5/Astonishing_X-Men_Vol_3_1_Textless.jpg/revision/latest/scale-to-width-down/400?cb=20080601124741"
+    ],
+    "Dolphin with Aquaman's Trident": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Tursiops_truncatus_01-cropped.jpg/500px-Tursiops_truncatus_01-cropped.jpg",
+      "https://static.wikia.nocookie.net/marvel_dc/images/5/51/Aquaman_0024.jpg/revision/latest/scale-to-width-down/400?cb=20130516170558"
+    ],
+    "Chicken with a Chainsaw": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/84/Male_and_female_chicken_sitting_together.jpg/500px-Male_and_female_chicken_sitting_together.jpg",
+      "https://static.wikia.nocookie.net/doom/images/3/32/Doom64Chainsaw11D64ex.jpg/revision/latest/scale-to-width-down/400?cb=20100616231806"
+    ],
+    "Panda with a Zweihänder": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/500px-Grosser_Panda.JPG",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Zweihaender_im_historischen_Museum_Basel.JPG/330px-Zweihaender_im_historischen_Museum_Basel.JPG"
+    ],
+    "Lion with the Sword of Omens": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a6/020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg/500px-020_The_lion_king_Snyggve_in_the_Serengeti_National_Park_Photo_by_Giles_Laurent.jpg",
+      "https://static.wikia.nocookie.net/thundercats/images/1/16/SwordOfOmensFromThunderCats1985SeriesEpisodeExodusSc01.jpg/revision/latest/scale-to-width-down/400?cb=20210211175113"
+    ],
+    "Corgi with the Royal Sceptre": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Welsh_Pembroke_Corgi.jpg/500px-Welsh_Pembroke_Corgi.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Crown_Jewels_of_the_United_Kingdom_1952-12-13.jpg/330px-Crown_Jewels_of_the_United_Kingdom_1952-12-13.jpg"
+    ],
+    "Raccoon with a Lancer": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3e/Raccoon_in_Central_Park_%2835264%29.jpg/500px-Raccoon_in_Central_Park_%2835264%29.jpg",
+      "https://static.wikia.nocookie.net/gearsofwar/images/a/a9/Gears_4_Lancer_Mk2.png/revision/latest/scale-to-width-down/400?cb=20190911220038"
+    ],
+    "Platypus with a Ray Gun": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Duck-billed_platypus_%28Ornithorhynchus_anatinus%29_Scottsdale.jpg/500px-Duck-billed_platypus_%28Ornithorhynchus_anatinus%29_Scottsdale.jpg",
+      "https://static.wikia.nocookie.net/callofduty/images/f/f5/Ray_Gun_WaW.png/revision/latest/scale-to-width-down/400?cb=20130424112607"
+    ],
+    "Hedgehog with a Morning Star": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e1/Erinaceus_europaeus_LC0119.jpg/500px-Erinaceus_europaeus_LC0119.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Morgenstern_%28137936355%29.jpg/330px-Morgenstern_%28137936355%29.jpg"
+    ],
+    "Komodo Dragon with a Valyrian Steel Dagger": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/202306_Varanus_komodoensis.jpg/500px-202306_Varanus_komodoensis.jpg",
+      "https://static.wikia.nocookie.net/gameofthrones/images/3/36/Viserys_Dagger_1.png/revision/latest/scale-to-width-down/400?cb=20221011000217"
+    ],
+    "Crocodile with Kusanagi": [
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/SaltwaterCrocodile%28%27Maximo%27%29.jpg/500px-SaltwaterCrocodile%28%27Maximo%27%29.jpg",
+      "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Amaterasu_cave_wide.jpg/330px-Amaterasu_cave_wide.jpg"
+    ]
   }
 };

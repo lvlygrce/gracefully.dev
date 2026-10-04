@@ -432,6 +432,24 @@ fieldset { border: 0; min-width: 0; }
   object-position: center 18%;
 }
 
+/* The weapon an armed animal carries, as a round badge in the corner. */
+.portrait__badge {
+  position: absolute;
+  right: 6%;
+  bottom: 5%;
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--paper);
+  border: 2px solid var(--paper);
+  box-shadow: 0 4px 12px -4px rgba(36, 31, 26, 0.45);
+  z-index: 1;
+}
+
+.portrait .portrait__badge img { position: static; width: 100%; height: 100%; object-fit: contain; padding: 12%; }
+.portrait--md .portrait__badge { border-width: 1.5px; width: 46%; }
+
 .portrait--contain img { object-fit: contain; object-position: center; padding: 6%; }
 
 .portrait__letters {

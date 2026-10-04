@@ -114,13 +114,21 @@
   }
 
   // A picture, or a lettered placeholder if there isn't one or it won't load.
+  // A picture, or a lettered placeholder if there isn't one or it won't load.
+  // A pair of pictures (an armed animal) shows the second as a badge in the
+  // corner, so you can see the weapon as well as who's holding it.
   function portrait(universe, name, size) {
-    const src = (IMAGES[universe] || {})[name];
+    const entry = (IMAGES[universe] || {})[name];
+    const [src, badge] = Array.isArray(entry) ? entry : [entry];
     const fallback = `<span class="portrait__letters" aria-hidden="true">${esc(initials(name))}</span>`;
     const contain = (U[universe] || {}).fit === "contain" ? " portrait--contain" : "";
+    const loading = size === "lg" ? "eager" : "lazy";
     return `<span class="portrait portrait--${size}${contain}">${fallback}${src
-      ? `<img src="${esc(src)}" alt="" loading="${size === "lg" ? "eager" : "lazy"}"
+      ? `<img src="${esc(src)}" alt="" loading="${loading}"
              referrerpolicy="no-referrer" onerror="this.remove()" />`
+      : ""}${badge && size !== "sm"
+      ? `<span class="portrait__badge"><img src="${esc(badge)}" alt="" loading="${loading}"
+             referrerpolicy="no-referrer" onerror="this.parentNode.remove()" /></span>`
       : ""}</span>`;
   }
 
