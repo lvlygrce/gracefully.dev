@@ -763,7 +763,9 @@
           <p><span class="hand">turning point</span> ${esc(m.verdict.turning_point)}</p>
           <p><span class="hand">most valuable</span> ${esc(m.verdict.mvp)}</p>
           <p class="hand">judged by ${esc(m.verdict.by)} · the whole story is in recent battles</p></div>` : ""}
-        <div class="controls">${countdown(s.endsAt, "next fight in {s}")}<button class="btn btn--primary" type="button" id="next">Next</button></div>`;
+        <div class="controls">${countdown(s.endsAt, "next fight in {s}")}<button class="btn btn--primary" type="button" id="next">Next</button>
+          ${fights.has(m.id) ? `<button class="btn" type="button" id="replay">Replay the battle</button>
+          ${fights.get(m.id).verdict.reasoning ? `<button class="btn" type="button" id="reasoning">How the judge reasoned it</button>` : ""}` : ""}</div>`;
     }
     app.innerHTML = `
       <p class="hand">${roundName(m.id && s.bracket.findIndex(r => r.some(x => x.id === m.id)))}</p>
@@ -772,6 +774,8 @@
       <div style="margin-top: var(--space-md)">${middle}</div>
       ${foot(m.stage === "vote" ? `<button class="btn btn--quiet" type="button" id="close-vote">Close the vote</button>` : "")}`;
     on("next", () => net.send({ t: "host:next" }));
+    on("replay", () => replay(m.id));
+    on("reasoning", () => reasoning(m.id));
     on("close-vote", () => net.send({ t: "host:next" }));
     on("retry", () => { judging.matchId = null; maybeJudge(); });
     on("crowd", () => net.send({ t: "host:crowd" }));
@@ -789,13 +793,48 @@
         <div class="arrive" style="--i:2; max-width: 40rem; margin: var(--space-md) auto 0">${teamHtml(p, 0)}</div>
         <div class="controls" style="justify-content:center">
           <button class="btn btn--primary btn--big" type="button" id="again">Play again with everyone</button>
+          ${lastFight() ? `<button class="btn" type="button" id="replay-final">Replay the final</button>` : ""}
+          ${lastFight() && lastFight().verdict.reasoning ? `<button class="btn" type="button" id="reasoning-final">How the judge reasoned it</button>` : ""}
           <button class="btn" type="button" id="new-room">New room</button>
         </div>
       </div>` : `<p class="hand">Nobody drafted a team, so there's no tournament.</p>
         <div class="controls"><button class="btn btn--primary" type="button" id="again">Play again</button></div>`;
     on("again", () => net.send({ t: "host:again" }));
     on("new-room", () => { safe.remove(HOST_KEY); createRoom(); });
+    on("replay-final", () => replay(lastId()));
+    on("reasoning-final", () => reasoning(lastId()));
     if (p) announce(`${p.name} is the champion.`);
+  }
+
+  /* Replays and the judge's reasoning, over whatever screen is showing. */
+  const lastId = () => [...fights.keys()].pop();
+  const lastFight = () => fights.get(lastId());
+  function overlay() {
+    let o = document.getElementById("tv-overlay");
+    if (o) o.remove();
+    o = document.createElement("div");
+    o.id = "tv-overlay"; o.className = "tv-overlay";
+    o.innerHTML = `<div class="tv-overlay__box"><div class="tv-overlay__body"></div>
+      <div class="controls"><button class="btn" type="button" id="overlay-close">Close</button></div></div>`;
+    document.body.appendChild(o);
+    let ctl = null;
+    const close = () => { if (ctl) ctl.destroy(); o.remove(); };
+    o.querySelector("#overlay-close").addEventListener("click", close);
+    return { body: o.querySelector(".tv-overlay__body"), close, set ctl(c) { ctl = c; } };
+  }
+  function replay(id) {
+    const f = fights.get(id);
+    if (!f) return;
+    const o = overlay();
+    o.body.classList.add("tv-battle");
+    o.ctl = Battle.player(o.body, { teams: f.teams, verdict: f.verdict, arena: f.arena, worldName: w => (U[w] || {}).name || w }, { onEnd: () => setTimeout(o.close, 1500) });
+  }
+  function reasoning(id) {
+    const f = fights.get(id);
+    if (!f) return;
+    const o = overlay();
+    o.body.innerHTML = `<p class="hand">how the judge reasoned it</p><p class="big-note">${esc(f.verdict.reasoning)}</p>
+      ${f.verdict.fight ? `<div class="reasoning__fight">${String(f.verdict.fight).split(/\n+/).filter(Boolean).map(p => `<p>${esc(p)}</p>`).join("")}</div>` : ""}`;
   }
 
   /* --- The AI judge, run here on the TV --------------------------------- */
@@ -819,7 +858,9 @@
   // Send the verdict once the film (if any) has played or been skipped.
   // The fight as an 8-bit battle on this screen, then the result. The admin's
   // phone can pause or skip it, just like a film.
+  const fights = new Map();   // matchId -> { teams, verdict, arena }, for replays and reasoning
   function showBattle(matchId, teams, v, arena) {
+    fights.set(matchId, { teams, verdict: v, arena });
     if (!prefs.battle8 || judging.matchId !== matchId) return finishJudged();
     judging.battle = { teams, verdict: v, arena, el: null, ctl: null };
     net.send({ t: "host:film", matchId, film: "playing" });

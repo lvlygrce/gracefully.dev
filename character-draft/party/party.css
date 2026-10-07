@@ -449,3 +449,19 @@ html.tv .stage { padding-top: 3.4rem; }
 
 /* The 8-bit battle fills the TV, as big as a 16:9 box can be below the title. */
 .tv-battle .b8 { width: min(100%, calc((100vh - 13rem) * 16 / 9)); }
+
+/* Replays and the judge's reasoning, over the current screen. */
+.tv-overlay {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; place-items: center;
+  padding: var(--space-md);
+  background: rgba(23, 18, 14, 0.6);
+}
+.tv-overlay__box {
+  width: min(100%, 90rem); max-height: 100%; overflow: auto;
+  padding: var(--space-md);
+  background: var(--paper);
+  border-radius: var(--radius-blob);
+}
+.tv-overlay__body .big-note { max-width: 60rem; }
+.reasoning__fight p { max-width: 60rem; color: var(--ink-muted); }
