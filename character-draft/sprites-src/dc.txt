@@ -1,0 +1,72 @@
+Superman	h|m|w|f1d0b0|1a1a1a|1f4fa8|c0262f|c0262f|slick|none|jumpsuit|none|cape,emblem|beam|light
+Batman	h|m|w|8a8f96|1a1a1a|6a6f78|1f1f24|f2cf3a|none|cowl|jumpsuit|none|cape,emblem,belt|gadget|none
+Wonder Woman	h|m|n|f1d0b0|1a1a1a|c0262f|1f3f8a|e8b84a|long|headband|armour|sword|shield|blade|light
+The Flash	h|m|t|c0262f|1a1a1a|c0262f|c0262f|f2cf3a|none|fullmask|jumpsuit|none|emblem|fists|lightning
+Green Lantern	h|m|n|f1d0b0|5a3a1a|2e8b3a|1f1f1f|4caf50|short|mask|jumpsuit|none|emblem,glow|summon|light
+Aquaman	h|l|w|f1d0b0|e6c35c|ef8a2c|2e8b3a|e8b84a|long|none|armour|trident|beard|blade|water
+Cyborg	r|l|w|8d5524|1a1a1a|9aa3ad|3a3a44|c0262f|none|none|armour|cannon|glow_eyes|gun|tech
+Martian Manhunter	h|l|w|4caf50|4caf50|3f4fa8|1f3f8a|c0262f|bald|none|jumpsuit|none|cape,redeyes|psychic|psychic
+Green Arrow	h|m|n|f1d0b0|e6c35c|2e6b3a|2e6b3a|4caf50|short|hood|tunic|bow|beard|bow|none
+Black Canary	h|m|t|f3d6bf|f2cf3a|1f1f1f|1f1f1f|8fd0ff|long|none|jumpsuit|none||psychic|wind
+Shazam	h|l|w|f1d0b0|1a1a1a|c0262f|f2cf3a|f2cf3a|slick|none|jumpsuit|none|cape,emblem|fists|lightning
+Supergirl	h|m|t|f3d6bf|f2cf3a|1f4fa8|c0262f|c0262f|long|none|jumpsuit|none|cape,emblem|beam|light
+Superboy	h|m|n|f1d0b0|1a1a1a|1f1f1f|3f4f8a|c0262f|short|none|jumpsuit|none|emblem|fists|none
+Nightwing	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|3fa0ff|short|mask|jumpsuit|club|emblem|blunt|none
+Robin	h|s|t|f1d0b0|1a1a1a|c0262f|2e6b3a|f2cf3a|short|mask|tunic|sword|cape|blade|none
+Batgirl	h|m|t|f3d6bf|c0401d|5a5a7a|1f1f1f|f2cf3a|long|cowl|jumpsuit|none|cape,emblem|gadget|tech
+Red Hood	h|m|w|c0262f|1a1a1a|1f1f1f|3a3a44|c0262f|none|helm|coat|gun|emblem|gun|none
+Catwoman	h|m|t|f3d6bf|1a1a1a|1f1f1f|1f1f1f|8fd0ff|none|cowl|jumpsuit|whip|glasses|blunt|none
+Raven	h|m|t|bfb0c8|5b3a7a|1f1f2a|5b3a7a|8e5bd0|none|hood|robe|none|cape,glow|magic|dark
+Starfire	h|m|t|ef8a2c|c0262f|8e5bd0|8e5bd0|4caf50|long|none|jumpsuit|none|glow_eyes|beam|fire
+Beast Boy	h|s|t|4caf50|2e6b3a|8e5bd0|1f1f1f|2e8b3a|spiky|none|jumpsuit|none|ears|claws|nature
+Blue Beetle	r|m|n|1f4fa8|1a1a1a|1f4fa8|1f1f1f|8fe9ff|none|none|armour|blaster|wings,glow_eyes|gun|tech
+Booster Gold	h|m|n|f1d0b0|e6c35c|f2cf3a|1f3f8a|8fe9ff|short|visor|jumpsuit|blaster|emblem|gun|tech
+Hawkman	h|m|w|f1d0b0|1a1a1a|e8b84a|2e8b3a|e8b84a|none|helmet|bare|mace|wings,belt|blunt|none
+Zatanna	h|m|t|f3d6bf|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|tophat|suit|wand||magic|light
+John Constantine	h|m|t|f1d0b0|e6c35c|b8906a|1f1f1f|ff7a1a|messy|none|coat|none||magic|fire
+Doctor Fate	h|m|n|e8b84a|1a1a1a|1f3f8a|e8b84a|ffe14d|none|helm|robe|none|cape,glow|magic|light
+Swamp Thing	h|x|w|3f6a3a|2e5a2a|3f6a3a|2e5a2a|c0262f|none|none|bare|none|redeyes,moustache|claws|nature
+Plastic Man	h|m|t|f1d0b0|1a1a1a|c0262f|f2cf3a|f2cf3a|short|none|jumpsuit|none|glasses,belt|fists|none
+The Atom	h|s|t|f1d0b0|1a1a1a|1f3f8a|c0262f|c0262f|none|fullmask|jumpsuit|none|emblem|fists|tech
+Firestorm	h|m|n|f1d0b0|ff7a1a|c0262f|f2cf3a|ff7a1a|none|none|jumpsuit|none|flame_head,emblem|beam|fire
+John Stewart	h|l|w|5a3a24|1a1a1a|2e8b3a|1f1f1f|4caf50|bald|none|jumpsuit|none|emblem,glow|summon|light
+Guy Gardner	h|m|w|f1d0b0|c0401d|2e8b3a|1f1f1f|4caf50|short|none|jumpsuit|none|emblem,glow|summon|light
+Black Adam	h|l|w|c68642|1a1a1a|1f1f1f|f2cf3a|f2cf3a|slick|none|jumpsuit|none|cape,emblem|fists|lightning
+Batwoman	h|m|t|f2f0ea|c0262f|1f1f1f|1f1f1f|c0262f|long|cowl|jumpsuit|none|cape,emblem|gadget|none
+Static	h|m|t|8d5524|1a1a1a|1f3f8a|f2cf3a|8fe9ff|short|mask|coat|none||magic|lightning
+Mister Miracle	h|m|n|f1d0b0|1a1a1a|c0262f|f2cf3a|2e8b3a|none|fullmask|jumpsuit|none|cape|gadget|tech
+Big Barda	h|l|n|f3d6bf|1a1a1a|3f4f8a|e8b84a|e8b84a|long|helmet|armour|staff||blunt|tech
+The Question	h|m|n|f2e0c8|1a1a1a|3f6aa8|1f1f1f|f2e0c8|none|facemask|coat|none||fists|none
+The Spectre	h|l|n|f2f0ea|1a1a1a|2e8b3a|2e8b3a|2e8b3a|none|hood|robe|none|cape,glow|magic|light
+Steel	r|l|w|9aa3ad|9aa3ad|9aa3ad|c0262f|c0262f|none|none|armour|hammer|cape,emblem|blunt|tech
+Joker	h|m|t|f2f0ea|4caf50|8e5bd0|5b3a7a|2e8b3a|slick|none|suit|gun|grin|gun|poison
+Harley Quinn	h|m|t|f2f0ea|f2f0ea|c0262f|1f1f1f|ff6ad5|ponytail|none|jumpsuit|bat||blunt|none
+Lex Luthor	h|m|n|f1d0b0|f1d0b0|2e8b3a|8e5bd0|2e8b3a|bald|none|armour|blaster||gun|tech
+Darkseid	h|x|w|5a5a5a|1a1a1a|3f4f8a|1f1f1f|c0262f|bald|helmet|armour|none|redeyes|beam|dark
+Brainiac	h|m|n|4caf50|4caf50|8e5bd0|1f1f1f|f2f0ea|bald|none|jumpsuit|none|antennae|psychic|tech
+General Zod	h|m|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|c0262f|short|none|uniform|none|beard,cape|beam|light
+Doomsday	h|x|w|8a8f96|8a8f96|8a8f96|3f4f8a|f2f0ea|none|none|bare|none|spikes,redeyes|fists|none
+Bane	h|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|4caf50|none|fullmask|vest|none|belt|fists|poison
+Ra's al Ghul	h|m|n|e0ac69|d9d4c7|2e6b3a|1f1f1f|e8b84a|slick|none|robe|sword|beard,cape|blade|none
+Talia al Ghul	h|m|t|e0ac69|1a1a1a|1f1f1f|1f1f1f|2e8b3a|long|none|jumpsuit|sword||blade|none
+Deathstroke	h|m|w|ef8a2c|f2f0ea|1f1f24|1f1f24|ef8a2c|none|fullmask|armour|sword|eyepatch,beard|blade|none
+Poison Ivy	h|m|t|bfe39a|c0401d|2e8b3a|2e6b3a|4caf50|long|none|dress|none|glow|summon|poison
+Two-Face	h|m|n|f1d0b0|5a3a1a|f2f0ea|1f1f1f|8e5bd0|short|none|suit|gun|grin|gun|none
+The Riddler	h|m|t|f1d0b0|c0401d|2e8b3a|1f1f1f|8e5bd0|short|hat|suit|staff|emblem|gadget|none
+Penguin	h|s|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|e8b84a|none|tophat|suit|gun|glasses|gadget|none
+Scarecrow	h|m|t|b8906a|5a3a1a|6b5a3a|3b3026|8bd34a|none|hat|coat|none|grin,glow_eyes|gadget|poison
+Mr. Freeze	r|l|w|8fd0ff|8fd0ff|cfd6dd|5a6a78|9fe3ff|none|none|armour|blaster|glow_eyes|gun|ice
+Killer Croc	h|x|w|5a7a4a|5a7a4a|5a7a4a|3a3a3a|e8b84a|bald|none|bare|none|fangs,tail|bite|water
+Sinestro	h|m|t|c84aa0|1a1a1a|f2cf3a|1f1f1f|f2cf3a|slick|none|jumpsuit|none|moustache,glow|summon|light
+Black Manta	r|m|n|1f1f1f|1a1a1a|1f1f1f|1f1f1f|c0262f|none|none|armour|none|glow_eyes|beam|water
+Cheetah	h|m|t|e8b84a|e8b84a|e8b84a|e8b84a|4caf50|long|none|bare|claws|spots,ears,tail|claws|none
+Reverse-Flash	h|m|t|f2cf3a|1a1a1a|f2cf3a|c0262f|c0262f|none|fullmask|jumpsuit|none|emblem,redeyes|fists|lightning
+Gorilla Grodd	h|l|w|5a5a5a|1a1a1a|5a5a5a|5a5a5a|ff6ad5|none|none|fur|none|glow_eyes|psychic|psychic
+Captain Cold	h|m|n|f1d0b0|5a3a1a|3fa0ff|1f1f1f|9fe3ff|short|none|coat|blaster|glasses|gun|ice
+Deadshot	h|m|n|8d5524|1a1a1a|c0262f|1f1f1f|c0262f|bald|none|vest|rifle|eyepatch|gun|none
+Amanda Waller	h|m|w|5a3a24|1a1a1a|1f1f1f|1f1f1f|f2f0ea|short|none|suit|none||gadget|none
+Lobo	h|l|w|cfd6dd|1a1a1a|1f1f1f|1f1f1f|c0262f|long|none|vest|gun|redeyes|gun|none
+Clayface	o|x|w|8a6a4a|5a4632|8a6a4a|8a6a4a|f2cf3a|none|none|bare|none|nubs,glow_eyes|fists|earth
+Trigon	h|x|w|c0262f|f2f0ea|c0262f|1f1f1f|f2cf3a|long|none|robe|none|horns,glow_eyes,beard|magic|fire
+Mongul	h|x|w|f2cf3a|1a1a1a|8e5bd0|1f1f1f|c0262f|bald|none|armour|none|redeyes|fists|none
+Atrocitus	h|l|w|c0262f|1a1a1a|1f1f1f|c0262f|c0262f|bald|none|jumpsuit|none|emblem,glow,fangs|magic|blood

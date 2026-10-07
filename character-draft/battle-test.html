@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex" />
+  <title>Battle test</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet" />
+  <script>document.write('<link rel="stylesheet" href="battle.css?t=' + Date.now() + '" />')</script>
+  <style>
+    :root { --paper: #fbf7ef; --ink: #241f1a; }
+    body { margin: 0; padding: 16px; background: var(--paper); color: var(--ink); font: 14px system-ui, sans-serif; }
+    #stage { max-width: 960px; }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+  <script src="characters.js?v=26"></script>
+  <script>document.write('<script src="sprites.js?t=' + Date.now() + '"><\/script>')</script>
+  <script>document.write('<script src="sprite.js?t=' + Date.now() + '"><\/script>')</script>
+  <script>document.write('<script src="battle.js?t=' + Date.now() + '"><\/script>')</script>
+  <script>
+    const U = window.UNIVERSES;
+    const ch = (world, name) => ({ world, name, note: (U[world].characters.find(c => c[0] === name) || [])[1] || "" });
+    const teams = [
+      { name: "Grace", roster: [ch("marvel", "Thor"), ch("pokemon", "Pikachu"), ch("westeros", "Jon Snow"), ch("hp", "Harry Potter"), ch("minecraft", "Steve")] },
+      { name: "Sam", roster: [ch("westeros", "Drogon"), ch("pokemon", "Gengar"), ch("marvel", "Spider-Man"), ch("hp", "Nagini"), ch("minecraft", "Creeper")] },
+    ];
+    const verdict = {
+      winner: "Grace", mvp: "Thor", verdict: "Thor's lightning grounded Drogon before the dragon could burn the line.",
+      turning_point: "Thor calls down the storm on Drogon.",
+      preps: [
+        { gear: [{ name: "Redstone turret", made_by: "Steve", effect: "fires arrows on its own", look: "turret", colour: "red" }] },
+        { gear: [{ name: "TNT bundle", made_by: "scavenged", effect: "explodes", look: "bomb", colour: "red" }] },
+      ],
+      beats: [
+        { actor: "Drogon", action: "special", target: "Jon Snow", effect: "fire", outcome: "hurt", caption: "Drogon dives out of the smoke and breathes fire across the line.", line: "" },
+        { actor: "Jon Snow", action: "block", target: "none", effect: "none", outcome: "none", caption: "Jon raises his cloak against the flames.", line: "Hold the line!" },
+        { actor: "Spider-Man", action: "shoot", target: "Pikachu", effect: "web", outcome: "hit", caption: "Spider-Man webs Pikachu to the ground.", line: "Gotcha, sparky!" },
+        { actor: "Pikachu", action: "cast", target: "Spider-Man", effect: "lightning", outcome: "crit", caption: "Pikachu bursts free with a Thunderbolt.", line: "Pika!" },
+        { actor: "Steve", action: "deploy_gear", target: "Gengar", gear: "Redstone turret", effect: "none", outcome: "hit", caption: "Steve's redstone turret opens up on Gengar.", line: "" },
+        { actor: "Creeper", action: "deploy_gear", target: "Steve", gear: "TNT bundle", effect: "explosion", outcome: "ko", caption: "The Creeper hisses and the TNT goes off under Steve.", line: "Sssss…" },
+        { actor: "Harry Potter", action: "cast", target: "Nagini", effect: "light", outcome: "hit", caption: "Harry's spell catches Nagini mid-strike.", line: "Expelliarmus!" },
+        { actor: "Nagini", action: "strike", target: "Harry Potter", effect: "poison", outcome: "dodged", caption: "Nagini lunges, but Harry rolls away.", line: "" },
+        { actor: "Thor", action: "special", target: "Drogon", effect: "lightning", outcome: "ko", caption: "Thor calls down the storm and grounds Drogon.", line: "Bring me Thanos!" },
+        { actor: "Gengar", action: "cast", target: "Thor", effect: "dark", outcome: "blocked", caption: "Gengar's shadow ball bounces off Thor's hammer.", line: "" },
+      ],
+    };
+    if (location.search.includes("real")) {
+      fetch("test-verdict.json").then(r => r.json()).then(d => {
+        window.fightCtl = Battle.player(document.getElementById("stage"), { teams: d.teams, verdict: d.v, arena: d.arena }, { onEnd: () => { document.title = "ended"; } });
+      });
+    } else window.fightCtl = Battle.player(document.getElementById("stage"), { teams, verdict, arena: { name: "The Wall", terrain: "A cliff of ice", world: "westeros" } }, {
+      onEnd: () => { document.title = "ended"; },
+    });
+  </script>
+</body>
+</html>

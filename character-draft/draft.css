@@ -1077,3 +1077,47 @@ fieldset { border: 0; min-width: 0; }
   .format__price em, .format__note { font-size: 0.82rem; line-height: 1.3; }
   .judge__lede { font-size: 1rem; }
 }
+
+/* The speaker beside the theme toggle: waves for music, one wave for effects
+   only, a cross for silence. Same as the party TV. */
+.sound-toggle { right: calc(var(--space-sm) + 3rem); }
+.sound-toggle .cross { display: none; }
+.sound-toggle[data-mode="effects"] .wave--2 { display: none; }
+.sound-toggle[data-mode="off"] .wave { display: none; }
+.sound-toggle[data-mode="off"] .cross { display: block; }
+
+/* The 8-bit battle sits in the judge panel. */
+.battle-box { margin: var(--space-sm) 0; }
+.battle-view #battle-8bit:not(:empty) { margin: var(--space-sm) 0; }
+
+/* Two players here, or the party on a TV: the choice comes first. */
+.modes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-sm);
+  margin: 0 0 var(--space-md);
+}
+.mode {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+  padding: var(--space-sm);
+  background: var(--paper-warm);
+  border: 1.5px solid var(--rule);
+  border-radius: var(--radius-blob);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color var(--dur) var(--ease), transform var(--dur) var(--ease-bounce);
+}
+a.mode:hover, a.mode:focus-visible { border-color: var(--accent); transform: rotate(-0.6deg); outline: none; }
+.mode--here { border-color: var(--accent); background: var(--accent-wash, var(--paper-warm)); }
+.mode__name {
+  font-family: var(--font-display);
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  font-size: var(--size-entry);
+  font-weight: 450;
+  line-height: 1.2;
+}
+.mode__go { color: var(--accent); }
+.mode__note { font-style: italic; color: var(--ink-muted); line-height: var(--leading-snug); }
+.mode--small .mode__name { font-size: 1.05rem; }

@@ -10,13 +10,20 @@
   "use strict";
 
   const BASE = new URL("sfx/", document.currentScript.src).href;
-  const NAMES = ["reveal", "bid", "tick", "tock", "sold", "skipped", "join", "fight", "winner", "champion", "timeup", "vote", "lobby", "auction"];
-  const LEVEL = { lobby: 0.32, auction: 0.16 };   // music sits under everything
+  const EFFECTS = ["reveal", "bid", "tock", "sold", "skipped", "join", "fight", "winner", "champion", "timeup", "vote",
+    "b_slash", "b_punch", "b_shoot", "b_gun", "b_beam", "b_fire", "b_magic", "b_charge", "b_boom", "b_hit", "b_crit",
+    "b_block", "b_whoosh", "b_ko", "b_heal", "b_build", "b_deploy", "b_shield", "b_ready", "b_fight", "b_win"];
+  // Music beds, all in the same 8-bit fighting style. A bed with several
+  // tracks plays them in turn, crossfading, so it never loops one clip.
+  const BEDS = { lobby: ["lobby"], auction: ["auction1", "auction2", "auction3"], battle: ["battle1", "battle2"] };
+  const LEVEL = { lobby: 0.3, auction: 0.2, battle: 0.26 };   // music sits under everything
+  const FADE_IN = 2, FADE_OUT = 1.5, CROSS = 2.5;
+  const NAMES = EFFECTS.concat(...Object.values(BEDS));
 
   let ctx = null, master = null;
   const buffers = {};
   let mode = "all";
-  let musicName = null, musicNode = null, musicGain = null;
+  let musicName = null, musicNode = null, musicGain = null, musicTrack = 0, musicTimer = null;
   let ducked = false;
 
   function ensure() {
@@ -32,9 +39,9 @@
 
   async function load(name) {
     try {
-      const res = await fetch(`${BASE}${name}.mp3?v=1`);
+      const res = await fetch(`${BASE}${name}.mp3?v=2`);
       buffers[name] = await ctx.decodeAudioData(await res.arrayBuffer());
-      if (name === musicName && !musicNode) startMusic();
+      if (musicName && BEDS[musicName].includes(name) && !musicNode) startMusic();
     } catch { /* a missing sound just stays quiet */ }
   }
 
@@ -46,12 +53,18 @@
     src.buffer = buffers[name];
     src.playbackRate.value = rate;
     const g = ctx.createGain();
-    g.gain.value = vol;
+    // A few milliseconds of fade either side, so nothing clicks in or out.
+    const t = ctx.currentTime, len = src.buffer.duration / rate;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t + 0.012);
+    g.gain.setValueAtTime(vol, Math.max(t + 0.012, t + len - 0.05));
+    g.gain.linearRampToValueAtTime(0, t + len);
     src.connect(g).connect(master);
     src.start();
   }
 
-  function stopMusic(fade = 0.6) {
+  function stopMusic(fade = FADE_OUT) {
+    clearTimeout(musicTimer);
     if (!musicNode) return;
     const node = musicNode, g = musicGain;
     musicNode = null; musicGain = null;
@@ -63,17 +76,37 @@
     } catch { /* already stopped */ }
   }
 
-  function startMusic() {
-    if (mode !== "all" || !live() || !musicName || !buffers[musicName]) return;
+  function startMusic(fadeIn = FADE_IN) {
+    if (mode !== "all" || !live() || !musicName) return;
+    const list = BEDS[musicName];
+    const track = list[musicTrack % list.length];
+    if (!buffers[track]) return;
     const src = ctx.createBufferSource();
-    src.buffer = buffers[musicName];
-    src.loop = true;
+    src.buffer = buffers[track];
+    src.loop = list.length === 1;
     const g = ctx.createGain();
-    g.gain.value = 0;
-    g.gain.linearRampToValueAtTime(level(), ctx.currentTime + 1.2);
+    g.gain.setValueAtTime(0, ctx.currentTime);
+    g.gain.linearRampToValueAtTime(level(), ctx.currentTime + fadeIn);
     src.connect(g).connect(master);
     src.start();
     musicNode = src; musicGain = g;
+    // Hand over to the next track before this one ends.
+    if (list.length > 1) {
+      const name = musicName;
+      musicTimer = setTimeout(() => {
+        if (musicName !== name) return;
+        const old = { node: musicNode, gain: musicGain };
+        musicNode = null; musicGain = null;
+        musicTrack++;
+        startMusic(CROSS);
+        try {
+          old.gain.gain.cancelScheduledValues(ctx.currentTime);
+          old.gain.gain.setValueAtTime(old.gain.gain.value, ctx.currentTime);
+          old.gain.gain.linearRampToValueAtTime(0, ctx.currentTime + CROSS);
+          old.node.stop(ctx.currentTime + CROSS + 0.05);
+        } catch { /* already stopped */ }
+      }, Math.max(1000, (src.buffer.duration - CROSS) * 1000));
+    }
   }
 
   const level = () => (LEVEL[musicName] || 0.25) * (ducked ? 0.35 : 1);
@@ -83,6 +116,7 @@
     if (name === musicName && (musicNode || !live())) return;
     stopMusic();
     musicName = name;
+    if (name) musicTrack = Math.floor(Math.random() * BEDS[name].length);
     startMusic();
   }
 
@@ -120,7 +154,7 @@
 
   function setMode(m) {
     mode = ["all", "effects", "off"].includes(m) ? m : "all";
-    if (mode !== "all") stopMusic(0.3);
+    if (mode !== "all") stopMusic(0.6);
     else startMusicIfIdle();
     if (mode === "off" && "speechSynthesis" in window) speechSynthesis.cancel();
   }

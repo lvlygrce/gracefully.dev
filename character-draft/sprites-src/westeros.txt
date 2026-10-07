@@ -1,0 +1,72 @@
+Jon Snow	h|m|n|ecc8a8|1c1712|2a2622|3b3026|4a3f36|long|none|fur|sword|cape,beard|blade|ice
+Daenerys Targaryen	h|m|t|f3d6bf|f2eee4|5c6e8a|3a3f4f|8b1e1e|braids|none|dress|none|cape|magic|fire
+Tyrion Lannister	h|s|n|f1cfb0|b5823c|8b1e1e|3b2a1a|e8b84a|short|none|coat|book|beard|gadget|none
+Cersei Lannister	h|m|t|f3d6bf|e6c35c|7a1b1b|2a1a1a|e8b84a|short|crown|dress|none||psychic|none
+Jaime Lannister	h|m|n|f1cfb0|d9b45a|b8202a|e8b84a|e8b84a|short|none|armour|sword|cape|blade|none
+Tywin Lannister	h|m|n|ecc8a8|d9d4c7|7a1b1b|2a1a1a|e8b84a|bald|none|coat|none|beard|gadget|none
+Arya Stark	h|s|t|f1cfb0|3b2a1a|5a4632|3b3026|cfd6dd|bun|none|tunic|dagger||blade|none
+Sansa Stark	h|m|t|f3d6bf|b5401d|2a2a3a|2a2a3a|9aa3ad|long|none|dress|none|scarf|psychic|ice
+Bran Stark	h|s|n|f1cfb0|3b2a1a|5a4632|3b3026|9fe3ff|short|none|robe|none|glow_eyes|psychic|psychic
+Ned Stark	h|m|n|ecc8a8|3b2a1a|4a3f36|3b3026|6b6b6b|long|none|fur|greatsword|cape,beard|blade|none
+Robb Stark	h|m|n|ecc8a8|8a3a1a|3a3026|2a2622|6b6b6b|short|none|fur|sword|cape,beard|blade|none
+Catelyn Stark	h|m|t|f3d6bf|a33a1a|2a3a4a|2a2a3a|6b6b6b|long|none|dress|none||psychic|none
+Theon Greyjoy	h|m|t|f1cfb0|3b2a1a|2a2a2a|1f1f1f|b8a04a|messy|none|tunic|bow||bow|none
+Yara Greyjoy	h|m|n|e8c4a0|3b2a1a|2a2a2a|1f1f1f|b8a04a|short|none|coat|axe||blade|water
+Euron Greyjoy	h|m|n|e8c4a0|1a1a1a|1f1f1f|2a2a2a|b8a04a|messy|none|coat|axe|beard,eyepatch|blade|water
+Sandor Clegane	h|l|w|ecc8a8|1a1a1a|3a3a3a|2a2a2a|9a9a9a|long|none|armour|greatsword|beard|blade|none
+Gregor Clegane	h|x|w|ecc8a8|1a1a1a|5a5f66|2a2b30|9a9a9a|bald|helm|armour|greatsword||blade|none
+Brienne of Tarth	h|l|n|f1cfb0|e6c35c|9aa3ad|5a5f66|3f7fbf|short|none|armour|sword|cape|blade|none
+Podrick Payne	h|m|t|f1cfb0|3b2a1a|5a4632|3b3026|9aa3ad|short|none|tunic|sword||blade|none
+Bronn	h|m|t|e0ac69|3b2a1a|5a4632|3b3026|8a5a32|short|none|vest|crossbow|beard|bow|none
+Samwell Tarly	h|m|w|f1cfb0|3b2a1a|2a2622|1f1f1f|9a9a9a|short|none|robe|book||magic|none
+Jorah Mormont	h|m|w|ecc8a8|9a9a9a|5a4632|3b3026|6b6b6b|bald|none|armour|sword|beard|blade|none
+Davos Seaworth	h|m|n|e0ac69|8a8a8a|5a4632|3b3026|8a5a32|short|none|coat|dagger|beard|blade|none
+Stannis Baratheon	h|m|n|ecc8a8|3b2a1a|3a3a3a|2a2a2a|e8b84a|bald|crown|armour|sword|beard,cape|blade|fire
+Robert Baratheon	h|l|w|ecc8a8|1a1a1a|e8b84a|3b2a1a|e8b84a|short|crown|tunic|hammer|beard|blunt|none
+Joffrey Baratheon	h|m|t|f3d6bf|e6c35c|b8202a|e8b84a|e8b84a|short|crown|tunic|crossbow||bow|none
+Melisandre	h|m|t|f3d6bf|b5201d|b8202a|7a1b1b|ff7a1a|long|none|robe|none||magic|fire
+Petyr Baelish	h|m|t|f1cfb0|2a2a2a|3a3f4f|1f1f1f|e8b84a|slick|none|coat|dagger|beard|gadget|none
+Varys	h|m|w|f1cfb0|f1cfb0|8a6aa8|5b3a7a|e8b84a|bald|none|robe|none||psychic|none
+Oberyn Martell	h|m|t|c68642|1a1a1a|d9a03a|7a4a24|e8b84a|short|none|vest|spear|beard|blade|poison
+Ellaria Sand	h|m|t|c68642|1a1a1a|d9a03a|7a4a24|8bd34a|long|none|dress|dagger||blade|poison
+Tormund Giantsbane	h|l|w|f1cfb0|b5401d|6b4a2a|3b3026|9a9a9a|long|none|fur|axe|beard|blade|none
+Ygritte	h|m|t|f3d6bf|b5401d|6b4a2a|3b3026|8a5a32|long|none|fur|bow||bow|none
+The Night King	h|l|n|9fc3d6|9fc3d6|5a6a78|3a4a58|6af0ff|bald|none|armour|spear|glow_eyes,spikes|magic|ice
+Khal Drogo	h|l|w|a0623b|1a1a1a|a0623b|3b2a1a|e8b84a|braids|none|bare|scythe|beard,belt|blade|none
+Grey Worm	h|m|n|8d5524|1a1a1a|6b5a3a|3b3026|cfd6dd|bald|helmet|armour|spear|shield|blade|none
+Missandei	h|m|t|8d5524|1a1a1a|e8dcc0|5a4a3a|e8b84a|braids|none|dress|book||psychic|none
+Margaery Tyrell	h|m|t|f3d6bf|6b4423|6aa0d8|3a5a8a|e8b84a|long|none|dress|none||psychic|nature
+Olenna Tyrell	h|m|t|f1d8c8|d9d4c7|2e6b3a|1f3a24|e8b84a|bun|hood|robe|none||psychic|poison
+Ramsay Bolton	h|m|n|f1cfb0|1a1a1a|7a1f1f|2a1a1a|c0262f|short|none|tunic|bow||bow|blood
+Jaqen H'ghar	h|m|t|f1cfb0|8a3a1a|2a2a2a|1f1f1f|9a9a9a|long|none|robe|dagger||blade|dark
+Gendry	h|m|w|f1cfb0|1a1a1a|f1cfb0|3b3026|8a5a32|short|none|bare|hammer|belt|blunt|fire
+Hodor	h|x|w|ecc8a8|5a4632|6b5a3a|3b3026|8a5a32|messy|none|tunic|club|beard|blunt|none
+Beric Dondarrion	h|m|n|ecc8a8|e6c35c|5a4632|3b3026|ff7a1a|short|none|armour|sword|eyepatch|blade|fire
+Barristan Selmy	h|m|n|f1d8c8|f2f0ea|f2f0ea|cfd6dd|e8b84a|short|none|armour|sword|cape,beard|blade|none
+Daario Naharis	h|m|t|e0ac69|5a3a1a|3f7fbf|2a3a5a|e8b84a|long|none|coat|sword|beard|blade|none
+Rhaenyra Targaryen	h|m|t|f3d6bf|f2eee4|1a1a1a|7a1b1b|c0262f|braids|crown|dress|none|cape|magic|fire
+Daemon Targaryen	h|m|t|f1cfb0|f2eee4|1a1a1a|3a3a3a|c0262f|long|none|armour|sword|cape|blade|fire
+Viserys I Targaryen	h|m|n|f1d8c8|f2eee4|5a2a2a|1a1a1a|e8b84a|long|crown|robe|none|beard|psychic|none
+Alicent Hightower	h|m|t|f3d6bf|8a3a1a|2e6b3a|1f3a24|e8b84a|bun|none|dress|book||psychic|none
+Otto Hightower	h|m|n|f1d8c8|3b3b3b|2e6b3a|1f1f1f|e8b84a|short|none|robe|none|beard|gadget|none
+Aegon II Targaryen	h|m|t|f3d6bf|f2eee4|2e6b3a|1f1f1f|e8b84a|short|crown|tunic|sword||blade|fire
+Aemond Targaryen	h|m|t|f3d6bf|f2eee4|1a1a1a|2a2a2a|9fe3ff|long|none|coat|sword|eyepatch|blade|none
+Helaena Targaryen	h|m|t|f3d6bf|f2eee4|2e6b3a|1f3a24|e8b84a|braids|none|dress|none||psychic|psychic
+Criston Cole	h|m|n|f1cfb0|3b2a1a|f2f0ea|cfd6dd|e8b84a|short|none|armour|sword|cape|blade|none
+Corlys Velaryon	h|m|n|8d5524|d9d4c7|2c6e75|1f3a4a|e8b84a|braids|none|coat|sword|beard|blade|water
+Rhaenys Targaryen	h|m|t|8d5524|1a1a1a|7a1b1b|1a1a1a|e8b84a|braids|none|dress|none|cape|magic|fire
+Jacaerys Velaryon	h|m|t|f1cfb0|3b2a1a|1a1a1a|2a2a2a|c0262f|short|none|tunic|sword||blade|none
+Baela Targaryen	h|m|t|c68642|f2eee4|1a1a1a|2a2a2a|9a9a9a|braids|none|coat|sword||blade|none
+Larys Strong	h|m|n|f1cfb0|3b2a1a|3a3a3a|1f1f1f|8a5a32|short|none|coat|staff||gadget|none
+Mysaria	h|m|t|f3d6bf|f2eee4|f2f0ea|cfd6dd|c0262f|bun|none|robe|dagger||gadget|none
+Cregan Stark	h|m|w|ecc8a8|1a1a1a|4a3f36|3b3026|6b6b6b|long|none|fur|sword|beard,cape|blade|ice
+Alys Rivers	h|m|t|f3d6bf|1a1a1a|7a1f1f|2a1a1a|8bd34a|long|none|robe|staff||magic|dark
+Drogon	d|x|w|2b2422|7a1f1a|2b2422|2b2422|8b1e1e|none|none|bare|none|redeyes|breath|fire
+Rhaegal	d|x|w|2f6b3a|b8823a|2f6b3a|2f6b3a|b8823a|none|none|bare|none||breath|fire
+Viserion	d|x|w|e8d9b0|d9b45a|e8d9b0|e8d9b0|6af0ff|none|none|bare|none|glow_eyes|breath|ice
+Vhagar	d|x|w|6b6a4a|4a4a3a|6b6a4a|6b6a4a|8a7a5a|none|none|bare|none||breath|fire
+Caraxes	d|x|t|b8202a|e8b84a|b8202a|b8202a|7a1b1b|none|none|bare|none||breath|fire
+Meleys	d|x|w|c0262f|e86a8a|c0262f|c0262f|f2a03a|none|none|bare|none||breath|fire
+Sunfyre	d|x|w|e8b84a|f2e0a0|e8b84a|e8b84a|ef8a2c|none|none|bare|none||breath|fire
+Ghost	q|m|n|f2f0ea|f2f0ea|f2f0ea|f2f0ea|b3202a|none|none|bare|none|redeyes|bite|none
+Nymeria	q|m|n|8a8a8a|cfcfcf|8a8a8a|8a8a8a|e8b84a|none|none|bare|none||bite|none

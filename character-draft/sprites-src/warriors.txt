@@ -1,0 +1,60 @@
+Firestar	q|m|n|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none||claws|fire
+Graystripe	q|m|w|8a8f96|5a5f66|8a8f96|8a8f96|e8b84a|none|none|bare|none|stripes|claws|none
+Sandstorm	q|m|t|e8c48a|f2e0b8|e8c48a|e8c48a|4caf50|none|none|bare|none||claws|none
+Bluestar	q|m|n|8a9ab8|cfd6dd|8a9ab8|8a9ab8|3f7fd6|none|none|bare|none|muzzle_light|claws|water
+Tigerstar	q|l|w|6b4a2a|1f1f1f|6b4a2a|6b4a2a|e8b84a|none|none|bare|none|stripes|claws|dark
+Scourge	q|s|t|1f1f1f|f2f0ea|1f1f1f|1f1f1f|3fa0ff|none|none|bare|claws|collar|claws|blood
+Bramblestar	q|l|w|7a5a32|1f1f1f|7a5a32|7a5a32|e8b84a|none|none|bare|none|stripes|claws|none
+Squirrelflight	q|m|t|d9662a|f2a85a|d9662a|d9662a|4caf50|none|none|bare|none||claws|fire
+Leafpool	q|m|t|a8825a|f2e0b8|a8825a|a8825a|e8b84a|none|none|bare|none|stripes|magic|nature
+Jayfeather	q|m|t|8a9ab0|5a6a7a|8a9ab0|8a9ab0|cfe8ff|none|none|bare|none|stripes|psychic|psychic
+Lionblaze	q|l|w|e8b84a|f2e0a0|e8b84a|e8b84a|e8b84a|none|none|bare|none|mane|claws|light
+Dovewing	q|m|t|b8c0c8|e8eef2|b8c0c8|b8c0c8|3fa0ff|none|none|bare|none||psychic|psychic
+Ivypool	q|m|t|cfd6dd|f2f0ea|cfd6dd|cfd6dd|3fa0ff|none|none|bare|none|stripes|claws|none
+Hollyleaf	q|m|n|1f1f24|3a3a44|1f1f24|1f1f24|4caf50|none|none|bare|none||claws|none
+Crowfeather	q|m|t|2a2a33|4a4a55|2a2a33|2a2a33|3fa0ff|none|none|bare|none||claws|wind
+Onestar	q|m|t|a8825a|d9b48a|a8825a|a8825a|e8b84a|none|none|bare|none|spots|claws|wind
+Leopardstar	q|m|n|e8b84a|1f1f1f|e8b84a|e8b84a|4caf50|none|none|bare|none|spots|claws|water
+Blackstar	q|l|w|f2f0ea|1f1f1f|f2f0ea|f2f0ea|e8b84a|none|none|bare|none|spots|claws|dark
+Tallstar	q|m|t|1f1f1f|f2f0ea|1f1f1f|1f1f1f|e8b84a|none|none|bare|none|spots|claws|wind
+Yellowfang	q|m|w|5a5a5a|8a8f96|5a5a5a|5a5a5a|f2cf3a|none|none|bare|none|fangs|magic|nature
+Spottedleaf	q|s|t|c8803a|f2f0ea|c8803a|c8803a|e8b84a|none|none|bare|none|spots,glow|magic|light
+Ravenpaw	q|s|t|1f1f24|f2f0ea|1f1f24|1f1f24|e8b84a|none|none|bare|none||claws|none
+Cinderpelt	q|s|n|6a6a72|9aa3ad|6a6a72|6a6a72|3fa0ff|none|none|bare|none||magic|nature
+Mothwing	q|m|t|e8c48a|8a6a3a|e8c48a|e8c48a|e8b84a|none|none|bare|none|stripes|magic|nature
+Hawkfrost	q|l|w|7a5a32|f2f0ea|7a5a32|7a5a32|3fa0ff|none|none|bare|none|muzzle_light|claws|ice
+Mapleshade	q|m|n|e8742a|f2f0ea|e8742a|e8742a|c0262f|none|none|bare|none|spots,redeyes,glow|claws|dark
+Brokenstar	q|l|w|5a4632|3b2a1a|5a4632|5a4632|e8b84a|none|none|bare|none|stripes|claws|dark
+Darkstripe	q|m|t|6a6a72|1f1f1f|6a6a72|6a6a72|e8b84a|none|none|bare|none|stripes|claws|poison
+Mistystar	q|m|n|8a9ab0|cfd6dd|8a9ab0|8a9ab0|3fa0ff|none|none|bare|none||claws|water
+Rowanstar	q|m|n|d9662a|f2a85a|d9662a|d9662a|4caf50|none|none|bare|none||claws|none
+Ashfur	q|m|n|8a8f96|5a5f66|8a8f96|8a8f96|3fa0ff|none|none|bare|none|spots|claws|fire
+Feathertail	q|m|t|cfd6dd|f2f0ea|cfd6dd|cfd6dd|3fa0ff|none|none|bare|none||claws|light
+Stormfur	q|m|w|5a6a7a|8a9ab0|5a6a7a|5a6a7a|e8b84a|none|none|bare|none||claws|water
+Cloudtail	q|m|n|f2f0ea|f2f0ea|f2f0ea|f2f0ea|3fa0ff|none|none|bare|none|mane|claws|none
+Brightheart	q|s|t|f2f0ea|e8742a|f2f0ea|f2f0ea|3fa0ff|none|none|bare|none|spots|claws|none
+Whitestorm	q|l|w|f2f0ea|cfd6dd|f2f0ea|f2f0ea|e8b84a|none|none|bare|none||claws|none
+Lionheart	q|l|w|e8b84a|f2e0a0|e8b84a|e8b84a|4caf50|none|none|bare|none|mane|claws|light
+Mudclaw	q|m|n|6b4a2a|3b2a1a|6b4a2a|6b4a2a|e8b84a|none|none|bare|none||claws|earth
+Sol	q|m|n|e8b84a|f2f0ea|e8b84a|e8b84a|e8b84a|none|none|bare|none|spots|psychic|light
+Clear Sky	q|m|n|b8c0c8|e8eef2|b8c0c8|b8c0c8|3fa0ff|none|none|bare|none||claws|wind
+Gray Wing	q|m|n|6a6a72|9aa3ad|6a6a72|6a6a72|e8b84a|none|none|bare|none||claws|none
+Thunder	q|l|w|e8742a|f2f0ea|e8742a|e8742a|e8b84a|none|none|bare|none|spots|claws|lightning
+Wind Runner	q|m|t|8a6a4a|b8906a|8a6a4a|8a6a4a|e8b84a|none|none|bare|none||claws|wind
+River Ripple	q|m|n|9aa3ad|cfd6dd|9aa3ad|9aa3ad|3fa0ff|none|none|bare|none|mane|claws|water
+Tall Shadow	q|l|t|1f1f24|3a3a44|1f1f24|1f1f24|4caf50|none|none|bare|none||claws|dark
+Shadowsight	q|m|t|8a8f96|5a5f66|8a8f96|8a8f96|3fa0ff|none|none|bare|none|stripes,glow_eyes|psychic|psychic
+Rootspring	q|m|n|e8c48a|f2e0b8|e8c48a|e8c48a|e8b84a|none|none|bare|none||psychic|light
+Alderheart	q|m|n|c8803a|f2a85a|c8803a|c8803a|e8b84a|none|none|bare|none||magic|nature
+Nightheart	q|m|n|1f1f24|3a3a44|1f1f24|1f1f24|e8b84a|none|none|bare|none||claws|dark
+Leafstar	q|m|n|a8825a|f2f0ea|a8825a|a8825a|e8b84a|none|none|bare|none|spots|claws|nature
+Hawkwing	q|m|n|5a5f66|9aa3ad|5a5f66|5a5f66|e8b84a|none|none|bare|none||claws|wind
+Ferncloud	q|m|t|b8c0c8|8a8f96|b8c0c8|b8c0c8|4caf50|none|none|bare|none|spots|claws|nature
+Longtail	q|m|t|e8d9a0|1f1f1f|e8d9a0|e8d9a0|e8b84a|none|none|bare|none|stripes|claws|none
+Rusty	q|s|n|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none|collar|claws|none
+Midnight	q|m|w|1f1f24|f2f0ea|1f1f24|1f1f24|e8b84a|none|none|bare|none|stripes,ears_round|psychic|psychic
+Stoneteller	q|m|n|8a8f96|cfd6dd|8a8f96|8a8f96|e8b84a|none|none|bare|none||magic|earth
+Sharptooth	q|x|w|e8c48a|f2e0b8|e8c48a|e8c48a|c0262f|none|none|bare|none|fangs,redeyes|bite|none
+Fireheart	q|m|t|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none||claws|fire
+Tawnypelt	q|m|n|c8803a|6b4a2a|c8803a|c8803a|4caf50|none|none|bare|none|stripes|claws|none
+Crookedstar	q|m|n|8a6a4a|cfd6dd|8a6a4a|8a6a4a|e8b84a|none|none|bare|none|stripes|claws|water

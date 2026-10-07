@@ -276,7 +276,7 @@
     else if (s.phase === "teams") label = "Start the tournament";
     else if (s.phase === "bracket") label = "Start the fight";
     else if (s.phase === "match" && m.stage === "vote") label = "Close the vote";
-    else if (s.phase === "match" && m.stage === "judging" && m.film === "ready") { label = "Play the film on the TV"; msg = "admin:film:play"; }
+    else if (s.phase === "match" && m.stage === "judging" && m.film === "ready") { label = "Play on the TV"; msg = "admin:film:play"; }
     else if (s.phase === "match" && m.stage === "judging" && m.film === "playing") { label = "Skip to the result"; msg = "admin:film:skip"; }
     else if (s.phase === "match" && m.stage === "judging" && m.film === "making") label = null;
     else if (s.phase === "match" && m.stage === "judging") { label = "Let the crowd decide instead"; msg = "admin:crowd"; }

@@ -1,0 +1,52 @@
+Gorilla with Excalibur	h|l|w|3a3a3a|1a1a1a|3a3a3a|3a3a3a|e8b84a|none|none|fur|sword|glow|blade|light
+Honey Badger with Mjölnir	q|m|w|2a2a2a|f2f0ea|2a2a2a|2a2a2a|ffe14d|none|none|bare|hammer|ears_round,stripes|blunt|lightning
+Goose with a Lightsaber	b|m|n|f2f0ea|1a1a1a|f2f0ea|f2f0ea|3fa0ff|none|none|bare|lightsaber||blade|light
+Octopus with Eight Katanas	o|m|n|c0563a|e86a4a|c0563a|c0563a|f2f0ea|none|none|bare|katana|nubs,spots|blade|water
+Grizzly Bear with the Infinity Gauntlet	h|l|w|6b4a2a|3b2a1a|6b4a2a|6b4a2a|e8b84a|none|none|fur|none|ears_round,gloves,glow|fists|psychic
+Hamster with the Master Sword	q|s|w|e8b84a|f2f0ea|e8b84a|e8b84a|3fa0ff|none|none|bare|sword|ears_round|blade|light
+Crow with the Elder Wand	b|s|n|1f1f24|1f1f24|1f1f24|1f1f24|e8b84a|none|none|bare|wand||magic|dark
+House Cat with the Buster Sword	q|s|n|8a8f96|f2f0ea|8a8f96|8a8f96|4caf50|none|none|bare|greatsword|stripes|blade|none
+Shiba Inu with a Keyblade	q|m|n|e8a05a|f2f0ea|e8a05a|e8a05a|e8b84a|none|none|bare|sword|muzzle_light|blade|light
+Kangaroo with Captain America's Shield	h|m|n|b8805a|e8c49a|b8805a|b8805a|c0262f|none|none|bare|shield|ears_long,tail|blunt|none
+Elephant with a Minigun	q|x|w|9aa3ad|f2f0ea|9aa3ad|9aa3ad|3a3a3a|none|none|bare|cannon|ears_floppy|gun|explosion
+Pigeon with a Portal Gun	b|s|n|8a8f96|4caf50|8a8f96|8a8f96|ef8a2c|none|none|bare|blaster||gun|tech
+Chimpanzee with the Gravity Hammer	h|m|n|3a2a2a|1a1a1a|3a2a2a|3a2a2a|8e5bd0|none|none|fur|hammer||blunt|tech
+Capybara with the Leviathan Axe	q|m|w|9a6a3a|8a5a32|9a6a3a|9a6a3a|9fe3ff|none|none|bare|axe|ears_round|blade|ice
+Duck with Sting	b|s|n|f2cf3a|ef8a2c|f2cf3a|f2cf3a|3fa0ff|none|none|bare|dagger|glow|blade|light
+Great White Shark with a Frickin' Laser Beam	s|l|w|8a9ab0|f2f0ea|8a9ab0|8a9ab0|c0262f|none|none|bare|blaster|fins,fangs|beam|tech
+Penguin with a Freeze Gun	b|s|w|1f1f24|f2f0ea|1f1f24|1f1f24|ef8a2c|none|none|bare|blaster||gun|ice
+Hippopotamus with the Blades of Chaos	q|l|w|8a7a8a|e8a0b0|8a7a8a|8a7a8a|ff7a1a|none|none|bare|sword|ears_round|blade|fire
+Bat with Batarangs	b|s|n|2a2a2a|1a1a1a|2a2a2a|2a2a2a|f2cf3a|none|none|bare|dagger|ears|blade|dark
+Ostrich with Stormbreaker	b|l|t|3a3a3a|f2e0d0|3a3a3a|3a3a3a|ffe14d|none|none|bare|axe||blade|lightning
+Sloth with the Death Note	h|m|n|8a7a5a|5a4a3a|8a7a5a|8a7a5a|1f1f1f|none|none|fur|book||psychic|dark
+Llama with Glamdring	q|m|n|e8dcc0|8a6a4a|e8dcc0|e8dcc0|3fa0ff|none|none|bare|sword|ears_long|blade|light
+Frog with the Dragon Slayer	c|s|w|4caf50|e8dcc0|4caf50|4caf50|1f1f1f|none|none|bare|greatsword||blade|none
+Owl with the Sword of Gryffindor	b|m|n|b8906a|f2e0c0|b8906a|b8906a|c0262f|none|none|bare|sword|crest|blade|light
+Monkey with Ruyi Jingu Bang	h|m|t|b8805a|e8c49a|b8805a|c0262f|e8b84a|none|crown|fur|staff|tail|blunt|earth
+Seal with the Lasso of Truth	s|m|w|9aa3ad|cfd6dd|9aa3ad|9aa3ad|e8b84a|none|none|bare|whip|whiskers|blunt|light
+Horse with the Lance of Longinus	q|l|n|6b4a2a|1a1a1a|6b4a2a|6b4a2a|c0262f|none|none|bare|spear|mane|blade|blood
+Wolf with Andúril	q|m|n|8a8f96|cfd6dd|8a8f96|8a8f96|3fa0ff|none|none|bare|sword|muzzle_light|blade|light
+Rabbit with the Holy Hand Grenade	c|s|n|f2f0ea|f2a0b0|f2f0ea|f2f0ea|e8b84a|none|none|bare|orb|ears_long|gadget|explosion
+Squirrel with the BFG 9000	c|s|n|b8603a|f2e0c0|b8603a|b8603a|4caf50|none|none|bare|cannon|ears,tail|gun|tech
+Bee with Needle	b|s|n|f2cf3a|1f1f1f|f2cf3a|f2cf3a|cfd6dd|none|none|bare|dagger|stripes,antennae|blade|poison
+Moose with the Monado	q|l|w|5a3a1a|8a6a4a|5a3a1a|5a3a1a|c0262f|none|none|bare|greatsword|horns|blade|light
+Parrot with the Trident of Poseidon	b|s|n|2e8b3a|c0262f|2e8b3a|2e8b3a|f2cf3a|none|none|bare|trident|crest|blade|water
+Snake with Scorpion's Spear	s|m|n|f2cf3a|1f1f1f|f2cf3a|f2cf3a|ff7a1a|none|none|bare|spear|stripes|blade|fire
+Turtle with a Blue Shell	c|s|w|4caf50|3fa0ff|4caf50|4caf50|3fa0ff|none|none|bare|orb|shell|gadget|explosion
+Cow with the Golden Gun	q|m|w|f2f0ea|1a1a1a|f2f0ea|f2f0ea|e8b84a|none|none|bare|gun|spots,horns|gun|none
+Axolotl with a Trident	c|s|n|f2a0c0|e86a8a|f2a0c0|f2a0c0|3fa0ff|none|none|bare|trident|fins,tail|blade|water
+Polar Bear with Frostmourne	q|l|w|f2f0ea|e8e0d8|f2f0ea|f2f0ea|9fe3ff|none|none|bare|greatsword|ears_round,glow_eyes|blade|ice
+Rooster with Nunchucks	b|s|n|f2f0ea|c0262f|f2f0ea|f2f0ea|f2cf3a|none|none|bare|flail|crest|blunt|none
+Giraffe with Gungnir	q|x|t|f2cf3a|8a5a32|f2cf3a|f2cf3a|e8b84a|none|none|bare|spear|spots,horns|blade|lightning
+Snail with the The One Ring	o|s|n|9a8a6a|c0a07a|9a8a6a|9a8a6a|e8b84a|none|none|bare|orb|shell,antennae|magic|dark
+Mantis with Adamantium Claws	h|m|t|8ad84a|4caf50|8ad84a|8ad84a|cfd6dd|none|none|bare|claws|antennae|claws|none
+Dolphin with Aquaman's Trident	s|m|n|8a9ab0|cfd6dd|8a9ab0|8a9ab0|e8b84a|none|none|bare|trident|fins|blade|water
+Chicken with a Chainsaw	b|s|n|f2f0ea|c0262f|f2f0ea|f2f0ea|ef8a2c|none|none|bare|cannon|crest|blade|blood
+Panda with a Zweihänder	h|l|w|f2f0ea|1f1f1f|1f1f1f|1f1f1f|cfd6dd|none|none|bare|greatsword|ears_round|blade|none
+Lion with the Sword of Omens	q|l|w|e8b84a|b8603a|e8b84a|e8b84a|c0262f|none|none|bare|sword|mane|blade|light
+Corgi with the Royal Sceptre	q|s|w|e8a05a|f2f0ea|e8a05a|e8a05a|e8b84a|none|none|bare|staff|muzzle_light,crown_q|magic|light
+Raccoon with a Lancer	c|s|n|8a8f96|1f1f1f|8a8f96|8a8f96|c0262f|none|none|bare|rifle|stripes,ears,tail|gun|none
+Platypus with a Ray Gun	q|s|w|3fa0a0|ef8a2c|3fa0a0|3fa0a0|1f1f1f|none|none|bare|blaster|no_ears|gun|tech
+Hedgehog with a Morning Star	q|s|w|8a6a4a|f2e0c0|8a6a4a|8a6a4a|cfd6dd|none|none|bare|flail|spikes|blunt|none
+Komodo Dragon with a Valyrian Steel Dagger	q|l|t|6a6a4a|8a8a6a|6a6a4a|6a6a4a|c0262f|none|none|bare|dagger|no_ears|bite|poison
+Crocodile with Kusanagi	q|l|t|4a6a3a|8a8a5a|4a6a3a|4a6a3a|cfd6dd|none|none|bare|katana|no_ears,spikes|blade|wind

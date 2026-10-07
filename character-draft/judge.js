@@ -34,6 +34,16 @@
      knowing the battlefield and the enemy roster but not the enemy's plan.
      Then the judge pits the two preparations against each other. */
 
+  /* The fight is also animated as an 8-bit battle, from a script of beats in
+     the judge's answer. These lists are what the animation can show. */
+  const ANIM = {
+    actions: ["advance", "strike", "shoot", "cast", "special", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up", "taunt", "retreat", "fall"],
+    effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
+    outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
+    looks: ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle", "potion", "armour", "banner", "beast", "device", "rope", "wall"],
+    colours: ["red", "orange", "yellow", "green", "blue", "purple", "white", "black", "grey", "gold", "silver", "brown", "pink", "cyan"],
+  };
+
   const CHARACTER_RULES = `Use what the characters can actually do in their source material (games, shows, films,
 comics, books). When teams mix worlds, scale power fairly. Stick to what each character really is and can do;
 never invent powers they don't have. The two players only drafted the teams; they are not in the fight.`;
@@ -124,7 +134,7 @@ ${rows(them, worldName)}
 Reply as JSON:
 - "leader": the character who leads your team
 - "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
-- "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged".
+- "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged". "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
 - "jobs": one short sentence per character on your team, saying their job in the plan (an object with one key per character name, exactly as listed)`;
     const schema = {
       type: "OBJECT",
@@ -139,15 +149,19 @@ Reply as JSON:
               name: { type: "STRING" },
               made_by: { type: "STRING", enum: [...makers, "already theirs", "scavenged"] },
               effect: { type: "STRING" },
+              look: { type: "STRING", enum: ANIM.looks },
+              colour: { type: "STRING", enum: ANIM.colours },
             },
-            required: ["name", "made_by", "effect"],
+            required: ["name", "made_by", "effect", "look", "colour"],
+            propertyOrdering: ["name", "made_by", "effect", "look", "colour"],
           },
         },
         jobs: keyedObject(keys.map(c => c.key)),
       },
       required: ["leader", "plan", "gear", "jobs"],
+      propertyOrdering: ["leader", "plan", "gear", "jobs"],
     };
-    return { system: PREP_SYSTEM, user, schema, maxTokens: 900 };
+    return { system: PREP_SYSTEM, user, schema, maxTokens: 1000 };
   }
 
   function prepText(prep) {
@@ -158,8 +172,10 @@ Reply as JSON:
     return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nJobs:\n${jobs}`;
   }
 
-  function battleQuestion(teams, preps, worldName, arena, aftermath) {
+  function battleQuestion(teams, preps, worldName, arena, aftermath, small) {
     const keys = roleKeys(teams).map(c => c.key);
+    const gearNames = [...new Set(preps.flatMap(p => p.gear.map(g => g.name)).filter(Boolean))];
+    const [lo, hi] = small ? [8, 12] : [12, 20];
     const user = `${battlefield(arena, worldName)}
 
 ${teams.map((t, i) => `Team drafted by ${t.name}:\n${rows(t, worldName)}\nTheir preparation:\n${prepText(preps[i])}`).join("\n\n")}
@@ -170,7 +186,18 @@ Reply as JSON:
 - "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
 - "mvp": the character who mattered most
 - "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
-- "verdict": one punchy line explaining why the winner won${aftermath ? `
+- "verdict": one punchy line explaining why the winner won
+- "beats": the same fight as an action script of ${lo} to ${hi} beats in order. It is animated as an 8-bit battle, so it must
+  follow your "fight" paragraphs exactly: the same moves, gear, turning point and result, in the same order. Each beat:
+  "actor" (who acts), "action", "target" (who it is aimed at, or "none"), "gear" (the gear item used, by its exact name, or
+  "none"), "effect" (what it looks like), "outcome" (how it lands on the target; "none" if no target), "caption" (one short
+  sentence a viewer reads while it plays, under 90 characters), and "line" (something the actor shouts, under 40
+  characters, or "" for most beats). Actions: strike/team_up are melee or signature attacks, shoot/cast are ranged,
+  special is a big signature move (use it for the turning point), build and deploy_gear bring in prepared gear, trap
+  springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/advance need no target,
+  retreat leaves the field, fall is being taken out by the terrain. Rules: every character acts at least once; anyone
+  knocked out ("ko") does nothing afterwards; use the gear where the plans used it; by the last beat everyone on the
+  losing side is knocked out or retreating, while the winner's side still has someone standing${aftermath ? `
 - "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
   "gear_broken" or "dead", with a short note (an object with one key per character name). Most characters should
   come out "fine" or "injured"; only kill a character if the fight clearly did. Losers are likelier to be hurt.` : ""}`;
@@ -183,6 +210,23 @@ Reply as JSON:
       }])),
       required: keys,
     };
+    const beat = {
+      type: "OBJECT",
+      properties: {
+        actor: { type: "STRING", enum: keys },
+        action: { type: "STRING", enum: ANIM.actions },
+        target: { type: "STRING", enum: [...keys, "none"] },
+        gear: { type: "STRING", enum: [...gearNames, "none"] },
+        effect: { type: "STRING", enum: ANIM.effects },
+        outcome: { type: "STRING", enum: ANIM.outcomes },
+        caption: { type: "STRING" },
+        line: { type: "STRING" },
+      },
+      required: ["actor", "action", "target", "gear", "effect", "outcome", "caption", "line"],
+      propertyOrdering: ["actor", "action", "target", "gear", "effect", "outcome", "caption", "line"],
+    };
+    // Reason first (the prose), then script it, then commit to a winner.
+    const order = ["fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
     const schema = {
       type: "OBJECT",
       properties: {
@@ -190,13 +234,17 @@ Reply as JSON:
         fight: { type: "STRING" },
         roles: keyedObject(keys),
         turning_point: { type: "STRING" },
+        // No minItems/maxItems: Gemini rejects them alongside this many enums.
+        // The prompt asks for the count, and Battle.script copes with any.
+        beats: { type: "ARRAY", items: beat },
         mvp: { type: "STRING" },
-        winner: { type: "STRING" },
+        winner: { type: "STRING", enum: teams.map(t => t.name) },
         verdict: { type: "STRING" },
       },
-      required: ["fight", "roles", "turning_point", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])],
+      required: order,
+      propertyOrdering: order,
     };
-    return { system: BATTLE_SYSTEM, user, schema, maxTokens: aftermath ? 2000 : 1500 };
+    return { system: BATTLE_SYSTEM, user, schema, maxTokens: (aftermath ? 2000 : 1500) + (small ? 1400 : 2600) };
   }
 
   // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
@@ -205,6 +253,7 @@ Reply as JSON:
     if (!s || typeof s !== "object") return s;
     const out = {};
     for (const [k, v] of Object.entries(s)) {
+      if (k === "propertyOrdering") continue;
       out[k] = k === "type" ? String(v).toLowerCase() : lower(v);
     }
     return out;
@@ -228,7 +277,10 @@ Reply as JSON:
     let carried = 0;
     const gear = [];
     for (const g of Array.isArray(data.gear) ? data.gear : []) {
-      const item = { name: String(g.name || "").trim(), made_by: String(g.made_by || "").trim(), effect: String(g.effect || "").trim() };
+      const item = {
+        name: String(g.name || "").trim(), made_by: String(g.made_by || "").trim(), effect: String(g.effect || "").trim(),
+        look: ANIM.looks.includes(g.look) ? g.look : "", colour: ANIM.colours.includes(g.colour) ? g.colour : "",
+      };
       if (!item.name) continue;
       const maker = makers.find(m => m.toLowerCase() === item.made_by.toLowerCase());
       if (maker) {
@@ -262,6 +314,7 @@ Reply as JSON:
       role: String(given[c.key] || given[c.name] || "").trim(),
     }));
     data.fight = String(data.fight || "");
+    data.beats = Array.isArray(data.beats) ? data.beats.filter(b => b && typeof b === "object") : [];
     if (data.aftermath && typeof data.aftermath === "object") {
       const given = data.aftermath;
       data.aftermath = roleKeys(teams).map(c => {
@@ -303,14 +356,24 @@ Reply as JSON:
     async request(path, body) {
       // Your own key goes straight to Google; with the PIN, through the server.
       const viaPin = !gemini.key() && pin.get();
-      const res = await fetch(viaPin ? `${SERVER}/gemini/${path}` : `${GEMINI}/${path}`, {
-        method: body ? "POST" : "GET",
-        headers: {
-          ...(viaPin ? { "x-draft-pin": pin.get() } : { "x-goog-api-key": gemini.key() }),
-          ...(body ? { "content-type": "application/json" } : {}),
-        },
-        body: body ? JSON.stringify(body) : undefined,
-      });
+      // A model that hangs or a dropped connection counts as busy, so the
+      // next model gets a turn rather than the whole fight failing.
+      let res;
+      try {
+        res = await fetch(viaPin ? `${SERVER}/gemini/${path}` : `${GEMINI}/${path}`, {
+          method: body ? "POST" : "GET",
+          headers: {
+            ...(viaPin ? { "x-draft-pin": pin.get() } : { "x-goog-api-key": gemini.key() }),
+            ...(body ? { "content-type": "application/json" } : {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+          signal: AbortSignal.timeout ? AbortSignal.timeout(150000) : undefined,
+        });
+      } catch (e) {
+        const err = new Error(e && e.name === "TimeoutError" ? "Gemini took too long to answer." : "Couldn't reach Gemini.");
+        err.status = 503; err.retry = true;
+        throw err;
+      }
       if (viaPin && res.status === 403) { pin.clear(); throw new Error("That PIN isn't right any more. Enter it again, or use your own Gemini key."); }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -354,7 +417,10 @@ Reply as JSON:
       const pool = (gemini.pool = gemini.pool || await gemini.models());
       const short = n => n.replace("models/", "");
       const tried = [];
-      for (const model of pool) {
+      // Overloaded models rest for a couple of minutes, unless every one is resting.
+      const cool = gemini.cool = gemini.cool || new Map();
+      const awake = pool.filter(m => !(cool.get(m) > Date.now()));
+      for (const model of awake.length ? awake : pool) {
         if (tried.length) onStatus(`${short(tried[tried.length - 1])} is busy, so ${what} goes to ${short(model)}…`);
         try {
           const data = await gemini.request(`${model}:generateContent`, {
@@ -374,6 +440,7 @@ Reply as JSON:
           if (!err.retry && !(err instanceof SyntaxError)) throw err;
           // Out of free calls for the day: don't ask this model again this visit.
           if (err.status === 429 && /per ?day|quota/i.test(err.message)) gemini.spent.add(model);
+          else cool.set(model, Date.now() + 120000);
           tried.push(model);
           await new Promise(r => setTimeout(r, 1200));
         }
@@ -486,6 +553,9 @@ Reply as JSON:
      Both war councils, then the battle. Preparations already made (say, the
      battle call failed last time) are reused rather than asked for again. */
 
+  // For checking the questions against the models without running a fight.
+  const questions = { prepQuestion, battleQuestion };
+
   async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep, aftermath = false }) {
     const backend = kind === "gemini" ? gemini : local;
     await backend.prepare(onStatus);
@@ -512,7 +582,7 @@ Reply as JSON:
     }
 
     onStatus("Both sides are ready. The battle is being fought…");
-    const q = battleQuestion(teams, done, worldName, arena, aftermath);
+    const q = battleQuestion(teams, done, worldName, arena, aftermath, kind !== "gemini");
     const battle = tidyBattle(await backend.ask(q, onStatus, "the battle"), teams);
     return { ...battle, preps: done, by: backend.label() };
   }
@@ -683,5 +753,5 @@ Reply as JSON:
     });
   }
 
-  window.Judge = { gemini, local, run, storyboard, aftermathOf, pin, SERVER };
+  window.Judge = { gemini, local, run, storyboard, aftermathOf, pin, SERVER, questions };
 })();

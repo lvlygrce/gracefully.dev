@@ -21,7 +21,7 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, sound: "all", announceNames: true, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
+    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, sound: "all", announceNames: true, battle8: true, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
     safe.get(PREFS_KEY) || {},
   );
   // The crowd vote used to be the default, so older saved settings carry it
@@ -66,7 +66,9 @@
 
   // Game-show cues from what changed between two states.
   function cues(was, s) {
-    Sound.music(["lobby", "teams", "bracket"].includes(s.phase) ? "lobby" : ["auction", "sold"].includes(s.phase) ? "auction" : null);
+    // During a match the battle (or film) owns the music; it starts quiet.
+    if (s.phase !== "match") Sound.music(["lobby", "teams", "bracket"].includes(s.phase) ? "lobby" : ["auction", "sold"].includes(s.phase) ? "auction" : null);
+    else if (!was || was.phase !== "match") Sound.music(null);
     if (!was) return;
     const same = (a, b) => a.phase === "match" && b.phase === "match" && a.match.id === b.match.id;
     if (s.phase === "lobby" && was.phase === "lobby" && s.players.length > was.players.length) Sound.play("join", 0.8);
@@ -80,16 +82,17 @@
     if (s.phase === "sold" && was.phase !== "sold") Sound.play(s.sold && s.sold.winner ? "sold" : "skipped");
     if (s.phase === "match" && !same(s, was)) Sound.play("fight");
     if (s.phase === "match" && s.match.stage === "vote" && same(s, was) && (s.match.voted || 0) > (was.match.voted || 0)) Sound.play("vote", 0.6);
-    if (s.phase === "match" && s.match.stage === "result" && !(same(s, was) && was.match.stage === "result")) Sound.play("winner");
+    if (s.phase === "match" && s.match.stage === "result" && !(same(s, was) && was.match.stage === "result")
+      && !(judging.battle && judging.matchId === s.match.id)) Sound.play("winner");   // the battle already played its own
     if (s.phase === "champion" && was.phase !== "champion") Sound.play("champion");
   }
 
-  // Ticks for the last seconds of any clock; faster and higher for the last three.
+  // A beep for each of the last three seconds of any clock, higher on the last.
   let tickSeen = { ends: 0, left: -1 };
   function tickSound() {
     const s = state;
-    let ends = 0, from = 5;
-    if (s && s.phase === "auction" && s.lot) { ends = s.lot.endsAt; from = s.lot.stage === "bidding" ? 5 : 3; }
+    let ends = 0;
+    if (s && s.phase === "auction" && s.lot) ends = s.lot.endsAt;
     else if (s && s.phase === "match" && s.match.stage === "vote") ends = s.match.endsAt;
     if (!ends) { tickSeen = { ends: 0, left: -1 }; return; }
     const left = clock.left(ends);
@@ -97,7 +100,7 @@
     if (!fresh && left === tickSeen.left) return;
     tickSeen = { ends, left };
     if (fresh) return;   // a clock that just (re)started: let the bid sound have the moment
-    if (left > 0 && left <= from) Sound.play(left <= 3 ? "tock" : "tick", left <= 3 ? 0.8 : 0.6);
+    if (left > 0 && left <= 3) Sound.play("tock", 0.7, left === 1 ? 1.25 : 1);   // the last three seconds only
     if (left === 0 && s.phase === "match") Sound.play("timeup", 0.8);
   }
   let filmCtl = null;
@@ -321,6 +324,13 @@
             ${prefs.casualties ? `<p class="muted" style="margin-top:.3rem">Harm is always reasoned, never random: the AI judge says what each fight did${prefs.judge === "crowd"
               ? ", and after a crowd vote Gemini works out what the result cost (add a key or the PIN above; without one, crowd fights leave everyone unhurt)" : ""}.</p>` : ""}
           </fieldset>
+          ${prefs.judge !== "crowd" ? `<fieldset>
+            <legend>Show each fight</legend>
+            <div class="opts">
+              ${opt("battle8", "on", "As an 8-bit battle, then the winner", prefs.battle8)}
+              ${opt("battle8", "off", "Straight to the winner", !prefs.battle8)}
+            </div>
+          </fieldset>` : ""}
           <fieldset>
             <legend>Film the fights</legend>
             <div class="opts">
@@ -367,6 +377,7 @@
       prefs.filmTier = i.value; savePrefs(); sendSettings(); priceFilms();
     }));
     if (prefs.film !== "off") priceFilms();
+    app.querySelectorAll('[name="battle8"]').forEach(i => i.addEventListener("change", () => { prefs.battle8 = i.value === "on"; savePrefs(); }));
     app.querySelectorAll('[name="sound"]').forEach(i => i.addEventListener("change", () => setSound(i.value)));
     app.querySelectorAll('[name="announce"]').forEach(i => i.addEventListener("change", () => {
       prefs.announceNames = i.value === "on"; savePrefs();
@@ -692,6 +703,28 @@
       middle = `<div class="topline"><p class="title title--md">Vote on your phones<span class="accent">.</span> <span class="hand" id="voted">${m.voted} of ${m.voters} voted</span></p>
         <span class="timer" data-ends="${m.endsAt}" data-fmt="{s}"></span></div>
         <div class="bar"><span data-bar="${m.endsAt}" data-total="${s.settings.voteSeconds}"></span></div>`;
+    } else if (m.stage === "judging" && judging.matchId === m.id && judging.battle) {
+      // Rebuilding the screen keeps the same battle going rather than restarting it.
+      const b = judging.battle;
+      app.innerHTML = `<p class="hand">${esc(player(m.a).name)} vs ${esc(player(m.b).name)}${m.final ? " · the final" : ""}</p>`;
+      if (!b.el) {
+        b.el = document.createElement("div");
+        b.el.className = "tv-film tv-film--full tv-battle";
+        app.appendChild(b.el);
+        b.ctl = filmCtl = Battle.player(b.el, { teams: b.teams, verdict: b.verdict, arena: b.arena, worldName: w => (U[w] || {}).name || w }, {
+          onState: st => {
+            if (judging.battle !== b) return;
+            if (st === "playing") net.send({ t: "host:film", matchId: m.id, film: "playing" });
+            if (st === "paused") net.send({ t: "host:film", matchId: m.id, film: "ready" });
+          },
+          onEnd: () => {
+            if (filmCtl === b.ctl) filmCtl = null;
+            net.send({ t: "host:film", matchId: m.id, film: null });
+            finishJudged();
+          },
+        });
+      } else app.appendChild(b.el);
+      return;
     } else if (m.stage === "judging" && judging.matchId === m.id && judging.film && judging.film.ready) {
       // The film gets the whole screen.
       app.innerHTML = `<p class="hand">${esc(player(m.a).name)} vs ${esc(player(m.b).name)} · press play here, or on the admin's phone</p>
@@ -784,6 +817,15 @@
   const filmsThis = m => state.settings.film === "all" || (state.settings.film === "final" && m.final);
 
   // Send the verdict once the film (if any) has played or been skipped.
+  // The fight as an 8-bit battle on this screen, then the result. The admin's
+  // phone can pause or skip it, just like a film.
+  function showBattle(matchId, teams, v, arena) {
+    if (!prefs.battle8 || judging.matchId !== matchId) return finishJudged();
+    judging.battle = { teams, verdict: v, arena, el: null, ctl: null };
+    net.send({ t: "host:film", matchId, film: "playing" });
+    render(true);
+  }
+
   function finishJudged() {
     const j = judging;
     if (!j.pending || j.sent) return;
@@ -848,7 +890,7 @@
           v.film = { shots: judging.film.shots };
           judging.film.ready = judging.film.shots.some(x => x.url);
           keepParty(teams, v);
-          if (!judging.film.ready) { net.send({ t: "host:film", matchId, film: null }); return finishJudged(); }
+          if (!judging.film.ready) { net.send({ t: "host:film", matchId, film: null }); return showBattle(matchId, teams, v, arena); }
           net.send({ t: "host:film", matchId, film: "ready" });
           return render(true);   // the film plays, then finishJudged sends the result
         } catch (err) {
@@ -857,7 +899,7 @@
         }
       }
       keepParty(teams, v);
-      finishJudged();
+      showBattle(matchId, teams, v, arena);
     } catch (err) {
       if (judging.matchId !== matchId) return;
       judging.error = err.message || "The judge couldn't decide.";

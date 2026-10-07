@@ -1,0 +1,74 @@
+Ahri	h|m|t|f3d6bf|1a1a1a|f2f0ea|c0262f|3fa0ff|long|none|dress|orb|ears,tail|magic|psychic
+Yasuo	h|m|n|e8c4a0|3b2a1a|3f7fd6|3a3a44|cfd6dd|ponytail|none|tunic|katana|scarf|blade|wind
+Yone	h|m|n|e8c4a0|3b2a1a|c0262f|1f1f1f|3fa0ff|ponytail|none|tunic|katana|glow_eyes|blade|dark
+Lee Sin	h|m|n|e0ac69|1a1a1a|e0ac69|ef8a2c|c0262f|bald|headband|bare|none|belt|fists|fire
+Master Yi	h|m|n|e8c4a0|1a1a1a|2e6b3a|e8b84a|e8b84a|none|helmet|tunic|sword|antennae|blade|none
+Irelia	h|m|t|f3d6bf|1a1a1a|8e5bd0|3a3a5a|e8b84a|long|none|armour|dagger|glow|blade|none
+Akali	h|m|t|e8c4a0|1a1a1a|2e6b3a|1f1f1f|4caf50|ponytail|facemask|jumpsuit|dagger||blade|smoke
+Shen	h|m|n|e8c4a0|1a1a1a|3f4fa8|1f1f1f|3fa0ff|none|facemask|tunic|sword|glow|blade|light
+Zed	h|m|n|e8c4a0|1a1a1a|1f1f1f|c0262f|c0262f|none|helm|armour|claws|glow_eyes|claws|dark
+Kennen	c|s|n|1f1f2a|1a1a1a|3f4fa8|1f1f1f|ffe14d|none|facemask|jumpsuit|none|ears|magic|lightning
+Jinx	h|m|t|f3d6bf|3f6bb8|1f1f2a|ff6ad5|ff6ad5|braids|none|vest|cannon|belt|gun|explosion
+Vi	h|m|n|f3d6bf|ff6ad5|c0262f|3a3a44|e8b84a|short|none|vest|none|gloves|fists|tech
+Caitlyn	h|m|t|f3d6bf|3b2a1a|3f4fa8|1f1f1f|e8b84a|long|tophat|coat|rifle||gun|none
+Jayce	h|m|n|f1d0b0|3b2a1a|e8b84a|3a3a44|3fa0ff|short|none|armour|hammer||blunt|tech
+Viktor	r|m|t|5a5f66|3a3a3a|5a5f66|3a3a3a|ffcc33|none|none|robe|staff|glow_eyes|beam|tech
+Ekko	h|s|t|8d5524|f2f0ea|2e8b3a|1f1f1f|4fd6e6|mohawk|none|vest|bat|glow|blunt|tech
+Ezreal	h|m|t|f1d0b0|e6c35c|3f7fd6|8a5a32|ffe14d|messy|none|coat|none|gloves,scarf|beam|light
+Heimerdinger	c|s|n|e8c4a0|e6c35c|3f7fd6|1f1f1f|ffe14d|messy|none|labcoat|none|ears,moustache|gadget|tech
+Singed	h|m|t|bfd6a0|9aa3ad|3a5a3a|1f1f1f|8bd34a|long|none|coat|none|glasses|gadget|poison
+Warwick	h|l|w|5a7a8a|9aa3ad|5a7a8a|3a3a3a|c0262f|messy|none|fur|claws|ears,fangs,redeyes|claws|blood
+Lux	h|m|t|f3d6bf|e6c35c|f2f0ea|3fa0ff|fff4b0|long|none|armour|staff||beam|light
+Garen	h|l|w|f1d0b0|3b2a1a|3f4fa8|9aa3ad|e8b84a|short|none|armour|greatsword|cape|blade|none
+Jarvan IV	h|l|n|f1d0b0|1a1a1a|e8b84a|3f4fa8|e8b84a|none|helm|armour|spear|cape|blade|none
+Xin Zhao	h|m|n|e8c4a0|1a1a1a|c0262f|e8b84a|e8b84a|ponytail|none|armour|spear|beard|blade|none
+Sylas	h|m|w|f1d0b0|1a1a1a|3f4fa8|5a5f66|3fa0ff|long|none|vest|flail|beard|blunt|psychic
+Darius	h|l|w|f1d0b0|1a1a1a|7a1b1b|1f1f1f|c0262f|none|helmet|armour|axe|beard,cape|blade|blood
+Draven	h|m|n|f1d0b0|1a1a1a|7a1b1b|1f1f1f|c0262f|slick|none|vest|axe|moustache|blade|none
+Katarina	h|m|t|f3d6bf|c0262f|1f1f1f|7a1b1b|cfd6dd|long|none|jumpsuit|dagger|eyepatch|blade|none
+Swain	h|m|n|e8e0d8|1a1a1a|1f1f1f|7a1b1b|c0262f|slick|none|coat|none|beard,wings_dark|magic|dark
+LeBlanc	h|m|t|f3d6bf|1a1a1a|8e5bd0|1f1f1f|e8b84a|long|crown|dress|staff||magic|psychic
+Sion	h|x|w|8a8f96|1a1a1a|7a1b1b|1f1f1f|c0262f|none|helm|armour|axe|glow_eyes|blade|blood
+Ashe	h|m|t|f3d6bf|f2f0ea|3f7fd6|1f3f8a|9fe3ff|long|hood|tunic|bow||bow|ice
+Sejuani	h|l|n|f3d6bf|f2f0ea|5a6a78|3a3a3a|9fe3ff|long|helmet|armour|flail||blunt|ice
+Lissandra	h|m|t|3f6bb8|f2f0ea|3f7fd6|1f3f8a|9fe3ff|none|helm|robe|none|spikes|magic|ice
+Braum	h|l|w|f1d0b0|3b2a1a|c0262f|3a3a44|9fe3ff|bald|none|fur|shield|moustache|blunt|ice
+Tryndamere	h|l|n|f1d0b0|8a3a1a|8a5a32|3b2a1a|c0262f|long|none|bare|greatsword|belt|blade|blood
+Ornn	h|x|w|c0401d|ff7a1a|5a4632|3b3026|ff7a1a|messy|none|fur|hammer|horns,beard|blunt|fire
+Volibear	q|x|w|f2f0ea|9fe3ff|f2f0ea|f2f0ea|ffe14d|none|none|bare|none|spikes,glow_eyes,ears_round|claws|lightning
+Anivia	b|l|n|9fe3ff|3f7fd6|9fe3ff|9fe3ff|f2f0ea|none|none|bare|none|crest|magic|ice
+Leona	h|m|n|e8c4a0|8a3a1a|e8b84a|c0262f|ffe14d|long|helmet|armour|sword|shield|blade|light
+Diana	h|m|t|e8e0d8|f2f0ea|5b3a7a|1f1f2a|cfd6dd|long|helmet|armour|scythe||blade|dark
+Pantheon	h|m|w|e0ac69|1a1a1a|e8b84a|c0262f|c0262f|none|helm|armour|spear|shield,cape|blade|none
+Aphelios	h|m|t|e8e0d8|f2f0ea|1f1f2a|1f1f1f|8fd0ff|long|facemask|robe|gun||gun|light
+Aurelion Sol	s|x|n|1f3f8a|e8b84a|1f3f8a|1f3f8a|ffe14d|none|none|bare|none|horns,glow,whiskers|magic|light
+Miss Fortune	h|m|t|f3d6bf|c0262f|1f1f1f|3a2a2a|e8b84a|long|hat|coat|gun||gun|none
+Gangplank	h|m|w|f1d0b0|f2f0ea|7a1b1b|1f1f1f|e8b84a|long|hat|coat|gun|beard,eyepatch|gun|explosion
+Graves	h|m|w|e0ac69|3b2a1a|5a4632|1f1f1f|ef8a2c|slick|none|vest|rifle|beard|gun|smoke
+Twisted Fate	h|m|n|f1d0b0|3b2a1a|7a1b1b|1f1f1f|e8b84a|long|hat|coat|none|moustache|magic|psychic
+Pyke	h|m|t|5a7a8a|1a1a1a|2c6e75|1f1f1f|4fd6e6|none|hood|coat|dagger|glow_eyes|blade|water
+Thresh	g|l|n|2e8b3a|8fe9ff|2e8b3a|2e8b3a|8fe9ff|none|none|bare|whip|glow_eyes,nubs|blunt|dark
+Viego	h|m|t|8fe9ff|f2f0ea|2e6b3a|1f1f1f|8fe9ff|long|crown|armour|greatsword|glow_eyes,cape|blade|dark
+Senna	h|m|t|8d5524|f2f0ea|1f1f1f|2e6b3a|8fe9ff|long|none|coat|cannon||gun|light
+Lucian	h|m|n|8d5524|1a1a1a|f2f0ea|1f1f1f|8fe9ff|short|none|coat|gun||gun|light
+Azir	b|l|n|e8b84a|3f7fd6|e8b84a|e8b84a|3f7fd6|none|none|bare|spear|crest|summon|earth
+Nasus	q|l|w|8a6a4a|e8b84a|8a6a4a|8a6a4a|8e5bd0|none|none|bare|staff|ears,collar|blunt|dark
+Renekton	h|l|w|5a8a4a|1a1a1a|5a8a4a|e8b84a|c0262f|none|none|bare|scythe|tail,fangs|blade|blood
+Xerath	g|l|n|3fa0ff|8fe9ff|3fa0ff|3fa0ff|f2f0ea|none|none|bare|none|glow,nubs|beam|lightning
+Rammus	o|m|n|8a8f96|5a4632|8a8f96|8a8f96|e8b84a|none|none|bare|none|spikes,feet|fists|earth
+Aatrox	h|x|w|8a2a1a|1a1a1a|7a1b1b|1f1f1f|c0262f|none|none|armour|greatsword|horns,wings_dark,glow_eyes|blade|blood
+Kayle	h|m|t|f3d6bf|e6c35c|e8b84a|f2f0ea|fff4b0|long|helmet|armour|sword|wings,halo|blade|fire
+Morgana	h|m|t|8e5bd0|1a1a1a|5b3a7a|1f1f1f|8e5bd0|long|none|robe|none|wings_dark|magic|dark
+Mordekaiser	r|x|w|3a3a44|2e8b3a|3a3a44|1f1f1f|8fe9ff|none|none|armour|mace|spikes,glow_eyes|blunt|dark
+Kai'Sa	h|m|t|e0ac69|8e5bd0|5b3a7a|1f1f2a|ff6ad5|long|none|armour|none|spikes|beam|psychic
+Vel'Koz	o|l|n|8e5bd0|ff6ad5|8e5bd0|8e5bd0|ff6ad5|none|none|bare|none|antennae,glow_eyes|beam|psychic
+Bard	h|l|w|f2f0ea|e8b84a|e8dcc0|5a4632|e8b84a|none|hood|robe|none|nubs|magic|light
+Nocturne	g|l|n|3f4fa8|1a1a2a|3f4fa8|3f4fa8|8fd0ff|none|none|bare|claws|glow_eyes,spikes|claws|dark
+Fiddlesticks	h|l|t|8a6a3a|5a4632|5a4632|3b3026|e8b84a|none|hat|coat|scythe|glow_eyes|blade|dark
+Sett	h|l|w|f1d0b0|c0401d|1f1f1f|3a3a44|e8b84a|ponytail|none|vest|none|ears|fists|none
+Teemo	c|s|n|e8c4a0|5a4632|2e8b3a|5a4632|c0262f|none|cap|bare|blaster|ears|gun|poison
+Yuumi	c|s|n|f2f0ea|e8b84a|f2f0ea|f2f0ea|3fa0ff|none|none|bare|book|ears,tail|magic|light
+Annie	h|s|t|f3d6bf|c0262f|ff6ad5|3a2a2a|ff7a1a|ponytail|none|dress|none|ears|magic|fire
+Blitzcrank	r|l|w|e8b84a|3a3a3a|e8b84a|3a3a3a|8fe9ff|none|none|armour|none|glow_eyes|gadget|lightning
+Malphite	h|x|w|8a6a8a|8a6a8a|8a6a8a|5a4a5a|ef8a2c|bald|none|bare|none|spikes|fists|earth
+Gwen	h|m|t|f3d6bf|8fd0ff|3f4fa8|f2f0ea|8fd0ff|braids|none|dress|none|scarf|blade|light

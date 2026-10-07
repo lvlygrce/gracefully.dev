@@ -1,0 +1,56 @@
+Izuku Midoriya	h|m|t|f1d0b0|2e6b3a|2e8b3a|1f1f1f|c0262f|messy|none|jumpsuit|none|gloves|fists|lightning
+Katsuki Bakugo	h|m|n|f1d0b0|f2e0a0|1f1f1f|1f1f1f|ef8a2c|spiky|mask|jumpsuit|none|gloves|fists|explosion
+Shoto Todoroki	h|m|t|f3d6bf|f2f0ea|3f4fa8|3f4fa8|ff7a1a|short|none|jumpsuit|none||magic|ice
+Ochaco Uraraka	h|m|t|f3d6bf|5a3a1a|1f1f1f|f2a0c0|f2a0c0|short|visor|jumpsuit|none|cheeks|psychic|wind
+Tenya Iida	r|m|n|cfd6dd|1a1a1a|cfd6dd|3f4fa8|3fa0ff|none|none|armour|none||fists|wind
+Eijiro Kirishima	h|m|w|f1d0b0|c0262f|5a5a5a|1f1f1f|c0262f|spiky|mask|bare|none|belt|fists|earth
+Momo Yaoyorozu	h|m|t|f3d6bf|1a1a1a|c0262f|c0262f|e8b84a|ponytail|none|jumpsuit|staff|belt|gadget|none
+Tsuyu Asui	h|m|t|3f6a3a|1f2a1a|2e6b3a|1f1f1f|f2cf3a|long|visor|jumpsuit|none||fists|water
+Denki Kaminari	h|m|t|f1d0b0|f2cf3a|1f1f1f|1f1f1f|f2cf3a|short|visor|jumpsuit|none||magic|lightning
+Fumikage Tokoyami	h|m|t|1f1f24|1f1f24|1f1f1f|1f1f1f|c0262f|none|none|coat|none|crest|summon|dark
+Kyoka Jiro	h|m|t|f3d6bf|5b3a7a|1f1f1f|1f1f1f|8e5bd0|short|none|jumpsuit|none||magic|wind
+Hanta Sero	h|m|t|f1d0b0|1a1a1a|3a3a44|1f1f1f|f2f0ea|short|helmet|jumpsuit|none||gadget|web
+Mina Ashido	h|m|t|f2a0c0|f2a0c0|e8dcc0|5a3a1a|9ad86a|messy|none|jumpsuit|none|horns|magic|poison
+Minoru Mineta	h|s|t|f1d0b0|8e5bd0|8e5bd0|1f1f1f|8e5bd0|none|none|jumpsuit|none|spots|gadget|none
+Mashirao Ojiro	h|m|n|f1d0b0|e6c35c|f2f0ea|f2f0ea|e8b84a|short|none|tunic|none|tail|fists|none
+Koji Koda	r|l|n|8a7a5a|1a1a1a|f2f0ea|8a7a5a|4caf50|none|none|tunic|none||summon|nature
+Rikido Sato	h|l|w|f1d0b0|1a1a1a|f2cf3a|1f1f1f|c0262f|short|none|jumpsuit|none||fists|none
+Mezo Shoji	h|l|w|f1d0b0|9aa3ad|3f4f8a|1f1f1f|9aa3ad|short|facemask|vest|none|spikes|fists|none
+Yuga Aoyama	h|m|t|f3d6bf|f2e0a0|f2f0ea|8e5bd0|fff4b0|short|visor|armour|none|cape|beam|light
+Toru Hagakure	g|m|n|f2f0ea|f2f0ea|f2f0ea|f2f0ea|8fd0ff|none|none|bare|none|gloves,nubs|fists|light
+Hitoshi Shinso	h|m|t|f1d0b0|8e5bd0|1f1f1f|1f1f1f|8e5bd0|messy|none|jumpsuit|none|scarf|psychic|psychic
+All Might	h|l|w|f1d0b0|f2cf3a|1f3f8a|c0262f|f2f0ea|spiky|none|jumpsuit|none|gloves|fists|none
+Shota Aizawa	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2cf3a|long|none|jumpsuit|whip|scarf,beard,glow_eyes|blunt|none
+Endeavor	h|l|w|f1d0b0|c0262f|1f3f8a|1f1f1f|ff7a1a|short|none|jumpsuit|none|flame_head,beard|beam|fire
+Hawks	h|m|t|f1d0b0|f2cf3a|1f1f1f|1f1f1f|c0262f|messy|visor|coat|none|wings|blade|wind
+Mirko	h|m|t|8d5524|f2f0ea|f2f0ea|1f1f1f|c0262f|long|none|jumpsuit|none|ears_long|fists|none
+Best Jeanist	h|m|t|f1d0b0|f2cf3a|3f6aa8|3f6aa8|f2f0ea|long|facemask|jumpsuit|none||summon|none
+Present Mic	h|m|t|f1d0b0|f2cf3a|1f1f1f|1f1f1f|ef8a2c|mohawk|none|coat|none|glasses|magic|wind
+Midnight	h|m|t|f3d6bf|1a1a1a|1f1f1f|1f1f1f|c0262f|long|mask|jumpsuit|whip||blunt|poison
+Gran Torino	h|s|t|f1d0b0|f2f0ea|f2cf3a|f2f0ea|f2cf3a|bald|mask|coat|none|cape|fists|wind
+Mirio Togata	h|m|w|f1d0b0|f2cf3a|f2cf3a|c0262f|c0262f|short|none|jumpsuit|none|cape|fists|none
+Tamaki Amajiki	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|e8b84a|short|none|jumpsuit|none|ears|claws|nature
+Nejire Hado	h|m|t|f3d6bf|3f9ad8|3f9ad8|1f1f1f|3fa0ff|long|none|jumpsuit|none|glow|beam|wind
+Kendo Itsuka	h|m|t|f3d6bf|ef8a2c|1f6a6a|1f1f1f|f2f0ea|ponytail|none|jumpsuit|none|gloves|fists|none
+Neito Monoma	h|m|t|f3d6bf|f2e0a0|1f1f1f|1f1f1f|f2f0ea|short|mask|suit|none||fists|psychic
+Tomura Shigaraki	h|m|t|e8e0d8|cfd6dd|1f1f1f|1f1f1f|c0262f|messy|none|coat|none|redeyes|claws|dark
+All For One	h|l|w|e8e0d8|f2f0ea|1f1f1f|1f1f1f|1f1f1f|bald|helm|suit|none|glow|beam|dark
+Dabi	h|m|t|8a5a6a|1a1a1a|1f1f2a|1f1f1f|3fa0ff|messy|none|coat|none|stripes|magic|fire
+Himiko Toga	h|m|t|f3d6bf|f2cf3a|1f2a4a|1f1f1f|c0262f|bun|none|dress|dagger|fangs|blade|blood
+Twice	h|m|n|1f1f1f|1a1a1a|1f1f1f|9aa3ad|f2f0ea|none|fullmask|jumpsuit|none|belt|summon|none
+Mr. Compress	h|m|t|f2f0ea|1a1a1a|f2cf3a|1f1f1f|c0262f|none|tophat|coat|none|cape|gadget|none
+Spinner	h|m|t|3f6a3a|5b3a7a|8a5a32|1f1f1f|c0262f|spiky|facemask|vest|sword|tail|blade|none
+Kurogiri	h|m|n|5b3a7a|5b3a7a|1f1f1f|1f1f1f|f2cf3a|none|none|suit|none|glow,glow_eyes|summon|dark
+Stain	h|m|t|f1d0b0|1a1a1a|3a3a3a|1f1f1f|c0262f|messy|headband|coat|katana|scarf|blade|blood
+Overhaul	h|m|n|f1d0b0|1a1a1a|3a3a44|1f1f1f|f2f0ea|short|facemask|coat|none|gloves|fists|earth
+Muscular	h|l|w|f1d0b0|f2cf3a|c0262f|1f1f1f|c0262f|short|none|bare|none|stripes|fists|blood
+Gigantomachia	h|x|w|5a4632|1a1a1a|5a4632|3b3026|f2cf3a|long|none|fur|none|spikes|fists|earth
+Lady Nagant	h|m|t|f3d6bf|1a1a1a|1f1f1f|ff6ad5|ff6ad5|long|none|coat|rifle||gun|none
+Re-Destro	h|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|8a5a32|slick|none|suit|none|glasses,spikes|fists|dark
+Eri	h|s|t|f3d6bf|e8dcc0|f2f0ea|f2a0c0|c0262f|long|none|dress|none|horn|magic|light
+Star and Stripe	h|m|n|f3d6bf|f2cf3a|1f3f8a|c0262f|f2f0ea|long|none|jumpsuit|none|emblem,glow|beam|light
+Fat Gum	o|l|w|f2cf3a|1a1a1a|f2cf3a|c0262f|c0262f|none|none|bare|none|feet,nubs|fists|none
+Nighteye	h|m|t|f1d0b0|f2cf3a|1f1f1f|1f1f1f|f2f0ea|slick|none|suit|none|glasses|gadget|psychic
+Gang Orca	h|l|w|1f1f24|f2f0ea|1f1f1f|1f1f1f|f2f0ea|none|none|suit|none|fins|bite|water
+Ryukyu	d|x|n|f2a0b0|f2f0ea|f2a0b0|f2a0b0|f2cf3a|none|none|bare|none||claws|none
+Mei Hatsume	h|m|t|f3d6bf|f2a0c0|8a5a32|1f1f1f|f2cf3a|long|visor|jumpsuit|blaster|belt|gadget|tech

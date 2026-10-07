@@ -1,0 +1,51 @@
+Steve	k|m|n|c9926b|3b2a1a|2e9fb5|3b3fa0|6b4423|short|none|tunic|sword||blade|none
+Alex	k|m|t|f1d0b0|ef8a2c|6abf4a|8a6a3a|8a5a32|long|none|tunic|bow||bow|none
+Ender Dragon	d|x|w|1f1f24|3a3a44|1f1f24|1f1f24|c86af0|none|none|bare|none|glow_eyes|breath|dark
+Wither	k|l|w|2a2a2a|1a1a1a|2a2a2a|2a2a2a|8fe9ff|none|none|bare|none|noarms,glow_eyes,spikes|beam|dark
+Warden	k|x|w|1f3a44|4fd6e6|1f3a44|1f3a44|4fd6e6|none|none|bare|none|glow,horns|fists|psychic
+Creeper	k|m|n|5fa04e|5fa04e|5fa04e|5fa04e|2f6b2a|none|none|bare|none|noarms,face_creeper|gadget|explosion
+Enderman	k|l|t|1a1a1f|1a1a1f|1a1a1f|1a1a1f|c86af0|none|none|bare|none|glow_eyes|fists|psychic
+Zombie	k|m|n|4f8a4a|2a4a2a|2e9fb5|3b3fa0|1f1f1f|short|none|tunic|none||fists|poison
+Skeleton	k|m|t|cfcfcf|cfcfcf|cfcfcf|cfcfcf|1f1f1f|none|none|bare|bow|stripes|bow|none
+Spider	q|m|w|2a2a2a|1f1f1f|2a2a2a|2a2a2a|c0262f|none|none|bare|none|redeyes,no_ears,spots|bite|poison
+Witch	k|m|n|5a8a4a|3a3a3a|5b3a7a|2e6b3a|8bd34a|none|wizard|robe|none||magic|poison
+Pillager	k|m|n|9aa3ad|1a1a1a|5a4a3a|3a3a44|8a5a32|none|none|tunic|crossbow||bow|none
+Evoker	k|m|n|9aa3ad|1a1a1a|1f1f1f|e8b84a|e8b84a|none|none|robe|none|glow|summon|dark
+Vindicator	k|m|n|9aa3ad|1a1a1a|5a5f66|3a3a44|9aa3ad|none|none|tunic|axe||blade|none
+Ravager	q|x|w|5a5a5a|3a3a3a|5a5a5a|5a5a5a|e8dcc0|none|none|bare|none|horns,no_ears|bite|none
+Vex	k|s|t|9fd0e8|9fd0e8|9fd0e8|9fd0e8|f2f0ea|none|none|bare|sword|wings,glow|blade|light
+Iron Golem	k|x|w|cfc8b8|4caf50|cfc8b8|cfc8b8|c0262f|none|none|bare|none|redeyes|fists|earth
+Snow Golem	k|m|n|f2f0ea|ef8a2c|f2f0ea|f2f0ea|ef8a2c|none|none|bare|none|noarms|magic|ice
+Villager	k|m|n|b8906a|5a3a1a|8a5a32|5a3a1a|4caf50|bald|none|robe|none||fists|none
+Wolf	q|m|n|d9d4c7|9aa3ad|d9d4c7|d9d4c7|c0262f|none|none|bare|none|collar|bite|none
+Ghast	k|l|w|f2f0ea|9aa3ad|f2f0ea|f2f0ea|c0262f|none|none|bare|none|noarms,redeyes|breath|fire
+Blaze	k|m|n|f2cf3a|ef8a2c|f2cf3a|f2cf3a|ff7a1a|none|none|bare|none|noarms,flame_head,glow|breath|fire
+Wither Skeleton	k|l|t|2a2a2a|2a2a2a|2a2a2a|2a2a2a|9aa3ad|none|none|bare|sword|stripes|blade|dark
+Piglin	k|m|n|e8a0a0|1a1a1a|5a4a3a|8a6a3a|e8b84a|none|none|tunic|crossbow|ears|bow|none
+Piglin Brute	k|m|w|e8a0a0|1a1a1a|1f1f1f|e8b84a|e8b84a|none|none|tunic|axe|ears,belt|blade|none
+Zombified Piglin	k|m|n|e8a0a0|4f8a4a|5a4a3a|8a6a3a|e8b84a|none|none|tunic|sword|ears|blade|none
+Hoglin	q|l|w|c88a6a|8a5a3a|c88a6a|c88a6a|e8dcc0|none|none|bare|none|horns,ears|bite|none
+Magma Cube	o|m|n|5a1a1a|ff7a1a|5a1a1a|5a1a1a|ff7a1a|none|none|bare|none|glow_eyes,stripes|fists|fire
+Guardian	o|m|n|5aa0a0|ef8a2c|5aa0a0|5aa0a0|ef8a2c|none|none|bare|none|spikes,glow_eyes|beam|water
+Elder Guardian	o|l|w|cfc8b8|9aa3ad|cfc8b8|cfc8b8|5a7aa8|none|none|bare|none|spikes,glow_eyes|beam|water
+Drowned	k|m|n|4a8aa0|2a4a5a|5a8a8a|3a5a6a|3fa0ff|short|none|tunic|trident||blade|water
+Shulker	o|m|n|8e5bd0|f2cf3a|8e5bd0|8e5bd0|f2cf3a|none|none|bare|none|glow_eyes|magic|psychic
+Phantom	b|m|n|3f4f8a|4caf50|3f4f8a|3f4f8a|4caf50|none|none|bare|none|glow_eyes|claws|dark
+Slime	o|m|n|7ac05a|7ac05a|7ac05a|7ac05a|2e6b3a|none|none|bare|none||fists|nature
+Silverfish	s|s|n|9aa3ad|5a5f66|9aa3ad|9aa3ad|1f1f1f|none|none|bare|none|stripes|bite|earth
+Breeze	k|m|t|9fd0e8|8e5bd0|9fd0e8|9fd0e8|8e5bd0|none|none|bare|none|noarms,glow|magic|wind
+Bogged	k|m|t|9aa38a|4caf50|9aa38a|9aa38a|8bd34a|none|none|bare|bow|stripes|bow|poison
+Creaking	k|l|t|6b5a4a|3a3a3a|6b5a4a|6b5a4a|ef8a2c|none|none|bare|none|glow_eyes,spikes|fists|nature
+Allay	c|s|n|8fd0ff|8fd0ff|8fd0ff|8fd0ff|f2f0ea|none|none|bare|none|wings,glow|magic|light
+Axolotl	c|s|n|f2a0c0|e86a8a|f2a0c0|f2a0c0|1f1f1f|none|none|bare|none|fins,tail|bite|water
+Bee	b|s|n|f2cf3a|1f1f1f|f2cf3a|f2cf3a|9fd0e8|none|none|bare|none|stripes,antennae|bite|poison
+Polar Bear	q|l|w|f2f0ea|e8e0d8|f2f0ea|f2f0ea|1f1f1f|none|none|bare|none|ears_round|claws|ice
+Goat	q|m|n|e8e0d8|9aa3ad|e8e0d8|e8e0d8|1f1f1f|none|none|bare|none|horns,ears_floppy|fists|none
+Fox	q|s|t|ef8a2c|f2f0ea|ef8a2c|ef8a2c|1f1f1f|none|none|bare|none|muzzle_light|bite|none
+Dolphin	s|m|n|8a9ab0|cfd6dd|8a9ab0|8a9ab0|1f1f1f|none|none|bare|none|fins|bite|water
+Panda	q|l|w|f2f0ea|1f1f1f|f2f0ea|f2f0ea|1f1f1f|none|none|bare|none|ears_round,spots|claws|none
+Llama	q|m|n|e8dcc0|c0262f|e8dcc0|e8dcc0|3f7fd6|none|none|bare|none|ears_long|bite|none
+Sniffer	q|l|w|8a3a2a|4caf50|8a3a2a|8a3a2a|e8dcc0|none|none|bare|none|no_ears,spots|fists|nature
+Cat	q|s|t|e8b84a|f2f0ea|e8b84a|e8b84a|4caf50|none|none|bare|none|stripes|claws|none
+Parrot	b|s|n|c0262f|3fa0ff|c0262f|c0262f|f2cf3a|none|none|bare|none|crest|bite|wind
+Herobrine	k|m|n|c9926b|3b2a1a|2e9fb5|3b3fa0|f2f0ea|short|none|tunic|none|glow_eyes|magic|dark

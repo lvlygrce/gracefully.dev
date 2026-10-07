@@ -1,0 +1,146 @@
+Iron Man	r|m|n|b8202a|e0b13a|b8202a|e0b13a|8fe9ff|none|none|armour|none|glow_eyes,emblem|beam|tech
+Captain America	h|m|w|f1d0b0|c9a227|1f4fa8|1f4fa8|c8202a|none|helmet|uniform|shield|emblem,gloves|blunt|none
+Thor	h|l|w|f1d0b0|e6c35c|5a5f66|2a2b30|b3202a|long|none|armour|hammer|cape,beard|blunt|lightning
+Hulk	h|x|w|5aa13a|1a1a1a|5aa13a|5b3a7a|5aa13a|short|none|bare|none||fists|none
+Black Widow	h|m|t|f3d6bf|b5401d|1f1f1f|1f1f1f|c0262f|long|none|jumpsuit|gun|belt|gun|none
+Hawkeye	h|m|n|f1d0b0|b5823c|3a2a5a|1f1f1f|8e5bd0|short|none|vest|bow||bow|none
+Spider-Man	h|m|t|c8202a|1a1a1a|c8202a|1f4fa8|1f4fa8|none|fullmask|tunic|none|webbing,emblem|fists|web
+Doctor Strange	h|m|n|f1d0b0|3b3b3b|1f3f8a|5a3a1a|c0262f|slick|none|robe|none|cape,beard,glow|magic|light
+Black Panther	h|m|n|1f1f24|1f1f24|1f1f24|1f1f24|b98ce8|none|cowl|jumpsuit|claws|ears|claws|tech
+Captain Marvel	h|m|n|f1d0b0|e6c35c|1f3f8a|c8202a|e8b84a|long|none|jumpsuit|none|emblem,glow|beam|light
+Scarlet Witch	h|m|t|f3d6bf|8a2a1a|8b1e2e|5a1a1a|ff4a6a|long|none|coat|none|glow|magic|psychic
+Vision	h|m|n|b8303a|2e6b3a|2e8b3a|b8303a|e8b84a|none|fullmask|jumpsuit|none|cape,emblem|beam|light
+Ant-Man	h|s|n|c0262f|1a1a1a|c0262f|1f1f1f|8fe9ff|none|helmet|jumpsuit|none|antennae|fists|tech
+The Wasp	h|s|t|e8b84a|1a1a1a|e8b84a|1f1f1f|8fe9ff|none|helmet|jumpsuit|blaster|wings|gun|tech
+Falcon	h|m|n|8d5524|1a1a1a|3a3a44|c0262f|c0262f|buzz|visor|uniform|gun|wings|gun|wind
+Winter Soldier	h|m|n|f1d0b0|3b2a1a|1f1f24|1f1f1f|cfd6dd|long|none|vest|rifle|gloves|gun|none
+War Machine	r|l|w|5a5f66|3a3a3a|5a5f66|3a3a3a|ff9a2a|none|none|armour|cannon||gun|tech
+Star-Lord	h|m|n|f1d0b0|8a5a32|8a3a1a|3a2a2a|c0262f|short|visor|coat|blaster||gun|none
+Gamora	h|m|t|4caf50|1a1a1a|3a2a3a|1f1f1f|c0262f|long|none|jumpsuit|sword||blade|none
+Drax	h|l|w|6b8a9a|6b8a9a|6b8a9a|3a2a2a|b3202a|bald|none|bare|dagger|stripes|blade|none
+Rocket	c|s|n|8a6a4a|cfcfcf|ef8a2c|3a3a3a|ef8a2c|none|none|jumpsuit|cannon|ears,tail|gun|tech
+Groot	h|l|t|7a5a32|4caf50|7a5a32|5a3a1a|4caf50|none|none|bare|none|stripes|summon|nature
+Mantis	h|m|t|bfe3a5|1a1a1a|2e6b3a|1f3a24|f2f0ea|long|none|jumpsuit|none|antennae|psychic|psychic
+Nebula	r|m|t|3f6bb8|3f6bb8|3f6bb8|1f1f24|c0262f|none|none|jumpsuit|sword||blade|tech
+Thanos	h|x|w|8a5ba8|8a5ba8|e8b84a|3f5aa8|e8b84a|none|helmet|armour|none|gloves,glow|blunt|psychic
+Loki	h|m|t|f3d6bf|1a1a1a|2e6b3a|1f1f1f|e8b84a|long|none|coat|dagger|horns,cape|magic|dark
+Ultron	r|l|n|9aa3ad|9aa3ad|9aa3ad|5a5f66|ff4a3a|none|none|armour|none|glow_eyes|beam|tech
+Hela	h|m|t|e8e0d8|1a1a1a|1f1f1f|2e6b3a|2e8b3a|none|none|dress|sword|horns,cape|blade|dark
+Wolverine	h|m|w|f1d0b0|1a1a1a|e8b84a|1f4fa8|1f4fa8|spiky|cowl|uniform|claws|moustache|claws|none
+Deadpool	h|m|n|c0262f|1a1a1a|c0262f|1f1f1f|1f1f1f|none|fullmask|jumpsuit|katana|belt|blade|none
+Professor X	h|m|n|f1d0b0|f1d0b0|3a3a44|1f1f1f|ff6ad5|bald|none|suit|none|glow|psychic|psychic
+Magneto	h|m|n|f1d0b0|d9d4c7|8b1e2e|5b3a7a|8b1e2e|none|helmet|armour|none|cape|magic|tech
+Storm	h|m|t|8d5524|f2f0ea|1f1f1f|1f1f1f|ffe14d|long|none|jumpsuit|none|cape,glow_eyes|magic|lightning
+Phoenix	h|m|t|f3d6bf|c0401d|e8b84a|c0262f|ff7a1a|long|none|jumpsuit|none|emblem,glow|magic|fire
+Cyclops	h|m|n|f1d0b0|5a3a1a|1f3f8a|e8b84a|c0262f|short|visor|uniform|none|belt|beam|light
+Rogue	h|m|t|f3d6bf|5a3a1a|2e6b3a|e8b84a|f2f0ea|long|none|jumpsuit|none|gloves|fists|none
+Gambit	h|m|t|f1d0b0|5a3a1a|8a5a32|e8b84a|ff6ad5|long|cowl|coat|staff|glow_eyes|magic|psychic
+Mystique	h|m|t|3f6bb8|c0262f|3f6bb8|3f6bb8|e8b84a|slick|none|bare|none|redeyes|fists|none
+Juggernaut	h|x|w|c06a2a|c06a2a|c06a2a|5a3a1a|9aa3ad|none|helm|armour|none||fists|none
+Nightcrawler	h|m|t|3f4fa8|1a1a2a|1f1f1f|c0262f|e8b84a|messy|none|jumpsuit|sword|tail,ears|blade|smoke
+Silver Surfer	h|m|t|cfd6dd|cfd6dd|cfd6dd|cfd6dd|8fe9ff|bald|none|bare|none|glow|beam|light
+Galactus	h|x|w|8e5bd0|5b3a7a|3f7fd6|8e5bd0|c0262f|none|helmet|armour|none|horns|beam|psychic
+Doctor Doom	h|m|n|9aa3ad|9aa3ad|2e6b3a|5a5f66|2e8b3a|none|helm|armour|none|cape,hood|magic|tech
+Mister Fantastic	h|m|t|f1d0b0|5a3a1a|1f4fa8|1f1f1f|f2f0ea|short|none|jumpsuit|none|emblem|fists|none
+Invisible Woman	h|m|t|f3d6bf|e6c35c|1f4fa8|1f1f1f|8fd0ff|long|none|jumpsuit|none|emblem,glow|psychic|shield
+Human Torch	h|m|n|ff7a1a|ffcc33|ff7a1a|c0262f|ffe14d|none|none|jumpsuit|none|flame_head,glow|beam|fire
+The Thing	h|l|w|d97a3a|d97a3a|d97a3a|1f4fa8|1f4fa8|bald|none|bare|none|spots|fists|earth
+Ghost Rider	h|m|n|efe4c8|1a1a1a|1f1f1f|1f1f1f|ff7a1a|none|none|coat|whip|flame_head,glow_eyes|blade|fire
+Daredevil	h|m|n|b8202a|1a1a1a|b8202a|7a1b1b|7a1b1b|none|cowl|jumpsuit|club|emblem|blunt|none
+The Punisher	h|m|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|buzz|none|vest|rifle|emblem|gun|none
+Moon Knight	h|m|n|f2f0ea|f2f0ea|f2f0ea|cfd6dd|e8b84a|none|hood|robe|staff|cape|blunt|light
+Blade	h|m|w|8d5524|1a1a1a|1f1f1f|1f1f1f|cfd6dd|buzz|none|coat|katana|glasses|blade|none
+Ms. Marvel	h|s|t|c68642|1a1a1a|1f3f8a|c0262f|e8b84a|long|mask|tunic|none|scarf|fists|light
+She-Hulk	h|l|w|5aa13a|1a3a1a|f2f0ea|8e5bd0|8e5bd0|long|none|jumpsuit|none||fists|none
+Shang-Chi	h|m|n|e8c4a0|1a1a1a|c0262f|1f1f1f|3fa0ff|short|none|tunic|none|glow|fists|light
+Venom	h|l|w|1a1a1f|1a1a1f|1a1a1f|1a1a1f|f2f0ea|none|fullmask|jumpsuit|none|grin,fangs,emblem|bite|dark
+Carnage	h|l|n|b8202a|1a1a1a|b8202a|1a1a1a|f2f0ea|none|fullmask|jumpsuit|claws|grin,fangs|claws|blood
+Green Goblin	h|m|n|4caf50|4caf50|8e5bd0|4caf50|ef8a2c|none|hat|armour|none|grin,glow_eyes|gadget|explosion
+Doctor Octopus	h|m|w|f1d0b0|3b2a1a|2e6b3a|3a3a3a|9aa3ad|short|none|coat|none|glasses,spikes|gadget|tech
+Kang the Conqueror	h|m|n|3f7fd6|1a1a1a|2e6b3a|8e5bd0|8e5bd0|none|helm|armour|blaster|cape|gun|tech
+Red Skull	h|m|n|c0262f|c0262f|2a2a2a|1f1f1f|c0262f|bald|none|uniform|gun||gun|none
+Namor	h|m|t|f1d0b0|1a1a1a|f1d0b0|2e6b3a|e8b84a|slick|none|bare|trident|wings|blade|water
+Adam Warlock	h|m|n|e8b84a|e8b84a|c0262f|1f1f1f|ffe14d|short|none|jumpsuit|none|cape,glow|beam|light
+Nick Fury	h|m|n|8d5524|1a1a1a|1f1f1f|1f1f1f|9aa3ad|bald|none|coat|gun|eyepatch|gun|none
+Kingpin	h|x|w|f1d0b0|f1d0b0|f2f0ea|1f1f1f|8e5bd0|bald|none|suit|staff||blunt|none
+Black Bolt	h|m|n|1f1f2a|1a1a1a|1f1f2a|1f1f1f|8fd0ff|none|cowl|jumpsuit|none|antennae,emblem|psychic|lightning
+Okoye	h|m|t|8d5524|8d5524|c0262f|1f1f1f|e8b84a|bald|none|armour|spear||blade|none
+Valkyrie	h|m|t|8d5524|1a1a1a|9aa3ad|1f1f1f|f2f0ea|braids|none|armour|sword|cape|blade|none
+Squirrel Girl	h|s|t|f3d6bf|8a5a32|8a5a32|1f1f1f|ef8a2c|short|none|jumpsuit|none|ears,tail|claws|nature
+Howard the Duck	b|s|n|f2f0ea|f2f0ea|1f4fa8|1f1f1f|ef8a2c|none|none|bare|gun||gun|none
+Bullseye	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|none|cowl|jumpsuit|dagger|emblem|bow|none
+Elektra	h|m|t|f3d6bf|1a1a1a|b8202a|7a1b1b|cfd6dd|long|headband|jumpsuit|dagger||blade|none
+Iron Fist	h|m|n|f1d0b0|e6c35c|2e8b3a|e8b84a|e8b84a|short|mask|tunic|none|glow|fists|light
+Luke Cage	h|l|w|5a3a24|1a1a1a|e8b84a|1f3f8a|cfd6dd|bald|none|vest|none|belt|fists|none
+Jessica Jones	h|m|t|f3d6bf|1a1a1a|3a3a3a|1f1f3a|8a5a32|long|none|coat|none|scarf|fists|none
+Misty Knight	h|m|n|8d5524|1a1a1a|c0262f|1f1f1f|cfd6dd|afro|none|vest|gun|gloves|gun|tech
+Cloak	h|m|t|5a3a24|1a1a1a|1f1f2a|1f1f1f|8e5bd0|none|hood|robe|none|cape|magic|dark
+Dagger	h|m|t|f3d6bf|f2f0ea|f2f0ea|f2f0ea|fff4b0|long|none|jumpsuit|dagger|glow|magic|light
+Morbius	h|m|t|cfd6dd|1a1a1a|1f1f1f|1f1f1f|c0262f|slick|none|coat|none|fangs,redeyes|bite|blood
+Kraven the Hunter	h|m|w|e0ac69|3b2a1a|e8b84a|3b2a1a|cfd6dd|long|none|vest|spear|beard,mane|blade|none
+Mysterio	h|m|n|2e6b3a|8fd0ff|2e6b3a|8e5bd0|8fd0ff|none|helm|armour|none|cape,glow|magic|smoke
+Vulture	h|m|t|f1d0b0|f1d0b0|2e6b3a|1f1f1f|9aa3ad|bald|none|armour|none|wings|claws|wind
+Rhino	h|l|w|8a8f96|8a8f96|8a8f96|5a5f66|f2f0ea|none|helm|armour|none|horn|fists|earth
+Scorpion	h|m|n|2e6b3a|1a1a1a|2e6b3a|1f1f1f|e8b84a|none|helm|armour|none|tail|claws|poison
+Electro	h|m|n|f1d0b0|1a1a1a|2e8b3a|ffe14d|ffe14d|none|mask|jumpsuit|none|glow|magic|lightning
+Taskmaster	h|m|n|f2f0ea|1a1a1a|1f1f2a|ef8a2c|ef8a2c|none|hood|uniform|sword|shield,cape|blade|none
+Crossbones	h|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|none|fullmask|vest|gun|emblem|fists|none
+Baron Zemo	h|m|n|8e5bd0|1a1a1a|8e5bd0|5b3a7a|e8b84a|none|fullmask|coat|gun||gun|none
+Arnim Zola	r|m|w|c0262f|1a1a1a|c0262f|3a3a3a|8fe9ff|none|none|armour|none|glow_eyes|beam|tech
+MODOK	c|l|n|e8c4a0|1a1a1a|e8b84a|3a3a3a|3fa0ff|none|none|bare|none|noarms|beam|psychic
+Ego	o|x|w|6a8caf|3f7fd6|6a8caf|6a8caf|e8b84a|none|none|bare|none|glow|summon|psychic
+Yondu	h|m|n|3f6bb8|c0262f|8a3a1a|3a2a2a|c0262f|mohawk|none|coat|whip||bow|none
+Cosmo	q|m|n|b8823a|f2f0ea|b8823a|b8823a|c0262f|none|none|bare|none|ears_floppy,collar|psychic|psychic
+Beta Ray Bill	h|l|w|e8b84a|e8b84a|3a3a3a|8a5a32|c0262f|none|none|armour|hammer|cape|blunt|lightning
+Gorr	h|m|t|e8e0d8|1a1a1a|1f1f1f|1f1f1f|8e5bd0|bald|none|robe|sword|glow_eyes|blade|dark
+Black Knight	h|m|n|f1d0b0|1a1a1a|1f1f1f|5a5f66|8e5bd0|none|helm|armour|sword|cape|blade|dark
+Hercules	h|l|w|e0ac69|1a1a1a|e8b84a|8a5a32|e8b84a|short|none|bare|mace|beard,belt|blunt|none
+America Chavez	h|m|n|c68642|1a1a1a|1f3f8a|1f1f1f|f2f0ea|ponytail|none|jumpsuit|none|emblem|fists|light
+Kate Bishop	h|m|t|f3d6bf|1a1a1a|8e5bd0|1f1f1f|8e5bd0|long|none|coat|bow||bow|none
+Echo	h|m|t|c68642|1a1a1a|1f1f1f|1f1f1f|f2f0ea|ponytail|none|jumpsuit|none||fists|none
+Jubilee	h|s|t|f1d0b0|1a1a1a|e8b84a|3fa0ff|ff6ad5|short|none|coat|none|glasses|magic|light
+Colossus	h|x|w|9aa3ad|1a1a1a|e8b84a|c0262f|cfd6dd|short|none|uniform|none|belt|fists|earth
+Kitty Pryde	h|s|t|f3d6bf|5a3a1a|1f3f8a|e8b84a|8fd0ff|ponytail|none|uniform|none||fists|none
+Iceman	h|m|n|9fe3ff|9fe3ff|9fe3ff|9fe3ff|f2f0ea|none|none|bare|none|glow|magic|ice
+Beast	h|l|w|3f4fa8|3f4fa8|3f4fa8|1f1f1f|e8b84a|messy|none|bare|none|fangs|claws|none
+Psylocke	h|m|t|f3d6bf|8e5bd0|1f3f8a|1f1f1f|ff6ad5|long|none|jumpsuit|katana|scarf|blade|psychic
+Cable	h|l|w|f1d0b0|d9d4c7|3a3a44|1f1f1f|ffe14d|buzz|none|armour|cannon|glow_eyes|gun|tech
+Domino	h|m|t|f2f0ea|1a1a1a|1f1f1f|1f1f1f|f2f0ea|short|none|jumpsuit|gun|eyepatch|gun|none
+Emma Frost	h|m|t|e8f4fb|f2f0ea|f2f0ea|f2f0ea|8fd0ff|long|none|dress|none|cape,glow|psychic|psychic
+Apocalypse	h|x|w|5a5f66|1a1a1a|3f7fd6|5a5f66|3f7fd6|none|helm|armour|none|cape|beam|tech
+Sabretooth	h|l|w|e0ac69|e6c35c|5a3a1a|1f1f1f|f2f0ea|long|none|fur|claws|fangs|claws|none
+Sentry	h|l|n|f1d0b0|e6c35c|e8b84a|1f3f8a|ffe14d|short|none|jumpsuit|none|cape,emblem,glow|beam|light
+Wonder Man	h|m|n|f1d0b0|1a1a1a|c0262f|1f1f1f|ff6ad5|slick|visor|jumpsuit|none|glow|fists|light
+Hellcat	h|m|t|f3d6bf|c0401d|e8b84a|1f3f8a|e8b84a|long|none|jumpsuit|none|ears|claws|none
+Werewolf by Night	h|l|w|6b4a2a|3b2a1a|6b4a2a|3b2a1a|e8b84a|messy|none|fur|claws|ears,fangs,tail|claws|none
+Man-Thing	h|x|w|5a7a3a|3a5a2a|5a7a3a|3a5a2a|c0262f|none|none|bare|none|redeyes|claws|nature
+Mephisto	h|l|n|c0262f|1a1a1a|c0262f|1f1f1f|ff7a1a|none|none|robe|none|horns,cape,grin|magic|fire
+Dormammu	h|l|n|1f1f1f|ff7a1a|5b3a7a|1f1f1f|ff7a1a|none|none|robe|none|flame_head,glow_eyes|magic|fire
+Knull	h|l|n|e8e0d8|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|none|robe|sword|grin|blade|dark
+Ghost	h|m|n|f2f0ea|f2f0ea|f2f0ea|9aa3ad|8fd0ff|none|helm|jumpsuit|gun|glow|gun|tech
+Abomination	h|x|w|5a7a5a|5a7a5a|5a7a5a|3a4a3a|e8b84a|none|none|bare|none|spikes,fangs|fists|none
+The Leader	h|m|t|6abf4a|6abf4a|f2f0ea|1f1f1f|ff6ad5|bald|none|labcoat|none|glow|psychic|psychic
+Wong	h|m|w|e8c4a0|1a1a1a|ef8a2c|5a3a1a|e8b84a|bald|none|robe|book|glow|magic|light
+Agatha Harkness	h|m|t|f3d6bf|6b4a2a|8e5bd0|1f1f1f|8e5bd0|long|none|robe|none|glow|magic|dark
+Killmonger	h|m|w|5a3a24|1a1a1a|1f1f1f|e8b84a|e8b84a|messy|none|jumpsuit|claws||claws|tech
+M'Baku	h|l|w|5a3a24|1a1a1a|e8dcc0|5a3a1a|cfd6dd|bald|none|fur|club|beard|blunt|none
+Shuri	h|m|t|8d5524|1a1a1a|1f1f1f|e8b84a|b98ce8|braids|none|jumpsuit|blaster||gun|tech
+Nova	h|m|n|f1d0b0|1a1a1a|1f3f8a|e8b84a|e8b84a|none|helmet|jumpsuit|none|emblem,glow|beam|light
+Ronan the Accuser	h|l|n|3f7fd6|1a1a1a|1f1f1f|1f1f1f|3f7fd6|none|hood|robe|hammer|cape|blunt|dark
+Grandmaster	h|m|n|f1d0b0|9aa3ad|e8b84a|3f7fd6|3fa0ff|short|none|robe|staff||magic|psychic
+The Collector	h|m|t|f1d0b0|f2f0ea|f2f0ea|1f1f1f|c0262f|slick|none|coat|none||summon|none
+Batroc the Leaper	h|m|n|f1d0b0|1a1a1a|8e5bd0|e8b84a|e8b84a|short|none|jumpsuit|none|moustache|fists|none
+Doop	o|s|n|6abf4a|6abf4a|6abf4a|6abf4a|e8b84a|none|none|bare|gun|nubs|gun|none
+Throg	c|s|n|4caf50|e8b84a|5a5f66|4caf50|c0262f|none|helmet|bare|hammer|cape|blunt|lightning
+Lockjaw	q|l|w|8a6a4a|5a3a1a|8a6a4a|8a6a4a|e8b84a|none|none|bare|none|ears_floppy,antennae|bite|psychic
+Jeff the Land Shark	c|s|n|5a7aa8|f2f0ea|5a7aa8|5a7aa8|f2f0ea|none|none|bare|none|fins,fangs|bite|water
+Tigra	h|m|t|ef8a2c|ef8a2c|ef8a2c|1f1f1f|f2f0ea|long|none|bare|claws|stripes,ears,tail|claws|none
+Bob, Agent of Hydra	h|m|n|f1d0b0|1a1a1a|2e6b3a|1f1f1f|e8b84a|none|helmet|uniform|gun||gun|none
+Moon Girl	h|s|t|8d5524|1a1a1a|ff6ad5|1f3f8a|ffe14d|afro|none|jumpsuit|none|glasses|gadget|tech
+Forge	h|m|w|c68642|1a1a1a|3a5a8a|1f1f1f|ffe14d|ponytail|none|vest|gun|gloves|gadget|tech
+Union Jack	h|m|n|1f3f8a|1a1a1a|1f3f8a|c0262f|f2f0ea|none|fullmask|jumpsuit|gun|emblem|gun|none
+Stick	h|m|t|f1d8c8|d9d4c7|f2f0ea|9aa3ad|8a5a32|bald|none|robe|staff|beard|blunt|none
+Ikaris	h|m|n|f1d0b0|1a1a1a|1f3f8a|e8b84a|ffe14d|short|none|armour|none|glow_eyes|beam|light
+Thena	h|m|t|f3d6bf|f2eee4|e8b84a|cfd6dd|8fd0ff|long|none|armour|spear||blade|light
+Kingo	h|m|n|e0ac69|1a1a1a|8e5bd0|e8b84a|e8b84a|slick|none|suit|none|glow|beam|light
+Leech	h|s|t|9fd06a|1a1a1a|1f3f8a|f2f0ea|f2f0ea|bald|none|robe|none|ears|psychic|none

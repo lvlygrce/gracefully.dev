@@ -1,0 +1,129 @@
+/* Character Draft: the 8-bit battle stage. Shared by the two-player game and
+   the party TV. The canvas is tiny and scaled up with hard pixel edges; the
+   names, health bars, captions and speech sit on top as ordinary text. */
+
+.b8 {
+  --b8-ink: #fbf7ef;
+  --b8-shadow: #17120e;
+  --b8-hp: #5fd068;
+  --b8-hp-low: #ef6a4a;
+  position: relative;
+  width: 100%;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #17120e;
+  font-family: "Pixelify Sans", ui-monospace, monospace;
+  color: var(--b8-ink);
+  user-select: none;
+  container-type: inline-size;
+}
+/* The picture itself; the caption and controls sit underneath it. */
+.b8__screen { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.b8__stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Health bars along the top, one panel a side. */
+.b8__hud {
+  position: absolute;
+  inset: 1.6cqw 1.6cqw auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 2cqw;
+  pointer-events: none;
+}
+.b8__team { display: grid; gap: 0.35cqw; width: 34cqw; }
+.b8__team--right { text-align: right; justify-items: end; }
+.b8__who { font-size: 2.3cqw; text-shadow: 0.2cqw 0.2cqw 0 var(--b8-shadow); }
+.b8__f { display: grid; grid-template-columns: 1fr 12cqw; align-items: center; gap: 0.8cqw; width: 100%; font-size: 1.55cqw; }
+.b8__team--right .b8__f { grid-template-columns: 12cqw 1fr; }
+.b8__team--right .b8__n { order: 2; }
+.b8__n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0.15cqw 0.15cqw 0 var(--b8-shadow); }
+.b8__hp { height: 1cqw; background: rgba(23, 18, 14, 0.75); border: 0.18cqw solid var(--b8-shadow); }
+.b8__hp i { display: block; height: 100%; width: 100%; background: var(--b8-hp); transition: width 0.35s steps(6); }
+.b8__team--right .b8__hp i { margin-left: auto; }
+.b8__f.is-low .b8__hp i { background: var(--b8-hp-low); }
+.b8__f.is-down { opacity: 0.45; text-decoration: line-through; }
+.b8__f.is-fled { opacity: 0.45; }
+
+/* Speech and damage numbers, positioned over the sprites. */
+.b8__bubbles { position: absolute; inset: 0; pointer-events: none; }
+.b8__say {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  max-width: 30cqw;
+  padding: 0.6cqw 1cqw;
+  background: #fbf7ef;
+  color: #241f1a;
+  font-size: 1.7cqw;
+  line-height: 1.15;
+  border: 0.25cqw solid var(--b8-shadow);
+  box-shadow: 0.3cqw 0.3cqw 0 var(--b8-shadow);
+  animation: b8-pop 0.18s steps(3);
+}
+.b8__dmg {
+  position: absolute;
+  transform: translate(-50%, 0);
+  font-size: 2.2cqw;
+  text-shadow: 0.2cqw 0.2cqw 0 var(--b8-shadow);
+  animation: b8-rise 1.1s steps(10) forwards;
+}
+@keyframes b8-pop { from { transform: translate(-50%, -80%) scale(0.6); } }
+@keyframes b8-rise { to { transform: translate(-50%, -4cqw); opacity: 0; } }
+
+/* "Ready… Fight!" and the winner. */
+.b8__banner {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.b8__banner[hidden] { display: none; }
+.b8__banner span {
+  padding: 1cqw 3cqw;
+  font-size: 5.5cqw;
+  background: rgba(23, 18, 14, 0.72);
+  border: 0.4cqw solid #fbf7ef;
+  text-shadow: 0.4cqw 0.4cqw 0 #c0392b;
+  animation: b8-pop 0.25s steps(4);
+}
+
+/* What's happening, along the bottom. */
+.b8__caption {
+  margin: 0;
+  padding: 1cqw 1.6cqw 0.6cqw;
+  min-height: 2.4em;
+  font-size: max(0.85rem, 2cqw);
+  line-height: 1.25;
+  border-top: 0.25cqw solid #fbf7ef;
+}
+
+.b8__ctl {
+  padding: 0.4cqw 1.6cqw 1.2cqw;
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+}
+.b8__btn {
+  font: inherit;
+  font-size: max(0.8rem, 1.7cqw);
+  color: #fbf7ef;
+  background: rgba(23, 18, 14, 0.78);
+  border: 0.25cqw solid #fbf7ef;
+  padding: 0.4cqw 1.4cqw;
+  cursor: pointer;
+}
+.b8__btn:hover, .b8__btn:focus-visible { background: #c0392b; outline: none; }
+.b8__bar { flex: 1; height: 0.9cqw; background: rgba(23, 18, 14, 0.7); border: 0.2cqw solid #fbf7ef; }
+.b8__bar i { display: block; height: 100%; width: 0; background: #fbf7ef; }
+
+@media (prefers-reduced-motion: reduce) {
+  .b8__say, .b8__dmg, .b8__banner span { animation: none; }
+}

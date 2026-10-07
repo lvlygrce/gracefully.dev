@@ -1,0 +1,58 @@
+Harry Potter	h|m|t|f1d0b0|1a1a1a|2a2622|3a3a3a|b3202a|messy|none|robe|wand|glasses,scarf|magic|light
+Hermione Granger	h|m|t|f3d6bf|8a5a32|2a2622|3a3a3a|b3202a|afro|none|robe|wand|scarf|magic|light
+Ron Weasley	h|m|t|f3d6bf|d9662a|2a2622|3a3a3a|b3202a|short|none|robe|wand|scarf|magic|none
+Albus Dumbledore	h|m|t|f1d8c8|f2f0ea|8e5bd0|5b3a7a|e8b84a|long|wizard|robe|wand|beard,glasses|magic|light
+Lord Voldemort	h|m|t|e8ecec|e8ecec|1f1f1f|1f1f1f|4caf50|bald|none|robe|wand|redeyes|magic|dark
+Severus Snape	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|4caf50|long|none|robe|wand||magic|dark
+Minerva McGonagall	h|m|t|f1d8c8|3b3b3b|2e6b3a|1f1f1f|e8b84a|bun|wizard|robe|wand|glasses|magic|nature
+Rubeus Hagrid	h|x|w|f1d0b0|3b2a1a|5a4632|3b3026|8a5a32|messy|none|coat|club|beard|blunt|none
+Sirius Black	h|m|t|f1d0b0|1a1a1a|3a3a3a|1f1f1f|c0262f|long|none|coat|wand|beard|magic|dark
+Remus Lupin	h|m|t|f1d0b0|8a6a3a|8a6a4a|3a3a3a|e8b84a|short|none|coat|wand|moustache|magic|none
+Draco Malfoy	h|m|t|f3d6bf|f2f0ea|1f1f1f|2e6b3a|cfd6dd|slick|none|robe|wand|scarf|magic|dark
+Lucius Malfoy	h|m|t|f3d6bf|f2f0ea|1f1f1f|1f1f1f|cfd6dd|long|none|robe|staff|cape|magic|dark
+Bellatrix Lestrange	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|c0262f|messy|none|dress|wand|grin|magic|dark
+Neville Longbottom	h|m|n|f1d0b0|5a3a1a|2a2622|3a3a3a|b3202a|short|none|robe|sword|scarf|blade|nature
+Luna Lovegood	h|m|t|f3d6bf|f2e8b0|2a2622|3f4f8a|3fa0ff|long|none|robe|wand||magic|light
+Ginny Weasley	h|m|t|f3d6bf|d9662a|2a2622|3a3a3a|b3202a|long|none|robe|wand|scarf|magic|none
+Fred Weasley	h|m|t|f3d6bf|d9662a|8e5bd0|3a3a3a|f2cf3a|short|none|suit|wand||gadget|explosion
+George Weasley	h|m|t|f3d6bf|d9662a|8e5bd0|3a3a3a|f2cf3a|short|none|suit|wand||gadget|explosion
+Molly Weasley	h|m|w|f1d0b0|d9662a|8a5a6a|3a3a3a|e8b84a|short|none|dress|wand||magic|none
+Arthur Weasley	h|m|n|f1d0b0|d9662a|8a6a4a|3a3a3a|e8b84a|bald|none|coat|wand|glasses|gadget|tech
+Alastor Moody	h|m|w|e8c4a0|8a8a8a|5a4632|3a3a3a|3fa0ff|long|none|coat|staff|glow_eyes|magic|none
+Dobby	c|s|t|cfc0a8|cfc0a8|e8dcc0|e8dcc0|4caf50|none|none|robe|none|ears|magic|light
+Kreacher	c|s|t|bfb8a0|f2f0ea|8a8f96|8a8f96|4caf50|none|none|robe|none|ears|magic|dark
+Dolores Umbridge	h|m|w|f3d6bf|8a6a3a|f2a0c0|f2a0c0|f2a0c0|bun|none|suit|wand||magic|none
+Gellert Grindelwald	h|m|t|f3d6bf|f2f0ea|1f1f1f|1f1f1f|8fe9ff|slick|none|coat|wand||magic|lightning
+Peter Pettigrew	h|s|w|f1d0b0|9aa3ad|5a4632|3a3a3a|cfd6dd|bald|none|coat|wand||magic|none
+Cedric Diggory	h|m|n|f1d0b0|8a5a32|f2cf3a|1f1f1f|f2cf3a|short|none|robe|wand||magic|none
+Nymphadora Tonks	h|m|t|f3d6bf|e86ab8|8e5bd0|1f1f1f|e86ab8|spiky|none|coat|wand||magic|none
+Kingsley Shacklebolt	h|l|n|5a3a24|1a1a1a|8e5bd0|5b3a7a|e8b84a|bald|none|robe|wand||magic|light
+Fleur Delacour	h|m|t|f3d6bf|f2e8b0|3fa0ff|1f3f8a|f2f0ea|long|none|robe|wand||magic|fire
+Viktor Krum	h|m|w|f1d0b0|1a1a1a|c0262f|1f1f1f|e8b84a|buzz|none|robe|wand||magic|none
+Cho Chang	h|m|t|f3d6bf|1a1a1a|3f4f8a|1f1f1f|8a5a32|long|none|robe|wand|scarf|magic|none
+Gilderoy Lockhart	h|m|t|f1d0b0|f2cf3a|8e5bd0|5b3a7a|f2cf3a|slick|none|robe|wand|grin|magic|none
+Horace Slughorn	h|m|w|f1d0b0|d9d4c7|2e6b3a|1f1f1f|e8b84a|bald|none|robe|wand|moustache|gadget|poison
+Filius Flitwick	h|s|t|f1d0b0|f2f0ea|1f1f1f|1f1f1f|3fa0ff|short|none|robe|wand|moustache|magic|light
+Argus Filch	h|m|t|e8e0d8|8a8a8a|5a4632|3a3a3a|8a5a32|long|none|coat|none||fists|none
+Barty Crouch Jr.	h|m|t|f1d0b0|8a6a3a|1f1f1f|1f1f1f|c0262f|messy|none|robe|wand||magic|dark
+Fenrir Greyback	h|l|w|8a8a6a|6b6b6b|5a4632|3a3a3a|c0262f|messy|none|fur|claws|fangs,ears,beard|claws|blood
+Quirinus Quirrell	h|m|t|f2ece4|f2ece4|8e5bd0|1f1f1f|8e5bd0|none|wizard|robe|wand||magic|dark
+Newt Scamander	h|m|t|f3d6bf|8a5a32|3f4f8a|8a6a3a|e8b84a|messy|none|coat|wand|scarf|summon|nature
+Nagini	s|l|n|3f5a3a|c9c08a|3f5a3a|3f5a3a|e8b84a|none|none|bare|none|stripes|bite|poison
+Buckbeak	b|l|w|9aa3ad|8a6a4a|9aa3ad|9aa3ad|ef8a2c|none|none|bare|none|crest|claws|wind
+Fawkes	b|m|n|c0262f|f2cf3a|c0262f|c0262f|f2cf3a|none|none|bare|none|crest|magic|fire
+Aragog	q|x|w|2a2a2a|5a5a5a|2a2a2a|2a2a2a|f2f0ea|none|none|bare|none|no_ears,spots,glow_eyes|bite|poison
+Hedwig	b|s|n|f2f0ea|1a1a1a|f2f0ea|f2f0ea|f2cf3a|none|none|bare|none|spots|claws|wind
+Grawp	h|x|w|c0a080|5a3a1a|8a6a4a|5a3a1a|8a5a32|messy|none|bare|club|belt|blunt|none
+Basilisk	s|x|w|3f6a3a|f2cf3a|3f6a3a|3f6a3a|f2cf3a|none|none|bare|none|glow_eyes|bite|poison
+Norbert	d|m|n|3a4a3a|8a6a4a|3a4a3a|3a4a3a|ef8a2c|none|none|bare|none||breath|fire
+Vernon Dursley	h|m|w|f1c0b0|5a3a1a|5a6a8a|3a3a44|f2f0ea|short|none|suit|none|moustache|fists|none
+Dudley Dursley	h|m|w|f3c8b8|f2e0a0|f2cf3a|5a3a1a|f2f0ea|short|none|tunic|none|tail|fists|none
+Moaning Myrtle	g|s|t|cfe8e0|cfe8e0|cfe8e0|cfe8e0|5a6a7a|none|none|bare|none|nubs|magic|water
+Peeves	g|s|n|f2cf3a|ef8a2c|f2cf3a|f2cf3a|c0262f|none|cap|bare|none|grin,nubs|gadget|none
+Rita Skeeter	h|m|t|f3d6bf|f2e0a0|4caf50|1f1f1f|e8b84a|short|none|suit|none|glasses|gadget|none
+Cornelius Fudge	h|m|w|f1d0b0|9aa3ad|2e6b3a|1f1f1f|e8b84a|short|hat|suit|wand||magic|none
+Lily Potter	h|m|t|f3d6bf|b5401d|2a2622|3a3a3a|4caf50|long|none|robe|wand|glow|magic|light
+James Potter	h|m|t|f1d0b0|1a1a1a|2a2622|3a3a3a|b3202a|messy|none|robe|wand|glasses|magic|none
+Regulus Black	h|m|t|f3d6bf|1a1a1a|1f1f1f|2e6b3a|2e8b3a|short|none|robe|wand||magic|dark
+Aberforth Dumbledore	h|m|n|f1d8c8|d9d4c7|5a4632|3a3a3a|3fa0ff|long|none|coat|wand|beard,glasses|magic|none

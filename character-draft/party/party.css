@@ -446,3 +446,6 @@ html.tv .stage { padding-top: 3.4rem; }
 .pace summary::after { content: " ▾"; }
 .pace[open] summary::after { content: " ▴"; }
 .pace[open] summary { margin-bottom: 0.2rem; }
+
+/* The 8-bit battle fills the TV, as big as a 16:9 box can be below the title. */
+.tv-battle .b8 { width: min(100%, calc((100vh - 13rem) * 16 / 9)); }

@@ -1,0 +1,56 @@
+Albert Einstein	h|m|n|f1d0b0|f2f0ea|8a6a4a|3a3a3a|e8b84a|afro|none|coat|none|moustache|gadget|light
+Isaac Newton	h|m|n|f1d0b0|d9d4c7|3a3a3a|1f1f1f|c0262f|long|none|coat|none||gadget|earth
+Nikola Tesla	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|8fe9ff|slick|none|suit|none|moustache|gadget|lightning
+Marie Curie	h|m|t|f3d6bf|5a3a1a|1f1f1f|1f1f1f|8bd34a|bun|none|dress|none|glow|gadget|poison
+Leonardo da Vinci	h|m|n|f1d0b0|d9d4c7|5a3a1a|1f1f1f|8a5a32|long|hat|robe|none|beard|gadget|tech
+Thomas Edison	h|m|w|f1d0b0|d9d4c7|1f1f1f|1f1f1f|f2cf3a|short|none|suit|none||gadget|lightning
+Charles Darwin	h|m|n|f1d0b0|f2f0ea|1f1f1f|1f1f1f|4caf50|bald|none|coat|none|beard|summon|nature
+Stephen Hawking	h|m|t|f1d0b0|5a3a1a|5a6a8a|1f1f1f|8fe9ff|short|none|suit|none|glasses|psychic|psychic
+Ada Lovelace	h|m|t|f3d6bf|5a3a1a|5b3a7a|1f1f1f|e8b84a|bun|none|dress|none||gadget|tech
+Alan Turing	h|m|t|f1d0b0|3b2a1a|6b5a3a|3a3a3a|8fe9ff|short|none|suit|none||gadget|tech
+Galileo Galilei	h|m|n|f1d0b0|d9d4c7|1f1f1f|1f1f1f|e8b84a|bald|none|robe|none|beard|gadget|light
+Archimedes	h|m|n|e8c4a0|d9d4c7|f2f0ea|8a6a3a|e8b84a|bald|none|robe|none|beard|gadget|light
+Julius Caesar	h|m|n|e8c4a0|5a3a1a|f2f0ea|c0262f|e8b84a|short|crown|robe|sword|cape|blade|none
+Napoleon Bonaparte	h|s|n|f1d0b0|3b2a1a|1f3f8a|f2f0ea|e8b84a|short|hat|uniform|sword||blade|explosion
+Alexander the Great	h|m|n|e8c4a0|b5823c|e8b84a|c0262f|c0262f|messy|none|armour|spear|cape|blade|none
+Genghis Khan	h|m|w|e0ac69|1a1a1a|8a5a32|5a3a1a|e8dcc0|none|hat|fur|bow|beard|bow|none
+Sun Tzu	h|m|t|e8c4a0|1a1a1a|3f4f8a|1f1f1f|e8b84a|bun|none|robe|book|beard|psychic|none
+Hannibal Barca	h|m|w|c68642|1a1a1a|9aa3ad|8a5a32|c0262f|short|helmet|armour|sword|beard,cape|blade|none
+Joan of Arc	h|m|t|f3d6bf|5a3a1a|cfd6dd|3f4f8a|f2f0ea|short|none|armour|sword|cape|blade|light
+Cleopatra	h|m|t|c68642|1a1a1a|f2f0ea|e8b84a|3fa0ff|long|crown|dress|none||psychic|poison
+Queen Elizabeth I	h|m|t|f2ece4|c0401d|8e2b2b|1f1f1f|e8b84a|short|crown|dress|none||psychic|none
+Winston Churchill	h|m|w|f1d0b0|d9d4c7|1f1f1f|1f1f1f|8a5a32|bald|none|suit|none||gadget|none
+Abraham Lincoln	h|l|t|e8c4a0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|short|tophat|suit|axe|beard|blade|none
+George Washington	h|m|n|f1d0b0|f2f0ea|1f3f8a|f2cf3a|e8b84a|ponytail|none|uniform|sword||blade|none
+Adolf Hitler	h|m|n|f1d0b0|1a1a1a|8a6a3a|1f1f1f|c0262f|slick|none|uniform|none|moustache|gadget|none
+Joseph Stalin	h|m|n|f1d0b0|3b3b3b|8a8a6a|1f1f1f|e8b84a|slick|none|uniform|none|moustache|gadget|none
+Vlad the Impaler	h|m|n|f1d0b0|1a1a1a|7a1b1b|1f1f1f|e8b84a|long|crown|robe|spear|moustache|blade|blood
+Attila the Hun	h|m|w|e0ac69|1a1a1a|8a5a32|5a3a1a|9aa3ad|bald|none|fur|sword|moustache|blade|none
+Leonidas	h|m|w|e8c4a0|1a1a1a|c0262f|e8b84a|e8b84a|none|helmet|bare|spear|shield,cape,beard|blade|none
+Spartacus	h|m|w|e8c4a0|5a3a1a|8a6a3a|5a3a1a|9aa3ad|short|none|bare|sword|shield,belt|blade|none
+Miyamoto Musashi	h|m|n|e8c4a0|1a1a1a|3a3a44|1f1f1f|cfd6dd|ponytail|none|robe|katana|beard|blade|none
+Bruce Lee	h|m|t|e8c4a0|1a1a1a|f2cf3a|f2cf3a|1f1f1f|short|none|jumpsuit|club||fists|none
+Muhammad Ali	h|l|n|8d5524|1a1a1a|8d5524|f2f0ea|c0262f|short|none|bare|none|gloves|fists|none
+Harry Houdini	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|e8b84a|short|none|suit|none||gadget|smoke
+Blackbeard	h|l|w|e0ac69|1a1a1a|1f1f1f|7a1b1b|ff7a1a|long|hat|coat|sword|beard|blade|fire
+Rasputin	h|m|n|f1d0b0|1a1a1a|1f1f1f|1f1f1f|8e5bd0|long|none|robe|none|beard,glow_eyes|magic|dark
+Mahatma Gandhi	h|m|t|c68642|d9d4c7|f2f0ea|f2f0ea|8a5a32|bald|none|robe|staff|glasses|psychic|light
+Martin Luther King Jr.	h|m|n|5a3a24|1a1a1a|1f1f1f|1f1f1f|f2f0ea|short|none|suit|none|moustache|psychic|light
+Nelson Mandela	h|m|n|5a3a24|d9d4c7|c0262f|1f1f1f|e8b84a|short|none|tunic|none||psychic|light
+William Shakespeare	h|m|n|f1d0b0|5a3a1a|1f1f1f|1f1f1f|f2f0ea|bald|none|coat|book|beard|magic|psychic
+Wolfgang Amadeus Mozart	h|m|t|f3d6bf|f2f0ea|c0262f|f2f0ea|e8b84a|ponytail|none|coat|none||magic|wind
+Edgar Allan Poe	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|1f1f1f|messy|none|suit|book|moustache|summon|dark
+Amelia Earhart	h|m|t|f3d6bf|b5823c|8a5a32|5a3a1a|cfd6dd|short|none|coat|none|scarf,glasses|fists|wind
+Neil Armstrong	h|m|n|f2f0ea|1a1a1a|f2f0ea|cfd6dd|e8b84a|none|helmet|jumpsuit|none|emblem|gadget|tech
+Yuri Gagarin	h|m|n|f1d0b0|1a1a1a|ef8a2c|f2f0ea|c0262f|none|helmet|jumpsuit|none||gadget|tech
+Theodore Roosevelt	h|m|w|f1d0b0|5a3a1a|8a6a3a|5a3a1a|e8b84a|short|hat|uniform|rifle|moustache,glasses|gun|none
+Simo Häyhä	h|m|n|f2ece4|e6c35c|f2f0ea|f2f0ea|9aa3ad|none|hood|coat|rifle||gun|ice
+Harambe	h|l|w|3a3a3a|1a1a1a|3a3a3a|3a3a3a|8a8f96|none|none|fur|none|beard|fists|none
+Doge	q|m|n|e8b84a|f2f0ea|e8b84a|e8b84a|1f1f1f|none|none|bare|none|muzzle_light|bite|none
+Grumpy Cat	q|s|w|e8dcc0|6b5a4a|e8dcc0|e8dcc0|3fa0ff|none|none|bare|none|stripes|claws|none
+Laika	q|s|n|f2f0ea|8a6a3a|f2f0ea|f2f0ea|c0262f|none|none|bare|none|spots,collar|bite|tech
+Hachikō	q|m|n|e8dcc0|b8906a|e8dcc0|e8dcc0|c0262f|none|none|bare|none|collar|bite|none
+Koko the Gorilla	h|l|w|3a3a3a|1a1a1a|3a3a3a|3a3a3a|ef8a2c|none|none|fur|none||fists|none
+Bigfoot	h|x|w|6b4a2a|6b4a2a|6b4a2a|5a3a1a|e8b84a|messy|none|fur|none|beard|fists|earth
+Loch Ness Monster	s|x|w|3f6a5a|5a8a7a|3f6a5a|3f6a5a|1f1f1f|none|none|bare|none|fins|bite|water
+Mothman	h|l|t|3a3a3a|1a1a1a|3a3a3a|3a3a3a|c0262f|none|none|fur|none|batwings,redeyes,antennae|claws|dark

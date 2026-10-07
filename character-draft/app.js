@@ -45,6 +45,8 @@
   // Saved preferences can be partial (say, a judge picked while viewing a
   // shared result), so fill in whatever's missing.
   let prefs = Object.assign({ names: ["Player one", "Player two"], worlds: ["westeros"] }, store.get(PREFS_KEY, {}) || {});
+  // The 8-bit battle arrived after "just the story" was the default.
+  if (!prefs.battleV) { if (!prefs.format || prefs.format === "text") prefs.format = "battle"; prefs.battleV = 1; store.set(PREFS_KEY, prefs); }
   if (!Array.isArray(prefs.names) || prefs.names.length < 2) prefs.names = ["Player one", "Player two"];
   if (!Array.isArray(prefs.worlds)) prefs.worlds = U[prefs.universe] ? [prefs.universe] : ["westeros"];
   prefs.worlds = prefs.worlds.filter(w => U[w]);
@@ -190,6 +192,7 @@
     state.last = null;
     pendingBid = 1;
     save();
+    sfx("reveal"); Sound.say(char(i)[0]);
     announce(`${char(i)[0]}. ${state.players[state.opener].name}, open or pass.`);
     render();
   }
@@ -202,6 +205,7 @@
     if (!lot.bid) state.log.push(`${p.name} opens ${char(lot.i)[0]} at $${amount}.`);
     lot.bid = amount;
     lot.leader = lot.turn;
+    sfx("bid");
     lot.turn = other(lot.turn);
     settle();
   }
@@ -251,6 +255,7 @@
 
   function finishLot(result) {
     state.log.push(result.text);
+    sfx(result.who === null ? "skipped" : "sold");
     state.lot = null;
     state.last = result;
 
@@ -263,6 +268,7 @@
       state.phase = "done";
       if (!arenaInfo(state.arena)) state.arena = drawArena(state.worlds);
       state.log.push(next === null ? "That's the draft." : "The deck ran out. That's the draft.");
+      setTimeout(() => sfx("fight"), 900);
     } else {
       state.opener = next;
     }
@@ -338,7 +344,37 @@
 
   /* --- Views --------------------------------------------------------- */
 
+  /* --- Sound ------------------------------------------------------------
+     The same effects and 8-bit fighting music as party mode. Nothing plays
+     until the page has been clicked once (browsers insist). */
+
+  const Sound = window.Sound || { play() {}, say() {}, music() {}, unlock() {}, setMode() {} };
+  const sfx = (n, v) => Sound.play(n, v);
+  const SOUND_LABEL = { all: "Sound: effects and music", effects: "Sound: effects only", off: "Sound off" };
+  function soundButton() {
+    const b = document.getElementById("sound-toggle");
+    if (!b) return;
+    const m = prefs.sound || "all";
+    b.dataset.mode = m; b.setAttribute("aria-label", SOUND_LABEL[m]); b.title = SOUND_LABEL[m];
+  }
+  Sound.setMode(prefs.sound || "all");
+  document.addEventListener("pointerdown", () => Sound.unlock());
+  document.addEventListener("keydown", () => Sound.unlock());
+  document.getElementById("sound-toggle")?.addEventListener("click", () => {
+    prefs.sound = { all: "effects", effects: "off", off: "all" }[prefs.sound || "all"];
+    store.set(PREFS_KEY, prefs); Sound.setMode(prefs.sound); soundButton();
+    music();
+  });
+  soundButton();
+  // Music to suit the moment: the auction while drafting, a calmer bed after,
+  // and the battle owns the music while it plays.
+  function music() {
+    if (battleCtl) return;
+    Sound.music(state && !shared && state.phase === "draft" ? "auction" : (state && state.phase === "done") || shared ? "lobby" : null);
+  }
+
   function render() {
+    music();
     renderRecent();
     if (shared) {
       if (!arenaInfo(shared.a)) shared.a = drawArena(shared.w);
@@ -384,6 +420,20 @@
       </label>`).join("");
 
     app.innerHTML = `
+      <nav class="modes" aria-label="How to play">
+        <div class="mode mode--here">
+          <span class="mode__name">Two players</span>
+          <span class="mode__note">One screen, passed between you. Set it up below.</span>
+        </div>
+        <a class="mode" href="party/">
+          <span class="mode__name">Party mode <span class="mode__go" aria-hidden="true">→</span></span>
+          <span class="mode__note">Put it on a TV. Up to 24 people bid from their phones, then a knockout tournament of 8-bit battles.</span>
+        </a>
+        <a class="mode mode--small" href="/play/">
+          <span class="mode__name">Join a party <span class="mode__go" aria-hidden="true">→</span></span>
+          <span class="mode__note">Got a game PIN from the TV? Join on your phone.</span>
+        </a>
+      </nav>
       <form class="setup" id="setup">
         <h2 class="section-label">Who's drafting</h2>
         <div class="names">
@@ -421,7 +471,7 @@
 
         <button class="btn btn--primary" type="submit">Shuffle and begin</button>
         <p class="party-link">More than two of you? <a href="party/">Party mode</a> puts the game on a TV,
-          with up to 24 players joining on their phones and a knockout tournament at the end.</p>
+          with up to 24 players joining on their phones.</p>
       </form>`;
 
     const form = document.getElementById("setup");
@@ -457,7 +507,7 @@
         note.classList.add("choices__note--warn");
         return;
       }
-      prefs = { names, worlds, passes: Number(f.get("passes")) };
+      prefs = { ...prefs, names, worlds, passes: Number(f.get("passes")) };
       store.set(PREFS_KEY, prefs);
       startDraft(names, worlds, prefs.passes);
     });
@@ -739,16 +789,18 @@
     }
 
     if (verdict && verdict.film && !verdict.film.watched) return renderFilm(worlds, teams, isShared, verdict);
+    if (verdict && verdict.battle && !verdict.battle.watched) return renderBattle(worlds, teams, isShared, verdict);
 
     if (verdict) {
       body.innerHTML = (verdict.preps ? `<div class="wars">${warsHtml(verdict.preps, teams, "11")}</div>` : "")
         + verdictHtml(verdict)
-        + (verdict.film && verdict.film.shots.some(x => x.url) ? `<div class="judge__again"><button class="btn" type="button" id="film-replay">Watch the film again</button></div>` : "")
+        + `<div class="judge__again">${verdict.film && verdict.film.shots.some(x => x.url) ? `<button class="btn" type="button" id="film-replay">Watch the film again</button> ` : ""}<button class="btn" type="button" id="battle-replay">${verdict.battle ? "Watch the 8-bit battle again" : "Watch it as an 8-bit battle"}</button></div>`
         + `
         <div class="tools tools--loud judge__again">
           <button class="btn" type="button" id="judge-again">Ask for a second opinion</button>
         </div>`;
       on("film-replay", () => { verdict.film.watched = false; if (!isShared) save(); render(); });
+      on("battle-replay", () => { verdict.battle = { watched: false }; if (!isShared) save(); render(); });
       on("judge-again", () => {
         judging.preps = [];
         if (isShared) judging.verdict = null; else { state.verdict = null; save(); }
@@ -764,7 +816,8 @@
 
     const mode = prefs.judge || "gemini";
     const realPeople = teams.some(t => t.roster.some(r => r.world === "famous"));
-    const format = realPeople ? "text" : (prefs.format || "text");
+    const format = realPeople && FILM_TIERS.some(t => t.id === prefs.format) ? "battle" : (prefs.format || "battle");
+    const filmFormat = FILM_TIERS.some(t => t.id === format);
     const key = J.gemini.key();
     const localModel = prefs.localModel || J.local.models[0].id;
     const gpu = J.local.supported();
@@ -815,11 +868,12 @@
 
       <h3 class="judge__sub">How do you want to see it?</h3>
       <fieldset class="formats"><legend class="visually-hidden">Format</legend>
+        ${formatOption("battle", "8-bit battle", "The war councils plan, then the fight plays out as a little pixel battle. The winner is revealed at the end.", format)}
         ${formatOption("text", "Just the story", "War councils, the fight and the winner, in words.", format)}
         ${FILM_TIERS.map(t => formatOption(t.id, t.label, t.blurb, format)).join("")}
       </fieldset>
       <p class="judge__fine" id="format-note"></p>
-      ${format === "text" ? "" : J.pin.get() ? `<p class="judge__key">Films use Grace's PIN.</p>`
+      ${!filmFormat ? "" : J.pin.get() ? `<p class="judge__key">Films use Grace's PIN.</p>`
         : Film.ownKey.get() ? `<p class="judge__key">Your Higgsfield key is saved in this browser.
             <button class="btn btn--quiet btn--inline" type="button" id="forget-hf">Forget it</button></p>`
         : `<label class="field field--code"><span class="field__label">Higgsfield API key (key id:secret), or Grace's PIN</span>
@@ -827,7 +881,7 @@
           <p class="judge__fine">Your own key is kept in this browser and passed to Higgsfield through the party server for each film; it's never stored there.</p>`}
 
       ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
-      <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>${format === "text" ? "Reveal the winner" : "Make the film"}</button>`;
+      <button class="btn btn--primary" type="button" id="judge-go" ${mode === "local" && !gpu ? "disabled" : ""}>${format === "text" ? "Reveal the winner" : format === "battle" ? "Fight!" : "Make the film"}</button>`;
 
     body.querySelectorAll('[name="format"]').forEach(i => i.addEventListener("change", () => {
       prefs.format = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
@@ -901,7 +955,7 @@
           if (!ok) return fail("That PIN isn't right.");
         } else J.gemini.saveKey(typed);
       }
-      if (format !== "text" && !J.pin.get() && !Film.ownKey.get()) {
+      if (filmFormat && !J.pin.get() && !Film.ownKey.get()) {
         const typed = ((document.getElementById("code-input") || {}).value || "").trim();
         if (!typed) return fail("Enter your Higgsfield key, or Grace's PIN, to make a film.");
         if (J.pin.looksLike(typed)) {
@@ -933,7 +987,8 @@
           },
         });
         if (field) v.arena = field.name;
-        if (format !== "text") {
+        if (format === "battle") v.battle = { watched: false };
+        if (filmFormat) {
           // The verdict is in but stays hidden: the director storyboards it,
           // then the film is made, and the winner is revealed at the end.
           v.film = await makeFilm({ tier: format, mode, teams, verdict: v, field, worldName, onStatus });
@@ -941,7 +996,7 @@
         v.battleId = keepBattle(worlds, teams, field, v);
         judging = { busy: false, status: "", progress: null, error: "", verdict: isShared ? v : null, preps: [] };
         if (!isShared && state === draftAtStart) { state.verdict = v; save(); }
-        if (!v.film) announce(`${v.winner} wins. ${v.verdict}`);
+        if (!v.film && !v.battle) { announce(`${v.winner} wins. ${v.verdict}`); sfx("winner"); }
       } catch (err) {
         // Keep any war council that finished, so trying again goes straight on.
         judging = { busy: false, status: "", progress: null, error: err.message || "Something went wrong.", verdict: null, preps: judging.preps };
@@ -977,11 +1032,13 @@
     const setPrice = (id, html) => { const el = document.querySelector(`[data-price="${id}"]`); if (el) el.innerHTML = html; };
     const realPeople = teams.some(t => t.roster.some(r => r.world === "famous"));
     const rate = await Film.nzdRate();
-    setPrice("text", mode === "local" ? "free" : `about ${Film.nz(textUsd, rate)} <em>or free within Gemini's free allowance</em>`);
+    const wordsPrice = mode === "local" ? "free" : `about ${Film.nz(textUsd, rate)} <em>or free within Gemini's free allowance</em>`;
+    setPrice("text", wordsPrice);
+    setPrice("battle", wordsPrice);
     let q = null;
     try { q = await Film.quote(); } catch { /* shown below */ }
     const disable = why => {
-      document.querySelectorAll('[name="format"]').forEach(i => { if (i.value !== "text") i.disabled = true; });
+      document.querySelectorAll('[name="format"]').forEach(i => { if (FILM_TIERS.some(t => t.id === i.value)) i.disabled = true; });
       FILM_TIERS.forEach(t => setPrice(t.id, "unavailable"));
       if (note) note.textContent = why;
     };
@@ -1070,6 +1127,30 @@
     });
   }
 
+  /* --- The 8-bit battle --------------------------------------------------
+     Played from the judge's script before the winner is shown. */
+
+  let battleCtl = null;
+  function renderBattle(worlds, teams, isShared, verdict) {
+    const body = document.getElementById("judge-body");
+    body.innerHTML = `<div id="battle-box" class="battle-box"></div>`;
+    if (battleCtl) battleCtl.destroy();
+    const field = arenaInfo(isShared ? shared.a : state.arena);
+    battleCtl = Battle.player(document.getElementById("battle-box"), { teams, verdict, arena: field, worldName: w => U[w].name }, {
+      onEnd: () => {
+        battleCtl = null;
+        verdict.battle.watched = true;
+        setTimeout(music, 1500);
+        if (!isShared) save();
+        announce(`${verdict.winner} wins. ${verdict.verdict}`);
+        render();
+        const v = document.querySelector(".verdict");
+        if (v) v.scrollIntoView({ behavior: "smooth", block: "start" });
+      },
+    });
+    document.getElementById("battle-box").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
   /* --- Recent battles ---------------------------------------------------- */
 
   const filmForList = film => film && {
@@ -1078,10 +1159,10 @@
 
   function keepBattle(worlds, teams, field, v) {
     const id = Math.random().toString(36).slice(2, 10);
-    const { film, ...story } = v;
+    const { film, battle, ...story } = v;
     Film.battles.save({
       id, at: Date.now(), worlds,
-      arena: field ? { name: field.name, image: field.image } : null,
+      arena: field ? { name: field.name, image: field.image, terrain: field.terrain, world: field.world } : null,
       teams: teams.map(t => ({ name: t.name, roster: t.roster.map(r => ({ name: r.name, world: r.world, note: r.note, price: r.price })) })),
       verdict: story,
       film: filmForList(film),
@@ -1146,11 +1227,20 @@
           <button class="btn btn--quiet" type="button" id="battle-close">Close</button></div>
         <p class="judge__fine">${new Date(b.at).toLocaleString()}${b.arena ? ` · ${esc(b.arena.name)}` : ""}</p>
         ${hasFilm ? `<div id="battle-film"></div>` : ""}
+        <div id="battle-8bit"></div>
+        <p class="judge__again"><button class="btn" type="button" id="battle-8bit-go">Watch the 8-bit battle</button></p>
         ${v.preps ? `<div class="wars">${warsHtml(v.preps, b.teams, "11")}</div>` : ""}
         ${verdictHtml(v)}
       </div>`;
     dlg.querySelector("#battle-close").addEventListener("click", () => dlg.close());
     if (hasFilm) Film.player(dlg.querySelector("#battle-film"), { shots: b.film.shots }, {});
+    let ctl = null;
+    dlg.querySelector("#battle-8bit-go").addEventListener("click", e => {
+      e.target.parentElement.hidden = true;
+      const arena = b.arena && b.arena.terrain ? b.arena : b.arena ? { ...b.arena, terrain: "" } : null;
+      ctl = Battle.player(dlg.querySelector("#battle-8bit"), { teams: b.teams, verdict: v, arena }, { onEnd: () => {} });
+    });
+    dlg.addEventListener("close", () => { if (ctl) ctl.destroy(); ctl = null; }, { once: true });
     dlg.showModal();
   }
 

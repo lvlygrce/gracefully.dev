@@ -1,0 +1,39 @@
+Homelander	h|m|w|f1d0b0|f2cf3a|1f3f8a|c0262f|c0262f|slick|none|jumpsuit|none|cape,emblem|beam|fire
+Billy Butcher	h|m|w|f1d0b0|1a1a1a|1f1f1f|3a3a44|c0262f|short|none|coat|bat|beard|blunt|none
+Hughie Campbell	h|m|t|f1d0b0|5a3a1a|5a6a8a|3a3a44|f2f0ea|short|none|coat|gun||gun|none
+Starlight	h|m|t|f3d6bf|f2cf3a|f2f0ea|f2cf3a|fff4b0|long|none|jumpsuit|none|glow,emblem|beam|light
+Queen Maeve	h|m|n|f3d6bf|c0401d|cfd6dd|1f3f8a|e8b84a|long|none|armour|sword|shield|blade|none
+The Deep	h|m|n|f1d0b0|1a1a1a|2e6b3a|2e6b3a|e8b84a|short|none|jumpsuit|none|fins,emblem|fists|water
+A-Train	h|m|t|8d5524|1a1a1a|1f3f8a|f2f0ea|f2f0ea|short|visor|jumpsuit|none|emblem|fists|lightning
+Black Noir	h|m|w|1f1f1f|1a1a1a|1f1f1f|1f1f1f|f2f0ea|none|helm|armour|katana||blade|none
+Kimiko Miyashiro	h|m|t|f3d6bf|1a1a1a|3a3a44|1f1f1f|c0262f|short|none|jumpsuit|none||claws|blood
+Frenchie	h|m|n|f1d0b0|1a1a1a|5a4632|1f1f1f|8bd34a|long|none|coat|gun|beard|gadget|poison
+Mother's Milk	h|m|w|5a3a24|1a1a1a|3a4a2a|1f1f1f|f2f0ea|bald|none|vest|gun|beard|gun|none
+Stormfront	h|m|n|f3d6bf|1a1a1a|1f1f1f|c0262f|ffe14d|short|none|jumpsuit|none|cape|magic|lightning
+Soldier Boy	h|m|w|f1d0b0|1a1a1a|3a4a2a|1f1f1f|e8b84a|short|helmet|uniform|shield|emblem|beam|light
+Victoria Neuman	h|m|t|e0ac69|1a1a1a|1f1f1f|1f1f1f|c0262f|long|none|suit|none||psychic|blood
+Stan Edgar	h|m|n|5a3a24|3b3b3b|1f1f1f|1f1f1f|f2f0ea|short|none|suit|none|glasses|gadget|none
+Ashley Barrett	h|m|t|f3d6bf|e6c35c|f2a0c0|1f1f1f|f2f0ea|short|none|suit|none||gadget|none
+Translucent	h|m|n|cfe8f8|cfe8f8|cfe8f8|cfe8f8|f2f0ea|bald|none|bare|none|glow|fists|none
+Lamplighter	h|m|t|f1d0b0|5a3a1a|5a4632|1f1f1f|ff7a1a|short|none|coat|staff|emblem|magic|fire
+Ryan Butcher	h|s|t|f1d0b0|f2e0a0|3f4f8a|1f1f1f|c0262f|short|none|tunic|none|glow_eyes|beam|fire
+Sister Sage	h|m|t|5a3a24|1a1a1a|1f1f1f|1f1f1f|e8b84a|braids|none|suit|book|glasses|psychic|psychic
+Firecracker	h|m|t|f3d6bf|f2cf3a|c0262f|1f3f8a|ff7a1a|long|none|jumpsuit|none|emblem|magic|fire
+Love Sausage	h|m|w|f1d0b0|1a1a1a|c0262f|1f1f1f|e8b84a|bald|none|suit|none|beard|blunt|none
+Crimson Countess	h|m|t|f3d6bf|1a1a1a|c0262f|1f1f1f|c0262f|long|none|jumpsuit|none|glow|beam|fire
+Gunpowder	h|m|n|f1d0b0|1a1a1a|8a6a3a|1f1f1f|e8b84a|short|hat|coat|gun|moustache|gun|none
+Termite	h|s|t|f1d0b0|5a3a1a|ef8a2c|1f1f1f|f2f0ea|short|none|jumpsuit|none|antennae|fists|none
+Popclaw	h|m|t|f3d6bf|5a3a1a|c0262f|1f1f1f|cfd6dd|short|none|jumpsuit|claws||claws|none
+Ezekiel	h|m|t|f1d0b0|5a3a1a|f2f0ea|1f1f1f|e8b84a|slick|none|suit|none||fists|none
+Supersonic	h|m|n|f1d0b0|5a3a1a|3fa0ff|f2f0ea|f2f0ea|short|none|jumpsuit|none|emblem|fists|wind
+Black Noir II	h|m|n|1f1f1f|1a1a1a|1f1f1f|1f1f1f|f2f0ea|none|helm|armour|katana||blade|none
+Tek Knight	r|m|w|9aa3ad|1a1a1a|9aa3ad|3a3a44|3fa0ff|none|none|armour|blaster|glow_eyes|gadget|tech
+Grace Mallory	h|m|t|f1d8c8|d9d4c7|1f1f1f|1f1f1f|f2f0ea|short|none|coat|gun||gun|none
+Marie Moreau	h|m|t|5a3a24|1a1a1a|1f1f1f|1f1f1f|c0262f|short|none|jumpsuit|none||magic|blood
+Jordan Li	h|m|n|e8c4a0|1a1a1a|3a3a44|1f1f1f|f2f0ea|short|none|jumpsuit|none||fists|light
+Andre Anderson	h|m|n|5a3a24|1a1a1a|1f1f1f|1f1f1f|3fa0ff|short|none|jumpsuit|none||magic|tech
+Cate Dunlap	h|m|t|f3d6bf|e6c35c|f2f0ea|1f1f1f|ff6ad5|long|none|dress|none||psychic|psychic
+Golden Boy	h|m|n|f2cf3a|f2cf3a|f2cf3a|e8b84a|ffe14d|short|none|jumpsuit|none|glow|beam|fire
+Sam Riordan	h|l|w|f1d0b0|1a1a1a|3a3a3a|1f1f1f|f2f0ea|long|none|tunic|none|beard|fists|none
+Emma Meyer	h|s|t|f3d6bf|5a3a1a|f2a0c0|1f1f1f|f2f0ea|long|none|tunic|none||fists|none
+Polarity	h|m|n|5a3a24|9aa3ad|1f1f1f|1f1f1f|3fa0ff|short|none|jumpsuit|none|beard|magic|tech

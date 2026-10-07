@@ -1,0 +1,80 @@
+Rick Sanchez	h|m|t|e8e0d8|9fd0e8|f2f0ea|8a6a3a|4caf50|spiky|none|labcoat|blaster||gun|tech
+Morty Smith	h|s|n|f1d0b0|8a5a32|f2cf3a|3f4f8a|f2cf3a|short|none|tunic|none||fists|none
+Neo	h|m|t|f1d0b0|1a1a1a|1f1f1f|1f1f1f|4caf50|slick|none|coat|none|glasses|fists|psychic
+Morpheus	h|m|n|5a3a24|1a1a1a|1f1f1f|1f1f1f|4caf50|bald|none|coat|none|glasses|fists|none
+Trinity	h|m|t|f3d6bf|1a1a1a|1f1f1f|1f1f1f|4caf50|short|none|jumpsuit|gun|glasses|gun|none
+Agent Smith	h|m|n|f1d0b0|3b2a1a|1f1f1f|1f1f1f|f2f0ea|slick|none|suit|gun|glasses|fists|tech
+Ben Tennyson	h|s|t|f1d0b0|5a3a1a|f2f0ea|2e8b3a|4caf50|short|none|tunic|none|emblem,glow|summon|nature
+Vilgax	h|l|w|4f8a4a|1a1a1a|1f1f1f|8a5a32|c0262f|bald|none|armour|sword|redeyes,spikes|blade|none
+Finn the Human	h|s|t|f3d6bf|f2f0ea|3fa0ff|1f3f8a|f2f0ea|none|hood|tunic|sword|ears_round|blade|none
+Jake the Dog	q|m|w|f2cf3a|f2cf3a|f2cf3a|f2cf3a|1f1f1f|none|none|bare|none|ears_round|fists|none
+Marceline	h|m|t|bfc0c8|1a1a1a|3a3a44|3f4f8a|c0262f|long|none|tunic|axe|fangs|blade|dark
+Ice King	h|m|t|8fb8e8|f2f0ea|3f4fa8|3f4fa8|c0262f|long|crown|robe|none|beard|magic|ice
+Princess Bubblegum	h|m|t|f2a0c0|e86ab8|ff6ad5|8e5bd0|f2cf3a|long|crown|dress|none||gadget|tech
+Homer Simpson	h|m|w|f2cf3a|5a3a1a|f2f0ea|3f7fd6|f2f0ea|bald|none|tunic|none|beard|fists|none
+Bart Simpson	h|s|t|f2cf3a|f2cf3a|ef8a2c|3f7fd6|8a5a32|spiky|none|tunic|none||gadget|none
+SpongeBob SquarePants	o|s|n|f2e65a|f2e65a|f2e65a|8a5a32|c0262f|none|none|bare|none|spots,feet,nubs,grin|fists|water
+Patrick Star	o|m|n|f2a0b0|f2a0b0|f2a0b0|4caf50|8e5bd0|none|none|bare|none|nubs,feet|fists|none
+Plankton	c|s|t|2e8b3a|2e8b3a|2e8b3a|2e8b3a|c0262f|none|none|bare|none|antennae,redeyes|gadget|tech
+Peter Griffin	h|m|w|f1d0b0|5a3a1a|f2f0ea|2e6b3a|f2f0ea|short|none|tunic|none|glasses|fists|none
+Stewie Griffin	c|s|n|f1d0b0|8a5a32|f2cf3a|c0262f|c0262f|none|none|tunic|blaster||gun|tech
+Darth Vader	h|l|w|1f1f1f|1f1f1f|1f1f1f|1f1f1f|c0262f|none|helm|armour|lightsaber|cape|blade|dark
+Luke Skywalker	h|m|n|f1d0b0|e6c35c|1f1f1f|1f1f1f|4caf50|short|none|robe|lightsaber||blade|psychic
+Yoda	c|s|t|9ad86a|f2f0ea|8a6a3a|5a3a1a|4caf50|none|none|robe|lightsaber|ears|blade|psychic
+Han Solo	h|m|n|f1d0b0|5a3a1a|f2f0ea|1f1f1f|c0262f|short|none|vest|blaster||gun|none
+Obi-Wan Kenobi	h|m|n|f1d0b0|8a5a32|e8dcc0|8a6a3a|3fa0ff|short|none|robe|lightsaber|beard|blade|psychic
+Emperor Palpatine	h|m|t|e8e0d8|e8e0d8|1f1f1f|1f1f1f|8fe9ff|none|hood|robe|none|glow_eyes|magic|lightning
+Din Djarin	h|m|n|cfd6dd|1a1a1a|9aa3ad|5a4632|1f1f1f|none|helm|armour|rifle|cape|gun|none
+Grogu	c|s|n|9ad86a|f2f0ea|e8dcc0|e8dcc0|1f1f1f|none|none|robe|none|ears|psychic|psychic
+Darth Maul	h|m|t|c0262f|1a1a1a|1f1f1f|1f1f1f|c0262f|bald|none|robe|lightsaber|horns,stripes|blade|dark
+John Wick	h|m|n|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|none|suit|gun|beard|gun|none
+T-800	r|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|c0262f|none|none|coat|rifle|glasses,redeyes|gun|tech
+Predator	h|l|w|8a8a5a|1a1a1a|5a5f66|3a3a3a|c0262f|braids|none|armour|claws|fangs,glow|blade|tech
+Xenomorph	h|l|t|1f1f24|1f1f24|1f1f24|1f1f24|8fe9ff|none|none|bare|claws|tail,spikes|bite|poison
+Ellen Ripley	h|m|t|f3d6bf|3b2a1a|8a8a6a|3a3a3a|ff7a1a|short|none|jumpsuit|rifle||gun|fire
+Indiana Jones	h|m|n|f1d0b0|5a3a1a|8a6a3a|e8dcc0|8a5a32|short|hat|coat|whip||blunt|none
+James Bond	h|m|n|f1d0b0|5a3a1a|1f1f1f|1f1f1f|f2f0ea|short|none|suit|gun||gun|none
+Jack Sparrow	h|m|t|e0ac69|1a1a1a|f2f0ea|5a3a1a|c0262f|braids|hat|coat|sword|beard|blade|none
+Shrek	h|l|w|9ad86a|9ad86a|e8dcc0|8a6a3a|8a5a32|bald|none|vest|none|ears_round|fists|none
+Donkey	q|m|n|8a8f96|5a5f66|8a8f96|8a8f96|1f1f1f|none|none|bare|none|ears_long|bite|none
+Buzz Lightyear	h|m|n|f1d0b0|5a3a1a|f2f0ea|8e5bd0|4caf50|none|helmet|armour|blaster|wings|beam|tech
+Woody	h|m|t|f1d0b0|5a3a1a|f2cf3a|3f7fd6|c0262f|short|hat|vest|none|scarf|blunt|none
+Gandalf	h|m|n|f1d0b0|d9d4c7|9aa3ad|5a5f66|fff4b0|long|wizard|robe|staff|beard|magic|light
+Aragorn	h|m|n|f1d0b0|3b2a1a|3a3a2a|5a4632|cfd6dd|long|none|coat|sword|beard|blade|none
+Legolas	h|m|t|f3d6bf|f2e8b0|2e6b3a|8a6a3a|e8b84a|long|none|tunic|bow|ears|bow|none
+Gollum	h|s|t|bfc0a8|9aa3ad|bfc0a8|bfc0a8|8fe9ff|bald|none|bare|none|ears,glow_eyes|bite|none
+Sauron	h|x|w|3a3a3a|1a1a1a|3a3a3a|1f1f1f|ff7a1a|none|helm|armour|mace|spikes,glow_eyes|blunt|fire
+Optimus Prime	r|x|w|c0262f|3f4fa8|c0262f|3f4fa8|8fe9ff|none|none|armour|blaster|glow_eyes|gun|tech
+Megatron	r|x|w|9aa3ad|1a1a1a|9aa3ad|5a5f66|c0262f|none|none|armour|cannon|redeyes|gun|tech
+Godzilla	h|x|w|3f4f4a|1a1a1a|3f4f4a|3f4f4a|8fe9ff|none|none|bare|none|spikes,tail|breath|light
+King Kong	h|x|w|3a2a2a|1a1a1a|3a2a2a|3a2a2a|e8b84a|none|none|fur|none||fists|none
+Aang	h|s|t|f1d0b0|f1d0b0|ef8a2c|f2cf3a|3fa0ff|bald|none|robe|staff|stripes|magic|wind
+Zuko	h|m|t|f3d6bf|1a1a1a|c0262f|1f1f1f|ff7a1a|ponytail|none|tunic|sword||magic|fire
+Toph Beifong	h|s|t|f3d6bf|1a1a1a|2e8b3a|f2cf3a|2e8b3a|bun|headband|tunic|none||magic|earth
+Katara	h|m|t|c68642|3b2a1a|3f7fd6|1f3f8a|3fa0ff|braids|none|dress|none||magic|water
+Azula	h|m|t|f3d6bf|1a1a1a|c0262f|1f1f1f|3fa0ff|bun|crown|armour|none||magic|fire
+Scooby-Doo	q|l|n|a8783a|1a1a1a|a8783a|a8783a|3fa0ff|none|none|bare|none|spots,collar,ears_floppy|bite|none
+Bugs Bunny	h|m|t|9aa3ad|f2f0ea|9aa3ad|f2f0ea|ef8a2c|none|none|bare|none|ears_long,gloves|gadget|none
+Samurai Jack	h|m|t|f1d0b0|1a1a1a|f2f0ea|f2f0ea|cfd6dd|bun|none|robe|katana||blade|none
+Aku	h|x|n|1f1f1f|ff7a1a|1f1f1f|1f1f1f|c0262f|none|none|bare|none|horns,flame_head,glow_eyes|magic|dark
+Walter White	h|m|n|f1d0b0|f1d0b0|4caf50|1f1f1f|8fe9ff|bald|hat|coat|none|glasses,beard|gadget|poison
+Eleven	h|s|t|f3d6bf|5a3a1a|f2a0c0|3f4f8a|c0262f|buzz|none|dress|none|glow|psychic|psychic
+Vecna	h|l|n|8a3a2a|1a1a1a|8a3a2a|5a2a1a|c0262f|bald|none|bare|none|spikes,redeyes|psychic|dark
+The Doctor	h|m|t|f1d0b0|5a3a1a|5a4a3a|1f1f1f|8fe9ff|messy|none|coat|wand|scarf|gadget|tech
+Dalek	r|m|w|8a6a3a|e8b84a|8a6a3a|5a3a1a|3fa0ff|none|none|robe|blaster|noarms,spots|beam|tech
+Sherlock Holmes	h|m|t|f1d0b0|3b2a1a|5a4a3a|1f1f1f|8a5a32|short|hat|coat|none|scarf|gadget|none
+Mr. Bean	h|m|t|f1d0b0|3b2a1a|8a6a3a|3a3a3a|c0262f|short|none|suit|none||gadget|none
+John Rambo	h|m|w|e8c4a0|1a1a1a|e8c4a0|3a4a2a|c0262f|long|headband|bare|bow|belt|bow|explosion
+Rocky Balboa	h|m|w|f1d0b0|1a1a1a|f1d0b0|3f4f8a|c0262f|short|none|bare|none|gloves|fists|none
+Hannibal Lecter	h|m|n|f1d0b0|5a3a1a|3f7fd6|1f1f1f|e8dcc0|slick|facemask|jumpsuit|dagger||blade|none
+Freddy Krueger	h|m|t|c06a4a|1a1a1a|c0262f|2e6b3a|cfd6dd|none|hat|tunic|claws|stripes|claws|dark
+Jason Voorhees	h|l|w|f1d0b0|1a1a1a|3a4a3a|3a3a3a|f2f0ea|none|facemask|coat|sword||blade|none
+Michael Myers	h|l|n|f2f0ea|5a3a1a|3a4a5a|3a4a5a|f2f0ea|short|none|jumpsuit|dagger||blade|none
+Pennywise	h|m|t|f2f0ea|ef6a2a|f2f0ea|c0262f|c0262f|spiky|none|tunic|none|grin,redeyes|magic|dark
+Chucky	h|s|t|f1d0b0|ef6a2a|3f7fd6|c0262f|cfd6dd|messy|none|jumpsuit|dagger|stripes|blade|none
+Jack Torrance	h|m|n|f1d0b0|1a1a1a|8a3a2a|3a3a3a|9aa3ad|slick|none|coat|axe|grin|blade|none
+Wednesday Addams	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|f2f0ea|braids|none|dress|none||psychic|dark
+Arthur Morgan	h|m|w|e8c4a0|8a5a32|8a6a3a|3a3a3a|8a5a32|short|hat|coat|gun|beard|gun|none
+Master Chief	r|l|w|4f6a3a|1a1a1a|4f6a3a|3a4a2a|ef8a2c|none|none|armour|rifle||gun|tech
+Kratos	h|l|w|e8e0d8|1a1a1a|e8e0d8|8a3a2a|c0262f|bald|none|bare|axe|beard,stripes|blade|ice
+Geralt of Rivia	h|m|w|f1d0b0|f2f0ea|1f1f1f|1f1f1f|e8b84a|long|none|armour|sword|beard|blade|fire
