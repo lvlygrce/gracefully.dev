@@ -240,7 +240,7 @@
     if (w && w.id === me.id) buzz([30, 40, 30]);
     app.innerHTML = `${header()}<h1 class="title title--xl arrive">${esc(title)}<span class="accent">.</span></h1>
       ${lotCard(c, w ? `<br /><span class="hand">for $${r.amount}</span>` : `<br /><span class="hand">gone for good</span>`)}
-      <p class="hand">next card in a moment</p>${myTeam()}`;
+      <p class="hand">${state.settings.autoNext ? "next card in a moment" : me.admin ? "move on when you're ready" : "next card when the host moves on"}</p>${myTeam()}`;
   }
 
   // Leave at any time: clears this phone's game so it won't rejoin it.

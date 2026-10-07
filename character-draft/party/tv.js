@@ -21,9 +21,12 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "crowd", team: 5, skips: 2, bidSeconds: 10, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
+    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
     safe.get(PREFS_KEY) || {},
   );
+  // The crowd vote used to be the default, so older saved settings carry it
+  // without anyone having picked it: move them to Gemini once.
+  if (!prefs.v) { if (prefs.judge === "crowd") prefs.judge = "gemini"; prefs.v = 2; safe.set(PREFS_KEY, prefs); }
   prefs.worlds = (prefs.worlds || []).filter(w => U[w]);
   if (!prefs.worlds.length) prefs.worlds = Object.keys(U);
 
@@ -96,6 +99,7 @@
       filmTier: prefs.filmTier,
       skips: prefs.skips,
       bidSeconds: prefs.bidSeconds,
+      autoNext: prefs.autoNext,
       voteSeconds: prefs.voteSeconds,
       worldsLabel: prefs.worlds.map(w => U[w].name).join(" + "),
     };
@@ -201,9 +205,9 @@
           <fieldset>
             <legend>Who decides each fight</legend>
             <div class="opts">
-              ${opt("judge", "crowd", "The crowd votes on their phones", prefs.judge === "crowd")}
               ${opt("judge", "gemini", "AI judge: Gemini", prefs.judge === "gemini")}
               ${opt("judge", "local", "AI judge: on this computer", prefs.judge === "local")}
+              ${opt("judge", "crowd", "The crowd votes on their phones", prefs.judge === "crowd")}
             </div>
             ${prefs.judge === "gemini" || (prefs.judge === "crowd" && prefs.casualties) ? (key
               ? `<p class="muted" style="margin-top:.4rem">${J.gemini.key() ? "Gemini key saved on this computer." : "Using Grace's PIN for Gemini."} <button class="btn btn--quiet" type="button" id="forget-key">Forget it</button></p>`
@@ -221,7 +225,14 @@
           </fieldset>
           <fieldset>
             <legend>Clock after each bid</legend>
-            <div class="opts">${[8, 10, 15].map(n => opt("bidsecs", n, `${n} seconds`, prefs.bidSeconds === n)).join("")}</div>
+            <div class="opts">${[3, 5, 8, 10, 15].map(n => opt("bidsecs", n, `${n} seconds`, prefs.bidSeconds === n)).join("")}</div>
+          </fieldset>
+          <fieldset>
+            <legend>After each card is sold</legend>
+            <div class="opts">
+              ${opt("autonext", "off", "Wait for the host to move on", !prefs.autoNext)}
+              ${opt("autonext", "on", "Next card comes up by itself", prefs.autoNext)}
+            </div>
           </fieldset>
           <fieldset>
             <legend>Lasting harm, with three or more players</legend>
@@ -278,6 +289,9 @@
       prefs.filmTier = i.value; savePrefs(); sendSettings(); priceFilms();
     }));
     if (prefs.film !== "off") priceFilms();
+    app.querySelectorAll('[name="autonext"]').forEach(i => i.addEventListener("change", () => {
+      prefs.autoNext = i.value === "on"; savePrefs(); sendSettings(); updateStart();
+    }));
     [["team", "team"], ["skips", "skips"], ["bidsecs", "bidSeconds"]].forEach(([name, key]) => {
       app.querySelectorAll(`[name="${name}"]`).forEach(i => i.addEventListener("change", () => {
         prefs[key] = Number(i.value); savePrefs(); sendSettings(); updateStart();
