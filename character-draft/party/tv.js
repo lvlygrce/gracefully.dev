@@ -208,7 +208,7 @@
             ${prefs.judge === "gemini" || (prefs.judge === "crowd" && prefs.casualties) ? (key
               ? `<p class="muted" style="margin-top:.4rem">${J.gemini.key() ? "Gemini key saved on this computer." : "Using Grace's PIN for Gemini."} <button class="btn btn--quiet" type="button" id="forget-key">Forget it</button></p>`
               : `<label class="field" style="margin-top:.5rem"><span class="field__label">Gemini API key (free from Google AI Studio), or Grace's PIN</span>
-                   <input class="field__input" id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>`)
+                   <input class="field__input" id="key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" value="${esc(typed.key || "")}" /></label>`)
               : prefs.judge === "local" ? `<p class="muted" style="margin-top:.4rem">Runs Qwen 3.5 on this computer's graphics card: a 2.4GB download the first time, and a minute or two per fight.</p>` : ""}
           </fieldset>
           <fieldset>
@@ -242,7 +242,7 @@
             ${prefs.film !== "off" ? `<div class="opts" style="margin-top:.4rem">${["quick", "feature", "epic"].map(t => opt("filmtier", t, `${t[0].toUpperCase() + t.slice(1)} <span class="chip__meta" data-tierprice="${t}"></span>`, prefs.filmTier === t)).join("")}</div>
               <p class="muted" id="film-note" style="margin-top:.3rem"></p>
               ${J.pin.get() ? "" : Film.ownKey.get() ? `<p class="muted">Films use your Higgsfield key.</p>` : `<label class="field" style="margin-top:.4rem"><span class="field__label">Higgsfield key (key id:secret), or Grace's PIN</span>
-                <input class="field__input" id="hf-key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>`}` : ""}
+                <input class="field__input" id="hf-key" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" value="${esc(typed["hf-key"] || "")}" /></label>`}` : ""}
           </fieldset>
           <p class="muted">Everyone gets $${state.settings.budget}. One character at a time goes up for auction: whoever's turn it is
             opens the bidding or spends a skip to send it away. Then anyone can raise from their phone, and every bid resets the clock.
@@ -284,14 +284,45 @@
       }));
     });
     on("forget-key", () => { J.gemini.forgetKey(); render(true); });
-    const keyInput = document.getElementById("key");
-    if (keyInput) keyInput.addEventListener("input", updateStart);
+    ["key", "hf-key"].forEach(watchKey);
     on("start", startDraft);
     updateCloud();
     updateStart();
   }
 
   function sendSettings() { net.send({ t: "host:settings", settings: serverSettings() }); }
+
+  /* Keys and the PIN are kept as soon as they're entered, so changing a
+     setting (which redraws the lobby) never loses them, and the PIN typed
+     in either box unlocks both Gemini and films at once. */
+  const typed = {};
+  let pinTimer = null;
+  function watchKey(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", () => {
+      typed[id] = el.value;
+      updateStart();
+      clearTimeout(pinTimer);
+      const v = el.value.trim();
+      if (J.pin.looksLike(v)) pinTimer = setTimeout(() => tryPin(v), 350);
+    });
+    el.addEventListener("change", () => {
+      const v = el.value.trim();
+      if (!v || J.pin.looksLike(v)) return;
+      if (id === "key") { J.gemini.saveKey(v); typed.key = ""; render(true); }
+      else if (Film.ownKey.looksLike(v)) { Film.ownKey.set(v); typed["hf-key"] = ""; render(true); }
+      else { error = "That doesn't look like a Higgsfield key (key id:secret)."; render(true); }
+    });
+  }
+
+  async function tryPin(v) {
+    let ok = false;
+    try { ok = await J.pin.verify(v); } catch (err) { error = err.message; return render(true); }
+    if (!ok) { error = "That PIN isn't right."; return render(true); }
+    typed.key = ""; typed["hf-key"] = ""; error = "";
+    render(true);
+  }
 
   // What filming will cost, per fight and for the whole tournament.
   async function priceFilms() {

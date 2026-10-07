@@ -13,6 +13,17 @@
   const NAME_KEY = "character-draft:party:name";
 
   let session = safe.get(ME_KEY);           // { pin, playerId, token, name }
+  // Opened with a different game's PIN (a new QR code, say): leave the old
+  // game first rather than being pulled back into it.
+  const urlPin = (location.hash.match(/\d{5}/) || [])[0] || "";
+  let switching = !!(session && urlPin && urlPin !== session.pin);
+  let leaving = false;                      // we asked to leave, so "gone" is expected
+  // A new QR code opened in a tab that already has this page only changes the
+  // hash, which doesn't reload anything, so reload to go through the check above.
+  addEventListener("hashchange", () => {
+    const pin = (location.hash.match(/\d{5}/) || [])[0];
+    if (pin && (!session || pin !== session.pin)) location.reload();
+  });
   let state = null, me = null;
   let view = null;
   let flash = "";                           // a one-off message on the join screen
@@ -30,12 +41,17 @@
       if (session) net.send({ t: "resume", pin: session.pin, playerId: session.playerId, token: session.token });
     },
     onMessage(msg) {
+      if (msg.t === "joined" && switching) {
+        net.send({ t: "leave" });           // back in the old game just long enough to leave it
+        return;
+      }
       if (msg.t === "joined") {
         joining = false;
         session = { pin: msg.pin, playerId: msg.playerId, token: msg.token, name: msg.name };
         safe.set(ME_KEY, session);
         if (location.hash) history.replaceState(null, "", location.pathname);
       } else if (msg.t === "state") {
+        if (switching || leaving) return;
         clock.sync(msg.state.serverNow);
         const was = state;
         state = msg.state; me = msg.me;
@@ -47,9 +63,12 @@
       } else if (msg.t === "error") {
         joining = false; flash = msg.message; render(true);
       } else if (msg.t === "gone" || msg.t === "kicked") {
-        joining = false;
+        const wasLeaving = leaving || switching;
+        leaving = false; switching = false;
         safe.remove(ME_KEY); session = null; state = null; me = null;
-        flash = msg.t === "kicked" ? "The host removed you from that game." : "That game has ended. Join a new one with the PIN on the TV.";
+        if (joining) return;                 // left the old game on the way to a new one
+        flash = msg.t === "kicked" ? "The host removed you from that game."
+          : wasLeaving ? flash : "That game has ended. Join a new one with the PIN on the TV.";
         render(true);
       } else if (msg.t === "replaced") {
         flash = "You've joined from another tab or phone, so this one has stepped aside.";
@@ -79,6 +98,7 @@
     const s = state;
     ({ lobby: lobbyView, auction: auctionView, sold: soldView, teams: teamsView, bracket: bracketView, match: matchView, champion: championView })[s.phase]();
     adminBar();
+    leaveLink();
     tick();
     fit();
   }
@@ -96,7 +116,8 @@
     app.innerHTML = `
       <p class="hand arrive">Character Draft party</p>
       <h1 class="title title--xl arrive" style="--i:1">Join the game<span class="accent">.</span></h1>
-      ${session && !state ? `<p class="hand">Rejoining…</p>` : ""}
+      ${session && !state && !switching ? `<p class="hand">Rejoining your game…</p>
+        <button class="btn btn--quiet" type="button" id="forget">Not that game? Leave it</button>` : ""}
       <form id="join" class="arrive" style="--i:2; margin-top: var(--space-md)">
         <label class="field"><span class="field__label">Game PIN, from the TV</span>
           <input class="field__input field__input--pin" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" value="${esc(hashPin)}" required /></label>
@@ -114,7 +135,16 @@
       if (pin.length !== 5 || !nm) { flash = "Enter the 5-digit PIN and your name."; return render(true); }
       safe.set(NAME_KEY, nm);
       flash = ""; joining = true;
+      // Still attached to another game: leave it, then join this one.
+      if (session && session.pin !== pin) { leaving = true; net.send({ t: "leave" }); }
       net.send({ t: "join", pin, name: nm });
+      render(true);
+    });
+    on("forget", () => {
+      // The old game may be gone or unreachable; forget it either way.
+      leaving = true;
+      net.send({ t: "leave" });
+      safe.remove(ME_KEY); session = null; state = null; me = null;
       render(true);
     });
     const first = form.querySelector(hashPin ? '[name="name"]' : '[name="pin"]');
@@ -125,12 +155,11 @@
     app.innerHTML = `${header()}
       <h1 class="title title--xl arrive">You're in<span class="accent">.</span></h1>
       <p class="big-note arrive" style="--i:1">Watch the TV. The draft starts when the host is ready.</p>
-      <p class="hand arrive" style="--i:2">${state.players.length} players so far</p>
+      <p class="hand arrive" style="--i:2">${state.players.length} ${state.players.length === 1 ? "player" : "players"} so far</p>
       <p class="muted" style="margin-top: var(--space-md)">How it works: one character at a time goes up for auction. On your turn,
         open the bidding or use a skip to send them away; you have ${state.settings.skips} skip${state.settings.skips === 1 ? "" : "s"}.
         Anyone can raise, and every bid resets the clock. You have $${state.settings.budget} for ${state.settings.team} characters.</p>
-      <div class="controls"><button class="btn btn--quiet" type="button" id="leave">Leave this game</button></div>`;
-    on("leave", () => { net.send({ t: "leave" }); });
+`;
   }
 
   function lotCard(c, extra) {
@@ -212,6 +241,22 @@
     app.innerHTML = `${header()}<h1 class="title title--xl arrive">${esc(title)}<span class="accent">.</span></h1>
       ${lotCard(c, w ? `<br /><span class="hand">for $${r.amount}</span>` : `<br /><span class="hand">gone for good</span>`)}
       <p class="hand">next card in a moment</p>${myTeam()}`;
+  }
+
+  // Leave at any time: clears this phone's game so it won't rejoin it.
+  function leaveLink() {
+    const box = document.createElement("div");
+    box.className = "controls leave-link";
+    box.innerHTML = `<button class="btn btn--quiet" type="button" id="leave">Leave this game</button>`;
+    app.appendChild(box);
+    on("leave", () => {
+      if (state.phase !== "lobby" && !confirm("Leave this game? You won't be able to rejoin it, but your team stays in the tournament.")) return;
+      leaving = true;
+      net.send({ t: "leave" });
+      safe.remove(ME_KEY); session = null; state = null; me = null; view = null;
+      flash = "You've left the game.";
+      render(true);
+    });
   }
 
   // The first to join runs the show: a button for whatever comes next.

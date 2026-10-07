@@ -797,7 +797,7 @@
           <p class="judge__key">Using Grace's PIN for Gemini and films.
             <button class="btn btn--quiet btn--inline" type="button" id="forget-key">Forget it</button></p>` : `
           <label class="field"><span class="field__label">Gemini API key, or Grace's PIN</span>
-            <input class="field__input field__input--key" id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key, or the PIN" /></label>
+            <input class="field__input field__input--key" id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your key, or the PIN" value="${esc(typedKeys["key-input"] || "")}" /></label>
           <p class="judge__fine">Get a key free at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>.
             It stays in this browser and is only ever sent to Google.</p>`)
         : `
@@ -823,7 +823,7 @@
         : Film.ownKey.get() ? `<p class="judge__key">Your Higgsfield key is saved in this browser.
             <button class="btn btn--quiet btn--inline" type="button" id="forget-hf">Forget it</button></p>`
         : `<label class="field field--code"><span class="field__label">Higgsfield API key (key id:secret), or Grace's PIN</span>
-            <input class="field__input field__input--key" id="code-input" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" /></label>
+            <input class="field__input field__input--key" id="code-input" type="password" autocomplete="off" spellcheck="false" placeholder="Your key, or the PIN" value="${esc(typedKeys["code-input"] || "")}" /></label>
           <p class="judge__fine">Your own key is kept in this browser and passed to Higgsfield through the party server for each film; it's never stored there.</p>`}
 
       ${judging.error ? `<p class="judge__warn">${esc(judging.error)}</p>` : ""}
@@ -842,6 +842,32 @@
     }));
     on("forget-key", () => { J.gemini.forgetKey(); renderJudge(worlds, teams, isShared); });
     on("forget-hf", () => { Film.ownKey.clear(); renderJudge(worlds, teams, isShared); });
+
+    // Keep what's typed through redraws, and take the PIN (in either box) as
+    // soon as it's entered, so it never has to be typed twice.
+    ["key-input", "code-input"].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener("input", () => {
+        typedKeys[id] = el.value;
+        clearTimeout(pinTimer);
+        const v = el.value.trim();
+        if (!J.pin.looksLike(v)) return;
+        pinTimer = setTimeout(async () => {
+          let ok = false;
+          try { ok = await J.pin.verify(v); } catch (err) { judging.error = err.message; return renderJudge(worlds, teams, isShared); }
+          judging.error = ok ? "" : "That PIN isn't right.";
+          if (ok) { typedKeys["key-input"] = ""; typedKeys["code-input"] = ""; }
+          renderJudge(worlds, teams, isShared);
+        }, 350);
+      });
+      el.addEventListener("change", () => {
+        const v = el.value.trim();
+        if (!v || J.pin.looksLike(v)) return;
+        if (id === "key-input") { J.gemini.saveKey(v); typedKeys[id] = ""; renderJudge(worlds, teams, isShared); }
+        else if (Film.ownKey.looksLike(v)) { Film.ownKey.set(v); typedKeys[id] = ""; renderJudge(worlds, teams, isShared); }
+      });
+    });
 
     const storageLine = document.getElementById("storage-line");
     if (storageLine) {
@@ -993,7 +1019,9 @@
     };
   }
 
-  let filmWatch = null;   // the film id being polled, so there's only ever one poller
+  let filmWatch = null;
+  const typedKeys = {};
+  let pinTimer = null;   // the film id being polled, so there's only ever one poller
 
   function renderFilm(worlds, teams, isShared, verdict) {
     const body = document.getElementById("judge-body");
