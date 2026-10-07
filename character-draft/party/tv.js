@@ -21,7 +21,7 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
+    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, sound: "all", announceNames: true, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
     safe.get(PREFS_KEY) || {},
   );
   // The crowd vote used to be the default, so older saved settings carry it
@@ -37,11 +37,69 @@
   let error = "";
   // Browsers only allow sound after someone has clicked the page once.
   let soundOk = false;
+  const Sound = window.Sound;
+  Sound.setMode(prefs.sound);
   document.addEventListener("pointerdown", () => {
+    Sound.unlock();
+    if (soundOk) return;
     soundOk = true;
     const n = document.getElementById("sound-note");
     if (n) n.textContent = "";
-  }, { once: true });
+  });
+
+  // The corner speaker: all sound, effects only, or silence.
+  const SOUND_LABEL = { all: "Sound: effects and music", effects: "Sound: effects only", off: "Sound off" };
+  function soundButton() {
+    const b = document.getElementById("sound-toggle");
+    if (!b) return;
+    b.dataset.mode = prefs.sound;
+    b.setAttribute("aria-label", SOUND_LABEL[prefs.sound]);
+    b.title = SOUND_LABEL[prefs.sound];
+  }
+  function setSound(m) {
+    prefs.sound = m; savePrefs(); Sound.setMode(m); soundButton();
+    app.querySelectorAll('[name="sound"]').forEach(i => { i.checked = i.value === m; });
+  }
+  document.getElementById("sound-toggle")?.addEventListener("click", () =>
+    setSound({ all: "effects", effects: "off", off: "all" }[prefs.sound] || "all"));
+  soundButton();
+
+  // Game-show cues from what changed between two states.
+  function cues(was, s) {
+    Sound.music(["lobby", "teams", "bracket"].includes(s.phase) ? "lobby" : ["auction", "sold"].includes(s.phase) ? "auction" : null);
+    if (!was) return;
+    const same = (a, b) => a.phase === "match" && b.phase === "match" && a.match.id === b.match.id;
+    if (s.phase === "lobby" && was.phase === "lobby" && s.players.length > was.players.length) Sound.play("join", 0.8);
+    if (s.phase === "auction" && s.lots !== was.lots) {
+      Sound.play("reveal");
+      const c = card(s.lot.card);
+      if (c && prefs.announceNames) Sound.say(c.name);
+    }
+    if (s.phase === "auction" && was.phase === "auction" && s.lots === was.lots && s.lot.bids.length > was.lot.bids.length)
+      Sound.play("bid", 1, 1 + Math.min(0.35, s.lot.bids.length * 0.035));   // each raise a touch higher
+    if (s.phase === "sold" && was.phase !== "sold") Sound.play(s.sold && s.sold.winner ? "sold" : "skipped");
+    if (s.phase === "match" && !same(s, was)) Sound.play("fight");
+    if (s.phase === "match" && s.match.stage === "vote" && same(s, was) && (s.match.voted || 0) > (was.match.voted || 0)) Sound.play("vote", 0.6);
+    if (s.phase === "match" && s.match.stage === "result" && !(same(s, was) && was.match.stage === "result")) Sound.play("winner");
+    if (s.phase === "champion" && was.phase !== "champion") Sound.play("champion");
+  }
+
+  // Ticks for the last seconds of any clock; faster and higher for the last three.
+  let tickSeen = { ends: 0, left: -1 };
+  function tickSound() {
+    const s = state;
+    let ends = 0, from = 5;
+    if (s && s.phase === "auction" && s.lot) { ends = s.lot.endsAt; from = s.lot.stage === "bidding" ? 5 : 3; }
+    else if (s && s.phase === "match" && s.match.stage === "vote") ends = s.match.endsAt;
+    if (!ends) { tickSeen = { ends: 0, left: -1 }; return; }
+    const left = clock.left(ends);
+    const fresh = ends !== tickSeen.ends;
+    if (!fresh && left === tickSeen.left) return;
+    tickSeen = { ends, left };
+    if (fresh) return;   // a clock that just (re)started: let the bid sound have the moment
+    if (left > 0 && left <= from) Sound.play(left <= 3 ? "tock" : "tick", left <= 3 ? 0.8 : 0.6);
+    if (left === 0 && s.phase === "match") Sound.play("timeup", 0.8);
+  }
   let filmCtl = null;
 
   let judging = { matchId: null, preps: [null, null], status: "", error: "", film: null };
@@ -79,7 +137,15 @@
         const was = state;
         state = msg.state;
         if (!was || was.phase !== state.phase) error = "";
+        // The admin can change the pace from their phone: keep this screen's
+        // settings in step, so the next game (or the start) doesn't undo it.
+        const st = state.settings;
+        if (st.bidSeconds !== prefs.bidSeconds || st.autoNext !== prefs.autoNext) {
+          prefs.bidSeconds = st.bidSeconds; prefs.autoNext = st.autoNext; savePrefs();
+          if (state.phase === "lobby") view = null;   // redraw the settings
+        }
         render();
+        cues(was, state);
         maybeJudge();
         maybeReason();
       }
@@ -191,7 +257,7 @@
             </div>
           </div>
           <p class="hand" id="count" style="margin-top: var(--space-md)"></p>
-          <p class="muted" id="sound-note">${soundOk ? "" : "Click anywhere on this screen once, so films can play with sound."}</p>
+          <p class="muted" id="sound-note">${soundOk ? "" : "Click anywhere on this screen once to turn on the sound."}</p>
           <div class="roster-cloud" id="cloud"></div>
           ${foot(`<button class="btn btn--primary btn--big" type="button" id="start">Start the draft</button>`)}
         </section>
@@ -232,6 +298,18 @@
             <div class="opts">
               ${opt("autonext", "off", "Wait for the host to move on", !prefs.autoNext)}
               ${opt("autonext", "on", "Next card comes up by itself", prefs.autoNext)}
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Sound on this screen</legend>
+            <div class="opts">
+              ${opt("sound", "all", "Effects and music", prefs.sound === "all")}
+              ${opt("sound", "effects", "Effects only", prefs.sound === "effects")}
+              ${opt("sound", "off", "Off", prefs.sound === "off")}
+            </div>
+            <div class="opts" style="margin-top:.3rem">
+              ${opt("announce", "on", "Read out each character's name", prefs.announceNames)}
+              ${opt("announce", "off", "Don't", !prefs.announceNames)}
             </div>
           </fieldset>
           <fieldset>
@@ -289,6 +367,10 @@
       prefs.filmTier = i.value; savePrefs(); sendSettings(); priceFilms();
     }));
     if (prefs.film !== "off") priceFilms();
+    app.querySelectorAll('[name="sound"]').forEach(i => i.addEventListener("change", () => setSound(i.value)));
+    app.querySelectorAll('[name="announce"]').forEach(i => i.addEventListener("change", () => {
+      prefs.announceNames = i.value === "on"; savePrefs();
+    }));
     app.querySelectorAll('[name="autonext"]').forEach(i => i.addEventListener("change", () => {
       prefs.autoNext = i.value === "on"; savePrefs(); sendSettings(); updateStart();
     }));
@@ -832,7 +914,7 @@
       el.style.width = `${Math.max(0, Math.min(100, (left / Number(el.dataset.total)) * 100))}%`;
     });
   }
-  setInterval(tick, 250);
+  setInterval(() => { tick(); tickSound(); }, 250);
 
   function on(idName, fn) {
     const el = document.getElementById(idName);

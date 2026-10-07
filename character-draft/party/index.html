@@ -14,7 +14,7 @@
 
   <link rel="stylesheet" href="/style.css?v=3" />
   <!-- Bump ?v= on every release so browsers drop their cached copies. -->
-  <link rel="stylesheet" href="party.css?v=6" />
+  <link rel="stylesheet" href="party.css?v=8" />
 
   <script>
     try {
@@ -43,6 +43,16 @@
     </svg>
   </button>
 
+  <button class="theme-toggle sound-toggle" id="sound-toggle" type="button" aria-label="Sound: effects and music" data-mode="all">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" />
+      <path class="wave wave--1" d="M15.2 9.2a4 4 0 0 1 0 5.6" />
+      <path class="wave wave--2" d="M17.8 6.8a7.4 7.4 0 0 1 0 10.4" />
+      <path class="cross" d="M15.5 9.5l5 5M20.5 9.5l-5 5" />
+    </svg>
+  </button>
+
   <main class="stage" id="app" aria-live="off"></main>
   <p id="announce" class="visually-hidden" aria-live="polite"></p>
 
@@ -52,6 +62,7 @@
   <script src="../judge.js?v=26"></script>
   <script src="../film.js?v=26"></script>
   <script src="net.js?v=3"></script>
-  <script src="tv.js?v=10"></script>
+  <script src="sound.js?v=1"></script>
+  <script src="tv.js?v=12"></script>
 </body>
 </html>

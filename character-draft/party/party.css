@@ -331,6 +331,14 @@ html.tv .stage { padding-top: 3.4rem; }
   border-radius: var(--radius-blob);
 }
 .admin-bar .hand { font-size: var(--size-hand-sm); }
+.pace { display: grid; gap: 0.2rem; font-size: 0.9rem; }
+.pace__row { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.2rem; }
+.chip-btn {
+  font: inherit; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--rule-strong); border-radius: 999px;
+  padding: 0.3rem 0.7rem; cursor: pointer;
+}
+.chip-btn.is-on { background: var(--accent); border-color: var(--accent); color: var(--paper); }
 
 .raises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
 .raise { font-size: 1.5rem; padding: 0.9rem 0.4rem; }
@@ -425,3 +433,16 @@ html.tv .stage { padding-top: 3.4rem; }
   .btn:hover:not(:disabled) { transform: none; }
   .bar span, .tally span { transition: none; }
 }
+
+/* The TV's speaker, beside the theme toggle: waves for music, one wave for
+   effects only, a cross for silence. */
+.sound-toggle { right: calc(var(--space-sm) + 3rem); }
+.sound-toggle .cross { display: none; }
+.sound-toggle[data-mode="effects"] .wave--2 { display: none; }
+.sound-toggle[data-mode="off"] .wave { display: none; }
+.sound-toggle[data-mode="off"] .cross { display: block; }
+.pace summary { cursor: pointer; list-style: none; }
+.pace summary::-webkit-details-marker { display: none; }
+.pace summary::after { content: " ▾"; }
+.pace[open] summary::after { content: " ▴"; }
+.pace[open] summary { margin-bottom: 0.2rem; }

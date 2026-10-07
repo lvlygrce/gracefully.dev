@@ -29,6 +29,7 @@
   let flash = "";                           // a one-off message on the join screen
   let openAmount = { lot: 0, amount: 1 };
   let joining = false;
+  let paceOpen = false;                     // the admin's pace controls, folded away by default
 
   const announce = t => { announcer.textContent = ""; requestAnimationFrame(() => { announcer.textContent = t; }); };
   const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch { /* no-op */ } };
@@ -81,6 +82,10 @@
 
   function keyFor() {
     if (!state || !me) return `join:${joining}`;
+    // The admin's pace controls show the live settings, so a change redraws.
+    return viewKey() + (me.admin ? `:${state.settings.autoNext}:${state.settings.bidSeconds}` : "");
+  }
+  function viewKey() {
     const s = state;
     if (s.phase === "auction") return `auction:${s.lots}:${s.lot.stage}:${s.lot.bid}:${s.lot.leader}:${me.admin}`;
     if (s.phase === "sold") return `sold:${s.lots}:${me.admin}`;
@@ -278,16 +283,36 @@
     else if (s.phase === "match" && m.stage === "result") label = "Next fight";
     else if (s.phase === "champion") { label = "Play again with everyone"; msg = "admin:again"; }
     if (s.phase === "lobby" && s.players.length < 2) extra = `<span class="muted">Waiting for someone else to join.</span>`;
-    if (!label && !extra) return;
+    // During the draft the admin can change its pace on the fly.
+    const pace = ["lobby", "auction", "sold"].includes(s.phase) ? paceControls() : "";
+    if (!label && !extra && !pace) return;
     const bar = document.createElement("div");
     bar.className = "admin-bar";
-    bar.innerHTML = `<span class="hand">you're running the show</span>${label ? `<button class="btn btn--primary btn--wide" type="button" id="admin-go">${esc(label)}</button>` : ""}${extra}`;
+    bar.innerHTML = `<span class="hand">you're running the show</span>${label ? `<button class="btn btn--primary btn--wide" type="button" id="admin-go">${esc(label)}</button>` : ""}${extra}${pace}`;
     app.prepend(bar);
+    bar.querySelector(".pace")?.addEventListener("toggle", e => { paceOpen = e.target.open; fit(); });
+    bar.querySelectorAll("[data-pace]").forEach(b => b.addEventListener("click", () => {
+      const [k, v] = b.dataset.pace.split(":");
+      net.send({ t: "admin:settings", settings: k === "auto" ? { autoNext: v === "on" } : { bidSeconds: Number(v) } });
+      buzz(15);
+    }));
     on("admin-go", () => {
       if (msg.startsWith("admin:film:")) net.send({ t: "admin:film", action: msg.split(":")[2] });
       else net.send({ t: msg });
       buzz(20);
     });
+  }
+
+  function paceControls() {
+    const st = state.settings;
+    const chip = (key, label, on) => `<button class="chip-btn${on ? " is-on" : ""}" type="button" data-pace="${key}" aria-pressed="${on}">${label}</button>`;
+    return `<details class="pace" ${paceOpen ? "open" : ""}>
+      <summary class="muted">pace: ${st.bidSeconds}s clock · ${st.autoNext ? "next card by itself" : "waits for you"}</summary>
+      <span class="muted">after a sale</span>
+      <div class="pace__row">${chip("auto:off", "wait for me", !st.autoNext)}${chip("auto:on", "next card by itself", st.autoNext)}</div>
+      <span class="muted">clock after each bid</span>
+      <div class="pace__row">${[3, 5, 8, 10, 15].map(n => chip(`secs:${n}`, `${n}s`, st.bidSeconds === n)).join("")}</div>
+    </details>`;
   }
 
   function myTeam() {
