@@ -865,6 +865,16 @@
       });
       if (!state.match || state.match.id !== matchId) return;
       const side = v.winner === teams[1].name ? 1 : 0;
+      // Fights are to the death: anyone killed in the battle stays dead.
+      if (lasting() && Array.isArray(v.aftermath)) {
+        const killed = new Set();
+        for (const b of Battle.script(v, teams, v.preps)) {
+          if (b.outcome === "ko") (b.victims || [b.target]).forEach(k => k && killed.add(k));
+          if (b.action === "fall") killed.add(b.actor);
+        }
+        const keyOf = a => Battle.cast(teams).find(c => c.name === a.name && c.team === a.team);
+        v.aftermath.forEach(a => { const c = keyOf(a); if (c && killed.has(c.key)) { a.status = "dead"; a.note = a.note || "killed in the fight"; } });
+      }
       const aftermath = (v.aftermath || []).filter(a => a.status !== "fine")
         .map(a => ({ card: a.id, status: a.status === "gear_broken" ? "broken" : a.status, note: a.note }));
       judging.pending = { t: "host:result", matchId, side, verdict: v, aftermath };

@@ -1322,6 +1322,7 @@
     return `
       <div class="verdict">
         ${edges ? `<div class="edges verdict__step" style="--i:0">${edges}</div>` : `<p class="verdict__label verdict__step" style="--i:0">the battle</p>`}
+        ${v.reasoning ? `<details class="verdict__reasoning verdict__step" style="--i:1"><summary>How the judge reasoned it</summary><p>${esc(v.reasoning)}</p></details>` : ""}
         <div class="verdict__fight verdict__step" style="--i:1">${paras}</div>
         ${rolesHtml(v)}
         <p class="verdict__turn verdict__step" style="--i:3"><span class="verdict__label">the turning point</span> ${esc(v.turning_point)}</p>

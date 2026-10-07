@@ -127,3 +127,31 @@
 @media (prefers-reduced-motion: reduce) {
   .b8__say, .b8__dmg, .b8__banner span { animation: none; }
 }
+
+/* A named move, called out like a fighting game. */
+.b8__move {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%, 0);
+  padding: 0.5cqw 2cqw;
+  font-size: 3.4cqw;
+  color: #fff2c0;
+  background: rgba(23, 18, 14, 0.7);
+  border: 0.3cqw solid #fff2c0;
+  text-shadow: 0.3cqw 0.3cqw 0 #c0392b;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: b8-move 1.5s steps(8) forwards;
+}
+.b8__move[hidden] { display: none; }
+@keyframes b8-move {
+  0% { transform: translate(-50%, 1cqw) scale(0.6); opacity: 0; }
+  12% { transform: translate(-50%, 0) scale(1.08); opacity: 1; }
+  80% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -1cqw) scale(1); opacity: 0; }
+}
+.b8__f.is-dead .b8__n::before { content: "☠ "; text-decoration: none; display: inline-block; color: #ef6a4a; }
+.b8__f.is-dead { text-decoration: none; }
+.b8__f.is-dead .b8__n { text-decoration: line-through; }
+@media (prefers-reduced-motion: reduce) { .b8__move { animation: none; } }

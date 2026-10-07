@@ -1121,3 +1121,8 @@ a.mode:hover, a.mode:focus-visible { border-color: var(--accent); transform: rot
 .mode__go { color: var(--accent); }
 .mode__note { font-style: italic; color: var(--ink-muted); line-height: var(--leading-snug); }
 .mode--small .mode__name { font-size: 1.05rem; }
+
+/* The judge's reasoning, folded away above the story of the fight. */
+.verdict__reasoning { margin: 0 0 var(--space-sm); color: var(--ink-muted); }
+.verdict__reasoning summary { cursor: pointer; font-family: var(--font-hand); font-size: var(--size-hand-sm, 1.1rem); color: var(--ink); }
+.verdict__reasoning p { margin: 0.4rem 0 0; font-style: italic; line-height: var(--leading-snug); max-width: var(--measure); }

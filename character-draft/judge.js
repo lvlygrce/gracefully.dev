@@ -37,7 +37,8 @@
   /* The fight is also animated as an 8-bit battle, from a script of beats in
      the judge's answer. These lists are what the animation can show. */
   const ANIM = {
-    actions: ["advance", "strike", "shoot", "cast", "special", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up", "taunt", "retreat", "fall"],
+    actions: ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab", "teleport", "transform",
+      "summon", "stealth", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up", "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
     looks: ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle", "potion", "armour", "banner", "beast", "device", "rope", "wall"],
@@ -67,13 +68,20 @@ Each team has already prepared in secret: a leader, a plan, gear and jobs. Pit t
 other. Teams act on their plans and use their gear, but no plan survives contact unchanged: decide whose plan
 anticipated the other, whose gear counters what, where a plan breaks, and whether spymasters or schemers saw
 through the enemy's tricks. Devices can fail, be stolen or be turned against their makers.
-A battle is not decided by raw power alone. Weigh strategy and leadership, cunning and deception, skill and
-experience, raw power, the battlefield and home ground, and how well each team works together. A clever,
-well-led, well-equipped team can and often should beat a stronger but disorganised one, unless the power gap is
-truly overwhelming (a cosmic being against ordinary humans).
+Reason your way to the result; don't add up stats. Start from the two war councils: what each plan expects the
+enemy to do, what actually happens when the two plans meet, which assumptions break, which gear counters what,
+how the terrain helps or hurts each side, and what each character would really do in that moment. Be faithful to
+the source material about what characters can do: overpowered characters are overpowered. A cosmic, godlike,
+reality-bending or invincible character (Galactus, Saitama, Arceus, the Spectre) beats everyone far below their
+level, alone, and can wipe out a whole team at once, because no plan or gear can touch them; say so plainly when
+it's true. Between characters in the same league, the plans, cunning, leadership, gear and teamwork decide it,
+and a clever, well-led team can beat a stronger but disorganised one.
 Characters marked [injured] fight at reduced strength; [gear broken] means they can't use their signature weapon.
 Every character on both teams must play a part: mention each by name in the fight and give each their own line
-in "roles". Nobody sits out. Be decisive: no draws. Be vivid but brief. For "winner", give the player's name
+in "roles". Nobody sits out. Be decisive: no draws.
+This is a fight to the death. Nobody surrenders or runs: it ends only when every member of the losing team is dead,
+and the winners may lose members too. Fight the way each character really fights: their signature weapons, powers,
+techniques and named moves from their source material, and the gear their team prepared. Be vivid but brief. For "winner", give the player's name
 exactly as given.`;
 
   const tagsFor = r => {
@@ -181,7 +189,10 @@ Reply as JSON:
 ${teams.map((t, i) => `Team drafted by ${t.name}:\n${rows(t, worldName)}\nTheir preparation:\n${prepText(preps[i])}`).join("\n\n")}
 
 Reply as JSON:
-- "fight": the battle in three short paragraphs: how each plan played out, which gear mattered, naming every character at least once
+- "reasoning": your analysis before anything else is decided, five to eight sentences: how the two plans meet, where
+  each one works or breaks, which gear and terrain matter, how the key match-ups go given what the characters can
+  really do (and whether anyone is so far above the rest that the plans stop mattering), and so who wins and why
+- "fight": the battle in three short paragraphs, following your reasoning: how each plan played out, which gear mattered, naming every character at least once
 - "roles": one sentence for every character on both teams, saying what they did and how it went for them (an object with one key per character name, exactly as listed)
 - "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
 - "mvp": the character who mattered most
@@ -192,15 +203,23 @@ Reply as JSON:
   "actor" (who acts), "action", "target" (who it is aimed at, or "none"), "gear" (the gear item used, by its exact name, or
   "none"), "effect" (what it looks like), "outcome" (how it lands on the target; "none" if no target), "caption" (one short
   sentence a viewer reads while it plays, under 90 characters), and "line" (something the actor shouts, under 40
-  characters, or "" for most beats). Actions: strike/team_up are melee or signature attacks, shoot/cast are ranged,
-  special is a big signature move (use it for the turning point), build and deploy_gear bring in prepared gear, trap
-  springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/advance need no target,
-  retreat leaves the field, fall is being taken out by the terrain. Rules: every character acts at least once; anyone
-  knocked out ("ko") does nothing afterwards; use the gear where the plans used it; by the last beat everyone on the
-  losing side is knocked out or retreating, while the winner's side still has someone standing${aftermath ? `
+  characters, or "" for most beats), and "move" (the name of the technique, weapon or power used, as the source
+  material calls it: "Thunderbolt", "Hammer throw", "Rasengan", "Dracarys"; or "" for plain moves). Pick the action
+  that looks most like what the character really does: strike is a melee blow, combo a flurry of blows, shoot a
+  weapon fired, cast a spell or power, special a big signature move (use it for the turning point), throw hurls a
+  weapon or object, slam hits the ground and everyone near, barrage rains many shots down, grab seizes and hurls
+  someone, teleport vanishes and strikes from behind, transform powers up into a bigger form, summon calls in
+  creatures or allies, stealth vanishes then strikes, team_up is two allies at once, annihilate is an overwhelming
+  power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
+  enemy still alive); build and deploy_gear bring in
+  prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
+  advance need no target, fall is being killed by the terrain. Outcome "ko" means killed. Rules: every character
+  acts at least once; the dead do nothing afterwards; use the gear where the plans used it; nobody retreats; by the
+  last beat every character on the losing side has been killed ("ko"), while the winner's side still has someone
+  alive${aftermath ? `
 - "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
-  "gear_broken" or "dead", with a short note (an object with one key per character name). Most characters should
-  come out "fine" or "injured"; only kill a character if the fight clearly did. Losers are likelier to be hurt.` : ""}`;
+  "gear_broken" or "dead", with a short note (an object with one key per character name). It was a fight to the
+  death: everyone killed in your beats is "dead"; survivors are "fine", "injured" or "gear_broken".` : ""}`;
     const afterSchema = {
       type: "OBJECT",
       properties: Object.fromEntries(keys.map(k => [k, {
@@ -219,18 +238,20 @@ Reply as JSON:
         gear: { type: "STRING", enum: [...gearNames, "none"] },
         effect: { type: "STRING", enum: ANIM.effects },
         outcome: { type: "STRING", enum: ANIM.outcomes },
+        move: { type: "STRING" },
         caption: { type: "STRING" },
         line: { type: "STRING" },
       },
-      required: ["actor", "action", "target", "gear", "effect", "outcome", "caption", "line"],
-      propertyOrdering: ["actor", "action", "target", "gear", "effect", "outcome", "caption", "line"],
+      required: ["actor", "action", "move", "target", "gear", "effect", "outcome", "caption", "line"],
+      propertyOrdering: ["actor", "action", "move", "target", "gear", "effect", "outcome", "caption", "line"],
     };
     // Reason first (the prose), then script it, then commit to a winner.
-    const order = ["fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
+    const order = ["reasoning", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
     const schema = {
       type: "OBJECT",
       properties: {
         ...(aftermath ? { aftermath: afterSchema } : {}),
+        reasoning: { type: "STRING" },
         fight: { type: "STRING" },
         roles: keyedObject(keys),
         turning_point: { type: "STRING" },
@@ -314,6 +335,7 @@ Reply as JSON:
       role: String(given[c.key] || given[c.name] || "").trim(),
     }));
     data.fight = String(data.fight || "");
+    data.reasoning = String(data.reasoning || "");
     data.beats = Array.isArray(data.beats) ? data.beats.filter(b => b && typeof b === "object") : [];
     if (data.aftermath && typeof data.aftermath === "object") {
       const given = data.aftermath;

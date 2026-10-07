@@ -15,8 +15,12 @@
   "use strict";
 
   const W = 384, H = 216;
-  const ACTIONS = ["advance", "strike", "shoot", "cast", "special", "block", "dodge", "deploy_gear", "build",
-    "heal", "shield", "trap", "team_up", "taunt", "retreat", "fall"];
+  const ACTIONS = ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
+    "teleport", "transform", "summon", "stealth", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap",
+    "team_up", "taunt", "retreat", "fall"];
+  // Actions that need someone to hit.
+  const ATTACKS = ["strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
+    "teleport", "summon", "stealth", "trap", "team_up"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
     "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"];
   const OUTCOMES = ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"];
@@ -76,9 +80,9 @@
   }
 
   /* Clean a model's beats into something that always plays sensibly:
-     real actors and targets, nobody acting after they're down, everyone on
-     stage at least once, the dead actually falling, and the loser's side
-     beaten (or fleeing) by the end while the winner's side still stands. */
+     real actors and targets, the dead never acting again, everyone on stage
+     at least once, and a fight to the death: by the end every loser is
+     killed, while the winner's side still has someone alive. */
   function script(verdict, teams, preps) {
     const people = cast(teams);
     const find = finder(people);
@@ -100,27 +104,36 @@
       const actor = find(raw.actor);
       if (!actor || down.has(actor.key)) continue;
       let action = ACTIONS.includes(raw.action) ? raw.action : "strike";
+      // Nobody runs in a fight to the death: losers who'd flee are killed at the end.
+      if (action === "retreat") { if (actor.side !== winSide) continue; action = "dodge"; }
       let target = find(raw.target);
       const friendly = ["heal", "shield"].includes(action);
       if (friendly && target && target.side !== actor.side) target = null;
       if (!friendly && target && target.side === actor.side && action !== "team_up") target = null;
       // Attacks need someone to hit; gear can simply be set up (a potion, a wall).
-      if (["strike", "shoot", "cast", "special", "trap", "team_up"].includes(action) || (target && !friendly)) {
+      // Vanishing or blinking away needs no target; any other attack does.
+      const reposition = ["stealth", "teleport"].includes(action) && !target;
+      if (!reposition && (ATTACKS.includes(action) || (target && !friendly))) {
         if (!target || down.has(target.key)) target = standing(enemiesOf(actor))[0] || null;
         if (!target && !friendly) continue;
       }
       let outcome = OUTCOMES.includes(raw.outcome) ? raw.outcome : target && !friendly ? "hit" : "none";
-      if (friendly || !target || ["advance", "taunt", "block", "dodge", "retreat", "build"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
+      if (friendly || !target || ["advance", "taunt", "block", "dodge", "build", "transform"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
       // Never knock out the winner's last fighter.
       if (outcome === "ko" && target && target.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) outcome = "hurt";
       if (outcome === "ko" && target && target.side === winSide && target === mvp) outcome = "hurt";
       const g = findGear(raw.gear);
+      // An overwhelming power hits every enemy still alive.
+      const victims = action === "annihilate" ? standing(enemiesOf(actor)).map(q => q.key) : null;
+      if (victims && outcome === "ko" && actor.side !== winSide && standing(people.filter(q => q.side === winSide)).length <= victims.length) outcome = "crit";
       out.push({
-        actor: actor.key, action, target: target ? target.key : null,
+        actor: actor.key, action, target: target ? target.key : null, victims,
         gear: g ? g.name : null, effect: EFFECTS.includes(raw.effect) ? raw.effect : "none", outcome,
+        move: String(raw.move || "").trim().slice(0, 32),
         caption: String(raw.caption || "").trim().slice(0, 160), line: String(raw.line || "").trim().slice(0, 60),
       });
-      if (outcome === "ko" && target) down.add(target.key);
+      if (outcome === "ko" && victims) victims.forEach(k => down.add(k));
+      else if (outcome === "ko" && target) down.add(target.key);
       if (action === "fall") down.add(actor.key);
       if (action === "retreat" && actor.side !== winSide) down.add(actor.key);
     }
@@ -142,22 +155,21 @@
       const p = people.find(q => q.key === k);
       const foe = standing(enemiesOf(p))[0];
       if (!foe) continue;
-      out.push({ actor: foe.key, action: "strike", target: k, gear: null, effect: "none", outcome: "ko", caption: `${p.name} falls.`, line: "" });
+      out.push({ actor: foe.key, action: "strike", target: k, gear: null, effect: "none", outcome: "ko", caption: `${p.name} is killed.`, line: "", move: "" });
       down.add(k);
     }
 
-    // The losers are beaten or flee; the winners stand.
-    const finisher = (mvp && mvp.side === winSide && !down.has(mvp.key)) ? mvp : standing(people.filter(q => q.side === winSide))[0];
-    const losers = standing(people.filter(q => q.side !== winSide));
-    losers.forEach((p, i) => {
-      if (finisher && i === 0) {
-        out.push({ actor: finisher.key, action: out.length < 6 ? "special" : "strike", target: p.key, gear: null, effect: "none", outcome: "ko",
-          caption: verdict.turning_point && !out.some(b => b.caption === verdict.turning_point) ? String(verdict.turning_point) : `${finisher.name} finishes it.`, line: "" });
-        down.add(p.key);
-      } else {
-        out.push({ actor: p.key, action: "retreat", target: null, gear: null, effect: "none", outcome: "none", caption: `${p.name} retreats.`, line: "" });
-        down.add(p.key);
-      }
+    // To the death: every loser still alive is killed, the first by the
+    // turning point if it hasn't been shown yet, the rest by whoever stands.
+    const winners = () => standing(people.filter(q => q.side === winSide));
+    const finisher = (mvp && mvp.side === winSide && !down.has(mvp.key)) ? mvp : winners()[0];
+    standing(people.filter(q => q.side !== winSide)).forEach((p, i) => {
+      const killer = i === 0 && finisher ? finisher : winners()[i % Math.max(1, winners().length)] || finisher;
+      if (!killer) return;
+      const first = i === 0 && verdict.turning_point && !out.some(b => b.caption === verdict.turning_point);
+      out.push({ actor: killer.key, action: first ? "special" : "strike", target: p.key, gear: null, effect: "none", outcome: "ko",
+        caption: first ? String(verdict.turning_point) : `${killer.name} finishes ${p.name}.`, line: "", move: "" });
+      down.add(p.key);
     });
     return out;
   }
@@ -332,6 +344,7 @@
         </div>
         <div class="b8__bubbles"></div>
         <div class="b8__banner" hidden></div>
+        <div class="b8__move" hidden></div>
        </div>
         <p class="b8__caption" aria-live="polite"></p>
         <div class="b8__ctl">
@@ -345,11 +358,12 @@
     ctx.imageSmoothingEnabled = false;
     const caption = root.querySelector(".b8__caption"), banner = root.querySelector(".b8__banner"), bubbles = root.querySelector(".b8__bubbles");
     const bar = root.querySelector(".b8__bar i"), toggle = root.querySelector('[data-act="toggle"]');
+    const moveEl = root.querySelector(".b8__move");
 
     // Fighters, lined up on their side, biggest at the back.
     const fighters = people.map(p => {
       const sprite = window.Sprite.of(p);
-      return { ...p, sprite, hp: p.condition && p.condition.status === "injured" ? 70 : 100, downed: false, facing: p.side ? -1 : 1 };
+      return { ...p, sprite, hp: p.condition && p.condition.status === "injured" ? 70 : 100, downed: false, facing: p.side ? -1 : 1, alpha: 1, scale: 1 };
     });
     [0, 1].forEach(side => {
       const mine = fighters.filter(f => f.side === side).sort((a, b) => a.sprite.size - b.sprite.size);
@@ -362,7 +376,88 @@
     });
     const byKey = k => fighters.find(f => f.key === k);
     const fieldGear = [];   // items placed on the ground
+    const stains = [];      // blood, oil and goo left on the ground
     let shots = [], parts = [], rings = [], flash = null, shake = 0;
+
+    /* What a character bleeds, and how they die. Real people (the famous
+       world) are simply defeated, without gore. */
+    function gore(f) {
+      const sp = f.sprite.spec;
+      if (f.world === "famous" && sp.body !== "q" && sp.body !== "s") return { kind: "none" };
+      if (sp.body === "r") return { kind: "oil", c: "#2b2b2b" };
+      if (sp.body === "k") return { kind: "poof", c: "#c0262f" };
+      if (sp.body === "g") return { kind: "fade", c: sp.skin };
+      if (sp.body === "o") return { kind: "goo", c: sp.skin };
+      if (sp.extras.has("blood_green")) return { kind: "blood", c: "#7fd34a" };
+      if (sp.extras.has("blood_black")) return { kind: "blood", c: "#1d1a17" };
+      return { kind: "blood", c: "#b3121f" };
+    }
+    // A spray from a wound, and a few drops on the ground.
+    function bleed(f, amount, dir) {
+      const g = gore(f);
+      if (g.kind === "none" || g.kind === "fade") return;
+      const c = centre(f);
+      const n = Math.round(amount * (g.kind === "poof" ? 0.5 : 1));
+      for (let i = 0; i < n; i++) {
+        parts.push({ x: c.x, y: c.y + rnd(-3, 3), vx: dir * rnd(20, 110) + rnd(-20, 20), vy: rnd(-90, -10), g: 320,
+          c: g.kind === "oil" && i % 3 === 0 ? "#ffd23a" : i % 4 === 0 ? Sprite.shade(g.c, -0.3) : g.c, s: rnd(1, 3) | 0 || 1, t0: time, life: rnd(350, 700) });
+      }
+      if (g.kind === "poof") return;
+      for (let i = 0; i < Math.ceil(amount / 6); i++) stains.push({ x: f.pos.x + dir * rnd(2, 22), y: f.pos.y + rnd(-2, 3), r: 0, max: rnd(1, 3), c: g.c, t0: time });
+    }
+    // Death, in the character's own way: a pool of blood, oil or goo, a puff
+    // of smoke (Minecraft), or fading away (ghosts).
+    async function die(f, dir) {
+      const g = gore(f);
+      f.downed = true; f.dead = true; setHp(f, 0);
+      sfx("b_death", 0.9);
+      if (g.kind === "poof") {
+        burst(centre(f).x, centre(f).y, "smoke", 22, true);
+        f.flashUntil = time + 400;
+        await wait(260);
+        await tween(f, { alpha: 0 }, 300);
+        return;
+      }
+      if (g.kind === "fade") {
+        burst(centre(f).x, centre(f).y, "dark", 18);
+        await tween(f, { alpha: 0 }, 700);
+        return;
+      }
+      if (g.kind !== "none") {
+        bleed(f, 26, dir);
+        stains.push({ x: f.pos.x - dir * 4 * f.sprite.size, y: f.pos.y + 1, r: 0, max: (g.kind === "goo" ? 16 : 12) * f.sprite.size, c: g.c, t0: time, pool: true });
+      }
+      await wait(380);
+    }
+    function drawStains() {
+      for (const st of stains) {
+        const grow = st.pool ? clamp((time - st.t0) / 1600, 0, 1) : 1;
+        const rx = Math.max(1, Math.round(st.max * grow)), ry = Math.max(1, Math.round(rx * 0.35));
+        ctx.fillStyle = st.c;
+        for (let y = -ry; y <= ry; y++) {
+          const w = Math.round(rx * Math.sqrt(1 - (y * y) / ((ry + 0.5) * (ry + 0.5))));
+          ctx.fillRect(Math.round(st.x - w), Math.round(st.y + y), w * 2 + 1, 1);
+        }
+        if (st.pool && rx > 3) { ctx.fillStyle = Sprite.shade(st.c, 0.25); ctx.fillRect(Math.round(st.x - rx / 2), Math.round(st.y - ry + 1), 2, 1); }
+      }
+    }
+
+    // A character who uses a weapon from their team's gear holds it from then on.
+    const WIELD = { blade: "sword", bow: "bow", gun: "gun", staff: "staff", cannon: "cannon", rope: "whip", net: "whip" };
+    function wield(f, item) {
+      if (!item || item.side !== f.side) return;
+      if (WIELD[item.look]) f.sprite = Sprite.of(f, { weapon: WIELD[item.look] });
+      else if (item.look === "shield") f.sprite = Sprite.of(f, { extras: ["shield"] });
+    }
+    let moveTimer = null;
+    function callMove(name) {
+      if (!name) return;
+      moveEl.textContent = name.endsWith("!") ? name : `${name}!`;
+      moveEl.hidden = false;
+      moveEl.style.animation = "none"; void moveEl.offsetWidth; moveEl.style.animation = "";
+      clearTimeout(moveTimer);
+      moveTimer = setTimeout(() => { moveEl.hidden = true; }, 1500);
+    }
 
     /* A clock that stops while paused; every wait in the script uses it. */
     let time = 0, last = performance.now(), playing = !!(opts.autoplay !== false), skipping = false, done = false, raf = 0, ended = false;
@@ -401,6 +496,7 @@
       ctx.save();
       if (shake > time) ctx.translate(Math.round(rnd(-2, 2)), Math.round(rnd(-2, 2)));
       ctx.drawImage(bg, 0, 0);
+      drawStains();
       for (const it of fieldGear) drawGear(ctx, it.look, it.colour, it.x, it.y, time);
       const list = fighters.slice().sort((a, b) => a.pos.y - b.pos.y);
       for (const f of list) {
@@ -408,12 +504,13 @@
         const img = f.sprite.frame(pose, time - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
         const S = img.width;
         const x = Math.round(f.pos.x), y = Math.round(f.pos.y + (f.hop || 0));
-        ctx.fillStyle = "rgba(0,0,0,0.22)";
-        ctx.fillRect(x - Math.round(6 * f.sprite.size), Math.round(f.pos.y) - 1, Math.round(12 * f.sprite.size), 2);
+        if (f.alpha <= 0.01) continue;
+        ctx.fillStyle = `rgba(0,0,0,${(0.22 * clamp(f.alpha, 0, 1)).toFixed(2)})`;
+        ctx.fillRect(x - Math.round(6 * f.sprite.size * f.scale), Math.round(f.pos.y) - 1, Math.round(12 * f.sprite.size * f.scale), 2);
         ctx.save();
         ctx.translate(x, y);
-        if (f.facing < 0) ctx.scale(-1, 1);
-        if (f.alpha != null) ctx.globalAlpha = f.alpha;
+        ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale);
+        ctx.globalAlpha = clamp(f.alpha, 0, 1);
         ctx.drawImage(img, -Math.floor(S / 2), -(S - 4));
         ctx.restore();
         if (f.shield > time) { ctx.strokeStyle = "rgba(143,208,255,0.85)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y - 12 * f.sprite.size, 14 * f.sprite.size, 0, Math.PI * 2); ctx.stroke(); }
@@ -450,6 +547,9 @@
         case "breath": for (let i = 0; i < 6; i++) { const kk = clamp(k - i * 0.05, 0, 1); ctx.fillStyle = i % 2 ? s.c : "#ffe14d"; const r = 2 + i; ctx.fillRect(Math.round(lerp(s.x0, s.x1, kk)) - r / 2, Math.round(lerp(s.y0, s.y1, kk) + rnd(-2, 2)), r, r); } break;
         case "rock": ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 6, 5); break;
         case "gear": drawGear(ctx, s.look, s.c, x, y + 4, time); break;
+        case "spin": { ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(Math.floor(time / 60) * Math.PI / 2);
+          ctx.fillStyle = s.c; ctx.fillRect(-4, -1, 8, 3); ctx.fillStyle = "#8a5a32"; ctx.fillRect(-1, 1, 2, 4); ctx.restore(); break; }
+        case "fall": { ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 1, Math.round(y) - 5, 2, 6); ctx.fillStyle = "#ffffff"; ctx.fillRect(Math.round(x) - 1, Math.round(y), 2, 1); break; }
         default: ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 6, 6); ctx.fillStyle = "#ffffff"; ctx.fillRect(Math.round(x) - 1, Math.round(y) - 1, 2, 2);
       }
     }
@@ -496,6 +596,7 @@
       el.querySelector("i").style.width = `${f.hp}%`;
       el.classList.toggle("is-low", f.hp < 35);
       el.classList.toggle("is-down", f.downed);
+      el.classList.toggle("is-dead", !!f.dead);
     }
 
     // How a hit lands on the target.
@@ -525,14 +626,14 @@
       if (outcome === "crit" || outcome === "ko") { shake = time + 280; flash = { c: "#ffffff", until: time + 120, ms: 120 }; }
       target.flashUntil = time + 360;
       setPose(target, "hurt");
+      bleed(target, outcome === "ko" ? 18 : outcome === "crit" ? 14 : outcome === "hurt" ? 5 : 9, dir);
+      if (gore(target).kind === "blood" || gore(target).kind === "goo") sfx("b_splat", outcome === "hurt" ? 0.5 : 0.8);
       const left = outcome === "ko" ? 0 : Math.max(6, target.hp - dmg);
       damageNumber(target, outcome === "crit" ? `${target.hp - left}!` : `${target.hp - left}`, outcome === "crit" ? "#ffcc33" : "#ffffff");
       setHp(target, left);
       await tween(target.pos, { x: target.pos.x + dir * (outcome === "crit" || outcome === "ko" ? 14 : 7) }, 160);
       if (outcome === "ko") {
-        target.downed = true; setHp(target, 0);
-        sfx("b_ko", 0.9);
-        await wait(380);
+        await die(target, dir);
       } else {
         await wait(220);
         setPose(target, "idle");
@@ -584,6 +685,8 @@
       const effect = b.effect !== "none" ? b.effect : actor.sprite.spec.element !== "none" ? actor.sprite.spec.element : "impact";
       caption.textContent = b.caption || describe(b, actor, target);
       say(actor, b.line);
+      wield(actor, gearItem);
+      callMove(b.move);
       const ranged = RANGED.has(actor.sprite.spec.style);
       const t0 = time;
       switch (b.action) {
@@ -700,6 +803,151 @@
           }
           break;
         }
+        case "combo": {
+          if (!target) break;
+          await approach(actor, target);
+          const hit = b.effect !== "none" ? b.effect : actor.sprite.spec.style === "blade" ? "slash" : "impact";
+          for (let i = 0; i < 4; i++) {
+            setPose(actor, "windup"); await wait(80);
+            setPose(actor, "strike"); sfx(["blade", "claws"].includes(actor.sprite.spec.style) ? "b_slash" : "b_punch", 0.7, 1 + i * 0.08);
+            burst(centre(target).x - actor.facing * 3, centre(target).y + rnd(-4, 4), hit, 5);
+            if (i < 3 && b.outcome !== "blocked" && b.outcome !== "dodged" && b.outcome !== "miss") { bleed(target, 3, actor.facing); target.flashUntil = time + 120; }
+            await wait(90);
+          }
+          await land(target, b.outcome, effect, actor);
+          await wait(160); await goHome(actor);
+          break;
+        }
+        case "throw": {
+          if (!target) break;
+          setPose(actor, "windup"); await wait(220); setPose(actor, "strike");
+          const w = actor.sprite.spec.weapon, c = ["hammer", "axe", "shield", "mace"].includes(w) ? "#cfd6dd" : FX[effect] || "#cfd6dd";
+          sfx("b_throw", 0.9);
+          await fire(actor, target, "spin", effect, { c, ms: 420, arc: 14 });
+          await land(target, b.outcome, effect, actor);
+          // Hammers, axes and shields come back.
+          if (["hammer", "axe", "shield", "mace", "orb"].includes(w)) {
+            const a = centre(target), h = centre(actor);
+            const back = { kind: "spin", x0: a.x, y0: a.y, x1: h.x, y1: h.y, c, t0: time, ms: 380, arc: 10 };
+            shots.push(back); await wait(380); shots = shots.filter(q => q !== back);
+          }
+          setPose(actor, "idle");
+          break;
+        }
+        case "slam": {
+          if (!target) break;
+          setPose(actor, "windup");
+          await Promise.all([tween(actor, { hop: -26 }, 260), tween(actor.pos, { x: target.pos.x - actor.facing * 10 * actor.sprite.size, y: target.pos.y }, 260)]);
+          setPose(actor, "strike");
+          await tween(actor, { hop: 0 }, 120);
+          sfx("b_slam", 0.55); shake = time + 420;
+          rings.push({ x: actor.pos.x, y: actor.pos.y, r0: 2, r1: 46, c: FX[effect] || "#e8d9b0", t0: time, ms: 500 });
+          burst(actor.pos.x, actor.pos.y - 2, b.effect !== "none" ? b.effect : "earth", 24, true);
+          // Everyone near the impact is thrown about.
+          const near = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 46);
+          await Promise.all([land(target, b.outcome, effect, actor), ...near.map(f => land(f, "hurt", effect, actor))]);
+          await wait(160); await goHome(actor);
+          break;
+        }
+        case "barrage": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_charge", 0.6);
+          await wait(250);
+          const kindOf = ["fire", "explosion", "lightning", "ice", "dark", "light", "psychic", "tech"].includes(effect) ? "orb" : "fall";
+          const c = FX[effect] || "#cfd6dd";
+          for (let i = 0; i < 12; i++) {
+            const x = target.pos.x + rnd(-24, 24);
+            const s = { kind: kindOf, x0: x + rnd(-20, 20), y0: -10, x1: x, y1: target.pos.y - rnd(0, 12), c, t0: time, ms: 380 };
+            shots.push(s);
+            setTimeout(() => { shots = shots.filter(q => q !== s); }, 400);
+            if (i % 3 === 0) sfx(kindOf === "fall" ? "b_shoot" : "b_magic", 0.5);
+            await wait(70);
+          }
+          await wait(260);
+          burst(target.pos.x, target.pos.y - 4, effect === "none" ? "impact" : effect, 18, true);
+          await land(target, b.outcome, effect, actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "grab": {
+          if (!target) break;
+          await approach(actor, target);
+          setPose(actor, "strike");
+          await tween(target, { hop: -16 }, 260);
+          sfx("b_throw", 0.8);
+          await Promise.all([tween(target.pos, { x: target.pos.x + actor.facing * 34 }, 360), tween(target, { hop: 0 }, 360, t => t * t)]);
+          shake = time + 300; burst(target.pos.x, target.pos.y - 2, "earth", 14);
+          await land(target, b.outcome, effect, actor);
+          await goHome(actor);
+          if (!target.downed) await goHome(target);
+          break;
+        }
+        case "teleport": case "stealth": {
+          if (!target) {   // just slipping out of sight for a moment
+            sfx(b.action === "teleport" ? "b_teleport" : "b_whoosh", 0.7);
+            if (b.action === "teleport") burst(centre(actor).x, centre(actor).y, "smoke", 12);
+            await tween(actor, { alpha: b.action === "teleport" ? 0 : 0.15 }, 300);
+            await wait(700);
+            await tween(actor, { alpha: 1 }, 300);
+            break;
+          }
+          const tele = b.action === "teleport";
+          sfx(tele ? "b_teleport" : "b_whoosh", 0.8);
+          if (tele) { burst(centre(actor).x, centre(actor).y, "smoke", 14); actor.alpha = 0; await wait(260); }
+          else await tween(actor, { alpha: 0.12 }, 400);
+          // Appear behind the target, facing them.
+          actor.pos.x = target.pos.x + actor.facing * 16 * Math.max(1, target.sprite.size); actor.pos.y = target.pos.y;
+          actor.facing = -actor.facing;
+          if (tele) { burst(centre(actor).x, centre(actor).y, "smoke", 14); actor.alpha = 1; }
+          else await tween(actor, { alpha: 1 }, 160);
+          setPose(actor, "windup"); await wait(120);
+          setPose(actor, "strike"); sfx("b_slash", 0.9);
+          burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "slash", 12);
+          await land(target, b.outcome === "hit" ? "crit" : b.outcome, effect, actor);
+          await wait(200);
+          if (tele) { burst(centre(actor).x, centre(actor).y, "smoke", 12); actor.alpha = 0; await wait(200); }
+          actor.facing = actor.side ? -1 : 1;
+          actor.pos.x = actor.home.x; actor.pos.y = actor.home.y;
+          if (tele) { burst(centre(actor).x, centre(actor).y, "smoke", 10); actor.alpha = 1; }
+          setPose(actor, "idle");
+          break;
+        }
+        case "transform": {
+          setPose(actor, "cast"); sfx("b_transform", 1);
+          for (let i = 0; i < 6; i++) { burst(centre(actor).x, centre(actor).y, effect === "impact" ? "light" : effect, 6); await wait(110); }
+          flash = { c: FX[effect] || "#ffffff", until: time + 300, ms: 300 };
+          await tween(actor, { scale: Math.min(1.6, actor.scale * 1.4) }, 300);
+          rings.push({ x: centre(actor).x, y: centre(actor).y, r0: 4, r1: 40, c: FX[effect] || "#ffffff", t0: time, ms: 500 });
+          setHp(actor, actor.hp + 20);
+          setPose(actor, "victory"); await wait(500); setPose(actor, "idle");
+          break;
+        }
+        case "summon": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_summon", 0.9);
+          const c = FX[effect] && effect !== "impact" ? FX[effect] : actor.sprite.spec.accent;
+          const imps = [0, 1, 2].map(i => ({ kind: "gear", look: "beast", c, x0: actor.pos.x - actor.facing * (10 + i * 8), y0: actor.pos.y - 4 + i * 4,
+            x1: target.pos.x, y1: target.pos.y - 4 + i * 2, t0: time + i * 120, ms: 520 }));
+          imps.forEach(s => shots.push(s));
+          await wait(760);
+          shots = shots.filter(q => !imps.includes(q));
+          burst(centre(target).x, centre(target).y, effect === "impact" ? "dark" : effect, 16);
+          await land(target, b.outcome, effect, actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "annihilate": {
+          const victims = (b.victims || []).map(byKey).filter(f => f && !f.downed);
+          if (!victims.length && target) victims.push(target);
+          setPose(actor, "cast"); sfx("b_charge", 1);
+          for (let i = 0; i < 8; i++) { burst(centre(actor).x, centre(actor).y, effect === "impact" ? "light" : effect, 6, i > 5); await wait(90); }
+          flash = { c: FX[effect] || "#ffffff", until: time + 500, ms: 500 }; shake = time + 900;
+          sfx("b_boom", 1);
+          victims.forEach(v => { burst(centre(v).x, centre(v).y, effect === "impact" ? "explosion" : effect, 22, true); rings.push({ x: centre(v).x, y: centre(v).y, r0: 2, r1: 30, c: FX[effect] || "#ffffff", t0: time, ms: 600 }); });
+          await Promise.all(victims.map((v, i) => wait(i * 90).then(() => land(v, b.outcome, effect, actor))));
+          setPose(actor, "victory"); await wait(500); setPose(actor, "idle");
+          break;
+        }
         case "taunt":
           setPose(actor, "victory"); actor.hop = -4; await wait(240); actor.hop = 0; await wait(500); setPose(actor, "idle");
           break;
@@ -709,7 +957,7 @@
           if (actor.side !== winSide) { actor.downed = false; actor.alpha = 0; actor.gone = true; setHp(actor, actor.hp); root.querySelector(`.b8__f[data-k="${CSS.escape(actor.key)}"]`)?.classList.add("is-fled"); }
           break;
         case "fall":
-          setPose(actor, "hurt"); await wait(300); actor.downed = true; setHp(actor, 0); sfx("b_ko", 0.8); await wait(400);
+          setPose(actor, "hurt"); await wait(300); await die(actor, actor.facing);
           break;
       }
       // Let each beat breathe long enough to read its caption.
@@ -727,7 +975,9 @@
     }
 
     function describe(b, a, t) {
-      const verbs = { advance: "advances", strike: "attacks", shoot: "shoots at", cast: "casts at", special: "unleashes a special on", block: "braces",
+      const verbs = { advance: "advances", strike: "attacks", combo: "unleashes a flurry on", shoot: "shoots at", cast: "casts at", special: "unleashes a special on",
+        annihilate: "unleashes everything", throw: "hurls a weapon at", slam: "slams down on", barrage: "rains fire on", grab: "seizes", teleport: "teleports behind",
+        transform: "transforms", summon: "summons help against", stealth: "vanishes and strikes", block: "braces",
         dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
         team_up: "teams up against", taunt: "taunts the enemy", retreat: "retreats", fall: "falls" };
       return `${a.name} ${verbs[b.action] || "acts"}${t && !["block", "dodge", "build", "taunt", "retreat", "fall"].includes(b.action) ? ` ${t.name}` : ""}.`;
@@ -761,6 +1011,7 @@
       if (Sound) Sound.music(null);
       sfx("b_win", 1);
       fighters.filter(f => f.side === winSide && !f.downed).forEach(f => setPose(f, "victory"));
+      moveEl.hidden = true;
       caption.textContent = verdict.verdict || "";
       await showBanner(`<span>${esc(teams[winSide].name)}'s team wins</span>`, 2600);
       finish();

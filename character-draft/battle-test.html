@@ -27,23 +27,23 @@
       { name: "Sam", roster: [ch("westeros", "Drogon"), ch("pokemon", "Gengar"), ch("marvel", "Spider-Man"), ch("hp", "Nagini"), ch("minecraft", "Creeper")] },
     ];
     const verdict = {
-      winner: "Grace", mvp: "Thor", verdict: "Thor's lightning grounded Drogon before the dragon could burn the line.",
+      winner: "Grace", mvp: "Thor", verdict: "Thor's storm and Steve's sword carried a fight to the death.",
       turning_point: "Thor calls down the storm on Drogon.",
       preps: [
-        { gear: [{ name: "Redstone turret", made_by: "Steve", effect: "fires arrows on its own", look: "turret", colour: "red" }] },
+        { gear: [{ name: "Diamond Sword", made_by: "Steve", effect: "a sharper blade", look: "blade", colour: "cyan" }] },
         { gear: [{ name: "TNT bundle", made_by: "scavenged", effect: "explodes", look: "bomb", colour: "red" }] },
       ],
       beats: [
-        { actor: "Drogon", action: "special", target: "Jon Snow", effect: "fire", outcome: "hurt", caption: "Drogon dives out of the smoke and breathes fire across the line.", line: "" },
-        { actor: "Jon Snow", action: "block", target: "none", effect: "none", outcome: "none", caption: "Jon raises his cloak against the flames.", line: "Hold the line!" },
-        { actor: "Spider-Man", action: "shoot", target: "Pikachu", effect: "web", outcome: "hit", caption: "Spider-Man webs Pikachu to the ground.", line: "Gotcha, sparky!" },
-        { actor: "Pikachu", action: "cast", target: "Spider-Man", effect: "lightning", outcome: "crit", caption: "Pikachu bursts free with a Thunderbolt.", line: "Pika!" },
-        { actor: "Steve", action: "deploy_gear", target: "Gengar", gear: "Redstone turret", effect: "none", outcome: "hit", caption: "Steve's redstone turret opens up on Gengar.", line: "" },
-        { actor: "Creeper", action: "deploy_gear", target: "Steve", gear: "TNT bundle", effect: "explosion", outcome: "ko", caption: "The Creeper hisses and the TNT goes off under Steve.", line: "Sssss…" },
-        { actor: "Harry Potter", action: "cast", target: "Nagini", effect: "light", outcome: "hit", caption: "Harry's spell catches Nagini mid-strike.", line: "Expelliarmus!" },
-        { actor: "Nagini", action: "strike", target: "Harry Potter", effect: "poison", outcome: "dodged", caption: "Nagini lunges, but Harry rolls away.", line: "" },
-        { actor: "Thor", action: "special", target: "Drogon", effect: "lightning", outcome: "ko", caption: "Thor calls down the storm and grounds Drogon.", line: "Bring me Thanos!" },
-        { actor: "Gengar", action: "cast", target: "Thor", effect: "dark", outcome: "blocked", caption: "Gengar's shadow ball bounces off Thor's hammer.", line: "" },
+        { actor: "Spider-Man", action: "combo", move: "Web-swing kick", target: "Jon Snow", effect: "impact", outcome: "hit", caption: "Spider-Man swings in with a flurry of kicks.", line: "Thwip!" },
+        { actor: "Thor", action: "throw", move: "Mjölnir throw", target: "Spider-Man", effect: "lightning", outcome: "crit", caption: "Thor hurls Mjölnir, and it comes back.", line: "" },
+        { actor: "Gengar", action: "teleport", move: "Shadow Sneak", target: "Pikachu", effect: "dark", outcome: "hit", caption: "Gengar melts into the shadows and strikes from behind.", line: "" },
+        { actor: "Pikachu", action: "barrage", move: "Thunder", target: "Gengar", effect: "lightning", outcome: "ko", caption: "Pikachu brings down a storm of bolts on Gengar.", line: "Pika!" },
+        { actor: "Steve", action: "strike", move: "Diamond Sword", target: "Creeper", gear: "Diamond Sword", effect: "slash", outcome: "ko", caption: "Steve draws his new diamond sword and cuts the Creeper down.", line: "" },
+        { actor: "Nagini", action: "grab", move: "Constrict", target: "Harry Potter", effect: "poison", outcome: "hit", caption: "Nagini coils around Harry and hurls him.", line: "" },
+        { actor: "Harry Potter", action: "cast", move: "Sectumsempra", target: "Nagini", effect: "blood", outcome: "ko", caption: "Harry's curse cuts Nagini apart.", line: "Sectumsempra!" },
+        { actor: "Drogon", action: "slam", move: "Dive bomb", target: "Thor", effect: "fire", outcome: "hit", caption: "Drogon crashes down, scattering the line.", line: "" },
+        { actor: "Thor", action: "transform", move: "God of Thunder", target: "none", effect: "lightning", outcome: "none", caption: "Thor's eyes blaze as the storm fills him.", line: "Bring me Thanos!" },
+        { actor: "Thor", action: "annihilate", move: "Bifrost storm", target: "none", effect: "lightning", outcome: "ko", caption: "Thor unleashes the storm on everyone left.", line: "" },
       ],
     };
     if (location.search.includes("real")) {

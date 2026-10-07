@@ -19,7 +19,7 @@ ENUMS = {
 }
 EXTRAS = set("""cape wings batwings wings_dark tail tail_bolt tail_flame ears ears_long ears_round ears_floppy horns horn antennae
 halo flame_head beard moustache glasses eyepatch grin fangs cheeks redeyes glow_eyes glow gloves belt stripes spots emblem scarf
-spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield""".split())
+spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield blood_green blood_black""".split())
 FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent", "hairStyle", "head", "outfit", "weapon", "extras", "style", "element"]
 
 chars = json.loads(subprocess.run(["node", "-e", """

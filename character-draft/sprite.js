@@ -652,9 +652,18 @@
 
   /* A fighter's frames: Sprite.of(character) → { frame(pose, t), flash(...) }.
      t is in ms, so animation speed is the same on any screen. */
-  function of(c) {
+  // o.weapon / o.extras swap in gear picked up during a fight.
+  function of(c, o = {}) {
     const spec = c.spec ? parse(c.spec) : specFor(c);
-    const key = `${c.world}|${c.name}|${c.spec || ""}`;
+    if (o.weapon) {
+      spec.weapon = o.weapon;
+      if (["bow", "crossbow"].includes(o.weapon)) spec.style = "bow";
+      else if (["gun", "rifle", "cannon", "blaster"].includes(o.weapon)) spec.style = "gun";
+      else if (["staff", "wand"].includes(o.weapon) && spec.style === "fists") spec.style = "magic";
+      else if (spec.style === "fists") spec.style = "blade";
+    }
+    (o.extras || []).forEach(x => spec.extras.add(x));
+    const key = `${c.world}|${c.name}|${c.spec || ""}|${o.weapon || ""}|${(o.extras || []).join(",")}`;
     if (!cache.has(key)) cache.set(key, new Map());
     const mine = cache.get(key);
     const get = (pose, f, flash) => {

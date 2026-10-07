@@ -53,7 +53,7 @@ Blade	h|m|w|8d5524|1a1a1a|1f1f1f|1f1f1f|cfd6dd|buzz|none|coat|katana|glasses|bla
 Ms. Marvel	h|s|t|c68642|1a1a1a|1f3f8a|c0262f|e8b84a|long|mask|tunic|none|scarf|fists|light
 She-Hulk	h|l|w|5aa13a|1a3a1a|f2f0ea|8e5bd0|8e5bd0|long|none|jumpsuit|none||fists|none
 Shang-Chi	h|m|n|e8c4a0|1a1a1a|c0262f|1f1f1f|3fa0ff|short|none|tunic|none|glow|fists|light
-Venom	h|l|w|1a1a1f|1a1a1f|1a1a1f|1a1a1f|f2f0ea|none|fullmask|jumpsuit|none|grin,fangs,emblem|bite|dark
+Venom	h|l|w|1a1a1f|1a1a1f|1a1a1f|1a1a1f|f2f0ea|none|fullmask|jumpsuit|none|grin,fangs,emblem,blood_black|bite|dark
 Carnage	h|l|n|b8202a|1a1a1a|b8202a|1a1a1a|f2f0ea|none|fullmask|jumpsuit|claws|grin,fangs|claws|blood
 Green Goblin	h|m|n|4caf50|4caf50|8e5bd0|4caf50|ef8a2c|none|hat|armour|none|grin,glow_eyes|gadget|explosion
 Doctor Octopus	h|m|w|f1d0b0|3b2a1a|2e6b3a|3a3a3a|9aa3ad|short|none|coat|none|glasses,spikes|gadget|tech
@@ -116,7 +116,7 @@ Werewolf by Night	h|l|w|6b4a2a|3b2a1a|6b4a2a|3b2a1a|e8b84a|messy|none|fur|claws|
 Man-Thing	h|x|w|5a7a3a|3a5a2a|5a7a3a|3a5a2a|c0262f|none|none|bare|none|redeyes|claws|nature
 Mephisto	h|l|n|c0262f|1a1a1a|c0262f|1f1f1f|ff7a1a|none|none|robe|none|horns,cape,grin|magic|fire
 Dormammu	h|l|n|1f1f1f|ff7a1a|5b3a7a|1f1f1f|ff7a1a|none|none|robe|none|flame_head,glow_eyes|magic|fire
-Knull	h|l|n|e8e0d8|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|none|robe|sword|grin|blade|dark
+Knull	h|l|n|e8e0d8|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|none|robe|sword|grin,blood_black|blade|dark
 Ghost	h|m|n|f2f0ea|f2f0ea|f2f0ea|9aa3ad|8fd0ff|none|helm|jumpsuit|gun|glow|gun|tech
 Abomination	h|x|w|5a7a5a|5a7a5a|5a7a5a|3a4a3a|e8b84a|none|none|bare|none|spikes,fangs|fists|none
 The Leader	h|m|t|6abf4a|6abf4a|f2f0ea|1f1f1f|ff6ad5|bald|none|labcoat|none|glow|psychic|psychic
