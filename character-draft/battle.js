@@ -379,11 +379,9 @@
     const stains = [];      // blood, oil and goo left on the ground
     let shots = [], parts = [], rings = [], flash = null, shake = 0;
 
-    /* What a character bleeds, and how they die. Real people (the famous
-       world) are simply defeated, without gore. */
+    /* What a character bleeds, and how they die. */
     function gore(f) {
       const sp = f.sprite.spec;
-      if (f.world === "famous" && sp.body !== "q" && sp.body !== "s") return { kind: "none" };
       if (sp.body === "r") return { kind: "oil", c: "#2b2b2b" };
       if (sp.body === "k") return { kind: "poof", c: "#c0262f" };
       if (sp.body === "g") return { kind: "fade", c: sp.skin };
