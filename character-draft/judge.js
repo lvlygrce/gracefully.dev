@@ -15,6 +15,7 @@
     ? "http://localhost:8080"
     : "https://party-server-production-d0f7.up.railway.app";
   const MODEL_STORE = "character-draft:v1:gemini-model";
+  const PREFERRED = "models/gemini-3.7-flash";
   const GEMINI = "https://generativelanguage.googleapis.com/v1beta";
   const WEBLLM_URL = "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.85/+esm";
 
@@ -38,7 +39,9 @@
      the judge's answer. These lists are what the animation can show. */
   const ANIM = {
     actions: ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab", "teleport", "transform",
-      "summon", "stealth", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up", "taunt", "fall"],
+      "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift", "regenerate", "phase", "fly",
+      "grow", "shrink", "reality_warp", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
     looks: ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle", "potion", "armour", "banner", "beast", "device", "rope", "wall"],
@@ -60,7 +63,9 @@ and the enemy they'll face. A team with no maker cannot build anything new: its 
 already carry or could scavenge from the battlefield, at most two items.
 Characters marked [injured] are hurt from an earlier fight and weaker; [gear broken] means their signature weapon
 or gear is gone, so plan around that.
-Plan around the terrain and around specific enemies. Be concrete and brief.`;
+First take honest stock of your own team: what each member can really do in their source material, how strong
+they truly are, and their limits and weaknesses. Then plan around the terrain and around specific enemies,
+using what your members actually have. Be concrete and brief.`;
 
   const BATTLE_SYSTEM = `You are the judge of a fantasy battle between two drafted teams of fictional characters.
 ${CHARACTER_RULES}
@@ -70,12 +75,17 @@ anticipated the other, whose gear counters what, where a plan breaks, and whethe
 through the enemy's tricks. Devices can fail, be stolen or be turned against their makers.
 Reason your way to the result; don't add up stats. Start from the two war councils: what each plan expects the
 enemy to do, what actually happens when the two plans meet, which assumptions break, which gear counters what,
-how the terrain helps or hurts each side, and what each character would really do in that moment. Be faithful to
-the source material about what characters can do: overpowered characters are overpowered. A cosmic, godlike,
-reality-bending or invincible character (Galactus, Saitama, Arceus, the Spectre) beats everyone far below their
-level, alone, and can wipe out a whole team at once, because no plan or gear can touch them; say so plainly when
-it's true. Between characters in the same league, the plans, cunning, leadership, gear and teamwork decide it,
-and a clever, well-led team can beat a stronger but disorganised one.
+how the terrain helps or hurts each side, and what each character would really do in that moment, using the
+abilities and limits each council listed (correct them if a council over- or under-sold its own side).
+Be realistic about power. Most strong characters have limits, weaknesses and counters, and those matter: fatigue,
+range, a single weak point, needing time to charge, being outnumbered, terrain that blunts their strength.
+Reserve "unstoppable" for beings who truly are (cosmic, omnipotent or reality-bending, like Galactus or Arceus)
+and only when nobody on the other side can touch them; then say so plainly, and they can win alone.
+Below that level, fights are rarely one-sided. Between comparable teams the result should be close: both sides
+land real blows, the winners usually lose at least one member, and there is a moment where it could have gone the
+other way. A clean sweep with no losses is rare: only when one side is far stronger or its plan perfectly counters
+the other's. Numbers, match-ups and teamwork can bring down a lone powerhouse. Don't simply hand the fight to the
+team with the single strongest character; and across many fights, either team can win.
 Characters marked [injured] fight at reduced strength; [gear broken] means they can't use their signature weapon.
 Every character on both teams must play a part: mention each by name in the fight and give each their own line
 in "roles". Nobody sits out. Be decisive: no draws.
@@ -83,6 +93,32 @@ This is a fight to the death. Nobody surrenders or runs: it ends only when every
 and the winners may lose members too. Fight the way each character really fights: their signature weapons, powers,
 techniques and named moves from their source material, and the gear their team prepared. Be vivid but brief. For "winner", give the player's name
 exactly as given.`;
+
+  // The war councils and the judge share one system prompt and one opening
+  // (battlefield and both rosters, in the same order), so Gemini's implicit
+  // cache can reuse that prefix across the three calls of a fight.
+  const SHARED_SYSTEM = `This conversation is one step of a fantasy battle between two drafted teams of fictional
+characters. Each request asks you to play one role: a team's war council, preparing in secret, or the judge, who
+pits both preparations against each other and decides the fight. Follow the rules for the role you are given.
+
+Rules for a war council:
+${PREP_SYSTEM}
+
+Rules for the judge:
+${BATTLE_SYSTEM}`;
+  function context(teams, arena, worldName) {
+    return `${battlefield(arena, worldName)}
+Both teams arrive at dusk with a day to scout, build, plan and set traps before the clash.
+
+${shown(teams).map(t => `The team drafted by ${t.name}:\n${rows(t, worldName)}`).join("\n\n")}`;
+  }
+  // Models favour whichever team they read first, so each fight shows them in
+  // a random order, chosen once and used for all three calls.
+  const orders = new WeakMap();
+  function shown(teams) {
+    if (!orders.has(teams)) orders.set(teams, Math.random() < 0.5 ? [0, 1] : [1, 0]);
+    return orders.get(teams).map(i => teams[i]);
+  }
 
   const tagsFor = r => {
     const u = (window.UNIVERSES || {})[r.world] || {};
@@ -130,16 +166,14 @@ exactly as given.`;
     const gearRule = makers.length
       ? `Your makers are ${makers.join(", ")}. Each can build ONE new item; everyone else can only bring what they already carry.`
       : "Your team has no makers, so you cannot build anything new: list at most two things your members already carry or could scavenge.";
-    const user = `${battlefield(arena, worldName)}
-Both teams arrive at dusk with a day to scout, build, plan and set traps before the clash.
+    const user = `${context(teams, arena, worldName)}
 
-Your team, drafted by ${us.name}:
-${rows(us, worldName)}
-
-The enemy, drafted by ${them.name}:
-${rows(them, worldName)}
+Your role: the war council for the team drafted by ${us.name}. The enemy is the team drafted by ${them.name}; you
+don't know their plan.
 
 Reply as JSON:
+- "kit": for each character on your team, one line on what they really bring: signature powers, weapons and skills,
+  how strong they are, and their main limits or weaknesses (an object with one key per character name, exactly as listed)
 - "leader": the character who leads your team
 - "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
 - "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged". "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
@@ -165,38 +199,43 @@ Reply as JSON:
           },
         },
         jobs: keyedObject(keys.map(c => c.key)),
+        kit: keyedObject(keys.map(c => c.key)),
       },
-      required: ["leader", "plan", "gear", "jobs"],
-      propertyOrdering: ["leader", "plan", "gear", "jobs"],
+      required: ["kit", "leader", "plan", "gear", "jobs"],
+      propertyOrdering: ["kit", "leader", "plan", "gear", "jobs"],
     };
-    return { system: PREP_SYSTEM, user, schema, maxTokens: 1000 };
+    return { system: SHARED_SYSTEM, user, schema, maxTokens: 1500 };
   }
 
   function prepText(prep) {
     const gear = prep.gear.length
       ? prep.gear.map(g => `  - ${g.name} (${g.made_by}): ${g.effect}`).join("\n")
       : "  - nothing beyond what they carry";
-    const jobs = prep.jobs.map(j => `  - ${j.name}: ${j.job}`).join("\n");
-    return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nJobs:\n${jobs}`;
+    const jobs = prep.jobs.map(j => `  - ${j.name}: ${j.job}${j.kit ? `\n      abilities and limits: ${j.kit}` : ""}`).join("\n");
+    return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
   }
 
   function battleQuestion(teams, preps, worldName, arena, aftermath, small) {
     const keys = roleKeys(teams).map(c => c.key);
     const gearNames = [...new Set(preps.flatMap(p => p.gear.map(g => g.name)).filter(Boolean))];
     const [lo, hi] = small ? [8, 12] : [12, 20];
-    const user = `${battlefield(arena, worldName)}
+    const user = `${context(teams, arena, worldName)}
 
-${teams.map((t, i) => `Team drafted by ${t.name}:\n${rows(t, worldName)}\nTheir preparation:\n${prepText(preps[i])}`).join("\n\n")}
+Your role: the judge. Each team prepared in secret:
+
+${shown(teams).map(t => `The preparation of the team drafted by ${t.name}:\n${prepText(preps[teams.indexOf(t)])}`).join("\n\n")}
 
 Reply as JSON:
-- "reasoning": your analysis before anything else is decided, five to eight sentences: how the two plans meet, where
-  each one works or breaks, which gear and terrain matter, how the key match-ups go given what the characters can
-  really do (and whether anyone is so far above the rest that the plans stop mattering), and so who wins and why
+- "reasoning": your analysis before anything else is decided, six to ten sentences. First make the strongest honest
+  case for each team winning (the order the teams are listed in means nothing), then weigh them: how strong each side really is
+  (and whether anyone is truly beyond the rest), how the two plans meet, where each works or breaks, which gear and
+  terrain matter, how the key match-ups go given each character's real abilities and limits, what it costs the
+  winners, the moment it could have turned, and so who wins and why
 - "fight": the battle in three short paragraphs, following your reasoning: how each plan played out, which gear mattered, naming every character at least once
 - "roles": one sentence for every character on both teams, saying what they did and how it went for them (an object with one key per character name, exactly as listed)
 - "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
 - "mvp": the character who mattered most
-- "winner": exactly one of: ${teams.map(t => JSON.stringify(t.name)).join(", ")}
+- "winner": exactly one of: ${shown(teams).map(t => JSON.stringify(t.name)).join(", ")}
 - "verdict": one punchy line explaining why the winner won
 - "beats": the same fight as an action script of ${lo} to ${hi} beats in order. It is animated as an 8-bit battle, so it must
   follow your "fight" paragraphs exactly: the same moves, gear, turning point and result, in the same order. Each beat:
@@ -209,7 +248,12 @@ Reply as JSON:
   weapon fired, cast a spell or power, special a big signature move (use it for the turning point), throw hurls a
   weapon or object, slam hits the ground and everyone near, barrage rains many shots down, grab seizes and hurls
   someone, teleport vanishes and strikes from behind, transform powers up into a bigger form, summon calls in
-  creatures or allies, stealth vanishes then strikes, team_up is two allies at once, annihilate is an overwhelming
+  creatures or allies, stealth vanishes then strikes, team_up is two allies at once; special abilities have their
+  own: time_stop freezes time and strikes while everyone else is frozen, foresee reads the target's attack before it
+  comes, dodges and counters, mind_control turns the target against their own ally (the outcome lands on that ally),
+  clone attacks with copies, shapeshift disguises as the enemy then strikes, regenerate heals one's own wounds, phase
+  passes through attacks or bodies, fly attacks from the air, grow and shrink change size to stomp or slip in,
+  reality_warp bends reality around the target; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
@@ -265,7 +309,7 @@ Reply as JSON:
       required: order,
       propertyOrdering: order,
     };
-    return { system: BATTLE_SYSTEM, user, schema, maxTokens: (aftermath ? 2000 : 1500) + (small ? 1400 : 2600) };
+    return { system: SHARED_SYSTEM, user, schema, maxTokens: (aftermath ? 2000 : 1500) + (small ? 1400 : 2600) };
   }
 
   // The same shape in JSON Schema, for WebLLM's grammar-constrained output.
@@ -318,7 +362,10 @@ Reply as JSON:
       leader: String(data.leader || ""),
       plan: String(data.plan || ""),
       gear,
-      jobs: keys.map(c => ({ name: c.name, world: c.world, job: String(given[c.key] || given[c.name] || "").trim() })),
+      jobs: keys.map(c => ({
+        name: c.name, world: c.world, job: String(given[c.key] || given[c.name] || "").trim(),
+        kit: String((data.kit || {})[c.key] || (data.kit || {})[c.name] || "").trim(),
+      })),
     };
   }
 
@@ -430,8 +477,9 @@ Reply as JSON:
       // (which has far more free calls a day) to fall back on.
       const pool = [0, 1, 2].flatMap(t => sorted.filter(n => tier(n) === t).slice(0, t === 2 ? 1 : 3));
       if (!pool.length) throw new Error("Gemini has run out of free calls on every model for today. Try tomorrow, or use the judge on this device.");
-      const last = safe.get(MODEL_STORE);
-      return last && pool.includes(last) ? [last, ...pool.filter(n => n !== last)] : pool;
+      // Gemini 3.7 Flash judges every fight; the rest are only fallbacks when it's busy.
+      const first = names.includes(PREFERRED) && !gemini.spent.has(PREFERRED) ? [PREFERRED] : [];
+      return [...first, ...pool.filter(n => n !== PREFERRED)];
     },
 
     // One structured question, falling back across models when one is busy.
@@ -455,6 +503,8 @@ Reply as JSON:
           const text = parts.filter(p => p.text && !p.thought).map(p => p.text).join("");
           if (!text) throw Object.assign(new Error("Gemini came back empty."), { retry: true });
           const out = json(text);
+          // How much of the prompt came from Gemini's cache, for checking it works.
+          gemini.usage = (gemini.usage || []).concat({ what, model: short(model), ...(data.usageMetadata || {}) });
           safe.set(MODEL_STORE, model);
           gemini.used = short(model);
           return out;
@@ -767,7 +817,7 @@ Reply as JSON:
       },
       required: ["aftermath"],
     };
-    const data = await backend.ask({ system: BATTLE_SYSTEM, user, schema, maxTokens: 900 }, onStatus, "the medic");
+    const data = await backend.ask({ system: SHARED_SYSTEM, user, schema, maxTokens: 900 }, onStatus, "the medic");
     const given = (data && data.aftermath) || {};
     return roleKeys(teams).map(c => {
       const a = given[c.key] || given[c.name] || {};

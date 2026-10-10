@@ -16,11 +16,15 @@
 
   const W = 384, H = 216;
   const ACTIONS = ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
-    "teleport", "transform", "summon", "stealth", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap",
-    "team_up", "taunt", "retreat", "fall"];
+    "teleport", "transform", "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
+    "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "block", "dodge", "deploy_gear", "build", "heal",
+    "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
   const ATTACKS = ["strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
-    "teleport", "summon", "stealth", "trap", "team_up"];
+    "teleport", "summon", "stealth", "trap", "team_up", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
+    "reality_warp"];
+  // Abilities that can be used on their own, with or without a target.
+  const SOLO = ["stealth", "teleport", "phase", "fly", "grow", "shrink", "time_stop"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
     "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"];
   const OUTCOMES = ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"];
@@ -112,20 +116,26 @@
       if (!friendly && target && target.side === actor.side && action !== "team_up") target = null;
       // Attacks need someone to hit; gear can simply be set up (a potion, a wall).
       // Vanishing or blinking away needs no target; any other attack does.
-      const reposition = ["stealth", "teleport"].includes(action) && !target;
+      const reposition = SOLO.includes(action) && !target;
       if (!reposition && (ATTACKS.includes(action) || (target && !friendly))) {
         if (!target || down.has(target.key)) target = standing(enemiesOf(actor))[0] || null;
         if (!target && !friendly) continue;
       }
       let outcome = OUTCOMES.includes(raw.outcome) ? raw.outcome : target && !friendly ? "hit" : "none";
-      if (friendly || !target || ["advance", "taunt", "block", "dodge", "build", "transform"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
+      if (friendly || !target || ["advance", "taunt", "block", "dodge", "build", "transform", "regenerate"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
       // Never knock out the winner's last fighter.
       if (outcome === "ko" && target && target.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) outcome = "hurt";
       if (outcome === "ko" && target && target.side === winSide && target === mvp) outcome = "hurt";
       const g = findGear(raw.gear);
-      // An overwhelming power hits every enemy still alive.
-      const victims = action === "annihilate" ? standing(enemiesOf(actor)).map(q => q.key) : null;
-      if (victims && outcome === "ko" && actor.side !== winSide && standing(people.filter(q => q.side === winSide)).length <= victims.length) outcome = "crit";
+      // An overwhelming power hits every enemy still alive; a controlled mind
+      // turns on one of its own allies (or itself, if it has none left).
+      let victims = action === "annihilate" ? standing(enemiesOf(actor)).map(q => q.key) : null;
+      if (action === "mind_control" && target) {
+        const ally = standing(alliesOf(target))[0];
+        victims = [(ally || target).key];
+      }
+      if (victims && outcome === "ko" && victims.some(k => people.find(q => q.key === k).side === winSide)
+        && standing(people.filter(q => q.side === winSide)).length <= victims.filter(k => people.find(q => q.key === k).side === winSide).length) outcome = "crit";
       out.push({
         actor: actor.key, action, target: target ? target.key : null, victims,
         gear: g ? g.name : null, effect: EFFECTS.includes(raw.effect) ? raw.effect : "none", outcome,
@@ -378,6 +388,10 @@
     const fieldGear = [];   // items placed on the ground
     const stains = [];      // blood, oil and goo left on the ground
     let shots = [], parts = [], rings = [], flash = null, shake = 0;
+    let frozen = null;      // { by, at }: time stopped by one fighter
+    let ghost = null;       // a glimpse of the future: { f, x0, x1, t0, ms }
+    let warpUntil = 0;      // reality bending on screen
+    let clones = [];        // copies fighting alongside someone
 
     /* What a character bleeds, and how they die. */
     function gore(f) {
@@ -488,6 +502,7 @@
       if (!ended || !stopped) raf = requestAnimationFrame(frame);
     }
     let stopped = false;
+    let warpCanvas = null;
     const timer = setInterval(() => { if (stopped) return clearInterval(timer); step(); }, 30);
 
     function draw() {
@@ -496,10 +511,11 @@
       ctx.drawImage(bg, 0, 0);
       drawStains();
       for (const it of fieldGear) drawGear(ctx, it.look, it.colour, it.x, it.y, time);
-      const list = fighters.slice().sort((a, b) => a.pos.y - b.pos.y);
+      const list = fighters.concat(clones).sort((a, b) => a.pos.y - b.pos.y);
       for (const f of list) {
         const pose = f.downed ? "ko" : f.pose;
-        const img = f.sprite.frame(pose, time - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
+        const t = frozen && f !== frozen.by ? frozen.at : time;   // the frozen don't move
+        const img = (f.disguise || f.sprite).frame(pose, t - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
         const S = img.width;
         const x = Math.round(f.pos.x), y = Math.round(f.pos.y + (f.hop || 0));
         if (f.alpha <= 0.01) continue;
@@ -512,6 +528,14 @@
         ctx.drawImage(img, -Math.floor(S / 2), -(S - 4));
         ctx.restore();
         if (f.shield > time) { ctx.strokeStyle = "rgba(143,208,255,0.85)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y - 12 * f.sprite.size, 14 * f.sprite.size, 0, Math.PI * 2); ctx.stroke(); }
+      }
+      if (ghost) {
+        const k = clamp((time - ghost.t0) / ghost.ms, 0, 1), g = ghost.f, img = g.sprite.frame("strike", 0);
+        ctx.save(); ctx.globalAlpha = 0.35 * (1 - k * 0.5);
+        ctx.translate(Math.round(lerp(ghost.x0, ghost.x1, k)), Math.round(g.pos.y));
+        ctx.scale(g.facing < 0 ? -1 : 1, 1);
+        ctx.drawImage(img, -Math.floor(img.width / 2), -(img.width - 4));
+        ctx.restore();
       }
       for (const r of rings) { const k = (time - r.t0) / r.ms; if (k < 1) { ctx.strokeStyle = r.c; ctx.globalAlpha = 1 - k; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(r.x, r.y, r.r0 + (r.r1 - r.r0) * k, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } }
       rings = rings.filter(r => time - r.t0 < r.ms);
@@ -526,6 +550,24 @@
       parts = parts.filter(p => time - p.t0 < p.life);
       if (flash && flash.until > time) { ctx.globalAlpha = (flash.until - time) / flash.ms * 0.55; ctx.fillStyle = flash.c; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; }
       ctx.restore();
+      // Stopped time: the world goes grey, all but the one who stopped it.
+      if (frozen) {
+        ctx.save();
+        ctx.globalCompositeOperation = "saturation"; ctx.fillStyle = "#808080"; ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "source-over";
+        const f = frozen.by, img = f.sprite.frame(f.pose, time - f.poseT);
+        ctx.translate(Math.round(f.pos.x), Math.round(f.pos.y + (f.hop || 0)));
+        ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale);
+        ctx.drawImage(img, -Math.floor(img.width / 2), -(img.width - 4));
+        ctx.restore();
+      }
+      // Bent reality: the picture ripples in slices and its colours flip.
+      if (warpUntil > time) {
+        const copy = warpCanvas || (warpCanvas = Object.assign(document.createElement("canvas"), { width: W, height: H }));
+        copy.getContext("2d").drawImage(cv, 0, 0);
+        for (let y = 0; y < H; y += 3) ctx.drawImage(copy, 0, y, W, 3, Math.round(Math.sin(y / 9 + time / 70) * 5), y, W, 3);
+        if (((time / 120) | 0) % 3 === 0) { ctx.globalCompositeOperation = "difference"; ctx.fillStyle = "#ffffff"; ctx.globalAlpha = 0.5; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; }
+      }
       placeBubbles();
       bar.style.width = `${Math.round(progress * 100)}%`;
     }
@@ -946,6 +988,161 @@
           setPose(actor, "victory"); await wait(500); setPose(actor, "idle");
           break;
         }
+        case "time_stop": {
+          setPose(actor, "cast"); sfx("b_timestop", 1);
+          rings.push({ x: centre(actor).x, y: centre(actor).y, r0: 4, r1: 160, c: "#ffffff", t0: time, ms: 700 });
+          frozen = { by: actor, at: time };
+          await wait(600);
+          // Stopping time without striking: the world holds still, then moves on.
+          if (!target || ["none", "blocked", "dodged", "miss"].includes(b.outcome)) {
+            setPose(actor, "victory"); await wait(900);
+            frozen = null; flash = { c: "#ffffff", until: time + 150, ms: 150 };
+            setPose(actor, "idle");
+            break;
+          }
+          await approach(actor, target);
+          for (let i = 0; i < 3; i++) {
+            setPose(actor, "windup"); await wait(110);
+            setPose(actor, "strike"); sfx("b_punch", 0.5, 0.8);
+            burst(centre(target).x, centre(target).y + rnd(-4, 4), b.effect !== "none" ? b.effect : "impact", 4);
+            await wait(130);
+          }
+          await goHome(actor);
+          await wait(250);
+          frozen = null; sfx("b_crit", 1); flash = { c: "#ffffff", until: time + 200, ms: 200 };
+          await land(target, b.outcome === "hit" ? "crit" : b.outcome, effect, actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "foresee": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_magic", 0.8, 0.8);
+          burst(centre(actor).x, centre(actor).y - 6 * actor.sprite.size, "psychic", 8);
+          // A glimpse of the attack that's coming…
+          ghost = { f: target, x0: target.pos.x, x1: actor.pos.x - target.facing * 14 * target.sprite.size, t0: time, ms: 650 };
+          await wait(700); ghost = null;
+          // …so when it comes for real, it finds nothing there.
+          setPose(target, "strike");
+          await Promise.all([tween(target.pos, { x: actor.pos.x - target.facing * 14 * target.sprite.size }, 280), (async () => { await wait(120); actor.hop = -8; await tween(actor.pos, { x: actor.pos.x - actor.facing * 16 }, 160); actor.hop = 0; })()]);
+          damageNumber(actor, "foreseen", "#ff6ad5"); sfx("b_whoosh", 0.8);
+          setPose(actor, "strike"); sfx("b_slash", 0.9);
+          burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "slash", 10);
+          await land(target, b.outcome, effect, actor);
+          await Promise.all([goHome(actor), goHome(target)]);
+          break;
+        }
+        case "mind_control": {
+          if (!target) break;
+          const victim = (b.victims || []).map(byKey).find(Boolean) || target;
+          setPose(actor, "cast"); sfx("b_psychic", 0.9);
+          for (let i = 0; i < 3; i++) { rings.push({ x: centre(target).x, y: centre(target).y - 6, r0: 2, r1: 14, c: "#ff6ad5", t0: time, ms: 400 }); await wait(160); }
+          damageNumber(target, "controlled", "#ff6ad5");
+          if (victim !== target) {
+            target.facing = -target.facing;
+            await approach(target, victim);
+            setPose(target, "windup"); await wait(150);
+            setPose(target, "strike"); sfx("b_slash", 0.8);
+            burst(centre(victim).x, centre(victim).y, "psychic", 10);
+            await land(victim, b.outcome, "psychic", target);
+            target.facing = target.side ? -1 : 1;
+            await goHome(target);
+          } else { setPose(target, "hurt"); await land(target, b.outcome, "psychic", actor); }
+          setPose(actor, "idle");
+          break;
+        }
+        case "clone": {
+          if (!target) break;
+          sfx("b_teleport", 0.8);
+          const copies = [-1, 1].map(k => ({ ...actor, key: `${actor.key}~${k}`, pos: { x: actor.pos.x - actor.facing * 6, y: actor.pos.y + k * 10 }, alpha: 0.8, pose: "idle", poseT: time, hop: 0 }));
+          copies.forEach(c => { burst(c.pos.x, c.pos.y - 8, "smoke", 8); clones.push(c); });
+          await wait(300);
+          await Promise.all([approach(actor, target), ...copies.map((c, i) => { setPose(c, "walk"); return tween(c.pos, { x: target.pos.x - actor.facing * (10 + i * 6), y: target.pos.y + (i ? 10 : -10) }, 420); })]);
+          [actor, ...copies].forEach(f => setPose(f, "windup")); await wait(150);
+          [actor, ...copies].forEach(f => setPose(f, "strike")); sfx("b_punch", 0.9);
+          burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "impact", 16);
+          await land(target, b.outcome, effect, actor);
+          copies.forEach(c => burst(c.pos.x, c.pos.y - 8, "smoke", 8));
+          clones = clones.filter(c => !copies.includes(c));
+          await goHome(actor);
+          break;
+        }
+        case "shapeshift": {
+          if (!target) break;
+          sfx("b_transform", 0.7); burst(centre(actor).x, centre(actor).y, "smoke", 14);
+          actor.disguise = target.sprite;
+          await wait(400);
+          await approach(actor, target);
+          await wait(250);
+          burst(centre(actor).x, centre(actor).y, "smoke", 12); actor.disguise = null;
+          setPose(actor, "strike"); sfx("b_slash", 1);
+          await land(target, b.outcome === "hit" ? "crit" : b.outcome, effect, actor);
+          await goHome(actor);
+          break;
+        }
+        case "regenerate": {
+          setPose(actor, "cast"); sfx("b_heal", 0.9);
+          for (let i = 0; i < 5; i++) { burst(centre(actor).x, centre(actor).y, "heal", 5); await wait(120); }
+          setHp(actor, actor.hp + 40); damageNumber(actor, "+40", "#6aff8a");
+          await wait(300); setPose(actor, "idle");
+          break;
+        }
+        case "phase": {
+          sfx("b_teleport", 0.6);
+          await tween(actor, { alpha: 0.35 }, 200);
+          if (target) {
+            setPose(actor, "walk");
+            await tween(actor.pos, { x: target.pos.x + actor.facing * 16, y: target.pos.y }, 500);
+            actor.facing = -actor.facing; await tween(actor, { alpha: 1 }, 120);
+            setPose(actor, "strike"); sfx("b_slash", 0.9);
+            await land(target, b.outcome, effect, actor);
+            actor.facing = actor.side ? -1 : 1;
+            await tween(actor, { alpha: 0.35 }, 120); await goHome(actor);
+          } else await wait(800);
+          await tween(actor, { alpha: 1 }, 200);
+          break;
+        }
+        case "fly": {
+          sfx("b_whoosh", 0.8);
+          await tween(actor, { hop: -40 }, 400);
+          if (target) {
+            await tween(actor.pos, { x: target.pos.x - actor.facing * 30 }, 350);
+            setPose(actor, "cast");
+            const a = { ...actor, pos: { x: actor.pos.x, y: actor.pos.y - 40 } };
+            await fire(a, target, shotFor(actor, b.effect, null), effect);
+            await land(target, b.outcome, effect, actor);
+            await goHome(actor);
+          } else await wait(600);
+          await tween(actor, { hop: 0 }, 300);
+          setPose(actor, "idle");
+          break;
+        }
+        case "grow": case "shrink": {
+          const grow = b.action === "grow", was = actor.scale;
+          sfx(grow ? "b_transform" : "b_teleport", 0.8);
+          await tween(actor, { scale: grow ? 1.9 : 0.45 }, 350);
+          if (grow) shake = time + 300;
+          if (target) {
+            await approach(actor, target);
+            setPose(actor, grow ? "windup" : "strike"); await wait(150);
+            setPose(actor, "strike");
+            if (grow) { sfx("b_slam", 0.5); shake = time + 400; burst(target.pos.x, target.pos.y, "earth", 18, true); }
+            else sfx("b_slash", 0.8);
+            await land(target, b.outcome === "hit" && !grow ? "crit" : b.outcome, effect, actor);
+            await goHome(actor);
+          } else await wait(600);
+          await tween(actor, { scale: was }, 300);
+          break;
+        }
+        case "reality_warp": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_warp", 1);
+          warpUntil = time + 1100;
+          await wait(900);
+          burst(centre(target).x, centre(target).y, effect === "impact" ? "psychic" : effect, 18, true);
+          await land(target, b.outcome, effect === "impact" ? "psychic" : effect, actor);
+          setPose(actor, "idle");
+          break;
+        }
         case "taunt":
           setPose(actor, "victory"); actor.hop = -4; await wait(240); actor.hop = 0; await wait(500); setPose(actor, "idle");
           break;
@@ -975,7 +1172,9 @@
     function describe(b, a, t) {
       const verbs = { advance: "advances", strike: "attacks", combo: "unleashes a flurry on", shoot: "shoots at", cast: "casts at", special: "unleashes a special on",
         annihilate: "unleashes everything", throw: "hurls a weapon at", slam: "slams down on", barrage: "rains fire on", grab: "seizes", teleport: "teleports behind",
-        transform: "transforms", summon: "summons help against", stealth: "vanishes and strikes", block: "braces",
+        transform: "transforms", summon: "summons help against", stealth: "vanishes and strikes", time_stop: "stops time and strikes",
+        foresee: "sees the attack coming and counters", mind_control: "seizes the mind of", clone: "sends copies at", shapeshift: "disguises as",
+        regenerate: "regenerates", phase: "phases", fly: "takes to the air", grow: "grows huge", shrink: "shrinks down", reality_warp: "bends reality around", block: "braces",
         dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
         team_up: "teams up against", taunt: "taunts the enemy", retreat: "retreats", fall: "falls" };
       return `${a.name} ${verbs[b.action] || "acts"}${t && !["block", "dodge", "build", "taunt", "retreat", "fall"].includes(b.action) ? ` ${t.name}` : ""}.`;
@@ -1026,7 +1225,7 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
-      skipping = true;
+      skipping = true; frozen = null; ghost = null; warpUntil = 0; clones = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();
