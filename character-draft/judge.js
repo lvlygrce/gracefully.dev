@@ -170,7 +170,19 @@ ${shown(teams).map(t => `The team drafted by ${t.name}:\n${rows(t, worldName)}`)
     required: keys,
   });
 
-  function prepQuestion(teams, i, worldName, arena) {
+  /* Who attacks and who defends is settled before either council plans, so
+     both plan for the same fight. A team fighting on its own world's ground
+     (most of its members are from the battlefield's world) holds it; otherwise
+     a coin decides. Kept with the preparations, so a retry keeps the roles. */
+  function decideRoles(teams, arena, preps) {
+    const kept = (preps || []).findIndex(p => p && p.stance === "attack");
+    if (kept >= 0) return kept;
+    const home = teams.map(t => t.roster.filter(r => arena && r.world === arena.world).length / Math.max(1, t.roster.length));
+    if (home[0] !== home[1] && Math.max(...home) > 0.5) return home[0] > home[1] ? 1 : 0;
+    return Math.random() < 0.5 ? 0 : 1;
+  }
+
+  function prepQuestion(teams, i, worldName, arena, attackerIndex) {
     const us = teams[i], them = teams[1 - i];
     const keys = roleKeys(teams).filter(c => c.team === us.name);
     const makers = us.roster.filter(isMaker).map(r => r.name);
@@ -180,13 +192,14 @@ ${shown(teams).map(t => `The team drafted by ${t.name}:\n${rows(t, worldName)}`)
     const user = `${context(teams, arena, worldName)}
 
 Your role: the war council for the team drafted by ${us.name}. The enemy is the team drafted by ${them.name}; you
-don't know their plan.
+don't know their plan. ${attackerIndex === i
+  ? `Your team is the ATTACKER: the enemy holds the strongest position on this battlefield and will be dug in and waiting. You must go to them, break their defences and kill them all; waiting or fortifying is not an option.`
+  : `Your team is the DEFENDER: you hold the strongest position on this battlefield and the enemy is coming to you. Fortify it, prepare the ground and make them pay for every step; you don't need to go anywhere.`}
 
 Reply as JSON:
 - "kit": for each character on your team, one line on what they really bring: signature powers, weapons and skills,
   how strong they are, and their main limits or weaknesses (an object with one key per character name, exactly as listed)
 - "leader": the character who leads your team
-- "stance": "attack" if your plan is to go after the enemy, "defend" if you hold ground and make them come to you
 - "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
 - "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged". "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
 - "jobs": one short sentence per character on your team, saying their job in the plan (an object with one key per character name, exactly as listed)`;
@@ -194,7 +207,6 @@ Reply as JSON:
       type: "OBJECT",
       properties: {
         leader: { type: "STRING" },
-        stance: { type: "STRING", enum: ["attack", "defend"] },
         plan: { type: "STRING" },
         gear: {
           type: "ARRAY",
@@ -214,8 +226,8 @@ Reply as JSON:
         jobs: keyedObject(keys.map(c => c.key)),
         kit: keyedObject(keys.map(c => c.key)),
       },
-      required: ["kit", "leader", "stance", "plan", "gear", "jobs"],
-      propertyOrdering: ["kit", "leader", "stance", "plan", "gear", "jobs"],
+      required: ["kit", "leader", "plan", "gear", "jobs"],
+      propertyOrdering: ["kit", "leader", "plan", "gear", "jobs"],
     };
     return { system: SHARED_SYSTEM, user, schema, maxTokens: 1500 };
   }
@@ -228,13 +240,14 @@ Reply as JSON:
     return `Leader: ${prep.leader}\nStance: ${prep.stance === "defend" ? "holds ground and defends" : "goes on the attack"}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
   }
 
-  function battleQuestion(teams, preps, worldName, arena, aftermath, small) {
+  function battleQuestion(teams, preps, worldName, arena, aftermath, small, attackerIndex = 0) {
     const keys = roleKeys(teams).map(c => c.key);
     const gearNames = [...new Set(preps.flatMap(p => p.gear.map(g => g.name)).filter(Boolean))];
     const [lo, hi] = small ? [8, 12] : [12, 20];
     const user = `${context(teams, arena, worldName)}
 
-Your role: the judge. Each team prepared in secret:
+Your role: the judge. The team drafted by ${teams[attackerIndex].name} attacks; the team drafted by
+${teams[1 - attackerIndex].name} defends its position and was waiting for them. Each team prepared in secret:
 
 ${shown(teams).map(t => `The preparation of the team drafted by ${t.name}:\n${prepText(preps[teams.indexOf(t)])}`).join("\n\n")}
 
@@ -244,8 +257,6 @@ Reply as JSON:
   (and whether anyone is truly beyond the rest), how the two plans meet, where each works or breaks, which gear and
   terrain matter, how the key match-ups go given each character's real abilities and limits, what it costs the
   winners, the moment it could have turned, and so who wins and why
-- "attacker": the team that goes on the attack (the other defends); follow the war councils' stances, and if both
-  want the same, decide from the plans and the terrain who has to move
 - "defences": what the defenders hold, in a few words, from the battlefield ("the walls of Castle Black")
 - "feature": the terrain feature the defenders fight from, the nearest of the given kinds; the animation shows it,
   defenders start dug in on it and attackers have to come across the field to them
@@ -261,7 +272,11 @@ Reply as JSON:
   "none"), "effect" (what it looks like), "outcome" (how it lands on the target; "none" if no target), "caption" (one short
   sentence a viewer reads while it plays, under 90 characters), and "line" (something the actor shouts, under 40
   characters, or "" for most beats), and "move" (the name of the technique, weapon or power used, as the source
-  material calls it: "Thunderbolt", "Hammer throw", "Rasengan", "Dracarys"; or "" for plain moves). Pick the action
+  material calls it: "Thunderbolt", "Hammer throw", "Rasengan", "Dracarys"; or "" for plain moves), "also" (other
+  characters caught by the same move, when one blow really takes out several: a sweep through a line, a blast, a
+  giant stepping on a squad; the outcome applies to them too; usually []), and "death" (how a "ko" kills: normal,
+  disintegrate, blast_off sends them flying off into the sky, vaporize, explode, crush, melt, shatter, burn; pick
+  what fits the move, and "normal" when there's no kill). Pick the action
   that looks most like what the character really does: strike is a melee blow, combo a flurry of blows, shoot a
   weapon fired, cast a spell or power, special a big signature move (use it for the turning point), throw hurls a
   weapon or object, slam hits the ground and everyone near, barrage rains many shots down, grab seizes and hurls
@@ -288,7 +303,11 @@ Reply as JSON:
   then fights beside them (name it in "move": Annie's Tibbers, Yugi's Dark Magician or Blue-Eyes White Dragon,
   Naruto's Kurama, Jotaro's Star Platinum, Dio's The World, Giorno's Gold Experience, Gandalf's eagles, Malzahar's
   voidlings, Elise's spiderlings, Zyra's plants, Ivern's Daisy, Yorick's Maiden of the Mist, Jon Snow's Ghost,
-  Dumbledore's Fawkes, Hagrid's Aragog, the Pokémon Trainer's Charizard); use these when they truly fit the character; annihilate is an overwhelming
+  Dumbledore's Fawkes, Hagrid's Aragog, the Pokémon Trainer's Charizard, a Patronus, Aang's Appa, Naruto's
+  Gamabunta, Sung Jinwoo's shadow army, Gru's Minions, Iron Man's Iron Legion, the Batmobile, Ghost Rider's Hell
+  Cycle, Vader's stormtroopers, Sauron's Nazgûl, Mario's Yoshi, Elsa's Marshmallow, Rocket's Groot, Shrek's Dragon,
+  Heimerdinger's turrets; summon_dragon can name the dragon: Drogon, Rhaegal, Viserion, Vhagar, Caraxes, Meleys or
+  Sunfyre); use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
@@ -297,7 +316,11 @@ Reply as JSON:
   their position first, and the terrain can kill. Outcome "ko" means killed. Rules: every character
   acts at least once; the dead do nothing afterwards; use the gear where the plans used it; nobody retreats; by the
   last beat every character on the losing side has been killed ("ko"), while the winner's side still has someone
-  alive. In a close fight, order the beats so the deaths alternate between the sides and the winner is not obvious
+  alive. The beats must play out the two war councils' plans as written: each side does what its plan and jobs say
+  until the fight forces a change, and every gear item a team prepared gets used. Everything you return must agree
+  with the beats: the fight paragraphs, the roles, the turning point (one of the beats), the MVP (a winner who
+  matters in the beats) and the verdict. Strong characters may kill several enemies in one beat when it makes
+  sense. In a close fight, order the beats so the deaths alternate between the sides and the winner is not obvious
   until the last few beats${aftermath ? `
 - "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
   "gear_broken" or "dead", with a short note (an object with one key per character name). It was a fight to the
@@ -321,20 +344,21 @@ Reply as JSON:
         effect: { type: "STRING", enum: ANIM.effects },
         outcome: { type: "STRING", enum: ANIM.outcomes },
         move: { type: "STRING" },
+        also: { type: "ARRAY", items: { type: "STRING", enum: keys } },
+        death: { type: "STRING", enum: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"] },
         caption: { type: "STRING" },
         line: { type: "STRING" },
       },
-      required: ["actor", "action", "move", "target", "gear", "effect", "outcome", "caption", "line"],
-      propertyOrdering: ["actor", "action", "move", "target", "gear", "effect", "outcome", "caption", "line"],
+      required: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line"],
+      propertyOrdering: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line"],
     };
     // Reason first (the prose), then script it, then commit to a winner.
-    const order = ["reasoning", "attacker", "defences", "feature", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
+    const order = ["reasoning", "defences", "feature", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
     const schema = {
       type: "OBJECT",
       properties: {
         ...(aftermath ? { aftermath: afterSchema } : {}),
         reasoning: { type: "STRING" },
-        attacker: { type: "STRING", enum: shown(teams).map(t => t.name) },
         defences: { type: "STRING" },
         feature: { type: "STRING", enum: ["wall", "cliff", "gate", "trench", "river", "bridge", "forest", "rooftops", "ruins", "open"] },
         fight: { type: "STRING" },
@@ -402,7 +426,7 @@ Reply as JSON:
       team: us.name,
       leader: String(data.leader || ""),
       plan: String(data.plan || ""),
-      stance: data.stance === "defend" ? "defend" : "attack",
+      stance: data.stance === "attack" ? "attack" : "defend",
       gear,
       jobs: keys.map(c => ({
         name: c.name, world: c.world, job: String(given[c.key] || given[c.name] || "").trim(),
@@ -426,8 +450,15 @@ Reply as JSON:
     data.fight = String(data.fight || "");
     data.reasoning = String(data.reasoning || "");
     data.defences = String(data.defences || "");
-    if (!names.includes(data.attacker)) data.attacker = names[0];
+
     data.beats = Array.isArray(data.beats) ? data.beats.filter(b => b && typeof b === "object") : [];
+    const winners = (teams.find(t => t.name === data.winner) || teams[0]).roster.map(r => r.name);
+    const keyName = k => (roleKeys(teams).find(c => c.key === k) || {}).name || k;
+    if (!winners.includes(keyName(data.mvp))) {
+      const kills = {};
+      data.beats.forEach(b => { if (b.outcome === "ko") kills[keyName(b.actor)] = (kills[keyName(b.actor)] || 0) + 1 + ((b.also || []).length); });
+      data.mvp = winners.slice().sort((a, b) => (kills[b] || 0) - (kills[a] || 0))[0] || data.mvp;
+    }
     if (data.aftermath && typeof data.aftermath === "object") {
       const given = data.aftermath;
       data.aftermath = roleKeys(teams).map(c => {
@@ -676,11 +707,13 @@ Reply as JSON:
     const backend = kind === "gemini" ? gemini : local;
     await backend.prepare(onStatus);
     const done = [preps[0] || null, preps[1] || null];
+    const attackerIndex = decideRoles(teams, arena, done);
 
     const prepOne = async i => {
       if (done[i]) return done[i];
-      const q = prepQuestion(teams, i, worldName, arena);
+      const q = prepQuestion(teams, i, worldName, arena, attackerIndex);
       const data = await backend.ask(q, onStatus, `${teams[i].name}'s war council`);
+      data.stance = i === attackerIndex ? "attack" : "defend";
       done[i] = tidyPrep(data, teams, i);
       onPrep(i, done[i]);
       return done[i];
@@ -698,9 +731,9 @@ Reply as JSON:
     }
 
     onStatus("Both sides are ready. The battle is being fought…");
-    const q = battleQuestion(teams, done, worldName, arena, aftermath, kind !== "gemini");
+    const q = battleQuestion(teams, done, worldName, arena, aftermath, kind !== "gemini", attackerIndex);
     const battle = tidyBattle(await backend.ask(q, onStatus, "the battle"), teams);
-    return { ...battle, preps: done, by: backend.label() };
+    return { ...battle, attacker: teams[attackerIndex].name, preps: done, by: backend.label() };
   }
 
   /* --- The director ------------------------------------------------

@@ -25,21 +25,18 @@
     const U = window.UNIVERSES;
     const ch = (world, name) => ({ world, name, note: (U[world].characters.find(c => c[0] === name) || [])[1] || "" });
     const teams = [
-      { name: "Grace", roster: [ch("league", "Annie"), ch("anime", "Yugi Muto"), ch("anime", "Naruto Uzumaki"), ch("anime", "Jotaro Kujo"), ch("shows", "Gandalf")] },
-      { name: "Sam", roster: [ch("anime", "Dio Brando"), ch("league", "Malzahar"), ch("league", "Elise"), ch("marvel", "Spider-Man"), ch("hp", "Rubeus Hagrid")] },
+      { name: "Grace", roster: [ch("marvel", "Thanos"), ch("hp", "Harry Potter"), ch("dc", "Batman"), ch("shows", "Gru"), ch("shows", "Elsa")] },
+      { name: "Sam", roster: [ch("marvel", "Spider-Man"), ch("pokemon", "Team Rocket"), ch("hp", "Lord Voldemort"), ch("shows", "Stormtrooper Legion"), ch("westeros", "The Night King")] },
     ];
     const verdict = {
-      winner: "Grace", mvp: "Yugi Muto", verdict: "Test.", turning_point: "Blue-Eyes.", preps: [],
+      winner: "Grace", mvp: "Thanos", verdict: "Test.", turning_point: "The snap.", preps: [{ stance: "attack" }, { stance: "defend" }], attacker: "Grace", feature: "wall", defences: "the wall",
       beats: [
-        { actor: "Annie", action: "summon_companion", move: "Tibbers", target: "Elise", effect: "fire", outcome: "hit", caption: "Annie: Have you seen my bear Tibbers?", line: "Tibbers!" },
-        { actor: "Malzahar", action: "summon_companion", move: "Voidlings", target: "Annie", effect: "dark", outcome: "hit", caption: "Voidlings swarm Annie.", line: "" },
-        { actor: "Yugi Muto", action: "summon_companion", move: "Blue-Eyes White Dragon", target: "Malzahar", effect: "light", outcome: "ko", caption: "Yugi summons the Blue-Eyes White Dragon.", line: "" },
-        { actor: "Dio Brando", action: "summon_companion", move: "The World", target: "Jotaro Kujo", effect: "impact", outcome: "hit", caption: "The World: muda muda muda.", line: "" },
-        { actor: "Jotaro Kujo", action: "summon_companion", move: "Star Platinum", target: "Dio Brando", effect: "impact", outcome: "ko", caption: "Star Platinum: ora ora ora.", line: "Ora!" },
-        { actor: "Naruto Uzumaki", action: "summon_companion", move: "Kurama", target: "Elise", effect: "fire", outcome: "ko", caption: "Kurama's Tailed Beast Bomb.", line: "" },
-        { actor: "Rubeus Hagrid", action: "summon_companion", move: "Aragog", target: "Gandalf", effect: "poison", outcome: "hurt", caption: "Aragog scuttles in.", line: "" },
-        { actor: "Gandalf", action: "summon_companion", move: "The Eagles", target: "Rubeus Hagrid", effect: "wind", outcome: "ko", caption: "The eagles are coming.", line: "" },
-        { actor: "Yugi Muto", action: "summon_companion", move: "Dark Magician", target: "Spider-Man", effect: "dark", outcome: "ko", caption: "Dark Magic Attack.", line: "" },
+        { actor: "Harry Potter", action: "summon_companion", move: "Expecto Patronum", target: "Lord Voldemort", effect: "light", outcome: "hit", death: "normal", caption: "A silver stag charges.", line: "Expecto Patronum!" },
+        { actor: "Batman", action: "summon_companion", move: "Batmobile", target: "Stormtrooper Legion", effect: "impact", outcome: "hit", death: "normal", caption: "The Batmobile ploughs in.", line: "" },
+        { actor: "Gru", action: "summon_companion", move: "Minions", target: "Team Rocket", effect: "impact", outcome: "ko", death: "blast_off", caption: "Team Rocket's blasting off again!", line: "" },
+        { actor: "Elsa", action: "summon_companion", move: "Marshmallow", target: "The Night King", effect: "ice", outcome: "ko", death: "shatter", caption: "Marshmallow smashes the Night King to pieces.", line: "" },
+        { actor: "Thanos", action: "special", move: "The Snap", target: "Spider-Man", also: ["Stormtrooper Legion"], effect: "psychic", outcome: "ko", death: "disintegrate", caption: "Thanos snaps.", line: "I don't feel so good." },
+        { actor: "Harry Potter", action: "cast", move: "Fiendfyre", target: "Lord Voldemort", effect: "fire", outcome: "ko", death: "burn", caption: "Fiendfyre.", line: "" },
       ],
     };
     if (location.search.includes("real")) {

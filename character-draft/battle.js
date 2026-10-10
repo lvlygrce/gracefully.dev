@@ -134,6 +134,12 @@
       if (outcome === "ko" && target && target.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) outcome = "hurt";
       if (outcome === "ko" && target && target.side === winSide && target === mvp) outcome = "hurt";
       const g = findGear(raw.gear);
+      // One move can catch several: "also" names the others it hits.
+      let also = (Array.isArray(raw.also) ? raw.also : []).map(find).filter(q => q && target && q !== target && q.side === target.side && !down.has(q.key)).map(q => q.key);
+      if (outcome === "ko" && also.length && target && target.side === winSide) {
+        const left = standing(people.filter(q => q.side === winSide)).length;
+        also = also.slice(0, Math.max(0, left - 2));
+      }
       // An overwhelming power hits every enemy still alive; a controlled mind
       // turns on one of its own allies (or itself, if it has none left).
       let victims = action === "annihilate" ? standing(enemiesOf(actor)).map(q => q.key) : null;
@@ -147,10 +153,12 @@
         actor: actor.key, action, target: target ? target.key : null, victims,
         gear: g ? g.name : null, effect: EFFECTS.includes(raw.effect) ? raw.effect : "none", outcome,
         move: String(raw.move || "").trim().slice(0, 32),
+        also: victims ? [] : [...new Set(also)],
+        death: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"].includes(raw.death) ? raw.death : "normal",
         caption: String(raw.caption || "").trim().slice(0, 160), line: String(raw.line || "").trim().slice(0, 60),
       });
       if (outcome === "ko" && victims) victims.forEach(k => down.add(k));
-      else if (outcome === "ko" && target) down.add(target.key);
+      else if (outcome === "ko" && target) { down.add(target.key); also.forEach(k => down.add(k)); }
       if (action === "fall" || action === "self_destruct") down.add(actor.key);
       if (action === "retreat" && actor.side !== winSide) down.add(actor.key);
     }
@@ -411,6 +419,21 @@
     { id: "ghost", name: "Ghost", match: /\bghost\b|direwolf/i, by: /^Jon Snow$/, kind: "beast", from: ["westeros", "Ghost"], attack: "melee", colour: "#ffffff", sound: "b_slash" },
     { id: "fawkes", name: "Fawkes", match: /fawkes|phoenix/i, by: /Dumbledore/, kind: "flyer", from: ["hp", "Fawkes"], attack: "dive", colour: "#ff7a1a", sound: "b_fire" },
     { id: "aragog", name: "Aragog", match: /aragog|acromantula/i, by: /^Rubeus Hagrid$/, kind: "beast", from: ["hp", "Aragog"], attack: "melee", colour: "#2a2a2a", sound: "b_summon" },
+    { id: "patronus", name: "a Patronus", match: /patronus|expecto/i, by: /^(Harry Potter|Severus Snape|Albus Dumbledore|Luna Lovegood|Hermione Granger)$/, kind: "beast", spec: "q|l|t|e8f4ff|cfe8ff|e8f4ff|e8f4ff|9fe3ff|none|none|bare|none|horns,glow,glow_eyes|fists|light", attack: "melee", colour: "#cfe8ff", sound: "b_magic", ghostly: true },
+    { id: "appa", name: "Appa", match: /appa|sky bison/i, by: /^Aang$/, kind: "flyer", spec: "q|g|w|f2f0ea|8a5a32|f2f0ea|f2f0ea|3f7fd6|none|none|bare|none|horns,stripes|fists|wind", attack: "dive", colour: "#d8f3e6", sound: "b_wind" },
+    { id: "gamabunta", name: "Gamabunta", match: /gamabunta|toad/i, kind: "beast", spec: "o|g|w|c0262f|e8b84a|c0262f|8a5a32|e8b84a|none|none|bare|katana|feet,grin,spots|fists|water", attack: "slam", colour: "#3fa0ff", sound: "b_slam" },
+    { id: "shadows", name: "the shadow army", match: /shadow (army|soldier|extraction)|arise/i, by: /^Sung Jinwoo$/, kind: "swarm", spec: "h|m|n|1f1f2a|1a1a1a|1f1f2a|1f1f2a|8e5bd0|none|helm|armour|sword|horde,glow_eyes|blade|dark", colour: "#8e5bd0", sound: "b_rise" },
+    { id: "minions", name: "the Minions", match: /minion/i, by: /^Gru$/, kind: "swarm", from: ["shows", "The Minions"], colour: "#f2cf3a", sound: "b_summon" },
+    { id: "ironlegion", name: "the Iron Legion", match: /iron legion|drones|suits/i, by: /^Iron Man$/, kind: "swarm", spec: "r|m|n|9aa3ad|1a1a1a|9aa3ad|c0262f|8fe9ff|none|none|armour|none|horde,glow_eyes|beam|tech", colour: "#8fe9ff", sound: "b_beam" },
+    { id: "batmobile", name: "the Batmobile", match: /batmobile|tumbler/i, by: /^Batman$/, kind: "vehicle", colour: "#2a2a33", sound: "b_plane" },
+    { id: "hellcycle", name: "the Hell Cycle", match: /hell.?cycle|bike|motorcycle/i, by: /^Ghost Rider$/, kind: "vehicle", colour: "#ff7a1a", sound: "b_fire", fire: true },
+    { id: "stormtroopers", name: "the 501st", match: /stormtrooper|501st|clone/i, by: /^(Darth Vader|Emperor Palpatine)$/, kind: "swarm", from: ["shows", "Stormtrooper Legion"], colour: "#f2f0ea", sound: "b_gun" },
+    { id: "nazgul", name: "a Nazgûl", match: /nazg[uû]l|ringwraith|fell beast/i, by: /^Sauron$/, kind: "flyer", spec: "d|g|t|2a2a2a|1a1a1a|2a2a2a|2a2a2a|3a3a3a|none|none|bare|none|redeyes|bite|dark", attack: "dive", colour: "#2a2a2a", sound: "b_roar" },
+    { id: "yoshi", name: "Yoshi", match: /yoshi/i, by: /^Mario$/, kind: "beast", from: ["smash", "Yoshi"], attack: "melee", colour: "#4caf50", sound: "b_gulp" },
+    { id: "marshmallow", name: "Marshmallow", match: /marshmallow|snow (giant|monster)/i, by: /^Elsa$/, kind: "beast", spec: "h|g|w|e8f4ff|9fe3ff|e8f4ff|cfe8ff|3fa0ff|none|none|bare|claws|spikes,fangs,glow_eyes|fists|ice", attack: "slam", colour: "#9fe3ff", sound: "b_freeze" },
+    { id: "groot", name: "Groot", match: /groot/i, by: /^Rocket$/, kind: "beast", from: ["marvel", "Groot"], attack: "slam", colour: "#4caf50", sound: "b_slam" },
+    { id: "dragon", name: "Dragon", match: /\bdragon\b/i, by: /^(Shrek|Donkey)$/, kind: "flyer", spec: "d|g|w|e86a8a|f2cf3a|e86a8a|e86a8a|8e5bd0|none|none|bare|none|spikes|breath|fire", attack: "breath", colour: "#ff7a1a", sound: "b_roar" },
+    { id: "turrets", name: "H-28G evolution turrets", match: /turret/i, by: /^Heimerdinger$/, kind: "swarm", spec: "r|s|n|9aa3ad|1a1a1a|e8b84a|5a5f66|3fa0ff|none|none|armour|cannon|horde,noarms,glow_eyes|gun|tech", colour: "#3fa0ff", sound: "b_gun" },
   ];
   function companionFor(actor, move) {
     return COMPANIONS.find(c => c.match.test(move || "")) || COMPANIONS.find(c => c.by && c.by.test(actor.name)) || null;
@@ -530,13 +553,80 @@
     }
     // Death, in the character's own way: a pool of blood, oil or goo, a puff
     // of smoke (Minecraft), or fading away (ghosts).
-    async function die(f, dir) {
+    let deathStyle = "normal";   // how this beat's kills die
+    async function die(f, dir, how = deathStyle) {
       // A summoned partner fades when its summoner falls.
       companions.filter(p => p.owner === f).forEach(p => { burst(p.pos.x, p.pos.y - 10, "smoke", 12); tween(p, { alpha: 0 }, 500); });
       companions = companions.filter(p => p.owner !== f);
       const g = gore(f);
       f.downed = true; f.dead = true; setHp(f, 0);
       sfx("b_death", 0.9);
+      const c = centre(f), h = 26 * f.sprite.size;
+      switch (how) {
+        case "disintegrate": {
+          // Dust from the top down, drifting away on the wind.
+          f.downed = false; setPose(f, "hurt"); f.cut = 0; f.cutFrom = "top";
+          for (let i = 0; i <= 10; i++) {
+            f.cut = i / 10;
+            for (let k = 0; k < 6; k++) parts.push({ x: f.pos.x + rnd(-6, 6) * f.sprite.size, y: f.pos.y - h + h * f.cut + rnd(-2, 2), vx: dir * rnd(20, 60), vy: rnd(-25, -5), g: -10, c: k % 2 ? "#8a7a6a" : Sprite.shade(f.sprite.spec.main, -0.2), s: 1, t0: time, life: rnd(600, 1200) });
+            await wait(110);
+          }
+          f.alpha = 0; f.cut = null; f.downed = true;
+          return;
+        }
+        case "blast_off": {
+          // Sent flying off into the sky, spinning, until a twinkle.
+          f.downed = false; setPose(f, "hurt"); sfx("b_whoosh", 0.9);
+          await Promise.all([tween(f.pos, { x: f.pos.x + dir * 140, y: -20 }, 900, t => t), tween(f, { spin: dir * 12, scale: 0.3 }, 900, t => t)]);
+          f.alpha = 0; f.downed = true;
+          parts.push({ x: clamp(f.pos.x, 10, W - 10), y: 12, vx: 0, vy: 0, g: 0, c: "#ffffff", s: 3, t0: time, life: 400 });
+          rings.push({ x: clamp(f.pos.x, 10, W - 10), y: 12, r0: 1, r1: 6, c: "#ffffff", t0: time, ms: 400 });
+          return;
+        }
+        case "vaporize": {
+          flash = { c: "#ffffff", until: time + 250, ms: 250 };
+          f.charred = 1; await wait(250);
+          burst(c.x, c.y, "smoke", 20); await tween(f, { alpha: 0 }, 400);
+          stains.push({ x: f.pos.x, y: f.pos.y + 1, r: 0, max: 6 * f.sprite.size, c: "#3a3530", t0: time, pool: true });
+          return;
+        }
+        case "explode": {
+          shake = time + 400; sfx("b_boom", 0.7);
+          burst(c.x, c.y, "explosion", 16, true);
+          if (g.kind !== "none" && g.kind !== "fade") { bleed(f, 40, dir); bleed(f, 30, -dir); }
+          f.alpha = 0;
+          if (g.kind === "blood" || g.kind === "goo") stains.push({ x: f.pos.x, y: f.pos.y + 1, r: 0, max: 16 * f.sprite.size, c: g.c, t0: time, pool: true });
+          return;
+        }
+        case "crush": {
+          await tween(f, { squash: 0.15 }, 160, t => t * t);
+          shake = time + 300; burst(f.pos.x, f.pos.y - 2, "earth", 12);
+          if (g.kind === "blood" || g.kind === "goo") stains.push({ x: f.pos.x, y: f.pos.y + 1, r: 0, max: 14 * f.sprite.size, c: g.c, t0: time, pool: true });
+          return;
+        }
+        case "melt": {
+          f.downed = false; setPose(f, "hurt"); f.cut = 0; f.cutFrom = "bottom";
+          const puddle = { x: f.pos.x, y: f.pos.y + 1, r: 0, max: 12 * f.sprite.size, c: f.sprite.spec.main, t0: time, pool: true };
+          stains.push(puddle);
+          await tween(f, { cut: 1 }, 1200);
+          f.alpha = 0; f.cut = null; f.downed = true;
+          return;
+        }
+        case "shatter": {
+          sfx("b_block", 0.9);
+          for (let i = 0; i < 26; i++) { const a = rnd(0, Math.PI * 2), sp = rnd(40, 140); parts.push({ x: c.x, y: c.y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 40, g: 260, c: i % 2 ? "#cfe8ff" : f.sprite.spec.main, s: rnd(2, 4) | 0, t0: time, life: rnd(500, 900) }); }
+          f.alpha = 0;
+          return;
+        }
+        case "burn": {
+          f.downed = false; setPose(f, "hurt"); sfx("b_fire", 0.8);
+          for (let i = 0; i < 8; i++) { burst(f.pos.x + rnd(-4, 4), f.pos.y - h * rnd(0.2, 0.9), "fire", 4); f.charred = i / 8; await wait(120); }
+          f.downed = true; f.charred = 0.9;
+          stains.push({ x: f.pos.x, y: f.pos.y + 1, r: 0, max: 8 * f.sprite.size, c: "#2a2420", t0: time, pool: true });
+          return;
+        }
+        default: break;
+      }
       if (g.kind === "poof") {
         burst(centre(f).x, centre(f).y, "smoke", 22, true);
         f.flashUntil = time + 400;
@@ -659,6 +749,7 @@
         const t = frozen && f !== frozen.by ? frozen.at : time;   // the frozen don't move
         let img = (f.disguise || f.sprite).frame(pose, t - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
         if (f.stone) img = tinted(img, "#8c8c8c", 0.8);
+        else if (f.charred) img = tinted(img, "#1d1a17", f.charred);
         else if (f.tint) img = tinted(img, f.tint, 0.45);
         const S = img.width;
         const x = Math.round(f.pos.x), y = Math.round(f.pos.y + (f.hop || 0));
@@ -667,8 +758,16 @@
         ctx.fillRect(x - Math.round(6 * f.sprite.size * f.scale), Math.round(f.pos.y) - 1, Math.round(12 * f.sprite.size * f.scale), 2);
         ctx.save();
         ctx.translate(x, y);
-        ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale);
+        if (f.spin) { ctx.translate(0, -12 * f.sprite.size); ctx.rotate(f.spin); ctx.translate(0, 12 * f.sprite.size); }
+        ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale * (f.squash || 1));
         ctx.globalAlpha = clamp(f.alpha, 0, 1);
+        if (f.cut != null) {
+          // Dissolving from the top (dust) or sinking from the bottom (melting).
+          const top = -(S - 4), visible = S * (1 - f.cut);
+          ctx.beginPath();
+          if (f.cutFrom === "bottom") ctx.rect(-S / 2, top, S, visible); else ctx.rect(-S / 2, top + S - visible, S, visible);
+          ctx.clip();
+        }
         ctx.drawImage(img, -Math.floor(S / 2), -(S - 4));
         ctx.restore();
         if (f.ice) {
@@ -763,7 +862,10 @@
         case "drain": for (let i = 0; i < 5; i++) { const kk = (k + i * 0.18) % 1; ctx.fillStyle = s.c; ctx.fillRect(Math.round(lerp(s.x0, s.x1, kk)), Math.round(lerp(s.y0, s.y1, kk) + Math.sin(kk * 9) * 3), 2, 2); } break;
         case "note": { const px = Math.round(x), py = Math.round(y + Math.sin(time / 120 + s.x0) * 3); ctx.fillStyle = s.c; ctx.fillRect(px, py, 3, 2); ctx.fillRect(px + 2, py - 6, 1, 6); break; }
         case "rock": ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 6, 5); break;
-        case "gear": drawGear(ctx, s.look, s.c, x, y + 4, time); break;
+        case "gear":
+          if (s.scale) { ctx.save(); ctx.translate(Math.round(x), Math.round(y + 4)); ctx.scale((Math.sign(s.x1 - s.x0) || 1) * s.scale, s.scale); drawGear(ctx, s.look, s.c, 0, 0, time); ctx.restore(); }
+          else drawGear(ctx, s.look, s.c, x, y + 4, time);
+          break;
         case "spin": { ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.rotate(Math.floor(time / 60) * Math.PI / 2);
           ctx.fillStyle = s.c; ctx.fillRect(-4, -1, 8, 3); ctx.fillStyle = "#8a5a32"; ctx.fillRect(-1, 1, 2, 4); ctx.restore(); break; }
         case "fall": { ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 1, Math.round(y) - 5, 2, 6); ctx.fillStyle = "#ffffff"; ctx.fillRect(Math.round(x) - 1, Math.round(y), 2, 1); break; }
@@ -904,6 +1006,7 @@
       say(actor, b.line);
       wield(actor, gearItem);
       callMove(b.move);
+      deathStyle = b.death || "normal";
       const ranged = RANGED.has(actor.sprite.spec.style);
       const t0 = time;
       switch (b.action) {
@@ -1324,7 +1427,7 @@
           if (!target) break;
           setPose(actor, "cast"); sfx("b_roar", 1);
           callMove(b.move || "Dracarys");
-          const dragon = Sprite.of({ world: "westeros", name: /viserion|ice/i.test(b.move) ? "Viserion" : /rhaegal/i.test(b.move) ? "Rhaegal" : /vhagar/i.test(b.move) ? "Vhagar" : "Drogon", note: "" }, { size: "g" });
+          const dragon = Sprite.of({ world: "westeros", name: (["Viserion", "Rhaegal", "Vhagar", "Caraxes", "Meleys", "Sunfyre"].find(n => new RegExp(n, "i").test(b.move || "")) || (/ice/i.test(b.move || "") ? "Viserion" : "Drogon")), note: "" }, { size: "g" });
           flyer = { sprite: dragon, x: actor.facing > 0 ? -60 : W + 60, y: 70, facing: actor.facing, scale: 1 };
           await tween(flyer, { x: target.pos.x - actor.facing * 70, y: 80 }, 900);
           const breath = { kind: "breath", x0: flyer.x + actor.facing * 22, y0: flyer.y - 20, x1: target.pos.x, y1: target.pos.y - 10, c: FX[b.effect !== "none" ? b.effect : "fire"] || FX.fire, t0: time, ms: 700 };
@@ -1671,7 +1774,9 @@
               home: { x: actor.pos.x - side * (C.kind === "flyer" ? 34 : 26), y: actor.pos.y - (C.kind === "swarm" ? -10 : 6) } };
             pal.pos = { ...pal.home };
             setPose(actor, "cast"); sfx(C.sound || "b_summon", 1);
-            if (C.kind === "flyer") {
+            if (C.kind === "vehicle") {
+              companions.push(pal);
+            } else if (C.kind === "flyer") {
               pal.pos = { x: pal.home.x, y: -40 }; pal.alpha = 1; pal.hop = 0;
               for (let i = 0; i < 3; i++) rings.push({ x: pal.home.x, y: pal.home.y - 30, r0: 2, r1: 40, c: C.colour, t0: time + i * 150, ms: 600 });
               clones.push(pal); companions.push(pal);
@@ -1683,7 +1788,7 @@
             } else {
               burst(pal.home.x, pal.home.y - 8, C.id === "tibbers" ? "fire" : "smoke", 20, C.kind !== "swarm");
               clones.push(pal); companions.push(pal);
-              pal.scale = 0.2; pal.alpha = 1;
+              pal.scale = 0.2; pal.alpha = C.ghostly ? 0.8 : 1;
               await tween(pal, { scale: 1 }, 350);
               if (C.id === "tibbers") { shake = time + 300; burst(pal.pos.x, pal.pos.y - 20, "fire", 16, true); }
             }
@@ -1703,6 +1808,14 @@
             await Promise.all([goHome(actor), tween(pal.pos, { ...pal.home }, 380)]);
             await tween(pal, { alpha: 0 }, 400);
             companions = companions.filter(p => p !== pal); clones = clones.filter(c => c !== pal);
+          } else if (C.kind === "vehicle") {
+            companions = companions.filter(p => p !== pal); clones = clones.filter(c => c !== pal);
+            const v = { kind: "gear", look: "vehicle", c: C.colour, scale: 3, x0: side > 0 ? -40 : W + 40, y0: target.pos.y - 2, x1: target.pos.x + side * 30, y1: target.pos.y - 2, t0: time, ms: 700 };
+            shots.push(v); sfx(C.sound, 1);
+            for (let i = 0; i < 5; i++) { parts.push({ x: lerp(v.x0, v.x1, i / 5), y: target.pos.y, vx: 0, vy: -20, g: 0, c: C.fire ? "#ff7a1a" : "#9a9a9a", s: 3, t0: time + i * 120, life: 500 }); }
+            await wait(700); shots = shots.filter(q => q !== v);
+            shake = time + 300; burst(centre(target).x, centre(target).y, C.fire ? "fire" : "impact", 20, true);
+            await land(target, b.outcome, C.fire ? "fire" : "impact", actor);
           } else if (C.kind === "swarm") {
             setPose(pal, "walk");
             await tween(pal.pos, { x: target.pos.x - side * 8, y: target.pos.y + 2 }, 700);
@@ -1772,6 +1885,12 @@
           break;
         }
       }
+      // The same move catching others too.
+      if ((b.also || []).length) {
+        const extra = b.also.map(byKey).filter(f => f && !f.downed);
+        await Promise.all(extra.map((v, i) => wait(i * 140).then(() => { burst(centre(v).x, centre(v).y, effect === "none" ? "impact" : effect, 10); return land(v, b.outcome, effect, actor); })));
+      }
+      deathStyle = "normal";
       // Let each beat breathe long enough to read its caption.
       const need = Math.max(2300, (caption.textContent.length || 0) * 50);
       const spent = time - t0;
