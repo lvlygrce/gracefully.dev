@@ -50,3 +50,4 @@ Platypus with a Ray Gun	q|s|w|3fa0a0|ef8a2c|3fa0a0|3fa0a0|1f1f1f|none|none|bare|
 Hedgehog with a Morning Star	q|s|w|8a6a4a|f2e0c0|8a6a4a|8a6a4a|cfd6dd|none|none|bare|flail|spikes|blunt|none
 Komodo Dragon with a Valyrian Steel Dagger	q|l|t|6a6a4a|8a8a6a|6a6a4a|6a6a4a|c0262f|none|none|bare|dagger|no_ears|bite|poison
 Crocodile with Kusanagi	q|l|t|4a6a3a|8a8a5a|4a6a3a|4a6a3a|cfd6dd|none|none|bare|katana|no_ears,spikes|blade|wind
+Army of Ducks with Spears	b|s|n|f2f0ea|ef8a2c|f2f0ea|f2f0ea|ef8a2c|none|none|bare|spear|horde|blade|none

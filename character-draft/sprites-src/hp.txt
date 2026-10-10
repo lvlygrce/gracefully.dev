@@ -56,3 +56,5 @@ Lily Potter	h|m|t|f3d6bf|b5401d|2a2622|3a3a3a|4caf50|long|none|robe|wand|glow|ma
 James Potter	h|m|t|f1d0b0|1a1a1a|2a2622|3a3a3a|b3202a|messy|none|robe|wand|glasses|magic|none
 Regulus Black	h|m|t|f3d6bf|1a1a1a|1f1f1f|2e6b3a|2e8b3a|short|none|robe|wand||magic|dark
 Aberforth Dumbledore	h|m|n|f1d8c8|d9d4c7|5a4632|3a3a3a|3fa0ff|long|none|coat|wand|beard,glasses|magic|none
+Death Eaters	h|m|t|e8e0d8|1a1a1a|1f1f1f|1f1f1f|4caf50|none|hood|robe|wand|horde|magic|dark
+Dementors	g|m|t|2a2a2a|1a1a1a|2a2a2a|2a2a2a|9fe3ff|none|none|bare|none|horde,nubs|psychic|ice

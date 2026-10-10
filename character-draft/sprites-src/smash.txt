@@ -52,7 +52,7 @@ Rosalina & Luma	h|m|t|f3d6bf|f2f0ea|3fa0ff|3fa0ff|f2cf3a|long|crown|dress|wand|g
 Little Mac	h|s|t|f1d0b0|1a1a1a|f1d0b0|2e8b3a|2e8b3a|short|none|bare|none|gloves|fists|none
 Greninja	h|m|t|3f4fa8|1a1a1a|3f4fa8|f2e0a0|e86a8a|none|none|bare|none|scarf|magic|water
 Palutena	h|m|t|f3d6bf|4caf50|f2f0ea|e8b84a|e8b84a|long|crown|dress|staff|halo|magic|light
-Pac-Man	o|m|n|f2cf3a|f2cf3a|f2cf3a|f2cf3a|1f1f1f|none|none|bare|none|feet,nubs|bite|none
+Pac-Man	o|m|n|f2cf3a|f2cf3a|f2cf3a|f2cf3a|1f1f1f|none|none|bare|none|mouth|bite|none
 Robin	h|m|t|f3d6bf|f2f0ea|1f1f1f|8e5bd0|ffe14d|short|hood|coat|book||magic|lightning
 Shulk	h|m|t|f3d6bf|f2cf3a|c0262f|3a3a44|3fa0ff|messy|none|vest|greatsword||blade|light
 Bowser Jr.	c|s|n|e8b84a|ef6a2a|4caf50|e8b84a|f2f0ea|messy|none|bare|none|shell,horns,scarf|breath|fire
@@ -81,3 +81,5 @@ Sephiroth	h|l|t|f3d6bf|e8e8f0|1f1f1f|1f1f1f|8fe9ff|long|none|coat|katana|wings_d
 Pyra & Mythra	h|m|t|f3d6bf|c0262f|c0262f|1f1f1f|4caf50|short|none|jumpsuit|sword|glow|blade|fire
 Kazuya	h|m|w|f1d0b0|1a1a1a|f1d0b0|f2f0ea|c0262f|spiky|none|bare|none|gloves,redeyes|fists|lightning
 Sora	h|s|t|f1d0b0|8a5a32|1f1f1f|c0262f|e8b84a|spiky|none|jumpsuit|sword||blade|light
+Pikmin Army	c|s|t|c0262f|f2f0ea|c0262f|c0262f|f2f0ea|none|none|bare|none|horde,antennae|fists|nature
+Goomba Horde	c|s|w|8a5a32|1f1f1f|8a5a32|e8c49a|1f1f1f|none|none|bare|none|horde,fangs|bite|none

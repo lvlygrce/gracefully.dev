@@ -21,7 +21,7 @@
 <body>
   <p>World <select id="world"></select> <label><input type="checkbox" id="anim" checked /> animate</label> · pose <select id="pose"></select></p>
   <div id="out"></div>
-  <script src="characters.js?v=26"></script>
+  <script>document.write('<script src="characters.js?t=' + Date.now() + '"><\/script>')</script>
   <script>document.write('<script src="sprites.js?t=' + Date.now() + '"><\/script>')</script>
   <script>document.write('<script src="sprite.js?t=' + Date.now() + '"><\/script>')</script>
   <script>

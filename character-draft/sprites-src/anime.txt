@@ -83,3 +83,7 @@ Madara Uchiha	h|m|n|f1d0b0|1a1a1a|c0262f|3a3a44|c0262f|long|none|armour|scythe|r
 Zenitsu Agatsuma	h|m|t|f3d6bf|f2cf3a|1f1f1f|f2cf3a|ffe14d|short|none|coat|katana||blade|lightning
 Portgas D. Ace	h|m|n|f1d0b0|1a1a1a|f1d0b0|1f1f1f|ff7a1a|messy|hat|bare|none|belt|fists|fire
 Erwin Smith	h|m|n|f1d0b0|e6c35c|8a6a3a|f2f0ea|2e6b3a|slick|none|coat|sword|cape|blade|none
+The Rumbling	h|x|w|c06a4a|1a1a1a|c06a4a|8a3a2a|ff7a1a|none|none|bare|none|horde,stripes,glow_eyes|fists|fire
+Akatsuki	h|m|n|f3d6bf|1a1a1a|1f1f1f|c0262f|c0262f|long|none|robe|none|horde,redeyes|magic|fire
+Straw Hat Pirates	h|m|n|f1d0b0|1a1a1a|c0262f|3f7fd6|e8b84a|messy|hat|vest|katana|horde|fists|none
+Survey Corps	h|m|n|f1d0b0|5a3a1a|8a6a3a|f2f0ea|2e6b3a|short|none|coat|sword|horde,cape|blade|none

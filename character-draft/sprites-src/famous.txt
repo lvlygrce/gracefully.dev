@@ -54,3 +54,9 @@ Koko the Gorilla	h|l|w|3a3a3a|1a1a1a|3a3a3a|3a3a3a|ef8a2c|none|none|fur|none||fi
 Bigfoot	h|x|w|6b4a2a|6b4a2a|6b4a2a|5a3a1a|e8b84a|messy|none|fur|none|beard|fists|earth
 Loch Ness Monster	s|x|w|3f6a5a|5a8a7a|3f6a5a|3f6a5a|1f1f1f|none|none|bare|none|fins|bite|water
 Mothman	h|l|t|3a3a3a|1a1a1a|3a3a3a|3a3a3a|c0262f|none|none|fur|none|batwings,redeyes,antennae|claws|dark
+ANZAC Forces	h|m|n|e8c4a0|5a3a1a|8a7a4a|6a5a3a|5a4632|none|hat|uniform|rifle|horde|gun|explosion
+The 300 Spartans	h|m|w|e8c4a0|1a1a1a|c0262f|e8b84a|e8b84a|none|helmet|bare|spear|horde,shield,cape|blade|none
+Roman Legion	h|m|n|e8c4a0|1a1a1a|c0262f|9aa3ad|e8b84a|none|helmet|armour|sword|horde,shield|blade|none
+Mongol Horde	h|m|n|e0ac69|1a1a1a|8a5a32|5a3a1a|e8dcc0|none|hat|fur|bow|horde|bow|none
+Viking Raiders	h|m|w|f1d0b0|c0401d|5a4632|3b3026|9aa3ad|long|helmet|fur|axe|horde,beard,shield|blade|none
+Samurai Army	h|m|n|e8c4a0|1a1a1a|c0262f|1f1f1f|e8b84a|none|helmet|armour|katana|horde|blade|none

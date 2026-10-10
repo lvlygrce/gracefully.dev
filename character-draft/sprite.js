@@ -537,6 +537,14 @@
     g.rect(cx + R(w * 0.5), ey, Math.max(1, R(1.4 * u)), Math.max(2, R(2 * u)), eye);
     g.rect(cx + R(w * 0.1), ey, Math.max(1, R(1.4 * u)), Math.max(2, R(2 * u)), eye);
     if (x.has("grin")) g.rect(cx, ey + R(3 * u), R(w * 0.7), 1, "#ffffff");
+    // Pac-Man's mouth: a wedge cut out towards the front, open and shut.
+    if (x.has("mouth")) {
+      const open = pose === "strike" || f % 2 === 0 ? 0.55 : 0.25, my = top + R(h * 0.55);
+      for (let yy = -R(h * 0.5); yy <= R(h * 0.5); yy++) {
+        const reach = Math.abs(yy) <= R(h * open) ? R(w * 1.2 * (1 - Math.abs(yy) / (h * open + 0.5))) : 0;
+        if (reach > 0) g.ctx.clearRect(cx + w + 1 - reach, my + yy, reach + 1, 1);
+      }
+    }
     if (x.has("cheeks")) { g.px(cx + R(w * 0.8), ey + 2, "#e98aa8"); g.px(cx - R(w * 0.1), ey + 2, "#e98aa8"); }
     if (x.has("spikes")) for (let i = -w + 1; i < w; i += 3) g.tri(cx + i - 1, top + 2, cx + i, top - R(2 * u), cx + i + 1, top + 2, s.skin);
     if (x.has("feet")) { g.ellipse(cx - R(w * 0.5), bottom, R(2 * u), 1, s.accent); g.ellipse(cx + R(w * 0.5), bottom, R(2 * u), 1, s.accent); }
@@ -612,7 +620,22 @@
   const FRAMES = { idle: 2, walk: 4, windup: 1, strike: 1, shoot: 1, cast: 2, block: 1, hurt: 1, ko: 1, victory: 2 };
   const cache = new Map();
 
+  // A group (an army, a horde, a crew) is drawn as a little crowd: two
+  // smaller, darker figures behind the one in front.
   function draw(spec, pose, f) {
+    const one = drawOne(spec, pose, f);
+    if (!spec.extras.has("horde")) return one;
+    const back = tinted(drawOne(spec, pose, (f + 1) % 2), "#1d1a17", 0.25);
+    const S = one.width, c = canvas(S, S), ctx = c.getContext("2d");
+    const u = SIZE[spec.size] || 1, k = 0.78, w = Math.round(S * k);
+    for (const [dx, dy] of [[-Math.round(9 * u), -Math.round(4 * u)], [Math.round(9 * u), -Math.round(6 * u)]]) {
+      ctx.drawImage(back, Math.round((S - w) / 2) + dx, S - w - 4 * k + dy + Math.round(4 * k), w, w);
+    }
+    ctx.drawImage(one, 0, 0);
+    return c;
+  }
+
+  function drawOne(spec, pose, f) {
     const u = SIZE[spec.size] || 1;
     const S = Math.ceil(56 * u) + 8;
     const cv = canvas(S, S);

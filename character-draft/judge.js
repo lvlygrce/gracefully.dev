@@ -50,7 +50,11 @@
 
   const CHARACTER_RULES = `Use what the characters can actually do in their source material (games, shows, films,
 comics, books). When teams mix worlds, scale power fairly. Stick to what each character really is and can do;
-never invent powers they don't have. The two players only drafted the teams; they are not in the fight.`;
+never invent powers they don't have. The two players only drafted the teams; they are not in the fight.
+A character marked [group] is many fighters, not one: an army, horde, crew or swarm. It can fight in several places
+at once and swarm or surround a single enemy, it takes a lot to wipe out (casualties thin it rather than end it), and
+it counts as dead only when the whole group is destroyed. Numbers matter against ordinary fighters; they matter far
+less against a being who can level a city.`;
 
   const PREP_SYSTEM = `You are the war council for one team in a fantasy battle between two drafted teams of
 fictional characters. Your job is to prepare your team to win: pick a leader, make a plan, gear up and give
@@ -125,6 +129,7 @@ ${shown(teams).map(t => `The team drafted by ${t.name}:\n${rows(t, worldName)}`)
     return [
       (u.strategists || []).includes(r.name) ? " [strategist]" : "",
       (u.makers || []).includes(r.name) ? " [maker]" : "",
+      (u.groups || []).includes(r.name) ? " [group]" : "",
     ].join("");
   };
 

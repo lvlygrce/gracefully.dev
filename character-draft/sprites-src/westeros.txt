@@ -70,3 +70,7 @@ Meleys	d|x|w|c0262f|e86a8a|c0262f|c0262f|f2a03a|none|none|bare|none||breath|fire
 Sunfyre	d|x|w|e8b84a|f2e0a0|e8b84a|e8b84a|ef8a2c|none|none|bare|none||breath|fire
 Ghost	q|m|n|f2f0ea|f2f0ea|f2f0ea|f2f0ea|b3202a|none|none|bare|none|redeyes|bite|none
 Nymeria	q|m|n|8a8a8a|cfcfcf|8a8a8a|8a8a8a|e8b84a|none|none|bare|none||bite|none
+Dothraki Horde	h|m|w|a0623b|1a1a1a|a0623b|5a3a1a|e8b84a|braids|none|bare|scythe|horde,belt|blade|none
+The Unsullied	h|m|n|8d5524|1a1a1a|6b5a3a|3b3026|cfd6dd|bald|helmet|armour|spear|horde,shield|blade|none
+Army of the Dead	h|m|t|8fa8b8|3a3a3a|5a5f66|3a3a44|6af0ff|messy|none|fur|sword|horde,glow_eyes|claws|ice
+The Golden Company	h|m|w|f1d0b0|5a3a1a|e8b84a|8a6a3a|e8b84a|none|helmet|armour|sword|horde,shield|blade|none

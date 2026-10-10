@@ -1,5 +1,5 @@
 Superman	h|m|w|f1d0b0|1a1a1a|1f4fa8|c0262f|c0262f|slick|none|jumpsuit|none|cape,emblem|beam|light
-Batman	h|m|w|8a8f96|1a1a1a|6a6f78|1f1f24|f2cf3a|none|cowl|jumpsuit|none|cape,emblem,belt|gadget|none
+Batman	h|m|w|8a8f96|1a1a1a|6a6f78|1f1f24|1f1f24|none|cowl|jumpsuit|none|cape,emblem,belt|gadget|none
 Wonder Woman	h|m|n|f1d0b0|1a1a1a|c0262f|1f3f8a|e8b84a|long|headband|armour|sword|shield|blade|light
 The Flash	h|m|t|c0262f|1a1a1a|c0262f|c0262f|f2cf3a|none|fullmask|jumpsuit|none|emblem|fists|lightning
 Green Lantern	h|m|n|f1d0b0|5a3a1a|2e8b3a|1f1f1f|4caf50|short|mask|jumpsuit|none|emblem,glow|summon|light
@@ -70,3 +70,4 @@ Clayface	o|x|w|8a6a4a|5a4632|8a6a4a|8a6a4a|f2cf3a|none|none|bare|none|nubs,glow_
 Trigon	h|x|w|c0262f|f2f0ea|c0262f|1f1f1f|f2cf3a|long|none|robe|none|horns,glow_eyes,beard|magic|fire
 Mongul	h|x|w|f2cf3a|1a1a1a|8e5bd0|1f1f1f|c0262f|bald|none|armour|none|redeyes|fists|none
 Atrocitus	h|l|w|c0262f|1a1a1a|1f1f1f|c0262f|c0262f|bald|none|jumpsuit|none|emblem,glow,fangs|magic|blood
+Parademon Swarm	h|m|n|6a5a4a|1a1a1a|8a3a1a|3a3a3a|c0262f|none|none|armour|none|horde,batwings,redeyes|claws|none

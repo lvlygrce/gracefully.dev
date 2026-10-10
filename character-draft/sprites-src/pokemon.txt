@@ -80,3 +80,6 @@ Ceruledge	h|m|t|5b3a7a|e8b84a|5b3a7a|1f1f1f|3f7fd6|none|helm|armour|sword|glow_e
 Annihilape	h|m|w|9aa3ad|1a1a1a|9aa3ad|9aa3ad|8e5bd0|messy|none|bare|none|redeyes,glow|fists|dark
 Koraidon	d|l|w|c0262f|f2e0a0|c0262f|c0262f|3fa0ff|none|none|bare|none|horns|claws|none
 Miraidon	d|l|w|3f3f5a|8e5bd0|3f3f5a|3f3f5a|f2cf3a|none|none|bare|none|horns,glow|beam|lightning
+Team Rocket	h|m|t|f3d6bf|c0262f|f2f0ea|1f1f1f|c0262f|long|none|uniform|none|horde,emblem|summon|none
+Eeveelution Squad	q|s|n|9a6a3a|f2e0a0|9a6a3a|9a6a3a|1f1f1f|none|none|bare|none|horde,mane,ears|magic|psychic
+Beedrill Swarm	b|s|n|f2cf3a|1f1f1f|f2cf3a|f2cf3a|c0262f|none|none|bare|none|horde,stripes,antennae|bite|poison

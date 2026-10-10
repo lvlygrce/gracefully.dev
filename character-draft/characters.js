@@ -78,6 +78,10 @@ window.UNIVERSES = {
       ["Sunfyre", "The Golden"],
       ["Ghost", "Silent white direwolf"],
       ["Nymeria", "Direwolf, leader of the pack"],
+      ["Dothraki Horde", "A hundred thousand screaming horselords with arakhs"],
+      ["The Unsullied", "Eight thousand fearless spearmen who never break formation"],
+      ["Army of the Dead", "The Night King's endless wights, and they get back up"],
+      ["The Golden Company", "Twenty thousand sellswords who have never broken a contract"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
@@ -93,6 +97,8 @@ window.UNIVERSES = {
     ],
     strategists: ["Tywin Lannister", "Tyrion Lannister", "Stannis Baratheon", "Robb Stark", "Petyr Baelish", "Varys", "Olenna Tyrell", "Cersei Lannister", "Bronn", "Davos Seaworth", "Sansa Stark", "Bran Stark", "Jaime Lannister", "Ramsay Bolton", "Euron Greyjoy", "The Night King", "Grey Worm", "Barristan Selmy", "Margaery Tyrell", "Jaqen H'ghar", "Daemon Targaryen", "Otto Hightower", "Larys Strong", "Corlys Velaryon", "Criston Cole", "Aemond Targaryen", "Cregan Stark", "Mysaria", "Rhaenys Targaryen"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Dothraki Horde", "The Unsullied", "Army of the Dead", "The Golden Company"],
     makers: ["Gendry", "Samwell Tarly", "Melisandre", "Alys Rivers", "Tyrion Lannister"],
   },
 
@@ -246,6 +252,8 @@ window.UNIVERSES = {
       ["Thena", "Eternal warrior goddess"],
       ["Kingo", "Eternal and film star"],
       ["Leech", "Shuts off powers nearby"],
+      ["Chitauri Army", "Thanos's alien foot soldiers on hover-chariots"],
+      ["Hydra Agents", "Cut off one head, two more take its place"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
@@ -261,6 +269,8 @@ window.UNIVERSES = {
     ],
     strategists: ["Captain America", "Nick Fury", "Professor X", "Magneto", "Doctor Doom", "Mister Fantastic", "Black Widow", "Thanos", "Loki", "Kang the Conqueror", "Red Skull", "Kingpin", "Cyclops", "Black Panther", "Taskmaster", "Baron Zemo", "Cable", "Okoye", "Storm", "Emma Frost", "Mystique", "Iron Man", "Doctor Strange", "Ultron", "Apocalypse", "Killmonger", "The Punisher", "Rocket", "Arnim Zola", "The Leader", "MODOK", "Daredevil", "Kitty Pryde", "Agatha Harkness", "Mephisto", "Grandmaster", "Domino", "Bullseye", "Elektra"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Chitauri Army", "Hydra Agents"],
     makers: ["Iron Man", "Mister Fantastic", "Forge", "Shuri", "Rocket", "Doctor Doom", "Doctor Octopus", "Green Goblin", "Ultron", "Arnim Zola", "MODOK", "The Leader", "Ant-Man", "The Wasp", "Mysterio", "Vulture", "Beast", "Hulk", "Spider-Man", "Kang the Conqueror", "Moon Girl", "Cable", "War Machine"],
   },
 
@@ -342,6 +352,107 @@ window.UNIVERSES = {
       ["Blitzcrank", "Zaun · the Great Steam Golem"],
       ["Malphite", "Ixtal · Shard of the Monolith"],
       ["Gwen", "Shadow Isles · the Hallowed Seamstress"],
+      ["Akshan", "Shurima · the Rogue Sentinel"],
+      ["Alistar", "Runeterra · the Minotaur"],
+      ["Ambessa", "Noxus · Matriarch of War"],
+      ["Amumu", "Shurima · the Sad Mummy"],
+      ["Aurora", "Freljord · the Witch Between Worlds"],
+      ["Bel'Veth", "Void · the Empress of the Void"],
+      ["Brand", "Runeterra · the Burning Vengeance"],
+      ["Briar", "Noxus · the Restrained Hunger"],
+      ["Camille", "Piltover · the Steel Shadow"],
+      ["Cassiopeia", "Noxus · the Serpent's Embrace"],
+      ["Cho'Gath", "Void · the Terror of the Void"],
+      ["Corki", "Bandle City · the Daring Bombardier"],
+      ["Dr. Mundo", "Zaun · the Madman of Zaun"],
+      ["Elise", "Shadow Isles · the Spider Queen"],
+      ["Evelynn", "Runeterra · Agony's Embrace"],
+      ["Fiora", "Demacia · the Grand Duelist"],
+      ["Fizz", "Bilgewater · the Tidal Trickster"],
+      ["Galio", "Demacia · the Colossus"],
+      ["Gnar", "Freljord · the Missing Link"],
+      ["Gragas", "Freljord · the Rabble Rouser"],
+      ["Hecarim", "Shadow Isles · the Shadow of War"],
+      ["Hwei", "Ionia · the Visionary"],
+      ["Illaoi", "Bilgewater · the Kraken Priestess"],
+      ["Ivern", "Ionia · the Green Father"],
+      ["Janna", "Zaun · the Storm's Fury"],
+      ["Jax", "Icathia · Grandmaster at Arms"],
+      ["Jhin", "Ionia · the Virtuoso"],
+      ["K'Sante", "Shurima · the Pride of Nazumah"],
+      ["Kalista", "Shadow Isles · the Spear of Vengeance"],
+      ["Karma", "Ionia · the Enlightened One"],
+      ["Karthus", "Shadow Isles · the Deathsinger"],
+      ["Kassadin", "Void · the Void Walker"],
+      ["Kayn", "Ionia · the Shadow Reaper"],
+      ["Kha'Zix", "Void · the Voidreaver"],
+      ["Kindred", "Runeterra · the Eternal Hunters"],
+      ["Kled", "Noxus · the Cantankerous Cavalier"],
+      ["Kog'Maw", "Void · the Mouth of the Abyss"],
+      ["Lillia", "Ionia · the Bashful Bloom"],
+      ["Locke", "the Ashen Exorcist"],
+      ["Lulu", "Bandle City · the Fae Sorceress"],
+      ["Malzahar", "Void · the Prophet of the Void"],
+      ["Maokai", "Shadow Isles · the Twisted Treant"],
+      ["Mel", "Piltover · the Soul's Reflection"],
+      ["Milio", "Ixtal · the Gentle Flame"],
+      ["Naafiri", "Shurima · the Hound of a Hundred Bites"],
+      ["Nami", "Targon · the Tidecaller"],
+      ["Nautilus", "Bilgewater · the Titan of the Depths"],
+      ["Neeko", "Ixtal · the Curious Chameleon"],
+      ["Nidalee", "Ixtal · the Bestial Huntress"],
+      ["Nilah", "Bilgewater · the Joy Unbound"],
+      ["Nunu & Willump", "Freljord · the Boy and His Yeti"],
+      ["Olaf", "Freljord · the Berserker"],
+      ["Orianna", "Piltover · the Lady of Clockwork"],
+      ["Poppy", "Demacia · Keeper of the Hammer"],
+      ["Qiyana", "Ixtal · Empress of the Elements"],
+      ["Quinn", "Demacia · Demacia's Wings"],
+      ["Rakan", "Ionia · the Charmer"],
+      ["Rek'Sai", "Void · the Void Burrower"],
+      ["Rell", "Noxus · the Iron Maiden"],
+      ["Renata Glasc", "Zaun · the Chem-Baroness"],
+      ["Rengar", "Ixtal · the Pridestalker"],
+      ["Riven", "Noxus · the Exile"],
+      ["Rumble", "Bandle City · the Mechanized Menace"],
+      ["Ryze", "Runeterra · the Rune Mage"],
+      ["Samira", "Noxus · the Desert Rose"],
+      ["Seraphine", "Piltover · the Starry-Eyed Songstress"],
+      ["Shaco", "Runeterra · the Demon Jester"],
+      ["Shyvana", "Demacia · the Half-Dragon"],
+      ["Sivir", "Shurima · the Battle Mistress"],
+      ["Skarner", "Ixtal · the Primordial Sovereign"],
+      ["Smolder", "Targon · the Fiery Fledgling"],
+      ["Sona", "Demacia · Maven of the Strings"],
+      ["Soraka", "Targon · the Starchild"],
+      ["Syndra", "Ionia · the Dark Sovereign"],
+      ["Tahm Kench", "Bilgewater · the River King"],
+      ["Taliyah", "Shurima · the Stoneweaver"],
+      ["Talon", "Noxus · the Blade's Shadow"],
+      ["Taric", "Targon · the Shield of Valoran"],
+      ["Tristana", "Bandle City · the Yordle Gunner"],
+      ["Trundle", "Freljord · the Troll King"],
+      ["Twitch", "Zaun · the Plague Rat"],
+      ["Udyr", "Freljord · the Spirit Walker"],
+      ["Urgot", "Zaun · the Dreadnought"],
+      ["Varus", "Ionia · the Arrow of Retribution"],
+      ["Vayne", "Demacia · the Night Hunter"],
+      ["Veigar", "Bandle City · the Tiny Master of Evil"],
+      ["Vex", "Shadow Isles · the Gloomist"],
+      ["Vladimir", "Noxus · the Crimson Reaper"],
+      ["Wukong", "Ionia · the Monkey King"],
+      ["Xayah", "Ionia · the Rebel"],
+      ["Yorick", "Shadow Isles · Shepherd of Souls"],
+      ["Yunara", "Ionia · the Unbroken Faith"],
+      ["Zaahen", "the Unsundered"],
+      ["Zac", "Zaun · the Secret Weapon"],
+      ["Zeri", "Zaun · the Spark of Zaun"],
+      ["Ziggs", "Zaun · the Hexplosives Expert"],
+      ["Zilean", "Icathia · the Chronokeeper"],
+      ["Zoe", "Targon · the Aspect of Twilight"],
+      ["Zyra", "Ixtal · Rise of the Thorns"],
+      ["Minion Wave", "Summoner's Rift · melee, caster and siege minions that never stop coming"],
+      ["Baron Nashor", "Summoner's Rift · the Void beast of the pit"],
     ],
     // Known for strategy, leadership or cunning; the judge weighs this.
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the battle begins.
@@ -357,6 +468,8 @@ window.UNIVERSES = {
     ],
     strategists: ["Swain", "Jarvan IV", "Azir", "Darius", "LeBlanc", "Twisted Fate", "Gangplank", "Miss Fortune", "Sejuani", "Ashe", "Lissandra", "Caitlyn", "Heimerdinger", "Viktor", "Ekko", "Zed", "Shen", "Pyke", "Thresh", "Xerath", "Nasus", "Mordekaiser", "Xin Zhao", "Garen", "Bard", "Graves", "Sylas", "Jayce", "Viego"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Minion Wave"],
     makers: ["Ornn", "Heimerdinger", "Viktor", "Jayce", "Ekko", "Singed", "Jinx", "Teemo", "Gangplank", "Caitlyn"],
   },
 
@@ -446,6 +559,9 @@ window.UNIVERSES = {
       ["Annihilape", "Fighting/Ghost · rage that outlives death"],
       ["Koraidon", "Fighting/Dragon · ancient legend, races like a bike"],
       ["Miraidon", "Electric/Dragon · future legend, a living machine"],
+      ["Team Rocket", "Jessie, James and Meowth, blasting off again"],
+      ["Eeveelution Squad", "All eight evolutions of Eevee fighting as one"],
+      ["Beedrill Swarm", "Bug/Poison · a furious swarm of stingers"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -460,6 +576,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Alakazam", "Mewtwo", "Metagross", "Zoroark", "Lucario", "Kingambit", "Gengar", "Mimikyu", "Ditto", "Darkrai"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Team Rocket", "Eeveelution Squad", "Beedrill Swarm"],
     makers: ["Tinkaton", "Conkeldurr"],
   },
 
@@ -529,6 +647,8 @@ window.UNIVERSES = {
       ["Fireheart", "Firestar as a young warrior"],
       ["Tawnypelt", "ShadowClan warrior, Tigerstar's daughter"],
       ["Crookedstar", "RiverClan leader with a crooked jaw"],
+      ["BloodClan", "Scourge's street cats with dog-tooth claws"],
+      ["StarClan Warriors", "Ancestors who walk in dreams and fight from the stars"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -542,6 +662,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Bluestar", "Tigerstar", "Firestar", "Leopardstar", "Onestar", "Bramblestar", "Squirrelflight", "Hawkfrost", "Sol", "Clear Sky", "Tallstar", "Scourge", "Leafstar", "Ivypool", "Midnight"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["BloodClan", "StarClan Warriors"],
     makers: ["Yellowfang", "Spottedleaf", "Leafpool", "Jayfeather", "Cinderpelt", "Mothwing", "Alderheart", "Shadowsight", "Stoneteller"],
   },
 
@@ -634,6 +756,10 @@ window.UNIVERSES = {
       ["Zenitsu Agatsuma", "Demon Slayer · asleep, he strikes like lightning"],
       ["Portgas D. Ace", "One Piece · Fire Fist"],
       ["Erwin Smith", "Attack on Titan · commander who gives everything to advance"],
+      ["The Rumbling", "Attack on Titan · millions of Colossal Titans marching to end the world"],
+      ["Akatsuki", "Naruto · rogue ninja who hunt tailed beasts"],
+      ["Straw Hat Pirates", "One Piece · Luffy's crew: swordsman, cook, sniper, navigator and more"],
+      ["Survey Corps", "Attack on Titan · soldiers with ODM gear who hunt Titans"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -649,6 +775,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Lelouch Lamperouge", "Light Yagami", "L", "Senku Ishigami", "Loid Forger", "Kazuma Sato", "Sosuke Aizen", "Erwin Smith", "Itachi Uchiha", "Kakashi Hatake", "Joseph Joestar", "Rintaro Okabe", "Conan Edogawa", "Ainz Ooal Gown", "Rimuru Tempest", "Makima", "Hisoka", "Edward Elric", "Kurapika", "Madara Uchiha", "Frieza"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["The Rumbling", "Akatsuki", "Straw Hat Pirates", "Survey Corps"],
     makers: ["Edward Elric", "Alphonse Elric", "Senku Ishigami", "Rintaro Okabe"],
   },
 
@@ -728,6 +856,7 @@ window.UNIVERSES = {
       ["Trigon", "Demon lord of the multiverse"],
       ["Mongul", "Warlord of Warworld"],
       ["Atrocitus", "Rage-fuelled Red Lantern"],
+      ["Parademon Swarm", "Darkseid's winged shock troops from Apokolips"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -745,6 +874,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Batman", "Lex Luthor", "Ra's al Ghul", "Talia al Ghul", "Amanda Waller", "Darkseid", "Brainiac", "Joker", "The Riddler", "Deathstroke", "Nightwing", "Martian Manhunter", "Wonder Woman", "Penguin", "Robin", "Mister Miracle", "Big Barda", "Sinestro", "General Zod", "Catwoman", "The Question", "Bane", "Gorilla Grodd", "Captain Cold"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Parademon Swarm"],
     makers: ["Batman", "Lex Luthor", "Cyborg", "Mr. Freeze", "Brainiac", "The Atom", "Batgirl", "Steel", "The Riddler", "Poison Ivy", "Scarecrow", "Penguin", "Gorilla Grodd", "Mister Miracle"],
   },
 
@@ -805,6 +936,8 @@ window.UNIVERSES = {
       ["Cat", "Tameable · scares off Creepers and Phantoms"],
       ["Parrot", "Tameable · mimics mobs' sounds"],
       ["Herobrine", "Legend · the ghost in the world that was 'removed'"],
+      ["Zombie Horde", "Hostile · a night's worth of zombies at the door"],
+      ["Pillager Raid", "Illager · a full raid: pillagers, vindicators, evokers and a ravager"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -822,6 +955,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Steve", "Alex", "Evoker", "Witch", "Herobrine"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Zombie Horde", "Pillager Raid"],
     makers: ["Steve", "Alex", "Villager", "Witch"],
   },
 
@@ -914,6 +1049,8 @@ window.UNIVERSES = {
       ["Pyra & Mythra", "Xenoblade 2 · two Aegis blades in one"],
       ["Kazuya", "Tekken · devil-blooded karate"],
       ["Sora", "Kingdom Hearts · Keyblade wielder"],
+      ["Pikmin Army", "Pikmin · a hundred tiny plant soldiers of every colour"],
+      ["Goomba Horde", "Super Mario · an endless march of Goombas"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -931,6 +1068,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Snake", "Joker", "Robin", "Byleth", "Marth", "Lucina", "Chrom", "Ike", "Mewtwo", "Palutena", "Sephiroth", "Ganondorf", "Bowser", "King K. Rool", "Olimar", "Shulk", "Wolf", "Pokémon Trainer", "Zelda"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Pikmin Army", "Goomba Horde"],
     makers: ["Steve", "Villager", "Snake", "Dr. Mario", "Bowser Jr.", "Wario", "Hero"],
   },
 
@@ -994,6 +1133,12 @@ window.UNIVERSES = {
       ["Bigfoot", "Elusive giant of the forests"],
       ["Loch Ness Monster", "Something in the loch"],
       ["Mothman", "Red-eyed omen of Point Pleasant"],
+      ["ANZAC Forces", "WWII · Australian and New Zealand soldiers, rifles, grit and the haka"],
+      ["The 300 Spartans", "Thermopylae · Leonidas's hoplites, shields locked"],
+      ["Roman Legion", "Five thousand legionaries in testudo formation"],
+      ["Mongol Horde", "Horse archers who conquered half the world"],
+      ["Viking Raiders", "Longship raiders with axes and shield walls"],
+      ["Samurai Army", "Sengoku-era samurai with katana, yari and arquebuses"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -1011,6 +1156,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Sun Tzu", "Napoleon Bonaparte", "Alexander the Great", "Genghis Khan", "Hannibal Barca", "Julius Caesar", "Winston Churchill", "George Washington", "Joan of Arc", "Queen Elizabeth I", "Cleopatra", "Joseph Stalin", "Attila the Hun", "Leonidas", "Spartacus", "Miyamoto Musashi", "Alan Turing", "Theodore Roosevelt", "Vlad the Impaler", "Abraham Lincoln"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["ANZAC Forces", "The 300 Spartans", "Roman Legion", "Mongol Horde", "Viking Raiders", "Samurai Army"],
     makers: ["Nikola Tesla", "Thomas Edison", "Leonardo da Vinci", "Archimedes", "Marie Curie", "Albert Einstein", "Isaac Newton", "Ada Lovelace", "Alan Turing", "Galileo Galilei", "Harry Houdini"],
   },
 
@@ -1098,6 +1245,46 @@ window.UNIVERSES = {
       ["Master Chief", "Halo · Spartan super-soldier"],
       ["Kratos", "God of War · the Ghost of Sparta"],
       ["Geralt of Rivia", "The Witcher · monster-hunting witcher"],
+      ["Rick Grimes", "The Walking Dead · sheriff turned leader, with a Colt Python"],
+      ["Daryl Dixon", "The Walking Dead · silent tracker with a crossbow"],
+      ["Michonne", "The Walking Dead · katana-wielding survivor"],
+      ["Buffy Summers", "Buffy the Vampire Slayer · the Slayer, stake in hand"],
+      ["Xena", "Xena: Warrior Princess · chakram and a battle cry"],
+      ["Omni-Man", "Invincible · Viltrumite who hits like a falling moon"],
+      ["Invincible", "Invincible · Mark Grayson, half-Viltrumite hero"],
+      ["The Bride", "Kill Bill · Hattori Hanzō sword and a death list"],
+      ["Mad Max", "Mad Max · road warrior with a sawn-off shotgun"],
+      ["Furiosa", "Mad Max: Fury Road · one-armed imperator with a war rig"],
+      ["T-1000", "Terminator 2 · shapeshifting liquid-metal assassin"],
+      ["RoboCop", "RoboCop · part man, part machine, all cop"],
+      ["Chewbacca", "Star Wars · Wookiee with a bowcaster"],
+      ["Boba Fett", "Star Wars · bounty hunter with a jetpack"],
+      ["Kylo Ren", "Star Wars · unstable crossguard lightsaber"],
+      ["Ahsoka Tano", "Star Wars · twin-saber former Jedi"],
+      ["Po", "Kung Fu Panda · the Dragon Warrior"],
+      ["Tai Lung", "Kung Fu Panda · snow leopard who mastered every scroll"],
+      ["Puss in Boots", "Shrek · swashbuckling cat with a rapier"],
+      ["Elsa", "Frozen · queen of ice and snow"],
+      ["Maui", "Moana · shapeshifting demigod with a magic fish hook"],
+      ["Mulan", "Mulan · the warrior who saved China"],
+      ["Scar", "The Lion King · treacherous lion and his hyenas"],
+      ["Toothless", "How to Train Your Dragon · Night Fury with plasma blasts"],
+      ["Shaggy Rogers", "Scooby-Doo · secretly unstoppable, says the internet"],
+      ["Popeye", "Popeye · strength straight from the spinach can"],
+      ["Garfield", "Garfield · hates Mondays, loves lasagne"],
+      ["Tom", "Tom and Jerry · cat with endless traps"],
+      ["Jerry", "Tom and Jerry · mouse who always wins"],
+      ["Wile E. Coyote", "Looney Tunes · ACME's most loyal customer"],
+      ["Gru", "Despicable Me · supervillain with a freeze ray"],
+      ["Lara Croft", "Tomb Raider · archaeologist with twin pistols"],
+      ["Doomguy", "Doom · rips and tears through demons"],
+      ["John McClane", "Die Hard · barefoot cop with a lot of bad luck"],
+      ["The Minions", "Despicable Me · a horde of yellow, banana-loving henchmen"],
+      ["Stormtrooper Legion", "Star Wars · thousands of Imperial troopers who rarely hit anything"],
+      ["Orcs of Mordor", "Lord of the Rings · Sauron's endless orc army"],
+      ["Clone Troopers", "Star Wars · the Grand Army of the Republic, bred for war"],
+      ["The Ghostbusters", "Ghostbusters · four scientists with unlicensed nuclear proton packs"],
+      ["Oompa Loompas", "Willy Wonka · singing factory workers with a song for every downfall"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -1114,6 +1301,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Rick Sanchez", "Morpheus", "Emperor Palpatine", "Yoda", "Obi-Wan Kenobi", "Gandalf", "Aragorn", "Sauron", "Optimus Prime", "Megatron", "Azula", "Walter White", "Sherlock Holmes", "Hannibal Lecter", "Aku", "Vilgax", "Plankton", "Stewie Griffin", "Princess Bubblegum", "James Bond", "John Wick", "Agent Smith", "Jack Sparrow", "The Doctor"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["The Minions", "Stormtrooper Legion", "Orcs of Mordor", "Clone Troopers", "The Ghostbusters", "Oompa Loompas"],
     makers: ["Rick Sanchez", "Princess Bubblegum", "Plankton", "Stewie Griffin", "Walter White", "The Doctor", "Sauron"],
   },
 
@@ -1177,6 +1366,8 @@ window.UNIVERSES = {
       ["Gang Orca", "Orca Hero, sonic waves"],
       ["Ryukyu", "Dragon Hero"],
       ["Mei Hatsume", "Support Course inventor whose \"babies\" are wild gadgets"],
+      ["Nomu Horde", "Engineered monsters with stacked quirks"],
+      ["Class 1-A", "U.A.'s hero class, all twenty of them"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -1193,6 +1384,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Shota Aizawa", "Hawks", "Nighteye", "Best Jeanist", "Momo Yaoyorozu", "Izuku Midoriya", "Katsuki Bakugo", "Tomura Shigaraki", "All For One", "Overhaul", "Re-Destro", "Gran Torino", "Endeavor"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Nomu Horde", "Class 1-A"],
     makers: ["Mei Hatsume", "Momo Yaoyorozu", "Overhaul"],
   },
 
@@ -1319,6 +1512,8 @@ window.UNIVERSES = {
       ["James Potter", "Harry's father, Prongs"],
       ["Regulus Black", "Death Eater who turned"],
       ["Aberforth Dumbledore", "Barman of the Hog's Head"],
+      ["Death Eaters", "Voldemort's masked followers"],
+      ["Dementors", "Soul-sucking guards of Azkaban"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -1336,6 +1531,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Albus Dumbledore", "Lord Voldemort", "Severus Snape", "Hermione Granger", "Minerva McGonagall", "Gellert Grindelwald", "Alastor Moody", "Kingsley Shacklebolt", "Ron Weasley", "Lucius Malfoy", "Dolores Umbridge", "Barty Crouch Jr."],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Death Eaters", "Dementors"],
     makers: ["Fred Weasley", "George Weasley", "Severus Snape", "Horace Slughorn", "Hermione Granger", "Arthur Weasley", "Neville Longbottom"],
   },
 
@@ -1395,6 +1592,7 @@ window.UNIVERSES = {
       ["Hedgehog with a Morning Star", "Spikes on spikes"],
       ["Komodo Dragon with a Valyrian Steel Dagger", "Venomous bite, Valyrian steel"],
       ["Crocodile with Kusanagi", "Death roll with a legendary blade"],
+      ["Army of Ducks with Spears", "A hundred ducks, a hundred spears, zero mercy"],
     ],
     // Battlefields: [name, terrain for the judge, picture]. One is drawn when the draft begins.
     arenas: [
@@ -1411,6 +1609,8 @@ window.UNIVERSES = {
     // Known for strategy, leadership or cunning; the judge weighs this.
     strategists: ["Honey Badger with Mjölnir", "Octopus with Eight Katanas", "Crow with the Elder Wand", "Chimpanzee with the Gravity Hammer", "Sloth with the Death Note", "Owl with the Sword of Gryffindor", "Monkey with Ruyi Jingu Bang", "Wolf with Andúril", "Moose with the Monado", "Dolphin with Aquaman's Trident"],
     // Engineers, smiths, inventors and alchemists: they build new gear for their team.
+    // Armies, hordes and squads: many fighters, not one.
+    groups: ["Army of Ducks with Spears"],
     makers: ["Crow with the Elder Wand", "Chimpanzee with the Gravity Hammer", "Raccoon with a Lancer"],
   },
 };

@@ -13,7 +13,7 @@ Ice King	h|m|t|8fb8e8|f2f0ea|3f4fa8|3f4fa8|c0262f|long|crown|robe|none|beard|mag
 Princess Bubblegum	h|m|t|f2a0c0|e86ab8|ff6ad5|8e5bd0|f2cf3a|long|crown|dress|none||gadget|tech
 Homer Simpson	h|m|w|f2cf3a|5a3a1a|f2f0ea|3f7fd6|f2f0ea|bald|none|tunic|none|beard|fists|none
 Bart Simpson	h|s|t|f2cf3a|f2cf3a|ef8a2c|3f7fd6|8a5a32|spiky|none|tunic|none||gadget|none
-SpongeBob SquarePants	o|s|n|f2e65a|f2e65a|f2e65a|8a5a32|c0262f|none|none|bare|none|spots,feet,nubs,grin|fists|water
+SpongeBob SquarePants	k|s|w|f2e65a|f2e65a|f2f0ea|8a5a32|c0262f|none|none|suit|none|spots,grin|fists|water
 Patrick Star	o|m|n|f2a0b0|f2a0b0|f2a0b0|4caf50|8e5bd0|none|none|bare|none|nubs,feet|fists|none
 Plankton	c|s|t|2e8b3a|2e8b3a|2e8b3a|2e8b3a|c0262f|none|none|bare|none|antennae,redeyes|gadget|tech
 Peter Griffin	h|m|w|f1d0b0|5a3a1a|f2f0ea|2e6b3a|f2f0ea|short|none|tunic|none|glasses|fists|none
@@ -78,3 +78,43 @@ Arthur Morgan	h|m|w|e8c4a0|8a5a32|8a6a3a|3a3a3a|8a5a32|short|hat|coat|gun|beard|
 Master Chief	r|l|w|4f6a3a|1a1a1a|4f6a3a|3a4a2a|ef8a2c|none|none|armour|rifle||gun|tech
 Kratos	h|l|w|e8e0d8|1a1a1a|e8e0d8|8a3a2a|c0262f|bald|none|bare|axe|beard,stripes|blade|ice
 Geralt of Rivia	h|m|w|f1d0b0|f2f0ea|1f1f1f|1f1f1f|e8b84a|long|none|armour|sword|beard|blade|fire
+Rick Grimes	h|m|n|f1d0b0|3b2a1a|8a7a5a|3a3a44|e8b84a|short|none|uniform|gun|beard|gun|none
+Daryl Dixon	h|m|n|f1d0b0|5a3a1a|5a4632|3a3a3a|8a5a32|long|none|vest|crossbow||bow|none
+Michonne	h|m|t|5a3a24|1a1a1a|3a3a3a|3a3a3a|cfd6dd|braids|none|vest|katana||blade|none
+Buffy Summers	h|m|t|f3d6bf|e6c35c|c0262f|3a3a44|8a5a32|long|none|vest|dagger||fists|none
+Xena	h|m|t|f1d0b0|1a1a1a|5a4632|3b3026|cfd6dd|long|none|armour|sword|shield|blade|none
+Omni-Man	h|l|w|f1d0b0|1a1a1a|f2f0ea|c0262f|c0262f|short|none|jumpsuit|none|moustache,cape|fists|none
+Invincible	h|m|n|f1d0b0|1a1a1a|f2cf3a|3f4fa8|3f4fa8|none|fullmask|jumpsuit|none|emblem|fists|none
+The Bride	h|m|t|f3d6bf|f2cf3a|f2cf3a|1f1f1f|1f1f1f|ponytail|none|jumpsuit|katana|stripes|blade|none
+Mad Max	h|m|n|f1d0b0|3b2a1a|1f1f1f|1f1f1f|8a5a32|short|none|vest|gun||gun|none
+Furiosa	h|m|t|f3d6bf|1a1a1a|5a4632|3a3a3a|1f1f1f|buzz|none|vest|rifle||gun|none
+T-1000	r|m|n|cfd6dd|cfd6dd|3a4a6a|1f1f24|cfd6dd|short|none|uniform|sword||blade|tech
+RoboCop	r|l|w|9aa3ad|1a1a1a|9aa3ad|5a5f66|3fa0ff|none|none|armour|gun|glow_eyes|gun|tech
+Chewbacca	h|l|w|8a5a32|5a3a1a|8a5a32|8a5a32|cfd6dd|none|none|fur|crossbow|belt|bow|none
+Boba Fett	h|m|n|4a6a4a|1a1a1a|7a7a5a|5a4632|c0262f|none|helm|armour|rifle|cape,antennae|gun|fire
+Kylo Ren	h|m|t|1f1f1f|1a1a1a|1f1f1f|1f1f1f|c0262f|none|helm|robe|lightsaber|cape|blade|dark
+Ahsoka Tano	h|m|t|e86a3a|f2f0ea|8a5a32|3a3a3a|f2f0ea|none|none|tunic|lightsaber|horns,stripes|blade|psychic
+Po	h|l|w|f2f0ea|1f1f1f|f2f0ea|8a5a32|e8b84a|none|none|bare|none|ears_round,belt|fists|none
+Tai Lung	h|m|n|e8dcc0|1a1a1a|e8dcc0|5b3a7a|e8b84a|none|none|bare|claws|ears,tail,spots|claws|none
+Puss in Boots	c|s|n|ef8a2c|f2f0ea|ef8a2c|8a5a32|1f1f1f|none|hat|bare|sword|ears,tail|blade|none
+Elsa	h|m|t|f3d6bf|f2f0ea|8fd0ff|3fa0ff|9fe3ff|braids|none|dress|none|cape,glow|magic|ice
+Maui	h|l|w|c68642|1a1a1a|c68642|5a4632|e8b84a|long|none|bare|staff|stripes|blunt|wind
+Mulan	h|m|t|f1d0b0|1a1a1a|c0262f|3a3a3a|e8b84a|bun|none|armour|sword||blade|none
+Scar	q|l|n|a8783a|1f1f1f|a8783a|a8783a|4caf50|none|none|bare|none|mane,eyepatch|claws|none
+Toothless	d|l|n|1f1f24|1f1f24|1f1f24|1f1f24|2a2a33|none|none|bare|none||breath|fire
+Shaggy Rogers	h|m|t|f1d0b0|8a5a32|4caf50|8a5a32|e8b84a|messy|none|tunic|none|beard|fists|psychic
+Popeye	h|m|w|f1d0b0|1a1a1a|1f1f1f|3f7fd6|f2f0ea|none|cap|tunic|none|eyepatch,gloves|fists|none
+Garfield	c|m|w|ef8a2c|1f1f1f|ef8a2c|ef8a2c|4caf50|none|none|bare|none|stripes,ears,tail|claws|none
+Tom	c|m|n|8a9ab0|f2f0ea|8a9ab0|8a9ab0|f2cf3a|none|none|bare|club|ears,tail|blunt|none
+Jerry	c|s|n|b8805a|f2e0c0|b8805a|b8805a|1f1f1f|none|none|bare|none|ears_round,tail|gadget|none
+Wile E. Coyote	h|m|t|8a6a4a|5a4632|8a6a4a|8a6a4a|1f1f1f|none|none|bare|none|ears,tail|gadget|explosion
+Gru	h|m|w|f2e8e0|f2e8e0|1f1f1f|3a3a3a|f2f0ea|bald|none|coat|blaster|scarf|gun|ice
+Lara Croft	h|m|t|f3d6bf|5a3a1a|3fa0a0|8a6a3a|8a5a32|ponytail|none|vest|gun|belt|gun|none
+Doomguy	r|m|w|4f6a3a|1a1a1a|4f6a3a|3a4a2a|ff7a1a|none|none|armour|cannon||gun|fire
+John McClane	h|m|n|f1d0b0|f1d0b0|f2f0ea|3a3a3a|c0262f|bald|none|vest|gun||gun|none
+The Minions	c|s|n|f2cf3a|1f1f1f|3f6aa8|3f6aa8|cfd6dd|none|none|jumpsuit|none|horde,glasses|fists|none
+Stormtrooper Legion	h|m|n|f2f0ea|1a1a1a|f2f0ea|f2f0ea|1f1f1f|none|helm|armour|blaster|horde|gun|none
+Orcs of Mordor	h|m|w|5a6a4a|1a1a1a|3a3a3a|1f1f1f|c0262f|bald|none|armour|sword|horde,fangs,redeyes|blade|none
+Clone Troopers	h|m|n|f2f0ea|1a1a1a|f2f0ea|3f7fd6|3f7fd6|none|helm|armour|blaster|horde|gun|none
+The Ghostbusters	h|m|n|f1d0b0|5a3a1a|8a8a6a|8a8a6a|ff6ad5|short|none|jumpsuit|blaster|horde|beam|psychic
+Oompa Loompas	c|s|n|ef8a2c|4caf50|8a5a32|f2f0ea|4caf50|short|none|tunic|none|horde|fists|none

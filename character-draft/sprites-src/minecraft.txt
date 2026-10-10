@@ -49,3 +49,5 @@ Sniffer	q|l|w|8a3a2a|4caf50|8a3a2a|8a3a2a|e8dcc0|none|none|bare|none|no_ears,spo
 Cat	q|s|t|e8b84a|f2f0ea|e8b84a|e8b84a|4caf50|none|none|bare|none|stripes|claws|none
 Parrot	b|s|n|c0262f|3fa0ff|c0262f|c0262f|f2cf3a|none|none|bare|none|crest|bite|wind
 Herobrine	k|m|n|c9926b|3b2a1a|2e9fb5|3b3fa0|f2f0ea|short|none|tunic|none|glow_eyes|magic|dark
+Zombie Horde	k|m|n|4f8a4a|2a4a2a|2e9fb5|3b3fa0|1f1f1f|short|none|tunic|none|horde|fists|poison
+Pillager Raid	k|m|n|9aa3ad|1a1a1a|5a4a3a|3a3a44|8a5a32|none|none|tunic|crossbow|horde|bow|none

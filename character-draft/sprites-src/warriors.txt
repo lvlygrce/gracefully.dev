@@ -58,3 +58,5 @@ Sharptooth	q|x|w|e8c48a|f2e0b8|e8c48a|e8c48a|c0262f|none|none|bare|none|fangs,re
 Fireheart	q|m|t|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none||claws|fire
 Tawnypelt	q|m|n|c8803a|6b4a2a|c8803a|c8803a|4caf50|none|none|bare|none|stripes|claws|none
 Crookedstar	q|m|n|8a6a4a|cfd6dd|8a6a4a|8a6a4a|e8b84a|none|none|bare|none|stripes|claws|water
+BloodClan	q|s|t|2a2a2a|8a8f96|2a2a2a|2a2a2a|c0262f|none|none|bare|claws|horde,collar|claws|blood
+StarClan Warriors	q|m|n|cfe0f8|f2f0ea|cfe0f8|cfe0f8|8fd0ff|none|none|bare|none|horde,glow,spots|claws|light

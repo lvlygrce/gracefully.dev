@@ -54,3 +54,5 @@ Nighteye	h|m|t|f1d0b0|f2cf3a|1f1f1f|1f1f1f|f2f0ea|slick|none|suit|none|glasses|g
 Gang Orca	h|l|w|1f1f24|f2f0ea|1f1f1f|1f1f1f|f2f0ea|none|none|suit|none|fins|bite|water
 Ryukyu	d|x|n|f2a0b0|f2f0ea|f2a0b0|f2a0b0|f2cf3a|none|none|bare|none||claws|none
 Mei Hatsume	h|m|t|f3d6bf|f2a0c0|8a5a32|1f1f1f|f2cf3a|long|visor|jumpsuit|blaster|belt|gadget|tech
+Nomu Horde	h|l|w|2a2a3a|1a1a1a|2a2a3a|2a2a3a|e8b84a|none|none|bare|none|horde,glow_eyes,fangs|fists|none
+Class 1-A	h|m|n|f1d0b0|2e6b3a|2e8b3a|1f1f1f|c0262f|messy|none|jumpsuit|none|horde|fists|lightning

@@ -144,3 +144,5 @@ Ikaris	h|m|n|f1d0b0|1a1a1a|1f3f8a|e8b84a|ffe14d|short|none|armour|none|glow_eyes
 Thena	h|m|t|f3d6bf|f2eee4|e8b84a|cfd6dd|8fd0ff|long|none|armour|spear||blade|light
 Kingo	h|m|n|e0ac69|1a1a1a|8e5bd0|e8b84a|e8b84a|slick|none|suit|none|glow|beam|light
 Leech	h|s|t|9fd06a|1a1a1a|1f3f8a|f2f0ea|f2f0ea|bald|none|robe|none|ears|psychic|none
+Chitauri Army	h|m|n|8a8a7a|1a1a1a|5a5f66|3a3a3a|8fe9ff|none|none|armour|blaster|horde,spikes|gun|tech
+Hydra Agents	h|m|n|f1d0b0|1a1a1a|2e6b3a|1f1f1f|c0262f|none|helmet|uniform|gun|horde|gun|none
