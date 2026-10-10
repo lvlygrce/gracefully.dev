@@ -78,7 +78,8 @@ window.CHARACTER_IMAGES = {
     "Nymeria": "https://static.wikia.nocookie.net/gameofthrones/images/5/54/Nymeria-S7.png/revision/latest/scale-to-width-down/400",
     "Dothraki Horde": "https://upload.wikimedia.org/wikipedia/en/f/ff/Map_of_the_Known_World.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "The Unsullied": "https://upload.wikimedia.org/wikipedia/en/2/28/Unsullied2014poster.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "Army of the Dead": "https://upload.wikimedia.org/wikipedia/en/f/fb/White_Walker-Game_of_Thrones-S02-E10.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+    "Army of the Dead": "https://upload.wikimedia.org/wikipedia/en/f/fb/White_Walker-Game_of_Thrones-S02-E10.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "The Golden Company": "https://static.wikia.nocookie.net/gameofthrones/images/4/43/Golden_Company.svg/revision/latest/scale-to-width-down/366?cb=20230905225116"
   },
   "marvel": {
     "Iron Man": "https://static.wikia.nocookie.net/marvelcinematicuniverse/images/9/9d/Iron_Man_Infobox.jpg/revision/latest/scale-to-width-down/400",
@@ -403,7 +404,8 @@ window.CHARACTER_IMAGES = {
     "Ziggs": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Ziggs_0.jpg",
     "Zilean": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Zilean_0.jpg",
     "Zoe": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Zoe_0.jpg",
-    "Zyra": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Zyra_0.jpg"
+    "Zyra": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Zyra_0.jpg",
+    "Baron Nashor": "https://static.wikia.nocookie.net/leagueoflegends/images/1/15/Baron_Nashor_OriginalSkin.jpg/revision/latest/scale-to-width-down/400?cb=20231129013246"
   },
   "pokemon": {
     "Pikachu": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png",
@@ -552,7 +554,9 @@ window.CHARACTER_IMAGES = {
     "Sharptooth": "https://static.wikia.nocookie.net/warriors/images/a/ac/Sharptooth_%28creature%29.jpg/revision/latest/scale-to-width-down/400?cb=20260916040917",
     "Fireheart": "https://static.wikia.nocookie.net/warriors/images/6/67/Firestar.star.png/revision/latest/scale-to-width-down/400?cb=20251229000309",
     "Tawnypelt": "https://static.wikia.nocookie.net/warriors/images/2/27/Tawnypelt.warrior.png/revision/latest/scale-to-width-down/400?cb=20240401201859",
-    "Crookedstar": "https://static.wikia.nocookie.net/warriors/images/1/12/Crookedstar.star.png/revision/latest/scale-to-width-down/400?cb=20250402002428"
+    "Crookedstar": "https://static.wikia.nocookie.net/warriors/images/1/12/Crookedstar.star.png/revision/latest/scale-to-width-down/400?cb=20250402002428",
+    "BloodClan": "https://static.wikia.nocookie.net/warriors/images/f/f6/Scourge.leader.png/revision/latest?cb=20240401220743",
+    "StarClan Warriors": "https://static.wikia.nocookie.net/warriors/images/d/d7/StarClan.FG-3.png/revision/latest/scale-to-width-down/295?cb=20240821142425"
   },
   "anime": {
     "Goku": "https://s4.anilist.co/file/anilistcdn/character/large/246-wsRRr6z1kii8.png",
@@ -642,7 +646,8 @@ window.CHARACTER_IMAGES = {
     "Erwin Smith": "https://s4.anilist.co/file/anilistcdn/character/large/b46496-Mu86MENd5wNB.png",
     "The Rumbling": "https://upload.wikimedia.org/wikipedia/en/d/d6/Shingeki_no_Kyojin_manga_volume_1.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "Akatsuki": "https://upload.wikimedia.org/wikipedia/en/4/44/Major_Konoha.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "Straw Hat Pirates": "https://upload.wikimedia.org/wikipedia/en/0/07/Straw_Hats.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+    "Straw Hat Pirates": "https://upload.wikimedia.org/wikipedia/en/0/07/Straw_Hats.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "Survey Corps": "https://static.wikia.nocookie.net/shingekinokyojin/images/a/a7/Survey_Corps_Logo.png/revision/latest/scale-to-width-down/298?cb=20140307090257"
   },
   "dc": {
     "Superman": "https://static.wikia.nocookie.net/marvel_dc/images/0/08/Summer_of_Superman_Special_Vol_1_1_Textless.jpg/revision/latest/scale-to-width-down/400?cb=20250416152204",
@@ -770,7 +775,9 @@ window.CHARACTER_IMAGES = {
     "Sniffer": "https://minecraft.wiki/images/thumb/Sniffer_sniffsniff.gif/400px-Sniffer_sniffsniff.gif?1e613",
     "Cat": "https://minecraft.wiki/images/thumb/Jellie_Cat.png/400px-Jellie_Cat.png?e5d99",
     "Parrot": "https://minecraft.wiki/images/thumb/Red_Parrot_JE1_BE1.png/400px-Red_Parrot_JE1_BE1.png?90904",
-    "Herobrine": "https://minecraft.wiki/images/thumb/Herobrine.png/400px-Herobrine.png?bc881"
+    "Herobrine": "https://minecraft.wiki/images/thumb/Herobrine.png/400px-Herobrine.png?bc881",
+    "Zombie Horde": "https://minecraft.wiki/images/Zombie_JE5_BE2.png?d709c",
+    "Pillager Raid": "https://minecraft.wiki/images/thumb/Pillager_JE3.png/400px-Pillager_JE3.png?22662"
   },
   "smash": {
     "Mario": "https://www.smashbros.com/assets_v2/img/fighter/mario/main.png",
@@ -1041,7 +1048,9 @@ window.CHARACTER_IMAGES = {
     "Stormtrooper Legion": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e9/Stormtroopers_at_Galaxy%E2%80%99s_Edge_%28cropped%29.jpg/500px-Stormtroopers_at_Galaxy%E2%80%99s_Edge_%28cropped%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "Clone Troopers": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0a/SDCC_2012_-_Clone_Troopers_%287567335018%29.jpg/500px-SDCC_2012_-_Clone_Troopers_%287567335018%29.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail",
     "The Ghostbusters": "https://upload.wikimedia.org/wikipedia/en/2/2f/Ghostbusters_%281984%29_theatrical_poster.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "Oompa Loompas": "https://upload.wikimedia.org/wikipedia/en/d/d9/Oompa_Loompas_in_1971.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+    "Oompa Loompas": "https://upload.wikimedia.org/wikipedia/en/d/d9/Oompa_Loompas_in_1971.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "Mulan": "https://static.wikia.nocookie.net/disney/images/0/04/Profile_-_Mulan.jpeg/revision/latest/scale-to-width-down/323?cb=20230904010800",
+    "Orcs of Mordor": "https://static.wikia.nocookie.net/lotr/images/f/fd/Z.Orcs.jpg/revision/latest/scale-to-width-down/400?cb=20190320014050"
   },
   "mha": {
     "Izuku Midoriya": "https://s4.anilist.co/file/anilistcdn/character/large/b89028-8w1I9o1ISHMg.png",
@@ -1099,7 +1108,9 @@ window.CHARACTER_IMAGES = {
     "Nighteye": "https://s4.anilist.co/file/anilistcdn/character/large/b129761-P1sMOT3u9UJm.jpg",
     "Gang Orca": "https://s4.anilist.co/file/anilistcdn/character/large/b149186-fvBDbvij65aI.png",
     "Ryukyu": "https://s4.anilist.co/file/anilistcdn/character/large/b145291-KOA58Q8fz0Xm.jpg",
-    "Mei Hatsume": "https://s4.anilist.co/file/anilistcdn/character/large/b89248-8QeMSMjjJ5RO.png"
+    "Mei Hatsume": "https://s4.anilist.co/file/anilistcdn/character/large/b89248-8QeMSMjjJ5RO.png",
+    "Nomu Horde": "https://static.wikia.nocookie.net/bokunoheroacademia/images/7/75/Hosu_Nomu.png/revision/latest/scale-to-width-down/304?cb=20260903022617",
+    "Class 1-A": "https://static.wikia.nocookie.net/bokunoheroacademia/images/d/dc/Class_1-A.png/revision/latest/scale-to-width-down/400?cb=20250611041624"
   },
   "boys": {
     "Homelander": "https://static.wikia.nocookie.net/amazons-the-boys/images/d/d4/The_Homelander_S5.png/revision/latest/scale-to-width-down/400?cb=20260408014531",
@@ -1201,7 +1212,8 @@ window.CHARACTER_IMAGES = {
     "James Potter": "https://static.wikia.nocookie.net/harrypotter/images/1/10/James_Potter_I_Deathly_Hallows.jpg/revision/latest/scale-to-width-down/400?cb=20180601015416",
     "Regulus Black": "https://static.wikia.nocookie.net/harrypotter/images/7/73/Regulus_PM.png/revision/latest/scale-to-width-down/400?cb=20180102200304",
     "Aberforth Dumbledore": "https://static.wikia.nocookie.net/harrypotter/images/4/40/Aberforth_Dumbledore.jpg/revision/latest/scale-to-width-down/400?cb=20170911160033",
-    "Death Eaters": "https://upload.wikimedia.org/wikipedia/en/7/7d/DeathEaters.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled"
+    "Death Eaters": "https://upload.wikimedia.org/wikipedia/en/7/7d/DeathEaters.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "Dementors": "https://static.wikia.nocookie.net/harrypotter/images/4/49/DementorConceptArt.jpg/revision/latest/scale-to-width-down/307?cb=20150928152038"
   },
   "armed": {
     "Gorilla with Excalibur": [

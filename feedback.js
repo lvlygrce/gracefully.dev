@@ -116,30 +116,60 @@
   panel.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
 
   // Speaking: the browser transcribes as you talk, into the box, where it can be corrected.
-  let rec = null, base = "";
+  // Phones (Android especially) send each phrase again and again as it grows, so
+  // only finished phrases are kept, each replacing any earlier, shorter copy of
+  // itself; and on phones listening runs one phrase at a time, restarting until
+  // stopped, which avoids the repeats altogether.
+  const phone = /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
+  let rec = null, base = "", heard = [], wanted = false;
+  const join = parts => parts.map(t => t.trim()).filter(Boolean).join(" ");
+  function keep(t) {
+    t = t.trim();
+    if (!t) return;
+    const last = heard[heard.length - 1];
+    if (last && (t.startsWith(last) || last.startsWith(t))) heard[heard.length - 1] = t.length >= last.length ? t : last;
+    else heard.push(t);
+  }
   function stopListening() {
+    wanted = false;
     if (rec) { try { rec.stop(); } catch { /* already stopped */ } }
   }
-  if (mic) mic.addEventListener("click", () => {
-    if (rec) return stopListening();
+  function listen() {
     rec = new Speech();
-    rec.continuous = true;
+    rec.continuous = !phone;
     rec.interimResults = true;
     rec.lang = document.documentElement.lang || navigator.language || "en";
-    base = text.value ? text.value.replace(/\s*$/, " ") : "";
     rec.onresult = e => {
-      let said = "";
-      for (let i = 0; i < e.results.length; i++) said += e.results[i][0].transcript;
-      text.value = base + said;
+      let interim = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) keep(t); else interim = t;
+      }
+      text.value = (base + join(heard) + (interim ? " " + interim.trim() : "")).trim();
       usedVoice = true;
     };
-    rec.onerror = e => { status.textContent = e.error === "not-allowed" ? "The microphone is blocked; you can type instead." : "Couldn't hear that; try again or type."; };
-    rec.onend = () => { rec = null; mic.setAttribute("aria-pressed", "false"); mic.textContent = "Speak"; };
+    rec.onerror = e => {
+      if (e.error === "no-speech" && wanted) return;   // a pause; keep listening
+      wanted = false;
+      status.textContent = e.error === "not-allowed" ? "The microphone is blocked; you can type instead." : "Couldn't hear that; try again or type.";
+    };
+    rec.onend = () => {
+      rec = null;
+      text.value = (base + join(heard)).trim();
+      if (wanted) { try { listen(); return; } catch { /* fall through and stop */ } }
+      mic.setAttribute("aria-pressed", "false"); mic.textContent = "Speak";
+    };
+    rec.start();
+  }
+  if (mic) mic.addEventListener("click", () => {
+    if (wanted || rec) return stopListening();
+    base = text.value.trim() ? text.value.trim() + " " : "";
+    heard = []; wanted = true;
     try {
-      rec.start();
+      listen();
       mic.setAttribute("aria-pressed", "true"); mic.textContent = "Listening… tap to stop";
       status.textContent = "";
-    } catch { rec = null; }
+    } catch { wanted = false; rec = null; }
   });
 
   // Which app and which screen, so the feedback can be acted on.

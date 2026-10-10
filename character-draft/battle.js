@@ -20,14 +20,14 @@
     "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead",
     "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole",
     "earthquake", "tornado", "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct",
-    "telekinesis", "spin_dash", "block", "dodge", "deploy_gear", "build", "heal",
+    "telekinesis", "spin_dash", "summon_companion", "block", "dodge", "deploy_gear", "build", "heal",
     "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
   const ATTACKS = ["strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
     "teleport", "summon", "stealth", "trap", "team_up", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
     "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor", "lullaby", "devour",
     "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado", "lightning_storm", "stretch",
-    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash"];
+    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion"];
   // Abilities that can be used on their own, with or without a target.
   const SOLO = ["stealth", "teleport", "phase", "fly", "grow", "shrink", "time_stop"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
@@ -332,6 +332,34 @@
     }
   }
 
+  /* --- Companions -----------------------------------------------------------
+     Characters with a signature partner call it in: Annie's Tibbers, Yugi's
+     Dark Magician or Blue-Eyes, Naruto's Kurama, a Stand behind its user. Each
+     is drawn from its own design. Found by the move's name, else by who calls. */
+
+  const COMPANIONS = [
+    { id: "blueeyes", name: "Blue-Eyes White Dragon", match: /blue.?eyes/i, kind: "flyer", spec: "d|g|w|e8eef8|9fd0ff|e8eef8|e8eef8|5ab8f0|none|none|bare|none|glow_eyes,spikes|breath|light", attack: "beam", colour: "#cfe8ff", sound: "b_roar", line: "Burst Stream of Destruction!" },
+    { id: "darkmagician", name: "Dark Magician", match: /dark magician/i, by: /^Yugi/, kind: "beast", spec: "h|l|t|c8b8e8|1a1a1a|5b3a9a|3a2a6a|4caf50|none|wizard|armour|staff|glow|magic|dark", attack: "orb", colour: "#8e5bd0", sound: "b_magic", line: "Dark Magic Attack!" },
+    { id: "tibbers", name: "Tibbers", match: /tibbers/i, by: /^Annie$/, kind: "beast", spec: "h|x|w|6b4a2a|3b2a1a|6b4a2a|6b4a2a|ff7a1a|none|none|bare|claws|ears_round,stripes,redeyes,glow|claws|fire", attack: "slam", colour: "#ff7a1a", sound: "b_roar", line: "" },
+    { id: "kurama", name: "Kurama", match: /kurama|nine.?tails|kyuubi/i, by: /^Naruto/, kind: "beast", spec: "q|g|w|ef8a2c|1f1f1f|ef8a2c|ef8a2c|c0262f|none|none|bare|none|tails9,redeyes,stripes|bite|fire", attack: "orb", colour: "#3a1a3a", sound: "b_roar", line: "Tailed Beast Bomb!" },
+    { id: "starplatinum", name: "Star Platinum", match: /star platinum/i, by: /^Jotaro/, kind: "stand", spec: "h|l|w|8e5bd0|1a1a1a|8e5bd0|e8b84a|c0262f|long|headband|bare|none|scarf,glow|fists|psychic", cry: "ORA", colour: "#8e5bd0", sound: "b_punch" },
+    { id: "theworld", name: "The World", match: /the world|za warudo/i, by: /^Dio/, kind: "stand", spec: "h|l|w|e8b84a|1a1a1a|e8b84a|3a5a3a|3a8a3a|none|helm|armour|none|glow|fists|psychic", cry: "MUDA", colour: "#e8b84a", sound: "b_punch" },
+    { id: "goldexp", name: "Gold Experience", match: /gold experience/i, by: /^Giorno/, kind: "stand", spec: "h|l|n|e8b84a|1a1a1a|e8b84a|4caf50|ff6ad5|none|helm|armour|none|glow|fists|nature", cry: "MUDA", colour: "#e8b84a", sound: "b_punch" },
+    { id: "eagle", name: "the Great Eagles", match: /eagle/i, by: /^Gandalf$/, kind: "flyer", spec: "b|g|w|8a5a32|e8b84a|8a5a32|8a5a32|e8b84a|none|none|bare|none|crest|claws|wind", attack: "dive", colour: "#e8d9b0", sound: "b_whoosh" },
+    { id: "voidlings", name: "voidlings", match: /voidling/i, by: /^Malzahar$/, kind: "swarm", spec: "q|s|n|8e5bd0|ff6ad5|8e5bd0|8e5bd0|ff6ad5|none|none|bare|none|horde,spikes,no_ears|bite|dark", colour: "#8e5bd0", sound: "b_summon" },
+    { id: "spiderlings", name: "spiderlings", match: /spiderling/i, by: /^Elise$/, kind: "swarm", spec: "q|s|w|2a2a2a|c0262f|2a2a2a|2a2a2a|c0262f|none|none|bare|none|horde,redeyes,no_ears,spots|bite|poison", colour: "#c0262f", sound: "b_summon" },
+    { id: "plants", name: "thorn plants", match: /plant|thorn|garden/i, by: /^Zyra$/, kind: "swarm", spec: "o|s|n|2e6b3a|c0262f|2e6b3a|2e6b3a|c0262f|none|none|bare|none|horde,spikes,grin|bite|nature", colour: "#4caf50", sound: "b_summon" },
+    { id: "daisy", name: "Daisy", match: /daisy/i, by: /^Ivern$/, kind: "beast", spec: "h|x|w|8a8f96|ff6ad5|8a8f96|5a5f66|ff6ad5|none|none|bare|none|spikes,glow_eyes|fists|nature", attack: "slam", colour: "#ff6ad5", sound: "b_slam" },
+    { id: "maiden", name: "the Maiden of the Mist", match: /maiden|mist/i, by: /^Yorick$/, kind: "beast", spec: "g|l|t|9fe3d8|f2f0ea|9fe3d8|9fe3d8|4caf50|none|none|bare|none|glow,glow_eyes,nubs|claws|dark", attack: "melee", colour: "#9fe3d8", sound: "b_psychic" },
+    { id: "charizard", name: "Charizard", match: /charizard/i, by: /Pok[eé]mon Trainer/, kind: "beast", from: ["pokemon", "Charizard"], attack: "breath", colour: "#ff7a1a", sound: "b_roar" },
+    { id: "ghost", name: "Ghost", match: /\bghost\b|direwolf/i, by: /^Jon Snow$/, kind: "beast", from: ["westeros", "Ghost"], attack: "melee", colour: "#ffffff", sound: "b_slash" },
+    { id: "fawkes", name: "Fawkes", match: /fawkes|phoenix/i, by: /Dumbledore/, kind: "flyer", from: ["hp", "Fawkes"], attack: "dive", colour: "#ff7a1a", sound: "b_fire" },
+    { id: "aragog", name: "Aragog", match: /aragog|acromantula/i, by: /^Rubeus Hagrid$/, kind: "beast", from: ["hp", "Aragog"], attack: "melee", colour: "#2a2a2a", sound: "b_summon" },
+  ];
+  function companionFor(actor, move) {
+    return COMPANIONS.find(c => c.match.test(move || "")) || COMPANIONS.find(c => c.by && c.by.test(actor.name)) || null;
+  }
+
   /* --- The stage -------------------------------------------------------- */
 
   const SLOTS = [[128, 170], [104, 152], [98, 190], [74, 162], [56, 182]];
@@ -405,6 +433,7 @@
     let hole = null;        // a black hole: { x, y, r }
     let sepiaUntil = 0;     // time running backwards
     let cracks = [];        // ground split by an earthquake: { x, y, until }
+    let companions = [];    // summoned partners that stay by their summoner
     const tints = new Map();
     const tinted = (img, c, a) => { const k = img; let m = tints.get(k); if (!m) tints.set(k, m = new Map()); if (!m.has(c)) m.set(c, Sprite.tint(img, c, a)); return m.get(c); };
 
@@ -435,6 +464,9 @@
     // Death, in the character's own way: a pool of blood, oil or goo, a puff
     // of smoke (Minecraft), or fading away (ghosts).
     async function die(f, dir) {
+      // A summoned partner fades when its summoner falls.
+      companions.filter(p => p.owner === f).forEach(p => { burst(p.pos.x, p.pos.y - 10, "smoke", 12); tween(p, { alpha: 0 }, 500); });
+      companions = companions.filter(p => p.owner !== f);
       const g = gore(f);
       f.downed = true; f.dead = true; setHp(f, 0);
       sfx("b_death", 0.9);
@@ -1224,7 +1256,7 @@
           if (!target) break;
           setPose(actor, "cast"); sfx("b_roar", 1);
           callMove(b.move || "Dracarys");
-          const dragon = Sprite.of({ world: "westeros", name: /viserion|ice/i.test(b.move) ? "Viserion" : /rhaegal/i.test(b.move) ? "Rhaegal" : "Drogon", note: "" });
+          const dragon = Sprite.of({ world: "westeros", name: /viserion|ice/i.test(b.move) ? "Viserion" : /rhaegal/i.test(b.move) ? "Rhaegal" : /vhagar/i.test(b.move) ? "Vhagar" : "Drogon", note: "" }, { size: "g" });
           flyer = { sprite: dragon, x: actor.facing > 0 ? -60 : W + 60, y: 70, facing: actor.facing, scale: 1 };
           await tween(flyer, { x: target.pos.x - actor.facing * 70, y: 80 }, 900);
           const breath = { kind: "breath", x0: flyer.x + actor.facing * 22, y0: flyer.y - 20, x1: target.pos.x, y1: target.pos.y - 10, c: FX[b.effect !== "none" ? b.effect : "fire"] || FX.fire, t0: time, ms: 700 };
@@ -1557,6 +1589,94 @@
           await goHome(actor);
           break;
         }
+        case "summon_companion": {
+          if (!target) break;
+          const C = companionFor(actor, b.move);
+          if (!C) { b.action = "summon"; return act(b); }
+          const sprite = C.from ? Sprite.of({ world: C.from[0], name: C.from[1], note: "" }, C.kind === "flyer" ? { size: "g" } : {}) : Sprite.of({ world: "companion", name: C.id, spec: C.spec });
+          callMove(b.move || C.name);
+          // Already here from an earlier call? It just attacks again.
+          let pal = companions.find(p => p.owner === actor && p.id === C.id);
+          const side = actor.facing;
+          if (!pal) {
+            pal = { key: `${actor.key}~${C.id}`, id: C.id, owner: actor, sprite, alpha: 0, scale: 1, facing: side, pose: "idle", poseT: time, hop: 0,
+              home: { x: actor.pos.x - side * (C.kind === "flyer" ? 34 : 26), y: actor.pos.y - (C.kind === "swarm" ? -10 : 6) } };
+            pal.pos = { ...pal.home };
+            setPose(actor, "cast"); sfx(C.sound || "b_summon", 1);
+            if (C.kind === "flyer") {
+              pal.pos = { x: pal.home.x, y: -40 }; pal.alpha = 1; pal.hop = 0;
+              for (let i = 0; i < 3; i++) rings.push({ x: pal.home.x, y: pal.home.y - 30, r0: 2, r1: 40, c: C.colour, t0: time + i * 150, ms: 600 });
+              clones.push(pal); companions.push(pal);
+              await tween(pal.pos, { y: pal.home.y }, 900);
+              shake = time + 300;
+            } else if (C.kind === "stand") {
+              clones.push(pal); companions.push(pal);
+              await tween(pal, { alpha: 0.85 }, 500);
+            } else {
+              burst(pal.home.x, pal.home.y - 8, C.id === "tibbers" ? "fire" : "smoke", 20, C.kind !== "swarm");
+              clones.push(pal); companions.push(pal);
+              pal.scale = 0.2; pal.alpha = 1;
+              await tween(pal, { scale: 1 }, 350);
+              if (C.id === "tibbers") { shake = time + 300; burst(pal.pos.x, pal.pos.y - 20, "fire", 16, true); }
+            }
+            setPose(actor, "idle");
+          }
+          // How each companion fights.
+          if (C.kind === "stand") {
+            await Promise.all([approach(actor, target), tween(pal.pos, { x: target.pos.x - side * 10, y: target.pos.y - 4 }, 420)]);
+            for (let i = 0; i < 8; i++) {
+              setPose(pal, i % 2 ? "strike" : "windup"); sfx("b_punch", 0.4, 1 + (i % 3) * 0.1);
+              burst(centre(target).x + rnd(-4, 4), centre(target).y + rnd(-8, 8), "impact", 3);
+              if (i % 3 === 0) damageNumber(target, C.cry, C.colour);
+              await wait(90);
+            }
+            shake = time + 300;
+            await land(target, b.outcome === "hit" ? "crit" : b.outcome, "impact", actor);
+            await Promise.all([goHome(actor), tween(pal.pos, { ...pal.home }, 380)]);
+            await tween(pal, { alpha: 0 }, 400);
+            companions = companions.filter(p => p !== pal); clones = clones.filter(c => c !== pal);
+          } else if (C.kind === "swarm") {
+            setPose(pal, "walk");
+            await tween(pal.pos, { x: target.pos.x - side * 8, y: target.pos.y + 2 }, 700);
+            setPose(pal, "strike"); sfx("b_slash", 0.7);
+            burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "blood", 10);
+            await land(target, b.outcome, b.effect !== "none" ? b.effect : "impact", actor);
+            burst(pal.pos.x, pal.pos.y - 4, "smoke", 10);
+            companions = companions.filter(p => p !== pal); clones = clones.filter(c => c !== pal);
+          } else if (C.attack === "beam" || C.attack === "orb" || C.attack === "breath") {
+            setPose(pal, "cast"); if (C.line) say(pal.owner, C.line);
+            await wait(300);
+            const mouth = { x: pal.pos.x + side * 20 * pal.sprite.size, y: pal.pos.y - 22 * pal.sprite.size };
+            const s = C.attack === "beam" ? { kind: "beam", x0: mouth.x, y0: mouth.y, x1: centre(target).x, y1: centre(target).y, c: C.colour, t0: time, ms: 700 }
+              : C.attack === "breath" ? { kind: "breath", x0: mouth.x, y0: mouth.y, x1: centre(target).x, y1: centre(target).y, c: C.colour, t0: time, ms: 700 }
+              : { kind: "orb", x0: mouth.x, y0: mouth.y, x1: centre(target).x, y1: centre(target).y, c: C.colour, t0: time, ms: 600 };
+            sfx(C.attack === "beam" ? "b_beam" : C.attack === "breath" ? "b_fire" : "b_magic", 1);
+            shots.push(s); await wait(s.ms); shots = shots.filter(q => q !== s);
+            burst(centre(target).x, centre(target).y, C.attack === "orb" ? "dark" : "explosion", 24, true); shake = time + 400;
+            if (C.attack === "beam") flash = { c: C.colour, until: time + 250, ms: 250 };
+            await land(target, b.outcome, C.attack === "breath" ? "fire" : "light", actor);
+            setPose(pal, "idle");
+          } else if (C.attack === "dive") {
+            const from = { ...pal.pos };
+            await tween(pal.pos, { x: target.pos.x - side * 6, y: target.pos.y - 10 }, 450);
+            sfx("b_slash", 1); burst(centre(target).x, centre(target).y, "slash", 14);
+            await land(target, b.outcome, "impact", actor);
+            await tween(pal.pos, from, 500);
+          } else {
+            // On foot: charge, strike (or slam the ground), and come back.
+            setPose(pal, "walk");
+            await tween(pal.pos, { x: target.pos.x - side * 16 * pal.sprite.size, y: target.pos.y }, 520);
+            setPose(pal, "windup"); await wait(180);
+            setPose(pal, "strike");
+            if (C.attack === "slam") { sfx("b_slam", 0.6); shake = time + 400; burst(target.pos.x, target.pos.y - 2, C.id === "tibbers" ? "fire" : "earth", 22, true); }
+            else { sfx("b_slash", 0.9); burst(centre(target).x, centre(target).y, "slash", 12); }
+            await land(target, b.outcome, C.id === "tibbers" ? "fire" : "impact", actor);
+            setPose(pal, "walk");
+            await tween(pal.pos, { ...pal.home }, 450);
+            setPose(pal, "idle");
+          }
+          break;
+        }
         case "taunt":
           setPose(actor, "victory"); actor.hop = -4; await wait(240); actor.hop = 0; await wait(500); setPose(actor, "idle");
           break;
@@ -1586,7 +1706,7 @@
     function describe(b, a, t) {
       const verbs = { advance: "advances", strike: "attacks", combo: "unleashes a flurry on", shoot: "shoots at", cast: "casts at", special: "unleashes a special on",
         annihilate: "unleashes everything", throw: "hurls a weapon at", slam: "slams down on", barrage: "rains fire on", grab: "seizes", teleport: "teleports behind",
-        transform: "transforms", summon: "summons help against", stealth: "vanishes and strikes", time_stop: "stops time and strikes",
+        transform: "transforms", summon: "summons help against", summon_companion: "calls a companion against", stealth: "vanishes and strikes", time_stop: "stops time and strikes",
         foresee: "sees the attack coming and counters", mind_control: "seizes the mind of", clone: "sends copies at", shapeshift: "disguises as",
         summon_dragon: "calls a dragon down on", summon_giant: "summons a colossus against", raise_dead: "raises the dead against", stampede: "stampedes through",
         airstrike: "calls an airstrike on", meteor: "drops a meteor on", lullaby: "sings to sleep", devour: "devours", portal: "drops a portal under",
@@ -1644,7 +1764,7 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
-      skipping = true; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
+      skipping = true; companions = []; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();

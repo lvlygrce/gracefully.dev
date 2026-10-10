@@ -75,8 +75,8 @@
     const [src, badge] = Array.isArray(card.image) ? card.image : [card.image];
     const letters = esc(String(card.name).split(" ").slice(0, 2).map(w => w[0]).join(""));
     return `<span class="pic ${cls || ""}"><span class="pic__letters" aria-hidden="true">${letters}</span>${src
-      ? `<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" />` : ""}${badge
-      ? `<span class="pic__badge"><img src="${esc(badge)}" alt="" referrerpolicy="no-referrer" onerror="this.parentNode.remove()" /></span>` : ""}</span>`;
+      ? `<img src="${esc(src)}" alt="" referrerpolicy="origin" onerror="this.remove()" />` : ""}${badge
+      ? `<span class="pic__badge"><img src="${esc(badge)}" alt="" referrerpolicy="origin" onerror="this.parentNode.remove()" /></span>` : ""}</span>`;
   }
 
   /* Fit to the screen: shrink the root font size (everything is sized in

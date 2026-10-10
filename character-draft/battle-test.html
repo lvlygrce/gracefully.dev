@@ -25,24 +25,21 @@
     const U = window.UNIVERSES;
     const ch = (world, name) => ({ world, name, note: (U[world].characters.find(c => c[0] === name) || [])[1] || "" });
     const teams = [
-      { name: "Grace", roster: [ch("dc", "Superman"), ch("dc", "Black Canary"), ch("marvel", "Storm"), ch("anime", "Shigeo Kageyama"), ch("smash", "Sonic")] },
-      { name: "Sam", roster: [ch("anime", "Monkey D. Luffy"), ch("marvel", "Rogue"), ch("minecraft", "Creeper"), ch("mha", "Eri"), ch("anime", "Frieza")] },
+      { name: "Grace", roster: [ch("league", "Annie"), ch("anime", "Yugi Muto"), ch("anime", "Naruto Uzumaki"), ch("anime", "Jotaro Kujo"), ch("shows", "Gandalf")] },
+      { name: "Sam", roster: [ch("anime", "Dio Brando"), ch("league", "Malzahar"), ch("league", "Elise"), ch("marvel", "Spider-Man"), ch("hp", "Rubeus Hagrid")] },
     ];
     const verdict = {
-      winner: "Grace", mvp: "Superman", verdict: "Test.", turning_point: "Mob lifts Frieza.", preps: [],
+      winner: "Grace", mvp: "Yugi Muto", verdict: "Test.", turning_point: "Blue-Eyes.", preps: [],
       beats: [
-        { actor: "Black Canary", action: "shout", move: "Canary Cry", target: "Luffy", effect: "wind", outcome: "hit", caption: "Canary Cry.", line: "" },
-        { actor: "Monkey D. Luffy", action: "stretch", move: "Gum-Gum Pistol", target: "Sonic", effect: "impact", outcome: "hit", caption: "Gum-Gum Pistol!", line: "" },
-        { actor: "Sonic", action: "spin_dash", move: "Spin Dash", target: "Rogue", effect: "impact", outcome: "hit", caption: "Sonic spin-dashes.", line: "" },
-        { actor: "Rogue", action: "drain", move: "Absorb", target: "Superman", effect: "psychic", outcome: "hurt", caption: "Rogue drains Superman.", line: "" },
-        { actor: "Superman", action: "laser_eyes", move: "Heat Vision", target: "Rogue", effect: "fire", outcome: "ko", caption: "Heat vision.", line: "" },
-        { actor: "Eri", action: "time_rewind", move: "Rewind", target: "none", effect: "none", outcome: "none", caption: "Eri turns back time.", line: "" },
-        { actor: "Storm", action: "lightning_storm", move: "Storm", target: "Frieza", effect: "lightning", outcome: "hit", caption: "Storm calls lightning.", line: "" },
-        { actor: "Frieza", action: "black_hole", move: "Supernova", target: "Storm", effect: "dark", outcome: "hit", caption: "A black hole opens.", line: "" },
-        { actor: "Storm", action: "tornado", move: "Tornado", target: "Eri", effect: "wind", outcome: "hit", caption: "A tornado.", line: "" },
-        { actor: "Superman", action: "earthquake", move: "Ground stomp", target: "Luffy", effect: "earth", outcome: "ko", caption: "The ground splits.", line: "" },
-        { actor: "Creeper", action: "self_destruct", move: "Sssss", target: "Sonic", effect: "explosion", outcome: "hit", caption: "The Creeper explodes.", line: "" },
-        { actor: "Shigeo Kageyama", action: "telekinesis", move: "100%", target: "Frieza", effect: "psychic", outcome: "ko", caption: "Mob lifts Frieza.", line: "" },
+        { actor: "Annie", action: "summon_companion", move: "Tibbers", target: "Elise", effect: "fire", outcome: "hit", caption: "Annie: Have you seen my bear Tibbers?", line: "Tibbers!" },
+        { actor: "Malzahar", action: "summon_companion", move: "Voidlings", target: "Annie", effect: "dark", outcome: "hit", caption: "Voidlings swarm Annie.", line: "" },
+        { actor: "Yugi Muto", action: "summon_companion", move: "Blue-Eyes White Dragon", target: "Malzahar", effect: "light", outcome: "ko", caption: "Yugi summons the Blue-Eyes White Dragon.", line: "" },
+        { actor: "Dio Brando", action: "summon_companion", move: "The World", target: "Jotaro Kujo", effect: "impact", outcome: "hit", caption: "The World: muda muda muda.", line: "" },
+        { actor: "Jotaro Kujo", action: "summon_companion", move: "Star Platinum", target: "Dio Brando", effect: "impact", outcome: "ko", caption: "Star Platinum: ora ora ora.", line: "Ora!" },
+        { actor: "Naruto Uzumaki", action: "summon_companion", move: "Kurama", target: "Elise", effect: "fire", outcome: "ko", caption: "Kurama's Tailed Beast Bomb.", line: "" },
+        { actor: "Rubeus Hagrid", action: "summon_companion", move: "Aragog", target: "Gandalf", effect: "poison", outcome: "hurt", caption: "Aragog scuttles in.", line: "" },
+        { actor: "Gandalf", action: "summon_companion", move: "The Eagles", target: "Rubeus Hagrid", effect: "wind", outcome: "ko", caption: "The eagles are coming.", line: "" },
+        { actor: "Yugi Muto", action: "summon_companion", move: "Dark Magician", target: "Spider-Man", effect: "dark", outcome: "ko", caption: "Dark Magic Attack.", line: "" },
       ],
     };
     if (location.search.includes("real")) {

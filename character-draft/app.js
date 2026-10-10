@@ -130,10 +130,10 @@
     const loading = size === "lg" ? "eager" : "lazy";
     return `<span class="portrait portrait--${size}${contain}">${fallback}${src
       ? `<img src="${esc(src)}" alt="" loading="${loading}"
-             referrerpolicy="no-referrer" onerror="this.remove()" />`
+             referrerpolicy="origin" onerror="this.remove()" />`
       : ""}${badge && size !== "sm"
       ? `<span class="portrait__badge"><img src="${esc(badge)}" alt="" loading="${loading}"
-             referrerpolicy="no-referrer" onerror="this.parentNode.remove()" /></span>`
+             referrerpolicy="origin" onerror="this.parentNode.remove()" /></span>`
       : ""}</span>`;
   }
 
@@ -559,7 +559,7 @@
     if (!field) return "";
     return `
       <div class="arena-strip">
-        <span class="arena-strip__img"><img src="${esc(field.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+        <span class="arena-strip__img"><img src="${esc(field.image)}" alt="" referrerpolicy="origin" onerror="this.remove()" /></span>
         <p><span class="block__kicker">the battle will be fought at</span>
           <span class="arena-strip__name">${esc(field.name)}</span>
           <span class="arena-strip__terrain">${esc(field.terrain)}</span></p>
@@ -1255,7 +1255,7 @@
     if (!field) { body.innerHTML = ""; return; }
     body.innerHTML = `
       <figure class="arena__card">
-        <span class="arena__img"><img src="${esc(field.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" /></span>
+        <span class="arena__img"><img src="${esc(field.image)}" alt="" referrerpolicy="origin" onerror="this.remove()" /></span>
         <figcaption>
           <p class="block__kicker">${worlds.length > 1 ? `from ${esc(U[field.world].name)}` : "drawn at the start"}</p>
           <h3 class="arena__name">${esc(field.name)}</h3>

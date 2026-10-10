@@ -8,7 +8,7 @@ import json, re, subprocess, sys, pathlib
 HERE = pathlib.Path(__file__).parent
 ENUMS = {
     "body": "h k r c q d b s o g".split(),
-    "size": "s m l x".split(),
+    "size": "s m l x g".split(),
     "build": "t n w".split(),
     "hairStyle": "short long spiky bald ponytail bun mohawk afro slick braids buzz messy none".split(),
     "head": "none helmet helm hood fullmask cowl mask facemask hat tophat wizard cap crown headband bandana visor".split(),
@@ -19,7 +19,7 @@ ENUMS = {
 }
 EXTRAS = set("""cape wings batwings wings_dark tail tail_bolt tail_flame ears ears_long ears_round ears_floppy horns horn antennae
 halo flame_head beard moustache glasses eyepatch grin fangs cheeks redeyes glow_eyes glow gloves belt stripes spots emblem scarf
-spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield blood_green blood_black horde mouth""".split())
+spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield blood_green blood_black horde mouth tails9""".split())
 FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent", "hairStyle", "head", "outfit", "weapon", "extras", "style", "element"]
 
 chars = json.loads(subprocess.run(["node", "-e", """

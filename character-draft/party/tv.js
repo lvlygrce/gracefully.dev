@@ -233,7 +233,7 @@
   function strip() {
     const a = state.arena;
     if (!a) return "";
-    return `<div class="strip"><img src="${esc(a.image)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()" />
+    return `<div class="strip"><img src="${esc(a.image)}" alt="" referrerpolicy="origin" onerror="this.remove()" />
       <p><span class="hand">the battle will be fought at</span><br /><span class="title title--md">${esc(a.name)}</span>
       <span class="muted"> ${esc(a.terrain)}</span></p></div>`;
   }

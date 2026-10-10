@@ -17,7 +17,7 @@
 
   const FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent",
     "hairStyle", "head", "outfit", "weapon", "extras", "style", "element"];
-  const SIZE = { s: 0.75, m: 1, l: 1.3, x: 1.7 };
+  const SIZE = { s: 0.75, m: 1, l: 1.3, x: 1.7, g: 2.4 };
   const OUTLINE = [23, 18, 14];
   const STEEL = "#d9dee4", STEEL_D = "#8e98a3", WOOD = "#7a4a24", GOLD = "#e8b84a", BONE = "#efe4c8", DARK = "#1d1a17";
 
@@ -422,9 +422,17 @@
     const bob = p.bob || 0, walk = pose === "walk" ? [-1, 0, 1, 0][f % 4] * u : 0;
     const bx = cx - Math.floor(bodyL / 2) + lunge, by = base - legH - bodyH + bob;
     const c = s.skin, mark = s.hair, legW = Math.max(2, R(2 * u));
-    // Tail.
+    // Tail (or nine, for a tailed beast).
     const tl = R((dragon ? 10 : 6) * u);
-    g.line(bx, by + 1, bx - tl * 0.6, by - tl * 0.6 + (f % 2), Math.max(1, R((dragon ? 2.5 : 1.5) * u)), dragon ? c : mark === c ? shade(c, -0.15) : mark);
+    if (x.has("tails9")) {
+      for (let i = 0; i < 9; i++) {
+        const a = -2.6 + i * 0.32 + (f % 2 ? 0.05 : 0), len = R((9 + (i % 3)) * u);
+        const ex = bx + Math.cos(a) * len, ey = by + 1 + Math.sin(a) * len;
+        g.line(bx + 1, by + 2, ex, ey, Math.max(2, R(2.2 * u)), i % 2 ? c : shade(c, -0.12));
+        g.disc(ex, ey, Math.max(1, R(1.4 * u)), shade(c, 0.25));
+      }
+    }
+    if (!x.has("tails9")) g.line(bx, by + 1, bx - tl * 0.6, by - tl * 0.6 + (f % 2), Math.max(1, R((dragon ? 2.5 : 1.5) * u)), dragon ? c : mark === c ? shade(c, -0.15) : mark);
     if (dragon) g.tri(bx - tl * 0.6 - 2, by - tl * 0.6 - 2, bx - tl * 0.6 + 2, by - tl * 0.6 - 3, bx - tl * 0.6, by - tl * 0.6 + 2, s.accent);
     // Far legs, wings behind.
     const legsX = [bx + 1, bx + bodyL - legW - 2];
@@ -678,6 +686,7 @@
   // o.weapon / o.extras swap in gear picked up during a fight.
   function of(c, o = {}) {
     const spec = c.spec ? parse(c.spec) : specFor(c);
+    if (o.size && SIZE[o.size]) spec.size = o.size;
     if (o.weapon) {
       spec.weapon = o.weapon;
       if (["bow", "crossbow"].includes(o.weapon)) spec.style = "bow";
@@ -686,7 +695,7 @@
       else if (spec.style === "fists") spec.style = "blade";
     }
     (o.extras || []).forEach(x => spec.extras.add(x));
-    const key = `${c.world}|${c.name}|${c.spec || ""}|${o.weapon || ""}|${(o.extras || []).join(",")}`;
+    const key = `${c.world}|${c.name}|${c.spec || ""}|${o.weapon || ""}|${(o.extras || []).join(",")}|${o.size || ""}`;
     if (!cache.has(key)) cache.set(key, new Map());
     const mine = cache.get(key);
     const get = (pose, f, flash) => {

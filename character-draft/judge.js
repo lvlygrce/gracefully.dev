@@ -42,7 +42,7 @@
       "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift", "regenerate", "phase", "fly",
       "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor",
       "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado",
-      "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
       "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
@@ -92,6 +92,10 @@ land real blows, the winners usually lose at least one member, and there is a mo
 other way. A clean sweep with no losses is rare: only when one side is far stronger or its plan perfectly counters
 the other's. Numbers, match-ups and teamwork can bring down a lone powerhouse. Don't simply hand the fight to the
 team with the single strongest character; and across many fights, either team can win.
+Tell a close fight so the result stays uncertain until late: deaths trade back and forth between the sides (one
+of theirs falls, then one of ours), the eventual losers land real blows and look like they might win, and the
+decisive swing comes near the end. Don't front-load one side's deaths or kill all of one side in a row unless the
+fight is genuinely one-sided.
 Characters marked [injured] fight at reduced strength; [gear broken] means they can't use their signature weapon.
 Every character on both teams must play a part: mention each by name in the fight and give each their own line
 in "roles". Nobody sits out. Be decisive: no draws.
@@ -273,14 +277,19 @@ Reply as JSON:
   (Luffy, Mister Fantastic), drain steals the target's life or power (Rogue, vampires, Dementors), laser_eyes fires
   beams from the eyes (Superman, Cyclops), self_destruct blows the actor up to take the target with them (the
   Creeper; the actor dies), telekinesis lifts the target and slams them down (Mob, Jean Grey, Eleven), spin_dash
-  is a high-speed spinning charge (Sonic); use these when they truly fit the character; annihilate is an overwhelming
+  is a high-speed spinning charge (Sonic), summon_companion calls in the character's own signature partner, which
+  then fights beside them (name it in "move": Annie's Tibbers, Yugi's Dark Magician or Blue-Eyes White Dragon,
+  Naruto's Kurama, Jotaro's Star Platinum, Dio's The World, Giorno's Gold Experience, Gandalf's eagles, Malzahar's
+  voidlings, Elise's spiderlings, Zyra's plants, Ivern's Daisy, Yorick's Maiden of the Mist, Jon Snow's Ghost,
+  Dumbledore's Fawkes, Hagrid's Aragog, the Pokémon Trainer's Charizard); use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
   advance need no target, fall is being killed by the terrain. Outcome "ko" means killed. Rules: every character
   acts at least once; the dead do nothing afterwards; use the gear where the plans used it; nobody retreats; by the
   last beat every character on the losing side has been killed ("ko"), while the winner's side still has someone
-  alive${aftermath ? `
+  alive. In a close fight, order the beats so the deaths alternate between the sides and the winner is not obvious
+  until the last few beats${aftermath ? `
 - "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
   "gear_broken" or "dead", with a short note (an object with one key per character name). It was a fight to the
   death: everyone killed in your beats is "dead"; survivors are "fine", "injured" or "gear_broken".` : ""}`;
