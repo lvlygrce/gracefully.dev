@@ -710,5 +710,5 @@
     };
   }
 
-  window.Sprite = { of, parse, guess, specFor, FIELDS, shade, lum, hexRgb };
+  window.Sprite = { of, parse, guess, specFor, FIELDS, shade, lum, hexRgb, tint: tinted };
 })();

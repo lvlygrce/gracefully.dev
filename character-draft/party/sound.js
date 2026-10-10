@@ -13,7 +13,8 @@
   const EFFECTS = ["reveal", "bid", "tock", "sold", "skipped", "join", "fight", "winner", "champion", "timeup", "vote",
     "b_slash", "b_punch", "b_shoot", "b_gun", "b_beam", "b_fire", "b_magic", "b_charge", "b_boom", "b_hit", "b_crit",
     "b_block", "b_whoosh", "b_ko", "b_heal", "b_build", "b_deploy", "b_shield", "b_ready", "b_fight", "b_win",
-    "b_splat", "b_death", "b_throw", "b_slam", "b_teleport", "b_transform", "b_summon", "b_timestop", "b_psychic", "b_warp"];
+    "b_splat", "b_death", "b_throw", "b_slam", "b_teleport", "b_transform", "b_summon", "b_timestop", "b_psychic", "b_warp",
+    "b_roar", "b_rise", "b_plane", "b_meteor", "b_sing", "b_gulp", "b_portal", "b_freeze", "b_stone", "b_anvil"];
   // Music beds, all in the same 8-bit fighting style. A bed with several
   // tracks plays them in turn, crossfading, so it never loops one clip.
   const BEDS = { lobby: ["lobby"], auction: ["auction1", "auction2", "auction3"], battle: ["battle1", "battle2"] };
@@ -40,7 +41,7 @@
 
   async function load(name) {
     try {
-      const res = await fetch(`${BASE}${name}.mp3?v=4`);
+      const res = await fetch(`${BASE}${name}.mp3?v=5`);
       buffers[name] = await ctx.decodeAudioData(await res.arrayBuffer());
       if (musicName && BEDS[musicName].includes(name) && !musicNode) startMusic();
     } catch { /* a missing sound just stays quiet */ }

@@ -23,28 +23,23 @@
     const U = window.UNIVERSES;
     const ch = (world, name) => ({ world, name, note: (U[world].characters.find(c => c[0] === name) || [])[1] || "" });
     const teams = [
-      { name: "Grace", roster: [ch("marvel", "Thor"), ch("pokemon", "Pikachu"), ch("westeros", "Jon Snow"), ch("hp", "Harry Potter"), ch("minecraft", "Steve")] },
-      { name: "Sam", roster: [ch("westeros", "Drogon"), ch("pokemon", "Gengar"), ch("marvel", "Spider-Man"), ch("hp", "Nagini"), ch("minecraft", "Creeper")] },
+      { name: "Grace", roster: [ch("westeros", "Daenerys Targaryen"), ch("anime", "Yugi Muto"), ch("westeros", "The Night King"), ch("pokemon", "Jigglypuff"), ch("smash", "Kirby")] },
+      { name: "Sam", roster: [ch("shows", "Elsa"), ch("shows", "Rick Sanchez"), ch("shows", "Wile E. Coyote"), ch("famous", "ANZAC Forces"), ch("westeros", "Dothraki Horde")] },
     ];
     const verdict = {
-      winner: "Grace", mvp: "Thor", verdict: "Thor's storm and Steve's sword carried a fight to the death.",
-      turning_point: "Thor calls down the storm on Drogon.",
-      preps: [
-        { gear: [{ name: "Diamond Sword", made_by: "Steve", effect: "a sharper blade", look: "blade", colour: "cyan" }] },
-        { gear: [{ name: "TNT bundle", made_by: "scavenged", effect: "explodes", look: "bomb", colour: "red" }] },
-      ],
+      winner: "Grace", mvp: "Yugi Muto", verdict: "Exodia ended it.", turning_point: "Yugi assembles Exodia.", preps: [],
       beats: [
-        { actor: "Spider-Man", action: "foresee", move: "Spider-sense", target: "Jon Snow", effect: "impact", outcome: "hit", caption: "Spider-Man's spider-sense tingles; he slips Jon's swing and hits back.", line: "Saw that coming!" },
-        { actor: "Gengar", action: "mind_control", move: "Hypnosis", target: "Harry Potter", effect: "psychic", outcome: "hit", caption: "Gengar hypnotises Harry, who turns his wand on Jon.", line: "" },
-        { actor: "Thor", action: "fly", move: "Storm flight", target: "Gengar", effect: "lightning", outcome: "ko", caption: "Thor rises on the storm and strikes Gengar from above.", line: "" },
-        { actor: "Creeper", action: "clone", move: "Swarm", target: "Steve", effect: "explosion", outcome: "hit", caption: "Three Creepers close in on Steve.", line: "" },
-        { actor: "Steve", action: "shrink", move: "Sneak", target: "Creeper", effect: "slash", outcome: "ko", caption: "Steve crouches low and slips under the blast.", line: "" },
-        { actor: "Nagini", action: "shapeshift", move: "Maledictus", target: "Pikachu", effect: "poison", outcome: "hit", caption: "Nagini takes Pikachu's shape and strikes.", line: "" },
-        { actor: "Pikachu", action: "reality_warp", move: "Thunder Wave", target: "Nagini", effect: "lightning", outcome: "ko", caption: "The air itself bends around Nagini.", line: "Pika!" },
-        { actor: "Drogon", action: "grow", move: "Full wingspan", target: "Jon Snow", effect: "fire", outcome: "ko", caption: "Drogon looms huge and crushes Jon.", line: "" },
-        { actor: "Thor", action: "regenerate", move: "Asgardian vigour", target: "none", effect: "heal", outcome: "none", caption: "Thor shrugs off his wounds.", line: "" },
-        { actor: "Thor", action: "time_stop", move: "Bifrost", target: "Drogon", effect: "lightning", outcome: "ko", caption: "For a heartbeat the world stands still.", line: "" },
-        { actor: "Harry Potter", action: "phase", move: "Apparate", target: "Spider-Man", effect: "light", outcome: "ko", caption: "Harry apparates through the smoke and ends it.", line: "" },
+        { actor: "Elsa", action: "freeze", move: "Let it go", target: "Kirby", effect: "ice", outcome: "hit", caption: "Elsa locks Kirby in ice.", line: "" },
+        { actor: "Daenerys Targaryen", action: "summon_dragon", move: "Dracarys", target: "Dothraki Horde", effect: "fire", outcome: "ko", caption: "Drogon answers his mother's call.", line: "Dracarys!" },
+        { actor: "The Night King", action: "raise_dead", move: "Rise", target: "ANZAC Forces", effect: "ice", outcome: "hit", caption: "The burned horde rises again, blue-eyed.", line: "" },
+        { actor: "ANZAC Forces", action: "airstrike", move: "Close air support", target: "The Night King", effect: "explosion", outcome: "hit", caption: "Bombers roar over the field.", line: "" },
+        { actor: "Rick Sanchez", action: "portal", move: "Portal gun", target: "Jigglypuff", effect: "tech", outcome: "hit", caption: "Rick drops Jigglypuff through a portal.", line: "Wubba lubba dub dub!" },
+        { actor: "Jigglypuff", action: "lullaby", move: "Sing", target: "Rick Sanchez", effect: "psychic", outcome: "hit", caption: "Jigglypuff sings Rick to sleep.", line: "Jiggly…" },
+        { actor: "Wile E. Coyote", action: "anvil", move: "ACME anvil", target: "Daenerys Targaryen", effect: "impact", outcome: "hurt", caption: "An ACME anvil falls from nowhere.", line: "" },
+        { actor: "Kirby", action: "devour", move: "Inhale", target: "Wile E. Coyote", effect: "none", outcome: "ko", caption: "Kirby inhales the coyote whole.", line: "Poyo!" },
+        { actor: "Elsa", action: "petrify", move: "Frozen heart", target: "The Night King", effect: "ice", outcome: "hit", caption: "Elsa's curse turns the Night King to stone, briefly.", line: "" },
+        { actor: "Yugi Muto", action: "summon_giant", move: "Exodia, Obliterate!", target: "ANZAC Forces", effect: "light", outcome: "ko", caption: "All five pieces: Exodia rises.", line: "Exodia, obliterate!" },
+        { actor: "Daenerys Targaryen", action: "meteor", move: "Fire from the sky", target: "Elsa", effect: "fire", outcome: "ko", caption: "Fire falls from the sky on Elsa.", line: "" },
       ],
     };
     if (location.search.includes("real")) {
