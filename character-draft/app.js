@@ -375,6 +375,10 @@
 
   function render() {
     music();
+    window.gracefullyScreen = () => shared ? "a shared team link"
+      : !state ? "setup: choosing players and worlds"
+      : state.phase === "draft" ? `the draft: card ${state.players[0].roster.length + state.players[1].roster.length + 1}, ${state.lot ? "bidding" : "between cards"}`
+      : battleCtl ? "watching the 8-bit battle" : (state.verdict ? "the result" : "teams done, the judge panel");
     renderRecent();
     if (shared) {
       if (!arenaInfo(shared.a)) shared.a = drawArena(shared.w);

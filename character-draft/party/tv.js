@@ -190,6 +190,7 @@
   }
 
   function render(force) {
+    window.gracefullyScreen = () => `party TV: ${state ? state.phase + (state.match ? `, match ${state.match.stage}` : "") + (state.lot ? `, lot ${state.lot.stage}` : "") : "connecting"}`;
     const key = keyFor(state);
     if (force || key !== view) { view = key; full(); }
     else partial();

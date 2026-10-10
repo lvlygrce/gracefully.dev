@@ -96,6 +96,7 @@
   }
 
   function render(force) {
+    window.gracefullyScreen = () => `party phone: ${view || "joining"}${me && me.admin ? " (admin)" : ""}`;
     const key = keyFor();
     if (!force && key === view) return tick();
     view = key;
