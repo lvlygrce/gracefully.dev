@@ -155,3 +155,20 @@
 .b8__f.is-dead { text-decoration: none; }
 .b8__f.is-dead .b8__n { text-decoration: line-through; }
 @media (prefers-reduced-motion: reduce) { .b8__move { animation: none; } }
+
+/* The battlefield's own picture, before the fight. */
+.b8__map {
+  position: absolute; inset: 0; display: grid; place-items: end start;
+  background: #17120e; overflow: hidden; animation: b8-map-in 0.6s ease-out;
+  transition: opacity 0.6s ease;
+}
+.b8__map[hidden] { display: none; }
+.b8__map.is-leaving { opacity: 0; }
+.b8__map img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.85; animation: b8-map-zoom 4s ease-out forwards; }
+.b8__map-text { position: relative; display: grid; gap: 0.6cqw; margin: 3cqw; padding: 1.4cqw 2cqw; max-width: 70cqw; background: rgba(23, 18, 14, 0.78); border: 0.3cqw solid #fbf7ef; }
+.b8__map-name { font-size: 4.4cqw; text-shadow: 0.3cqw 0.3cqw 0 #c0392b; }
+.b8__map-terrain { font-size: 1.7cqw; line-height: 1.3; opacity: 0.9; }
+.b8__map-sides { font-size: 2cqw; color: #fff2c0; }
+@keyframes b8-map-in { from { opacity: 0; } }
+@keyframes b8-map-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .b8__map, .b8__map img { animation: none; } }

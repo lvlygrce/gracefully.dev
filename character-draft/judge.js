@@ -186,6 +186,7 @@ Reply as JSON:
 - "kit": for each character on your team, one line on what they really bring: signature powers, weapons and skills,
   how strong they are, and their main limits or weaknesses (an object with one key per character name, exactly as listed)
 - "leader": the character who leads your team
+- "stance": "attack" if your plan is to go after the enemy, "defend" if you hold ground and make them come to you
 - "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
 - "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged". "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
 - "jobs": one short sentence per character on your team, saying their job in the plan (an object with one key per character name, exactly as listed)`;
@@ -193,6 +194,7 @@ Reply as JSON:
       type: "OBJECT",
       properties: {
         leader: { type: "STRING" },
+        stance: { type: "STRING", enum: ["attack", "defend"] },
         plan: { type: "STRING" },
         gear: {
           type: "ARRAY",
@@ -212,8 +214,8 @@ Reply as JSON:
         jobs: keyedObject(keys.map(c => c.key)),
         kit: keyedObject(keys.map(c => c.key)),
       },
-      required: ["kit", "leader", "plan", "gear", "jobs"],
-      propertyOrdering: ["kit", "leader", "plan", "gear", "jobs"],
+      required: ["kit", "leader", "stance", "plan", "gear", "jobs"],
+      propertyOrdering: ["kit", "leader", "stance", "plan", "gear", "jobs"],
     };
     return { system: SHARED_SYSTEM, user, schema, maxTokens: 1500 };
   }
@@ -223,7 +225,7 @@ Reply as JSON:
       ? prep.gear.map(g => `  - ${g.name} (${g.made_by}): ${g.effect}`).join("\n")
       : "  - nothing beyond what they carry";
     const jobs = prep.jobs.map(j => `  - ${j.name}: ${j.job}${j.kit ? `\n      abilities and limits: ${j.kit}` : ""}`).join("\n");
-    return `Leader: ${prep.leader}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
+    return `Leader: ${prep.leader}\nStance: ${prep.stance === "defend" ? "holds ground and defends" : "goes on the attack"}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
   }
 
   function battleQuestion(teams, preps, worldName, arena, aftermath, small) {
@@ -242,6 +244,11 @@ Reply as JSON:
   (and whether anyone is truly beyond the rest), how the two plans meet, where each works or breaks, which gear and
   terrain matter, how the key match-ups go given each character's real abilities and limits, what it costs the
   winners, the moment it could have turned, and so who wins and why
+- "attacker": the team that goes on the attack (the other defends); follow the war councils' stances, and if both
+  want the same, decide from the plans and the terrain who has to move
+- "defences": what the defenders hold, in a few words, from the battlefield ("the walls of Castle Black")
+- "feature": the terrain feature the defenders fight from, the nearest of the given kinds; the animation shows it,
+  defenders start dug in on it and attackers have to come across the field to them
 - "fight": the battle in three short paragraphs, following your reasoning: how each plan played out, which gear mattered, naming every character at least once
 - "roles": one sentence for every character on both teams, saying what they did and how it went for them (an object with one key per character name, exactly as listed)
 - "turning_point": the single moment that decided it, one sentence (a clever move or a device can count as much as a big hit)
@@ -285,7 +292,9 @@ Reply as JSON:
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
-  advance need no target, fall is being killed by the terrain. Outcome "ko" means killed. Rules: every character
+  advance need no target, fall is being killed by the terrain (thrown off the wall or cliff, drowned in the river,
+  lost in the lava). Let the battlefield shape the beats: attackers advance on the defences, defenders strike from
+  their position first, and the terrain can kill. Outcome "ko" means killed. Rules: every character
   acts at least once; the dead do nothing afterwards; use the gear where the plans used it; nobody retreats; by the
   last beat every character on the losing side has been killed ("ko"), while the winner's side still has someone
   alive. In a close fight, order the beats so the deaths alternate between the sides and the winner is not obvious
@@ -319,12 +328,15 @@ Reply as JSON:
       propertyOrdering: ["actor", "action", "move", "target", "gear", "effect", "outcome", "caption", "line"],
     };
     // Reason first (the prose), then script it, then commit to a winner.
-    const order = ["reasoning", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
+    const order = ["reasoning", "attacker", "defences", "feature", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
     const schema = {
       type: "OBJECT",
       properties: {
         ...(aftermath ? { aftermath: afterSchema } : {}),
         reasoning: { type: "STRING" },
+        attacker: { type: "STRING", enum: shown(teams).map(t => t.name) },
+        defences: { type: "STRING" },
+        feature: { type: "STRING", enum: ["wall", "cliff", "gate", "trench", "river", "bridge", "forest", "rooftops", "ruins", "open"] },
         fight: { type: "STRING" },
         roles: keyedObject(keys),
         turning_point: { type: "STRING" },
@@ -390,6 +402,7 @@ Reply as JSON:
       team: us.name,
       leader: String(data.leader || ""),
       plan: String(data.plan || ""),
+      stance: data.stance === "defend" ? "defend" : "attack",
       gear,
       jobs: keys.map(c => ({
         name: c.name, world: c.world, job: String(given[c.key] || given[c.name] || "").trim(),
@@ -412,6 +425,8 @@ Reply as JSON:
     }));
     data.fight = String(data.fight || "");
     data.reasoning = String(data.reasoning || "");
+    data.defences = String(data.defences || "");
+    if (!names.includes(data.attacker)) data.attacker = names[0];
     data.beats = Array.isArray(data.beats) ? data.beats.filter(b => b && typeof b === "object") : [];
     if (data.aftermath && typeof data.aftermath === "object") {
       const given = data.aftermath;

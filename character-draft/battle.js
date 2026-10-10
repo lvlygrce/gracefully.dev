@@ -307,6 +307,62 @@
     return cv;
   }
 
+  /* --- The defenders' ground ----------------------------------------------
+     One side attacks, the other holds a feature of the battlefield: a wall,
+     cliff, gate, trench, river, bridge, forest, rooftops or ruins. High ground
+     lifts the defenders; water and ditches sit between the two sides. */
+
+  const FEATURES = ["wall", "cliff", "gate", "trench", "river", "bridge", "forest", "rooftops", "ruins", "open"];
+  const HIGH = { wall: 136, gate: 136, cliff: 132, rooftops: 134 };
+  function featureFor(verdict, kind) {
+    if (FEATURES.includes(verdict.feature)) return verdict.feature;
+    return { castle: "wall", snow: "wall", sea: "river", forest: "forest", city: "rooftops", cave: "ruins", arena: "open", volcano: "cliff", tech: "trench", blocky: "wall" }[kind] || "open";
+  }
+  function drawFeature(feature, defSide, kind) {
+    const cv = document.createElement("canvas");
+    cv.width = W; cv.height = H;
+    const g = cv.getContext("2d");
+    const rect = (x, y, w, h, c) => { g.fillStyle = c; g.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); };
+    const P = PALETTES[kind] || PALETTES.plains;
+    const x0 = defSide ? 236 : 20, x1 = defSide ? 364 : 148, mid = W / 2;
+    const stone = kind === "snow" ? ["#c8d4e0", "#a8b8c8", "#8898a8"] : kind === "volcano" ? ["#4a3a38", "#3a2a28", "#2a1e1c"] : ["#9a9890", "#7f7d76", "#5f5d57"];
+    const top = HIGH[feature] || 0;
+    if (feature === "wall" || feature === "gate" || feature === "rooftops") {
+      const roof = feature === "rooftops";
+      rect(x0, top, x1 - x0, H - top, roof ? "#5a4a5a" : stone[1]);
+      for (let y = top + 4; y < H; y += 6) for (let x = x0 + ((y / 6) % 2) * 6; x < x1; x += 12) rect(x, y, 11, 1, roof ? "#4a3a4a" : stone[2]);
+      rect(x0, top, x1 - x0, 2, roof ? "#7a6a7a" : stone[0]);
+      if (!roof) for (let x = x0; x < x1; x += 10) rect(x, top - 5, 6, 5, stone[1]);
+      if (roof) for (let y = top + 10; y < H - 6; y += 16) for (let x = x0 + 6; x < x1 - 8; x += 18) rect(x, y, 6, 8, "#f2cf6a");
+      if (feature === "gate") { const gx = defSide ? x0 : x1 - 26; rect(gx, H - 50, 26, 50, "#2a1e14"); for (let i = 0; i < 26; i += 5) rect(gx + i, H - 50, 1, 50, "#5a4a3a"); }
+      const edge = defSide ? x0 : x1;
+      rect(edge - 1, top, 2, H - top, stone[2]);
+    } else if (feature === "cliff") {
+      for (let y = top; y < H; y++) {
+        const spread = (y - top) * 0.35;
+        const a = defSide ? x0 - spread : x0, b = defSide ? x1 : x1 + spread;
+        rect(a, y, b - a, 1, (y - top) % 9 < 2 ? stone[2] : stone[1]);
+      }
+      rect(x0, top, x1 - x0, 2, stone[0]);
+    } else if (feature === "trench") {
+      const tx = defSide ? x0 - 6 : x1 - 6;
+      rect(tx, 120, 12, H - 120, "#3a2a1a");
+      for (let y = 124; y < H; y += 7) { rect(tx - 4, y, 6, 4, "#b8a070"); rect(tx + 10, y + 3, 6, 4, "#b8a070"); }
+    } else if (feature === "river" || feature === "bridge") {
+      for (let y = 116; y < H; y++) { const w = 34 + Math.sin(y / 9) * 4; rect(mid - w / 2, y, w, 1, (y + Math.floor(y / 5)) % 7 === 0 ? "#9fd0f0" : "#3f7fb8"); }
+      if (feature === "bridge") { rect(mid - 28, 150, 56, 18, "#8a5a32"); for (let x = mid - 28; x < mid + 28; x += 6) rect(x, 150, 1, 18, "#5a3a1a"); rect(mid - 28, 148, 56, 2, "#6b4a2a"); }
+    } else if (feature === "forest") {
+      for (let i = 0; i < 6; i++) {
+        const x = x0 + 8 + i * ((x1 - x0 - 16) / 5), h = 34 + (i % 3) * 8, y = 128 + (i % 2) * 10;
+        for (let k = 0; k < h; k += 2) rect(x - k / 4, y - h + k, k / 2 + 1, 2, k % 6 ? "#2f6a3f" : "#3f7a4a");
+        rect(x - 1, y, 3, 8, "#5a3a24");
+      }
+    } else if (feature === "ruins") {
+      for (let i = 0; i < 5; i++) { const x = x0 + 10 + i * 26, h = 18 + (i * 7) % 20, y = 150 + (i % 2) * 14; rect(x, y - h, 8, h, stone[1]); rect(x - 2, y - h, 12, 3, stone[0]); rect(x + 3, y - h - 4, 4, 4, stone[2]); }
+    }
+    return { canvas: cv, top };
+  }
+
   /* --- Gear and effect drawings --------------------------------------- */
 
   function drawGear(g, look, colour, x, y, t) {
@@ -374,6 +430,14 @@
     const kind = backdropKind(arena, world);
     const night = /night|dark|shadow|dusk|midnight/i.test(arena ? `${arena.name} ${arena.terrain}` : "") && kind !== "volcano";
     const bg = backdrop(kind, night);
+    // Who attacks and who holds the ground.
+    const stance = side => ((verdict.preps || [])[side] || {}).stance;
+    const attackSide = verdict.attacker != null && teams.some(t => t.name === verdict.attacker)
+      ? teams.findIndex(t => t.name === verdict.attacker)
+      : stance(1) === "attack" && stance(0) !== "attack" ? 1 : 0;
+    const defSide = 1 - attackSide;
+    const feature = featureFor(verdict, kind);
+    const ground = drawFeature(feature, defSide, kind);
     const Sound = window.Sound;
     const sfx = (n, v = 1, r = 1) => { if (Sound) Sound.play(n, v, r); };
 
@@ -390,6 +454,7 @@
         <div class="b8__bubbles"></div>
         <div class="b8__banner" hidden></div>
         <div class="b8__move" hidden></div>
+        <div class="b8__map" hidden></div>
        </div>
         <p class="b8__caption" aria-live="polite"></p>
         <div class="b8__ctl">
@@ -414,9 +479,11 @@
       const mine = fighters.filter(f => f.side === side).sort((a, b) => a.sprite.size - b.sprite.size);
       mine.forEach((f, i) => {
         const [sx, sy] = SLOTS[i % SLOTS.length];
-        f.home = { x: side ? W - sx : sx, y: sy };
-        f.pos = { x: side ? W + 40 : -40, y: sy };
-        f.pose = "walk"; f.poseT = 0;
+        const high = side === defSide && ground.top;
+        f.home = { x: side ? W - sx : sx, y: high ? ground.top + 2 + (i % 3) * 3 : sy };
+        // Defenders are already in place; attackers march in from the edge.
+        f.pos = side === defSide ? { ...f.home } : { x: side ? W + 40 : -40, y: sy };
+        f.pose = side === defSide ? "idle" : "walk"; f.poseT = 0;
       });
     });
     const byKey = k => fighters.find(f => f.key === k);
@@ -556,6 +623,7 @@
       ctx.save();
       if (shake > time) ctx.translate(Math.round(rnd(-2, 2)), Math.round(rnd(-2, 2)));
       ctx.drawImage(bg, 0, 0);
+      ctx.drawImage(ground.canvas, 0, 0);
       drawStains();
       for (const c of cracks) {
         if (time > c.until) continue;
@@ -1685,9 +1753,24 @@
           await tween(actor.pos, { x: actor.side ? W + 50 : -50 }, 900);
           if (actor.side !== winSide) { actor.downed = false; actor.alpha = 0; actor.gone = true; setHp(actor, actor.hp); root.querySelector(`.b8__f[data-k="${CSS.escape(actor.key)}"]`)?.classList.add("is-fled"); }
           break;
-        case "fall":
-          setPose(actor, "hurt"); await wait(300); await die(actor, actor.facing);
+        case "fall": {
+          setPose(actor, "hurt");
+          if (ground.top && actor.side === defSide && actor.pos.y <= ground.top + 12) {
+            // Thrown off the wall or cliff.
+            sfx("b_whoosh", 0.8);
+            await tween(actor.pos, { x: actor.pos.x + (actor.side ? -24 : 24) }, 220);
+            await tween(actor.pos, { y: 182 }, 380, t => t * t);
+            shake = time + 250; burst(actor.pos.x, actor.pos.y - 2, "earth", 12);
+          } else if (feature === "river" || feature === "bridge") {
+            await tween(actor.pos, { x: W / 2, y: actor.pos.y + 4 }, 400);
+            sfx("b_whoosh", 0.6); burst(actor.pos.x, actor.pos.y - 4, "water", 18, true);
+            await tween(actor, { alpha: 0 }, 500);
+          } else if (kind === "volcano") {
+            burst(actor.pos.x, actor.pos.y - 4, "fire", 20, true); sfx("b_fire", 0.8);
+          } else await wait(300);
+          await die(actor, actor.facing);
           break;
+        }
       }
       // Let each beat breathe long enough to read its caption.
       const need = Math.max(2300, (caption.textContent.length || 0) * 50);
@@ -1730,9 +1813,24 @@
     async function run() {
       if (Sound) Sound.music("battle");
       fighters.forEach(f => setHp(f, f.hp));
-      // Walk on.
-      caption.textContent = arena ? `${arena.name}.` : "";
-      await Promise.all(fighters.map((f, i) => wait(i * 90).then(() => tween(f.pos, { x: f.home.x, y: f.home.y }, 900)).then(() => setPose(f, "idle"))));
+      // The battlefield itself first: its picture, its name, and who holds what.
+      const holders = teams[defSide].name, raiders = teams[attackSide].name;
+      const mapEl = root.querySelector(".b8__map");
+      if (arena) {
+        mapEl.innerHTML = `${arena.image ? `<img src="${esc(arena.image)}" alt="" referrerpolicy="origin" onerror="this.remove()" />` : ""}
+          <div class="b8__map-text"><span class="b8__map-name">${esc(arena.name)}</span>
+          ${arena.terrain ? `<span class="b8__map-terrain">${esc(arena.terrain)}</span>` : ""}
+          <span class="b8__map-sides">${esc(raiders)}'s team attacks · ${esc(holders)}'s team defends${verdict.defences ? ` ${esc(verdict.defences)}` : ""}</span></div>`;
+        mapEl.hidden = false;
+        caption.textContent = `${arena.name}: ${raiders}'s team attacks, ${holders}'s team holds ${verdict.defences || "its ground"}.`;
+        await wait(3400);
+        mapEl.classList.add("is-leaving");
+        await wait(600);
+        mapEl.hidden = true;
+      }
+      // The attackers march in; the defenders are already in position.
+      const raidersF = fighters.filter(f => f.side === attackSide);
+      await Promise.all(raidersF.map((f, i) => wait(i * 110).then(() => tween(f.pos, { x: f.home.x, y: f.home.y }, 1300)).then(() => setPose(f, "idle"))));
       sfx("b_ready", 0.9);
       await showBanner(`<span>Ready…</span>`, 700);
       sfx("b_fight", 1);

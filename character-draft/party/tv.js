@@ -884,7 +884,7 @@
     render(true);
     const teams = [teamFor(m.a), teamFor(m.b)];
     const a = state.arena;
-    const arena = a ? { name: a.name, terrain: a.terrain, world: a.world } : null;
+    const arena = a ? { name: a.name, terrain: a.terrain, world: a.world, image: a.image } : null;
     const setStatus = (t) => {
       if (judging.matchId !== matchId) return;
       judging.status = t;
