@@ -10,16 +10,16 @@ ENUMS = {
     "body": "h k r c q d b s o g".split(),
     "size": "s m l x g".split(),
     "build": "t n w".split(),
-    "hairStyle": "short long spiky bald ponytail bun mohawk afro slick braids buzz messy none".split(),
-    "head": "none helmet helm hood fullmask cowl mask facemask hat tophat wizard cap crown headband bandana visor".split(),
+    "hairStyle": "short long spiky bald ponytail bun mohawk afro slick braids buzz messy none huge_spiky twintails pompadour topknot flowing".split(),
+    "head": "none helmet helm hood fullmask cowl mask facemask hat tophat wizard cap crown headband bandana visor straw_hat cowboy horned_helm skull faceplate".split(),
     "outfit": "armour robe dress coat labcoat suit tunic uniform jersey jumpsuit fur bare vest".split(),
-    "weapon": "none sword greatsword dagger katana lightsaber axe hammer mace club bat flail spear trident staff scythe wand bow crossbow gun rifle blaster cannon shield whip claws book guitar orb".split(),
+    "weapon": "none sword greatsword dagger katana lightsaber axe hammer mace club bat flail spear trident staff scythe wand bow crossbow gun rifle blaster cannon shield whip claws book guitar orb double_saber chainsaw keyblade nunchucks".split(),
     "style": "blade blunt fists claws bite bow gun magic beam breath summon psychic gadget".split(),
     "element": "none fire ice lightning water earth wind poison light dark psychic tech nature blood web smoke shield explosion".split(),
 }
 EXTRAS = set("""cape wings batwings wings_dark tail tail_bolt tail_flame ears ears_long ears_round ears_floppy horns horn antennae
 halo flame_head beard moustache glasses eyepatch grin fangs cheeks redeyes glow_eyes glow gloves belt stripes spots emblem scarf
-spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield blood_green blood_black horde mouth tails9""".split())
+spikes shell mane noarms face_creeper webbing collar muzzle_light crest whiskers hood fins feet nubs no_ears crown_q boots_light shield blood_green blood_black horde mouth tails9 boots_accent gloves_accent star bolt trunks beard_long""".split())
 FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent", "hairStyle", "head", "outfit", "weapon", "extras", "style", "element"]
 
 chars = json.loads(subprocess.run(["node", "-e", """

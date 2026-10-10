@@ -1,10 +1,10 @@
-Iron Man	r|m|n|b8202a|e0b13a|b8202a|e0b13a|8fe9ff|none|none|armour|none|glow_eyes,emblem|beam|tech
-Captain America	h|m|w|f1d0b0|c9a227|1f4fa8|1f4fa8|c8202a|none|helmet|uniform|shield|emblem,gloves|blunt|none
+Iron Man	h|m|n|e0b13a|1a1a1a|b8202a|e0b13a|8fe9ff|none|faceplate|armour|none|emblem,gloves|beam|tech
+Captain America	h|m|w|f1d0b0|c9a227|1f4fa8|1f4fa8|c8202a|none|helmet|uniform|shield|star,gloves_accent,boots_accent|blunt|none
 Thor	h|l|w|f1d0b0|e6c35c|5a5f66|2a2b30|b3202a|long|none|armour|hammer|cape,beard|blunt|lightning
-Hulk	h|x|w|5aa13a|1a1a1a|5aa13a|5b3a7a|5aa13a|short|none|bare|none||fists|none
+Hulk	h|x|w|5aa13a|1a1a1a|5aa13a|5b3a7a|5aa13a|messy|none|tunic|none|fangs|fists|none
 Black Widow	h|m|t|f3d6bf|b5401d|1f1f1f|1f1f1f|c0262f|long|none|jumpsuit|gun|belt|gun|none
 Hawkeye	h|m|n|f1d0b0|b5823c|3a2a5a|1f1f1f|8e5bd0|short|none|vest|bow||bow|none
-Spider-Man	h|m|t|c8202a|1a1a1a|c8202a|1f4fa8|1f4fa8|none|fullmask|tunic|none|webbing,emblem|fists|web
+Spider-Man	h|m|t|c8202a|1a1a1a|c8202a|1f4fa8|1a1a1a|none|fullmask|tunic|none|webbing,emblem|fists|web
 Doctor Strange	h|m|n|f1d0b0|3b3b3b|1f3f8a|5a3a1a|c0262f|slick|none|robe|none|cape,beard,glow|magic|light
 Black Panther	h|m|n|1f1f24|1f1f24|1f1f24|1f1f24|b98ce8|none|cowl|jumpsuit|claws|ears|claws|tech
 Captain Marvel	h|m|n|f1d0b0|e6c35c|1f3f8a|c8202a|e8b84a|long|none|jumpsuit|none|emblem,glow|beam|light
@@ -23,10 +23,10 @@ Groot	h|l|t|7a5a32|4caf50|7a5a32|5a3a1a|4caf50|none|none|bare|none|stripes|summo
 Mantis	h|m|t|bfe3a5|1a1a1a|2e6b3a|1f3a24|f2f0ea|long|none|jumpsuit|none|antennae|psychic|psychic
 Nebula	r|m|t|3f6bb8|3f6bb8|3f6bb8|1f1f24|c0262f|none|none|jumpsuit|sword||blade|tech
 Thanos	h|x|w|8a5ba8|8a5ba8|e8b84a|3f5aa8|e8b84a|none|helmet|armour|none|gloves,glow|blunt|psychic
-Loki	h|m|t|f3d6bf|1a1a1a|2e6b3a|1f1f1f|e8b84a|long|none|coat|dagger|horns,cape|magic|dark
+Loki	h|m|t|f3d6bf|1a1a1a|2e6b3a|1f1f1f|e8b84a|flowing|horned_helm|coat|dagger|cape|magic|dark
 Ultron	r|l|n|9aa3ad|9aa3ad|9aa3ad|5a5f66|ff4a3a|none|none|armour|none|glow_eyes|beam|tech
 Hela	h|m|t|e8e0d8|1a1a1a|1f1f1f|2e6b3a|2e8b3a|none|none|dress|sword|horns,cape|blade|dark
-Wolverine	h|m|w|f1d0b0|1a1a1a|e8b84a|1f4fa8|1f4fa8|spiky|cowl|uniform|claws|moustache|claws|none
+Wolverine	h|m|w|f1d0b0|1a1a1a|e8b84a|1f4fa8|1f4fa8|none|cowl|uniform|claws|gloves_accent,boots_accent,trunks|claws|none
 Deadpool	h|m|n|c0262f|1a1a1a|c0262f|1f1f1f|1f1f1f|none|fullmask|jumpsuit|katana|belt|blade|none
 Professor X	h|m|n|f1d0b0|f1d0b0|3a3a44|1f1f1f|ff6ad5|bald|none|suit|none|glow|psychic|psychic
 Magneto	h|m|n|f1d0b0|d9d4c7|8b1e2e|5b3a7a|8b1e2e|none|helmet|armour|none|cape|magic|tech
@@ -45,7 +45,7 @@ Mister Fantastic	h|m|t|f1d0b0|5a3a1a|1f4fa8|1f1f1f|f2f0ea|short|none|jumpsuit|no
 Invisible Woman	h|m|t|f3d6bf|e6c35c|1f4fa8|1f1f1f|8fd0ff|long|none|jumpsuit|none|emblem,glow|psychic|shield
 Human Torch	h|m|n|ff7a1a|ffcc33|ff7a1a|c0262f|ffe14d|none|none|jumpsuit|none|flame_head,glow|beam|fire
 The Thing	h|l|w|d97a3a|d97a3a|d97a3a|1f4fa8|1f4fa8|bald|none|bare|none|spots|fists|earth
-Ghost Rider	h|m|n|efe4c8|1a1a1a|1f1f1f|1f1f1f|ff7a1a|none|none|coat|whip|flame_head,glow_eyes|blade|fire
+Ghost Rider	h|m|n|efe4c8|1a1a1a|1f1f1f|1f1f1f|ff7a1a|none|skull|coat|whip|flame_head,glow_eyes|blade|fire
 Daredevil	h|m|n|b8202a|1a1a1a|b8202a|7a1b1b|7a1b1b|none|cowl|jumpsuit|club|emblem|blunt|none
 The Punisher	h|m|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|buzz|none|vest|rifle|emblem|gun|none
 Moon Knight	h|m|n|f2f0ea|f2f0ea|f2f0ea|cfd6dd|e8b84a|none|hood|robe|staff|cape|blunt|light

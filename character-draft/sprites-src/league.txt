@@ -8,7 +8,7 @@ Akali	h|m|t|e8c4a0|1a1a1a|2e6b3a|1f1f1f|4caf50|ponytail|facemask|jumpsuit|dagger
 Shen	h|m|n|e8c4a0|1a1a1a|3f4fa8|1f1f1f|3fa0ff|none|facemask|tunic|sword|glow|blade|light
 Zed	h|m|n|e8c4a0|1a1a1a|1f1f1f|c0262f|c0262f|none|helm|armour|claws|glow_eyes|claws|dark
 Kennen	c|s|n|1f1f2a|1a1a1a|3f4fa8|1f1f1f|ffe14d|none|facemask|jumpsuit|none|ears|magic|lightning
-Jinx	h|m|t|f3d6bf|3f6bb8|1f1f2a|ff6ad5|ff6ad5|braids|none|vest|cannon|belt|gun|explosion
+Jinx	h|m|t|f3d6bf|3f6bb8|1f1f2a|ff6ad5|ff6ad5|twintails|none|vest|cannon|belt|gun|explosion
 Vi	h|m|n|f3d6bf|ff6ad5|c0262f|3a3a44|e8b84a|short|none|vest|none|gloves|fists|tech
 Caitlyn	h|m|t|f3d6bf|3b2a1a|3f4fa8|1f1f1f|e8b84a|long|tophat|coat|rifle||gun|none
 Jayce	h|m|n|f1d0b0|3b2a1a|e8b84a|3a3a44|3fa0ff|short|none|armour|hammer||blunt|tech

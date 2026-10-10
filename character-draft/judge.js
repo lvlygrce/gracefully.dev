@@ -42,7 +42,9 @@
       "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift", "regenerate", "phase", "fly",
       "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor",
       "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado",
-      "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes",
+      "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch",
+      "domain_expansion", "orb_strike", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
       "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
@@ -307,7 +309,15 @@ Reply as JSON:
   Gamabunta, Sung Jinwoo's shadow army, Gru's Minions, Iron Man's Iron Legion, the Batmobile, Ghost Rider's Hell
   Cycle, Vader's stormtroopers, Sauron's Nazgûl, Mario's Yoshi, Elsa's Marshmallow, Rocket's Groot, Shrek's Dragon,
   Heimerdinger's turrets; summon_dragon can name the dragon: Drogon, Rhaegal, Viserion, Vhagar, Caraxes, Meleys or
-  Sunfyre); use these when they truly fit the character; annihilate is an overwhelming
+  Sunfyre); and the signature moves: hook drags the target across to the actor (Thresh, Blitzcrank, Pyke, Scorpion's
+  "Get over here!"), chain_lightning jumps between several enemies, earth_spikes erupt from the ground under them
+  (Edward Elric's alchemy), sniper_shot is one long-range killing shot after a red laser sight (Simo Häyhä,
+  Deadshot, Caitlyn), grenade is a thrown explosive, poison_cloud leaves a lingering gas, spin_slash is a spinning
+  blade through everyone near (Garen's Judgment), shield_bounce ricochets a shield between enemies (Captain
+  America), web_swing swings in on a web line to kick (Spider-Man), mega_beam is a huge charged beam (Kamehameha,
+  Final Flash), one_punch is Saitama's single serious punch, domain_expansion traps the target in the actor's own
+  domain where the attack cannot miss (Gojo, Sukuna), orb_strike drives a spinning energy orb into the target at
+  close range (Rasengan, Chidori); use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/

@@ -26,7 +26,7 @@ Obi-Wan Kenobi	h|m|n|f1d0b0|8a5a32|e8dcc0|8a6a3a|3fa0ff|short|none|robe|lightsab
 Emperor Palpatine	h|m|t|e8e0d8|e8e0d8|1f1f1f|1f1f1f|8fe9ff|none|hood|robe|none|glow_eyes|magic|lightning
 Din Djarin	h|m|n|cfd6dd|1a1a1a|9aa3ad|5a4632|1f1f1f|none|helm|armour|rifle|cape|gun|none
 Grogu	c|s|n|9ad86a|f2f0ea|e8dcc0|e8dcc0|1f1f1f|none|none|robe|none|ears|psychic|psychic
-Darth Maul	h|m|t|c0262f|1a1a1a|1f1f1f|1f1f1f|c0262f|bald|none|robe|lightsaber|horns,stripes|blade|dark
+Darth Maul	h|m|t|c0262f|1a1a1a|1f1f1f|1f1f1f|c0262f|bald|none|robe|double_saber|horns,stripes|blade|dark
 John Wick	h|m|n|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|long|none|suit|gun|beard|gun|none
 T-800	r|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|c0262f|none|none|coat|rifle|glasses,redeyes|gun|tech
 Predator	h|l|w|8a8a5a|1a1a1a|5a5f66|3a3a3a|c0262f|braids|none|armour|claws|fangs,glow,blood_green|blade|tech
@@ -38,10 +38,10 @@ Jack Sparrow	h|m|t|e0ac69|1a1a1a|f2f0ea|5a3a1a|c0262f|braids|hat|coat|sword|bear
 Shrek	h|l|w|9ad86a|9ad86a|e8dcc0|8a6a3a|8a5a32|bald|none|vest|none|ears_round|fists|none
 Donkey	q|m|n|8a8f96|5a5f66|8a8f96|8a8f96|1f1f1f|none|none|bare|none|ears_long|bite|none
 Buzz Lightyear	h|m|n|f1d0b0|5a3a1a|f2f0ea|8e5bd0|4caf50|none|helmet|armour|blaster|wings|beam|tech
-Woody	h|m|t|f1d0b0|5a3a1a|f2cf3a|3f7fd6|c0262f|short|hat|vest|none|scarf|blunt|none
-Gandalf	h|m|n|f1d0b0|d9d4c7|9aa3ad|5a5f66|fff4b0|long|wizard|robe|staff|beard|magic|light
+Woody	h|m|t|f1d0b0|5a3a1a|f2cf3a|3f7fd6|c0262f|short|cowboy|vest|none|scarf|blunt|none
+Gandalf	h|m|n|f1d0b0|d9d4c7|9aa3ad|5a5f66|fff4b0|long|wizard|robe|staff|beard_long|magic|light
 Aragorn	h|m|n|f1d0b0|3b2a1a|3a3a2a|5a4632|cfd6dd|long|none|coat|sword|beard|blade|none
-Legolas	h|m|t|f3d6bf|f2e8b0|2e6b3a|8a6a3a|e8b84a|long|none|tunic|bow|ears|bow|none
+Legolas	h|m|t|f3d6bf|f2e8b0|2e6b3a|8a6a3a|e8b84a|flowing|none|tunic|bow|ears|bow|none
 Gollum	h|s|t|bfc0a8|9aa3ad|bfc0a8|bfc0a8|8fe9ff|bald|none|bare|none|ears,glow_eyes|bite|none
 Sauron	h|x|w|3a3a3a|1a1a1a|3a3a3a|1f1f1f|ff7a1a|none|helm|armour|mace|spikes,glow_eyes|blunt|fire
 Optimus Prime	r|x|w|c0262f|3f4fa8|c0262f|3f4fa8|8fe9ff|none|none|armour|blaster|glow_eyes|gun|tech
@@ -74,11 +74,11 @@ Pennywise	h|m|t|f2f0ea|ef6a2a|f2f0ea|c0262f|c0262f|spiky|none|tunic|none|grin,re
 Chucky	h|s|t|f1d0b0|ef6a2a|3f7fd6|c0262f|cfd6dd|messy|none|jumpsuit|dagger|stripes|blade|none
 Jack Torrance	h|m|n|f1d0b0|1a1a1a|8a3a2a|3a3a3a|9aa3ad|slick|none|coat|axe|grin|blade|none
 Wednesday Addams	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|f2f0ea|braids|none|dress|none||psychic|dark
-Arthur Morgan	h|m|w|e8c4a0|8a5a32|8a6a3a|3a3a3a|8a5a32|short|hat|coat|gun|beard|gun|none
+Arthur Morgan	h|m|w|e8c4a0|8a5a32|8a6a3a|3a3a3a|8a5a32|short|cowboy|coat|gun|beard|gun|none
 Master Chief	r|l|w|4f6a3a|1a1a1a|4f6a3a|3a4a2a|ef8a2c|none|none|armour|rifle||gun|tech
 Kratos	h|l|w|e8e0d8|1a1a1a|e8e0d8|8a3a2a|c0262f|bald|none|bare|axe|beard,stripes|blade|ice
 Geralt of Rivia	h|m|w|f1d0b0|f2f0ea|1f1f1f|1f1f1f|e8b84a|long|none|armour|sword|beard|blade|fire
-Rick Grimes	h|m|n|f1d0b0|3b2a1a|8a7a5a|3a3a44|e8b84a|short|none|uniform|gun|beard|gun|none
+Rick Grimes	h|m|n|f1d0b0|3b2a1a|8a7a5a|3a3a44|e8b84a|short|cowboy|uniform|gun|beard|gun|none
 Daryl Dixon	h|m|n|f1d0b0|5a3a1a|5a4632|3a3a3a|8a5a32|long|none|vest|crossbow||bow|none
 Michonne	h|m|t|5a3a24|1a1a1a|3a3a3a|3a3a3a|cfd6dd|braids|none|vest|katana||blade|none
 Buffy Summers	h|m|t|f3d6bf|e6c35c|c0262f|3a3a44|8a5a32|long|none|vest|dagger||fists|none

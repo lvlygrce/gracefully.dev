@@ -20,14 +20,15 @@
     "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead",
     "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole",
     "earthquake", "tornado", "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct",
-    "telekinesis", "spin_dash", "summon_companion", "block", "dodge", "deploy_gear", "build", "heal",
+    "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike",
+    "block", "dodge", "deploy_gear", "build", "heal",
     "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
   const ATTACKS = ["strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
     "teleport", "summon", "stealth", "trap", "team_up", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
     "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor", "lullaby", "devour",
     "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado", "lightning_storm", "stretch",
-    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion"];
+    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike"];
   // Abilities that can be used on their own, with or without a target.
   const SOLO = ["stealth", "teleport", "phase", "fly", "grow", "shrink", "time_stop"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
@@ -524,6 +525,9 @@
     let sepiaUntil = 0;     // time running backwards
     let cracks = [];        // ground split by an earthquake: { x, y, until }
     let companions = [];    // summoned partners that stay by their summoner
+    let gas = [];           // lingering poison clouds: { x, y, until }
+    let spikes = [];        // ground spikes: { x, y, t0, until }
+    let domain = null;      // a domain expansion: { colour, until }
     const tints = new Map();
     const tinted = (img, c, a) => { const k = img; let m = tints.get(k); if (!m) tints.set(k, m = new Map()); if (!m.has(c)) m.set(c, Sprite.tint(img, c, a)); return m.get(c); };
 
@@ -715,6 +719,16 @@
       ctx.drawImage(bg, 0, 0);
       ctx.drawImage(ground.canvas, 0, 0);
       drawStains();
+      if (domain && domain.until > time) {
+        ctx.fillStyle = domain.colour; ctx.globalAlpha = 0.55; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
+        ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 1;
+        for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2 + time / 3000; ctx.beginPath(); ctx.moveTo(W / 2, 90); ctx.lineTo(W / 2 + Math.cos(a) * 400, 90 + Math.sin(a) * 400); ctx.stroke(); }
+      }
+      for (const sp of spikes) {
+        if (time > sp.until) continue;
+        const k = clamp((time - sp.t0) / 180, 0, 1);
+        for (let i = -3; i <= 3; i++) { const h = (14 - Math.abs(i) * 3) * k; ctx.fillStyle = i % 2 ? "#8a8f96" : "#a8acb2"; ctx.beginPath(); ctx.moveTo(sp.x + i * 5 - 3, sp.y); ctx.lineTo(sp.x + i * 5, sp.y - h); ctx.lineTo(sp.x + i * 5 + 3, sp.y); ctx.fill(); }
+      }
       for (const c of cracks) {
         if (time > c.until) continue;
         ctx.fillStyle = "#1d1a17";
@@ -778,6 +792,11 @@
         if (f.asleep && ((time / 400) | 0) % 2 === 0) { ctx.fillStyle = "#ffffff"; ctx.font = "8px monospace"; ctx.fillText("z", x + 6, y - 14 - ((time / 100) % 6)); }
         if (f.shield > time) { ctx.strokeStyle = "rgba(143,208,255,0.85)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y - 12 * f.sprite.size, 14 * f.sprite.size, 0, Math.PI * 2); ctx.stroke(); }
       }
+      for (const gc of gas) {
+        if (time > gc.until) continue;
+        const fade = clamp((gc.until - time) / 600, 0, 1);
+        for (let i = 0; i < 7; i++) { ctx.fillStyle = `rgba(139,211,74,${(0.28 * fade).toFixed(2)})`; ctx.beginPath(); ctx.arc(gc.x + Math.sin(time / 400 + i) * 14, gc.y - 10 - (i % 3) * 7, 10 + (i % 3) * 3, 0, Math.PI * 2); ctx.fill(); }
+      }
       if (flyer) {
         const img = flyer.sprite.frame("walk", time), S = img.width;
         ctx.save(); ctx.translate(Math.round(flyer.x), Math.round(flyer.y)); ctx.scale(flyer.facing * flyer.scale, flyer.scale);
@@ -839,12 +858,17 @@
       switch (s.kind) {
         case "arrow": { const d = Math.sign(s.x1 - s.x0); ctx.fillStyle = "#8a5a32"; ctx.fillRect(Math.round(x - 5 * d), Math.round(y), 6, 1); ctx.fillStyle = "#ffffff"; ctx.fillRect(Math.round(x + d), Math.round(y) - 1, 1, 3); break; }
         case "bullet": ctx.fillStyle = "#ffe08a"; ctx.fillRect(Math.round(x) - 2, Math.round(y), 4, 1); break;
-        case "beam": { ctx.globalAlpha = 0.9; ctx.strokeStyle = s.c; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(lerp(s.x0, s.x1, Math.min(1, k * 2)), lerp(s.y0, s.y1, Math.min(1, k * 2))); ctx.stroke();
+        case "beam": { ctx.globalAlpha = 0.9; ctx.strokeStyle = s.c; ctx.lineWidth = s.w || 4; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(lerp(s.x0, s.x1, Math.min(1, k * 2)), lerp(s.y0, s.y1, Math.min(1, k * 2))); ctx.stroke();
           ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1; ctx.stroke(); ctx.globalAlpha = 1; break; }
         case "bolt": { if (k > 0.9) break; ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x0, s.y0);
           for (let i = 1; i <= 6; i++) ctx.lineTo(lerp(s.x0, s.x1, i / 6) + (i < 6 ? rnd(-4, 4) : 0), lerp(s.y0, s.y1, i / 6) + (i < 6 ? rnd(-6, 6) : 0)); ctx.stroke(); break; }
         case "web": { ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(x, y); ctx.stroke(); break; }
         case "breath": for (let i = 0; i < 6; i++) { const kk = clamp(k - i * 0.05, 0, 1); ctx.fillStyle = i % 2 ? s.c : "#ffe14d"; const r = 2 + i; ctx.fillRect(Math.round(lerp(s.x0, s.x1, kk)) - r / 2, Math.round(lerp(s.y0, s.y1, kk) + rnd(-2, 2)), r, r); } break;
+        case "hook": { ctx.strokeStyle = "#8a8f96"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(x, y); ctx.stroke();
+          ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 2, Math.round(y) - 2, 4, 4); ctx.fillRect(Math.round(x) + (s.x1 > s.x0 ? 2 : -4), Math.round(y) - 4, 2, 4); break; }
+        case "sight": { ctx.strokeStyle = "rgba(255,40,40,0.8)"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(s.x1, s.y1); ctx.stroke(); ctx.fillStyle = "#ff2828"; ctx.fillRect(Math.round(s.x1) - 1, Math.round(s.y1) - 1, 3, 3); break; }
+        case "disc": { const px = Math.round(x), py = Math.round(y); ctx.fillStyle = "#c0262f"; ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = "#f2f0ea"; ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = "#1f4fa8"; ctx.beginPath(); ctx.arc(px, py, 2, 0, Math.PI * 2); ctx.fill(); break; }
         case "plane": { const d = Math.sign(s.x1 - s.x0) || 1, px = Math.round(x), py = Math.round(y);
           ctx.fillStyle = "#6b7280"; ctx.fillRect(px - 8, py - 1, 16, 3); ctx.fillRect(px - 2 * d - 1, py - 6, 3, 13); ctx.fillRect(px - 8 * d - (d < 0 ? 2 : 0), py - 4, 2, 4);
           ctx.fillStyle = "#c0262f"; ctx.fillRect(px - 1, py - 1, 2, 2); break; }
@@ -1858,6 +1882,195 @@
           }
           break;
         }
+        case "hook": {
+          if (!target) break;
+          setPose(actor, "shoot"); sfx("b_throw", 0.9);
+          const hk = { kind: "hook", x0: centre(actor).x, y0: centre(actor).y, x1: centre(target).x, y1: centre(target).y, c: "#cfd6dd", t0: time, ms: 350 };
+          shots.push(hk); await wait(350);
+          if (["dodged", "miss"].includes(b.outcome)) { shots = shots.filter(q => q !== hk); await land(target, b.outcome, "impact", actor); setPose(actor, "idle"); break; }
+          sfx("b_block", 0.8); burst(centre(target).x, centre(target).y, "impact", 8);
+          // Reeled in: the chain stays taut while the target is dragged across.
+          const pull = { x: actor.pos.x + actor.facing * 16, y: actor.pos.y };
+          let reeling = true;
+          (async () => { while (reeling) { hk.x0 = centre(actor).x; hk.y0 = centre(actor).y; hk.x1 = centre(target).x; hk.y1 = centre(target).y; hk.t0 = time - hk.ms; await wait(30); } })();
+          await tween(target.pos, pull, 450, t => t * t);
+          reeling = false; shots = shots.filter(q => q !== hk);
+          setPose(actor, "strike"); sfx("b_slash", 1);
+          await land(target, b.outcome, "impact", actor);
+          if (!target.downed) await goHome(target);
+          setPose(actor, "idle");
+          break;
+        }
+        case "chain_lightning": {
+          if (!target) break;
+          setPose(actor, "cast");
+          const chain = [target, ...fighters.filter(f => f.side === target.side && f !== target && !f.downed)].slice(0, 4);
+          let from = actor;
+          for (const f of chain) {
+            const bolt = { kind: "bolt", x0: centre(from).x, y0: centre(from).y, x1: centre(f).x, y1: centre(f).y, c: "#ffe14d", t0: time, ms: 240 };
+            shots.push(bolt); sfx("b_beam", 0.6); burst(centre(f).x, centre(f).y, "lightning", 8);
+            await wait(200); shots = shots.filter(q => q !== bolt);
+            if (f !== target) land(f, "hurt", "lightning", actor);
+            from = f;
+          }
+          await land(target, b.outcome, "lightning", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "earth_spikes": {
+          if (!target) break;
+          setPose(actor, "strike"); sfx("b_quake", 0.7); shake = time + 300;
+          burst(actor.pos.x + actor.facing * 8, actor.pos.y, "earth", 8);
+          await wait(250);
+          spikes.push({ x: target.pos.x, y: target.pos.y + 2, t0: time, until: time + 1600 });
+          sfx("b_stone", 0.9); burst(target.pos.x, target.pos.y - 4, "earth", 14);
+          await tween(target, { hop: -10 }, 120);
+          await land(target, b.outcome, "earth", actor);
+          target.hop = 0;
+          setPose(actor, "idle");
+          break;
+        }
+        case "sniper_shot": {
+          if (!target) break;
+          setPose(actor, "shoot");
+          const sight = { kind: "sight", x0: centre(actor).x + actor.facing * 10, y0: centre(actor).y - 2, x1: centre(target).x, y1: centre(target).y - 6 * target.sprite.size, c: "#ff2828", t0: time, ms: 99999 };
+          shots.push(sight);
+          await wait(1100);
+          shots = shots.filter(q => q !== sight);
+          flash = { c: "#ffffff", until: time + 80, ms: 80 }; sfx("b_gun", 1, 0.7); shake = time + 120;
+          const round = { kind: "bullet", x0: sight.x0, y0: sight.y0, x1: sight.x1, y1: sight.y1, c: "#ffe08a", t0: time, ms: 120 };
+          shots.push(round); await wait(120); shots = shots.filter(q => q !== round);
+          await land(target, b.outcome === "hit" ? "crit" : b.outcome, "impact", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "grenade": {
+          if (!target) break;
+          setPose(actor, "windup"); await wait(180); setPose(actor, "strike"); sfx("b_throw", 0.8);
+          await fire(actor, target, "gear", "explosion", { look: "bomb", c: "#3a4a2a", ms: 650, arc: 34 });
+          sfx("b_boom", 1); shake = time + 350; burst(target.pos.x, target.pos.y - 4, "explosion", 26, true);
+          const near = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 36);
+          await Promise.all([land(target, b.outcome, "explosion", actor), ...near.map(f => land(f, "hurt", "explosion", actor))]);
+          setPose(actor, "idle");
+          break;
+        }
+        case "poison_cloud": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_drain", 0.6);
+          gas.push({ x: target.pos.x, y: target.pos.y, until: time + 4000 });
+          for (let i = 0; i < 4; i++) { burst(centre(target).x, centre(target).y, "poison", 4); target.flashUntil = time + 120; await wait(250); }
+          await land(target, b.outcome, "poison", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "spin_slash": {
+          if (!target) break;
+          await approach(actor, target);
+          sfx("b_spin", 0.9);
+          const near = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 34);
+          for (let i = 0; i < 8; i++) { actor.facing = -actor.facing; setPose(actor, "strike"); burst(centre(actor).x + actor.facing * 10, centre(actor).y, "slash", 3); await wait(90); }
+          actor.facing = actor.side ? -1 : 1;
+          await Promise.all([land(target, b.outcome, "slash", actor), ...near.map(f => land(f, "hurt", "slash", actor))]);
+          await goHome(actor);
+          break;
+        }
+        case "shield_bounce": {
+          if (!target) break;
+          setPose(actor, "windup"); await wait(180); setPose(actor, "strike"); sfx("b_throw", 0.9);
+          const others = fighters.filter(f => f.side === target.side && f !== target && !f.downed).slice(0, 2);
+          let from = centre(actor);
+          for (const f of [target, ...others]) {
+            const d = { kind: "disc", x0: from.x, y0: from.y, x1: centre(f).x, y1: centre(f).y, c: "#c0262f", t0: time, ms: 260 };
+            shots.push(d); await wait(260); shots = shots.filter(q => q !== d);
+            sfx("b_block", 0.8); burst(centre(f).x, centre(f).y, "impact", 8);
+            if (f !== target) land(f, "hurt", "impact", actor);
+            from = centre(f);
+          }
+          const back = { kind: "disc", x0: from.x, y0: from.y, x1: centre(actor).x, y1: centre(actor).y, c: "#c0262f", t0: time, ms: 320 };
+          shots.push(back);
+          await land(target, b.outcome, "impact", actor);
+          await wait(200); shots = shots.filter(q => q !== back);
+          setPose(actor, "idle");
+          break;
+        }
+        case "web_swing": {
+          if (!target) break;
+          sfx("b_whoosh", 0.9);
+          // Swinging in on a web line from somewhere overhead.
+          const anchor = { x: (actor.pos.x + target.pos.x) / 2, y: 20 };
+          const line = { kind: "web", x0: anchor.x, y0: anchor.y, x1: actor.pos.x, y1: actor.pos.y - 20, c: "#ffffff", t0: time - 2, ms: 1 };
+          shots.push(line);
+          let swinging = true;
+          (async () => { while (swinging) { line.x1 = actor.pos.x; line.y1 = actor.pos.y + (actor.hop || 0) - 20; line.t0 = time - 2; await wait(30); } })();
+          await tween(actor, { hop: -40 }, 250);
+          await Promise.all([tween(actor.pos, { x: target.pos.x - actor.facing * 12, y: target.pos.y }, 520), tween(actor, { hop: 0 }, 520)]);
+          swinging = false; shots = shots.filter(q => q !== line);
+          setPose(actor, "strike"); sfx("b_punch", 1); burst(centre(target).x, centre(target).y, "impact", 12);
+          await land(target, b.outcome, "impact", actor);
+          await goHome(actor);
+          break;
+        }
+        case "mega_beam": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_charge", 1);
+          const glow = FX[b.effect] && b.effect !== "none" ? FX[b.effect] : "#8fd0ff";
+          for (let i = 0; i < 10; i++) { burst(centre(actor).x + actor.facing * 8, centre(actor).y, b.effect !== "none" ? b.effect : "light", 4); await wait(100); }
+          shake = time + 1000; flash = { c: glow, until: time + 300, ms: 300 }; sfx("b_beam", 1, 0.7);
+          const beam = { kind: "beam", w: 12, x0: centre(actor).x + actor.facing * 8, y0: centre(actor).y, x1: actor.facing > 0 ? W + 20 : -20, y1: centre(target).y, c: glow, t0: time, ms: 900 };
+          shots.push(beam);
+          const inLine = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(centre(f).y - centre(target).y) < 14);
+          await wait(450);
+          await Promise.all([land(target, b.outcome, b.effect !== "none" ? b.effect : "light", actor), ...inLine.map(f => land(f, "hurt", "light", actor))]);
+          await wait(300); shots = shots.filter(q => q !== beam);
+          setPose(actor, "idle");
+          break;
+        }
+        case "one_punch": {
+          if (!target) break;
+          await approach(actor, target);
+          setPose(actor, "idle"); await wait(500);
+          damageNumber(actor, "serious punch", "#ffe14d");
+          setPose(actor, "windup"); await wait(300);
+          setPose(actor, "strike"); sfx("b_boom", 1); flash = { c: "#ffffff", until: time + 300, ms: 300 }; shake = time + 1200;
+          rings.push({ x: centre(target).x, y: centre(target).y, r0: 4, r1: 400, c: "#ffffff", t0: time, ms: 700 });
+          for (let i = 0; i < 30; i++) parts.push({ x: centre(target).x, y: centre(target).y + rnd(-20, 20), vx: actor.facing * rnd(200, 500), vy: rnd(-30, 30), g: 0, c: "#ffffff", s: 2, t0: time, life: 500 });
+          await land(target, b.outcome === "hit" ? "crit" : b.outcome, "impact", actor);
+          await goHome(actor);
+          break;
+        }
+        case "domain_expansion": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_warp", 1, 0.6);
+          damageNumber(actor, "domain expansion", "#ff6ad5");
+          const sukuna = /sukuna|malevolent|shrine/i.test(`${b.move} ${actor.name}`);
+          domain = { colour: sukuna ? "#3a0a0a" : "#14082a", until: time + 99999 };
+          await wait(900);
+          if (sukuna) {
+            // Malevolent Shrine: cuts from everywhere at once.
+            for (let i = 0; i < 10; i++) { burst(centre(target).x + rnd(-8, 8), centre(target).y + rnd(-10, 10), "slash", 4); sfx("b_slash", 0.4, 1.2); await wait(80); }
+          } else {
+            // Unlimited Void: everything at once, frozen in place.
+            for (let i = 0; i < 3; i++) { rings.push({ x: centre(target).x, y: centre(target).y, r0: 30, r1: 2, c: "#9fe3ff", t0: time, ms: 400 }); await wait(250); }
+            target.asleep = true; await wait(400); target.asleep = false;
+          }
+          await land(target, b.outcome === "dodged" || b.outcome === "miss" ? "hit" : b.outcome, "psychic", actor);
+          domain.until = time + 300;
+          setPose(actor, "idle");
+          break;
+        }
+        case "orb_strike": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_charge", 0.8);
+          const col = b.effect === "lightning" || /chidori/i.test(b.move || "") ? "#9fe3ff" : FX[b.effect] && b.effect !== "none" ? FX[b.effect] : "#7fc8ff";
+          for (let i = 0; i < 6; i++) { rings.push({ x: centre(actor).x + actor.facing * 8, y: centre(actor).y, r0: 6, r1: 2, c: col, t0: time, ms: 200 }); await wait(90); }
+          await approach(actor, target);
+          setPose(actor, "strike"); sfx("b_boom", 0.8);
+          rings.push({ x: centre(target).x, y: centre(target).y, r0: 2, r1: 26, c: col, t0: time, ms: 400 });
+          burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "light", 18, true); shake = time + 300;
+          await land(target, b.outcome, b.effect !== "none" ? b.effect : "light", actor);
+          await goHome(actor);
+          break;
+        }
         case "taunt":
           setPose(actor, "victory"); actor.hop = -4; await wait(240); actor.hop = 0; await wait(500); setPose(actor, "idle");
           break;
@@ -1914,6 +2127,9 @@
         airstrike: "calls an airstrike on", meteor: "drops a meteor on", lullaby: "sings to sleep", devour: "devours", portal: "drops a portal under",
         freeze: "freezes", petrify: "turns to stone", anvil: "drops an anvil on", shout: "screams at", black_hole: "opens a black hole under",
         earthquake: "splits the ground under", tornado: "whips a tornado at", lightning_storm: "calls a lightning storm on", time_rewind: "turns back time",
+        hook: "hooks and drags in", chain_lightning: "chains lightning through", earth_spikes: "raises spikes under", sniper_shot: "snipes",
+        grenade: "lobs a grenade at", poison_cloud: "gasses", spin_slash: "spins through", shield_bounce: "bounces a shield off", web_swing: "swings in on",
+        mega_beam: "fires everything at", one_punch: "punches", domain_expansion: "traps in a domain", orb_strike: "drives an orb into",
         stretch: "stretches a punch at", drain: "drains", laser_eyes: "burns", self_destruct: "self-destructs on", telekinesis: "lifts and slams", spin_dash: "spin-dashes into",
         regenerate: "regenerates", phase: "phases", fly: "takes to the air", grow: "grows huge", shrink: "shrinks down", reality_warp: "bends reality around", block: "braces",
         dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
@@ -1981,7 +2197,7 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
-      skipping = true; companions = []; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
+      skipping = true; companions = []; gas = []; spikes = []; domain = null; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();

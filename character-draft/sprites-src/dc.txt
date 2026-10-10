@@ -1,7 +1,7 @@
-Superman	h|m|w|f1d0b0|1a1a1a|1f4fa8|c0262f|c0262f|slick|none|jumpsuit|none|cape,emblem|beam|light
+Superman	h|m|w|f1d0b0|1a1a1a|1f4fa8|1f4fa8|c0262f|slick|none|jumpsuit|none|cape,emblem,trunks,boots_accent|beam|light
 Batman	h|m|w|8a8f96|1a1a1a|6a6f78|1f1f24|1f1f24|none|cowl|jumpsuit|none|cape,emblem,belt|gadget|none
-Wonder Woman	h|m|n|f1d0b0|1a1a1a|c0262f|1f3f8a|e8b84a|long|headband|armour|sword|shield|blade|light
-The Flash	h|m|t|c0262f|1a1a1a|c0262f|c0262f|f2cf3a|none|fullmask|jumpsuit|none|emblem|fists|lightning
+Wonder Woman	h|m|n|f1d0b0|1a1a1a|c0262f|1f3f8a|e8b84a|flowing|headband|armour|sword|shield,boots_accent|blade|light
+The Flash	h|m|t|c0262f|1a1a1a|c0262f|c0262f|f2cf3a|none|fullmask|jumpsuit|none|bolt,boots_accent|fists|lightning
 Green Lantern	h|m|n|f1d0b0|5a3a1a|2e8b3a|1f1f1f|4caf50|short|mask|jumpsuit|none|emblem,glow|summon|light
 Aquaman	h|l|w|f1d0b0|e6c35c|ef8a2c|2e8b3a|e8b84a|long|none|armour|trident|beard|blade|water
 Cyborg	r|l|w|8d5524|1a1a1a|9aa3ad|3a3a44|c0262f|none|none|armour|cannon|glow_eyes|gun|tech
@@ -40,7 +40,7 @@ The Question	h|m|n|f2e0c8|1a1a1a|3f6aa8|1f1f1f|f2e0c8|none|facemask|coat|none||f
 The Spectre	h|l|n|f2f0ea|1a1a1a|2e8b3a|2e8b3a|2e8b3a|none|hood|robe|none|cape,glow|magic|light
 Steel	r|l|w|9aa3ad|9aa3ad|9aa3ad|c0262f|c0262f|none|none|armour|hammer|cape,emblem|blunt|tech
 Joker	h|m|t|f2f0ea|4caf50|8e5bd0|5b3a7a|2e8b3a|slick|none|suit|gun|grin|gun|poison
-Harley Quinn	h|m|t|f2f0ea|f2f0ea|c0262f|1f1f1f|ff6ad5|ponytail|none|jumpsuit|bat||blunt|none
+Harley Quinn	h|m|t|f2f0ea|f2f0ea|c0262f|1f1f1f|ff6ad5|twintails|none|jumpsuit|bat||blunt|none
 Lex Luthor	h|m|n|f1d0b0|f1d0b0|2e8b3a|8e5bd0|2e8b3a|bald|none|armour|blaster||gun|tech
 Darkseid	h|x|w|5a5a5a|1a1a1a|3f4f8a|1f1f1f|c0262f|bald|helmet|armour|none|redeyes|beam|dark
 Brainiac	h|m|n|4caf50|4caf50|8e5bd0|1f1f1f|f2f0ea|bald|none|jumpsuit|none|antennae|psychic|tech

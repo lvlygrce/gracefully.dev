@@ -1,7 +1,7 @@
 Harry Potter	h|m|t|f1d0b0|1a1a1a|2a2622|3a3a3a|b3202a|messy|none|robe|wand|glasses,scarf|magic|light
 Hermione Granger	h|m|t|f3d6bf|8a5a32|2a2622|3a3a3a|b3202a|afro|none|robe|wand|scarf|magic|light
 Ron Weasley	h|m|t|f3d6bf|d9662a|2a2622|3a3a3a|b3202a|short|none|robe|wand|scarf|magic|none
-Albus Dumbledore	h|m|t|f1d8c8|f2f0ea|8e5bd0|5b3a7a|e8b84a|long|wizard|robe|wand|beard,glasses|magic|light
+Albus Dumbledore	h|m|t|f1d8c8|f2f0ea|8e5bd0|5b3a7a|e8b84a|flowing|wizard|robe|wand|beard_long,glasses|magic|light
 Lord Voldemort	h|m|t|e8ecec|e8ecec|1f1f1f|1f1f1f|4caf50|bald|none|robe|wand|redeyes|magic|dark
 Severus Snape	h|m|t|f2ece4|1a1a1a|1f1f1f|1f1f1f|4caf50|long|none|robe|wand||magic|dark
 Minerva McGonagall	h|m|t|f1d8c8|3b3b3b|2e6b3a|1f1f1f|e8b84a|bun|wizard|robe|wand|glasses|magic|nature

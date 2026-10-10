@@ -215,6 +215,10 @@
         if (type === "scythe") g.line(ex, ey, ex - dx * 2 + perp[0] * 6, ey - dy * 2 + perp[1] * 6, 2, STEEL);
         break;
       }
+      case "double_saber": { const L = R(u * 8); g.line(hx - dx * L, hy - dy * L, hx + dx * L, hy + dy * L, T + 1, glow); g.line(hx - dx * L, hy - dy * L, hx + dx * L, hy + dy * L, 1, "#ffffff"); g.rect(hx - 1, hy - 1, 3, 3, "#3a3a3a"); break; }
+      case "chainsaw": { const [ex, ey] = at(R(u * 8)); g.rect(hx - 2, hy - 2, 4, 4, "#c0262f"); g.line(hx + dx * 2, hy + dy * 2, ex, ey, 3, "#9aa3ad"); for (let i = 2; i < 8; i += 2) g.px(hx + dx * i * u - perp[0] * 2, hy + dy * i * u - perp[1] * 2, DARK); break; }
+      case "keyblade": { const [ex, ey] = at(R(u * 10)); g.line(hx, hy, ex, ey, 1, "#cfd6dd"); g.rect(ex - 1, ey - 1, 3, 3, GOLD); g.line(ex, ey, ex + perp[0] * 3, ey + perp[1] * 3, 1, GOLD); g.disc(hx - dx * 2, hy - dy * 2, 2, GOLD); break; }
+      case "nunchucks": { const [ex, ey] = at(R(u * 4)); g.line(hx, hy, ex, ey, 2, "#2a2a2a"); g.line(ex, ey, ex + perp[0] * 4 + dx * 2, ey + perp[1] * 4 + dy * 2, 1, "#9aa3ad"); g.line(ex + perp[0] * 4, ey + perp[1] * 4, ex + perp[0] * 4 + dx * 4 * u, ey + perp[1] * 4 + dy * 4 * u, 2, "#2a2a2a"); break; }
       case "wand": { const [ex, ey] = at(R(5 * u)); g.line(hx, hy, ex, ey, 1, WOOD); g.px(ex + dx, ey + dy, glow); g.px(ex + dx * 2, ey + dy * 2, "#ffffff"); break; }
       case "bow": case "crossbow": {
         const h = R(6 * u);
@@ -271,7 +275,7 @@
     const top = bare ? s.skin : s.main;
     const pants = bare ? s.skin : jump ? s.main : s.second;
     const sleeve = bare || s.outfit === "vest" ? s.skin : s.main;
-    const hand = x.has("gloves") ? s.second : robot ? shade(s.main, -0.2) : s.skin;
+    const hand = x.has("gloves_accent") ? s.accent : x.has("gloves") ? s.second : robot ? shade(s.main, -0.2) : s.skin;
     const hipY = base - legH;
     const tTop = hipY - torsoH + bob;
     const tLeft = cx - Math.floor(torsoW / 2) + lean;
@@ -311,7 +315,7 @@
     }
 
     // Legs: back then front, with boots.
-    const boot = bare ? shade(s.skin, -0.25) : x.has("boots_light") ? shade(s.second, 0.35) : shade(s.second, -0.45);
+    const boot = x.has("boots_accent") ? s.accent : bare ? shade(s.skin, -0.25) : x.has("boots_light") ? shade(s.second, 0.35) : shade(s.second, -0.45);
     const bootH = Math.max(1, R(2 * u));
     const lx = cx - Math.floor(torsoW / 2);
     if (legH > 0) {
@@ -335,6 +339,10 @@
     }
     if (x.has("stripes")) for (let i = 1; i < torsoH; i += 2) g.rect(tLeft, tTop + i, torsoW, 1, shade(top, -0.35));
     if (x.has("emblem")) g.rect(tLeft + Math.floor(torsoW / 2) - 1, tTop + 2, 2, 2, s.accent);
+    if (x.has("webbing") && s.head === "fullmask") { const w = shade(top, -0.45); for (let i = 1; i < torsoW; i += 2) g.rect(tLeft + i, tTop, 1, torsoH, w); }
+    if (x.has("star")) { const sx = tLeft + Math.floor(torsoW / 2), sy = tTop + R(torsoH * 0.4); g.rect(sx - 1, sy - 2, 2, 5, "#f2f0ea"); g.rect(sx - 2, sy - 1, 4, 2, "#f2f0ea"); }
+    if (x.has("bolt")) { const sx = tLeft + Math.floor(torsoW / 2), sy = tTop + 2; g.disc(sx, sy + 1, 2, "#f2f0ea"); g.line(sx + 1, sy - 1, sx - 1, sy + 1, 1, "#f2cf3a"); g.line(sx - 1, sy + 1, sx + 1, sy + 1, 1, "#f2cf3a"); g.line(sx + 1, sy + 1, sx - 1, sy + 3, 1, "#f2cf3a"); }
+    if (x.has("trunks")) g.rect(tLeft, hipY + bob - 1, torsoW, Math.max(2, R(2.5 * u)), s.accent);
     if (x.has("scarf")) { g.rect(tLeft, tTop, torsoW, 2, s.accent); g.line(tLeft, tTop + 1, tLeft - R(3 * u), tTop + R(3 * u) + (f % 2), 1, s.accent); }
     if (x.has("spikes")) for (let i = 0; i < 3; i++) g.tri(tLeft - 1, tTop + 1 + i * 3, tLeft - R(3 * u), tTop + i * 3, tLeft, tTop + 3 + i * 3, BONE);
 
@@ -358,6 +366,7 @@
       else { const eh = u >= 1 ? 2 : 1; g.rect(e1, ey - 1, 1, eh, eye); if (headW >= 6) g.rect(e2, ey - 1, 1, eh, eye); }
       if (x.has("cheeks")) { g.px(e1 + 1, ey + 2, "#e2433a"); g.px(e2 - 2, ey + 2, "#e2433a"); }
       if (x.has("beard")) g.rect(hx + 2, ey + 2, headW - 2, headH - (ey - hy) - 2 + 1, s.hair);
+      if (x.has("beard_long")) { g.rect(hx + 2, ey + 2, headW - 2, headH - (ey - hy) - 1, s.hair); g.tri(hx + 2, hy + headH, hx + headW, hy + headH, hx + R(headW * 0.6), hy + headH + R(8 * u), s.hair); }
       if (x.has("moustache")) g.rect(e2, ey + 2, 3, 1, s.hair);
       if (x.has("glasses")) { g.rect(e2 - 1, ey - 1, 4, 1, DARK); g.px(e1, ey, "#bfe3ff"); }
       if (x.has("eyepatch")) g.rect(e1 - 1, ey - 1, 2, 2, DARK);
@@ -375,14 +384,31 @@
         case "buzz": g.rect(hx, hy, headW, 1, s.hair); break;
         case "afro": g.rect(hx, hy, headW, 2, s.hair); break;
         case "messy": g.rect(hx - 1, hy - 1, headW + 1, 3, s.hair); g.px(hx + 2, hy - 2, s.hair); g.px(hx + 5, hy - 2, s.hair); g.rect(hx - 1, hy, 2, R(headH * 0.6), s.hair); break;
+        case "huge_spiky":   // Goku, Naruto, Cloud: big spikes fanning up and back
+          g.rect(hx - 1, hy - 1, headW + 2, 3, s.hair); g.rect(hx - 1, hy, 3, R(headH * 0.6), s.hair);
+          for (let i = 0; i < 5; i++) g.tri(hx - 2 + i * R(headW / 4), hy + 1, hx - 3 + i * R(headW / 4) - (i < 2 ? 2 : 0), hy - R((5 + (i % 2) * 2) * u), hx + 1 + i * R(headW / 4), hy + 1, s.hair);
+          g.tri(hx - 1, hy + 1, hx - R(5 * u), hy - R(1 * u), hx - 1, hy + R(4 * u), s.hair);
+          break;
+        case "twintails": g.rect(hx, hy, headW, 2, s.hair); for (const sx of [hx - 1, hx + headW]) { g.disc(sx, hy + 1, 1, s.hair); g.line(sx, hy + 1, sx + (sx < hx ? -2 : 2), hy + R(headH * 1.4), 2, s.hair); } break;
+        case "pompadour": g.rect(hx, hy - 1, headW, 3, s.hair); g.rect(hx + 2, hy - R(3 * u), headW + 1, R(3 * u), s.hair); break;
+        case "topknot": g.rect(hx, hy, headW, 2, s.hair); g.disc(hx + R(headW / 2), hy - 2, Math.max(1, R(1.6 * u)), s.hair); break;
+        case "flowing": g.rect(hx - 1, hy - 1, headW + 2, 3, s.hair); g.rect(hx - 2, hy, R(4 * u), headH + R(7 * u), s.hair); g.rect(hx - 1, hy + 1, 2, R(headH * 0.7), s.hair); break;
         default: break;
       }
     };
     switch (s.head) {
+      case "straw_hat": hairTop(); face(); g.rect(hx - 3, hy, headW + 6, 1, "#e8c46a"); g.rect(hx, hy - R(3 * u), headW, R(3 * u), "#e8c46a"); g.rect(hx, hy - 1, headW, 1, "#c0262f"); break;
+      case "cowboy": hairTop(); face(); g.rect(hx - 3, hy, headW + 6, 1, s.second); g.rect(hx + 1, hy - R(3 * u), headW - 2, R(3 * u), s.second); g.px(hx - 3, hy - 1, s.second); g.px(hx + headW + 2, hy - 1, s.second); break;
+      case "horned_helm": hairTop(); face(); g.rect(hx - 1, hy - 1, headW + 2, 3, GOLD); g.line(hx, hy, hx - R(3 * u), hy - R(7 * u), 1, GOLD); g.line(hx + headW - 1, hy, hx + headW + R(2 * u), hy - R(7 * u), 1, GOLD); g.rect(hx - 1, hy + 2, 1, headH - 3, GOLD); break;
+      case "skull": g.rect(hx, hy, headW, headH, BONE); g.rect(e2 - 1, ey - 1, 2, 2, DARK); g.rect(e1 - 1, ey - 1, 2, 2, DARK); g.px(e1 - 1, ey + 2, DARK); for (let i = 1; i < headW - 1; i += 2) g.px(hx + i, hy + headH - 2, DARK);
+        if (x.has("flame_head")) for (let i = 0; i < headW; i += 2) g.rect(hx + i, hy - 2 - ((i * 7) % 3), 2, 3, i % 4 ? "#ffcc33" : "#ff6a1a"); break;
+      case "faceplate": g.rect(hx, hy, headW, headH, s.main); g.rect(hx + 2, hy + 2, headW - 2, headH - 3, s.second); g.rect(e2 - 1, ey - 1, 2, 1, s.accent); g.rect(e1 - 1, ey - 1, 2, 1, s.accent); g.rect(hx + 3, hy + headH - 2, headW - 4, 1, shade(s.second, -0.3)); break;
       case "helmet": hairTop(); g.rect(hx - 1, hy - 1, headW + 2, R(headH * 0.45), s.accent === s.main ? STEEL : shade(STEEL, -0.05)); g.rect(hx - 1, hy - 1, 2, headH - 1, STEEL); face(); break;
       case "helm": g.rect(hx - 1, hy - 1, headW + 2, headH + 1, STEEL); g.rect(hx + 2, ey, headW - 2, 1, DARK); g.px(hx + R(headW / 2), hy - 2, s.accent); break;
       case "hood": g.rect(hx - 1, hy - 1, headW + 2, headH, s.main); g.rect(hx + 2, hy + 2, headW - 2, headH - 3, shade(s.skin, -0.35)); g.px(e1, ey, x.has("glow_eyes") ? s.accent : DARK); break;
-      case "fullmask": g.rect(hx, hy, headW, headH, s.main); g.rect(e2 - 1, ey - 1, 2, 2, "#ffffff"); g.rect(e1 - 1, ey - 1, 2, 2, "#ffffff"); if (x.has("webbing")) { g.px(hx + 2, hy + 2, DARK); g.px(hx + 3, hy + headH - 2, DARK); } break;
+      case "fullmask": g.rect(hx, hy, headW, headH, s.main);
+        if (x.has("webbing")) { const w = shade(s.main, -0.45); for (let i = 1; i < headW; i += 2) g.rect(hx + i, hy, 1, headH, w); for (let j = 2; j < headH; j += 3) g.rect(hx, hy + j, headW, 1, w); }
+        g.rect(e2 - 1, ey - 1, 2, 2, "#ffffff"); g.rect(e1 - 1, ey - 1, 2, 2, "#ffffff"); g.px(e2 - 2, ey - 1, DARK); g.px(e1 + 1, ey - 1, DARK); break;
       case "cowl": g.rect(hx, hy, headW, R(headH * 0.6), s.main); g.tri(hx, hy, hx + 1, hy - R(3 * u), hx + 2, hy, s.main); g.tri(hx + headW - 2, hy, hx + headW - 1, hy - R(3 * u), hx + headW, hy, s.main); g.px(e1, ey - 1, "#ffffff"); face(); break;
       case "mask": hairTop(); face(); g.rect(hx + 2, ey - 1, headW - 2, 2, s.accent); g.px(e1, ey - 1, "#ffffff"); break;
       case "facemask": hairTop(); face(); g.rect(hx + 2, ey + 1, headW - 2, headH - (ey - hy) - 1, s.accent); break;

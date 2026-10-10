@@ -1,7 +1,7 @@
-Goku	h|m|n|f1d0b0|1a1a1a|ef8a2c|1f3f8a|1f3f8a|spiky|none|tunic|none|belt|beam|light
-Naruto Uzumaki	h|m|t|f1d0b0|f2cf3a|ef8a2c|1f1f2a|3f7fd6|spiky|headband|jumpsuit|dagger|whiskers|fists|wind
-Monkey D. Luffy	h|m|t|f1d0b0|1a1a1a|c0262f|3f7fd6|e8b84a|messy|hat|vest|none||fists|none
-Ichigo Kurosaki	h|m|n|f1d0b0|ef8a2c|1f1f1f|1f1f1f|f2f0ea|spiky|none|robe|greatsword||blade|dark
+Goku	h|m|n|f1d0b0|1a1a1a|ef8a2c|ef8a2c|1f4fa8|huge_spiky|none|tunic|none|belt,gloves_accent,boots_accent|beam|light
+Naruto Uzumaki	h|m|t|f1d0b0|f2cf3a|ef8a2c|ef8a2c|3f7fd6|huge_spiky|headband|jumpsuit|dagger|whiskers|fists|wind
+Monkey D. Luffy	h|m|t|f1d0b0|1a1a1a|c0262f|3f7fd6|e8b84a|messy|straw_hat|vest|none||fists|none
+Ichigo Kurosaki	h|m|n|f1d0b0|ef8a2c|1f1f1f|1f1f1f|f2f0ea|huge_spiky|none|robe|greatsword||blade|dark
 Saitama	h|m|n|f1d0b0|f1d0b0|f2cf3a|f2cf3a|c0262f|bald|none|jumpsuit|none|cape,gloves|fists|none
 Izuku Midoriya	h|m|t|f1d0b0|2e6b3a|2e8b3a|1f1f1f|c0262f|messy|none|jumpsuit|none|gloves|fists|lightning
 Gon Freecss	h|s|t|f1d0b0|1a1a1a|2e8b3a|2e8b3a|ef8a2c|spiky|none|jumpsuit|none||fists|light
@@ -15,8 +15,8 @@ Spike Spiegel	h|m|t|f1d0b0|2a5a3a|3f4f8a|3f4f8a|ffe14d|messy|none|suit|gun||gun|
 Lelouch Lamperouge	h|m|t|f3d6bf|1a1a1a|1f1f1f|8e5bd0|c0262f|messy|none|coat|none|cape,redeyes|psychic|psychic
 Vash the Stampede	h|m|t|f1d0b0|f2cf3a|c0262f|1f1f1f|cfd6dd|spiky|none|coat|gun|glasses|gun|none
 Asta	h|s|n|f1d0b0|f2f0ea|1f1f1f|1f1f1f|3a3a44|spiky|headband|coat|greatsword||blade|dark
-Denji	h|m|n|f1d0b0|e6c35c|f2f0ea|1f1f1f|c0262f|messy|none|suit|none|grin,spikes|claws|blood
-Usagi Tsukino	h|m|t|f3d6bf|f2cf3a|f2f0ea|3f4f8a|c0262f|ponytail|crown|dress|wand|scarf|magic|light
+Denji	h|m|n|f1d0b0|e6c35c|f2f0ea|1f1f1f|c0262f|messy|none|suit|chainsaw|grin,spikes|blade|blood
+Usagi Tsukino	h|m|t|f3d6bf|f2cf3a|f2f0ea|3f4f8a|c0262f|twintails|crown|dress|wand|scarf|magic|light
 Inuyasha	h|m|n|f3d6bf|f2f0ea|c0262f|c0262f|e8b84a|long|none|robe|greatsword|ears|blade|wind
 Yusuke Urameshi	h|m|n|f1d0b0|1a1a1a|2e6b3a|2e6b3a|3fa0ff|slick|none|uniform|none||beam|light
 Kenshiro	h|l|w|e0ac69|1a1a1a|3a3a44|3a3a44|f2f0ea|short|none|vest|none||fists|none
@@ -57,7 +57,7 @@ Akira Fudo	h|l|w|5a5a7a|1a1a1a|5a5a7a|1f1f1f|c0262f|spiky|none|bare|none|batwing
 Momo Ayase	h|m|t|f3d6bf|5a3a1a|f2f0ea|c0262f|8fe9ff|long|none|uniform|none|glow|psychic|psychic
 Sung Jinwoo	h|m|n|f1d0b0|1a1a1a|1f1f1f|1f1f1f|8e5bd0|messy|none|coat|dagger|glow_eyes|summon|dark
 Shotaro Kaneda	h|m|t|f1d0b0|5a3a1a|c0262f|3f4f8a|c0262f|messy|none|jumpsuit|rifle|emblem|gun|tech
-Vegeta	h|m|n|f1d0b0|1a1a1a|3f4fa8|3f4fa8|f2f0ea|spiky|none|armour|none|gloves|beam|light
+Vegeta	h|m|n|f1d0b0|1a1a1a|3f4fa8|3f4fa8|f2f0ea|huge_spiky|none|armour|none|gloves_accent,boots_accent|beam|light
 Sasuke Uchiha	h|m|t|f3d6bf|1a1a2a|f2f0ea|3a3a44|8e5bd0|spiky|none|tunic|katana|redeyes|blade|lightning
 Roronoa Zoro	h|m|n|f1d0b0|4caf50|f2f0ea|1f1f1f|2e6b3a|short|none|vest|katana|belt|blade|none
 All Might	h|l|w|f1d0b0|f2cf3a|1f3f8a|c0262f|f2f0ea|spiky|none|jumpsuit|none|gloves|fists|none
@@ -68,7 +68,7 @@ L	h|m|t|f2ece4|1a1a1a|f2f0ea|3f4f8a|1f1f1f|messy|none|tunic|none||gadget|psychic
 Makima	h|m|t|f3d6bf|c0401d|f2f0ea|1f1f1f|e8b84a|braids|none|suit|none|glow_eyes|psychic|psychic
 Satoru Gojo	h|l|t|f3d6bf|f2f0ea|1f1f2a|1f1f2a|3fa0ff|spiky|visor|uniform|none|glow|psychic|psychic
 Levi Ackerman	h|s|t|f3d6bf|1a1a1a|8a6a3a|f2f0ea|2e6b3a|short|none|coat|sword|cape|blade|none
-Kakashi Hatake	h|m|t|f1d0b0|cfd6dd|2e6b3a|1f1f2a|c0262f|spiky|facemask|vest|dagger|redeyes|fists|lightning
+Kakashi Hatake	h|m|t|f1d0b0|cfd6dd|2e6b3a|1f1f2a|c0262f|huge_spiky|facemask|vest|dagger|redeyes|fists|lightning
 Itachi Uchiha	h|m|t|f3d6bf|1a1a1a|1f1f1f|c0262f|c0262f|ponytail|none|robe|none|redeyes|magic|fire
 Ryomen Sukuna	h|l|n|e8c4a0|e86a8a|f2f0ea|1f1f1f|c0262f|spiky|none|robe|none|stripes,redeyes,grin|magic|blood
 Frieza	h|m|t|f2f0ea|8e5bd0|f2f0ea|8e5bd0|8e5bd0|none|none|bare|none|tail,horns|beam|psychic
