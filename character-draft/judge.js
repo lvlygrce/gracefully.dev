@@ -41,7 +41,8 @@
     actions: ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab", "teleport", "transform",
       "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift", "regenerate", "phase", "fly",
       "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor",
-      "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado",
+      "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
       "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
@@ -265,7 +266,14 @@ Reply as JSON:
   through the enemy line, airstrike brings planes or bombers overhead, meteor drops one from the sky, lullaby sings
   the target to sleep (Jigglypuff), devour swallows the target whole (Kirby, Pac-Man, Tahm Kench), portal drops the
   target through a portal, freeze locks the target in ice, petrify turns them to stone, anvil is a cartoon gag that
-  drops something heavy on their head; use these when they truly fit the character; annihilate is an overwhelming
+  drops something heavy on their head; and more: shout is a sonic scream or roar that blasts everyone in front
+  (Black Canary, Black Bolt), black_hole drags the target into a gravity well, earthquake splits the ground under
+  the enemy, tornado sweeps them up in a whirlwind, lightning_storm calls bolts down from the sky (Storm, Raiden),
+  time_rewind turns back the actor's own wounds and the last moments (Eri, Subaru), stretch is a long elastic punch
+  (Luffy, Mister Fantastic), drain steals the target's life or power (Rogue, vampires, Dementors), laser_eyes fires
+  beams from the eyes (Superman, Cyclops), self_destruct blows the actor up to take the target with them (the
+  Creeper; the actor dies), telekinesis lifts the target and slams them down (Mob, Jean Grey, Eleven), spin_dash
+  is a high-speed spinning charge (Sonic); use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/

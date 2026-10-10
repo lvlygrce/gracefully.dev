@@ -18,13 +18,16 @@
   const ACTIONS = ["advance", "strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
     "teleport", "transform", "summon", "stealth", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
     "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead",
-    "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "block", "dodge", "deploy_gear", "build", "heal",
+    "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole",
+    "earthquake", "tornado", "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct",
+    "telekinesis", "spin_dash", "block", "dodge", "deploy_gear", "build", "heal",
     "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
   const ATTACKS = ["strike", "combo", "shoot", "cast", "special", "annihilate", "throw", "slam", "barrage", "grab",
     "teleport", "summon", "stealth", "trap", "team_up", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
     "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor", "lullaby", "devour",
-    "portal", "freeze", "petrify", "anvil"];
+    "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado", "lightning_storm", "stretch",
+    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash"];
   // Abilities that can be used on their own, with or without a target.
   const SOLO = ["stealth", "teleport", "phase", "fly", "grow", "shrink", "time_stop"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
@@ -124,7 +127,9 @@
         if (!target && !friendly) continue;
       }
       let outcome = OUTCOMES.includes(raw.outcome) ? raw.outcome : target && !friendly ? "hit" : "none";
-      if (friendly || !target || ["advance", "taunt", "block", "dodge", "build", "transform", "regenerate"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
+      // Blowing yourself up takes you with it, so the winners' last fighter can't.
+      if (action === "self_destruct" && actor.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) action = "special";
+      if (friendly || !target || ["advance", "taunt", "block", "dodge", "build", "transform", "regenerate", "time_rewind"].includes(action)) outcome = target && action === "advance" ? outcome : "none";
       // Never knock out the winner's last fighter.
       if (outcome === "ko" && target && target.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) outcome = "hurt";
       if (outcome === "ko" && target && target.side === winSide && target === mvp) outcome = "hurt";
@@ -146,7 +151,7 @@
       });
       if (outcome === "ko" && victims) victims.forEach(k => down.add(k));
       else if (outcome === "ko" && target) down.add(target.key);
-      if (action === "fall") down.add(actor.key);
+      if (action === "fall" || action === "self_destruct") down.add(actor.key);
       if (action === "retreat" && actor.side !== winSide) down.add(actor.key);
     }
 
@@ -397,6 +402,9 @@
     let giant = null;       // a colossus rising behind its summoner: { sprite, x, y, scale, rise, alpha }
     let flyer = null;       // something passing overhead: { sprite, x, y, facing, scale }
     let portals = [];       // { x, y, r, t0, until }
+    let hole = null;        // a black hole: { x, y, r }
+    let sepiaUntil = 0;     // time running backwards
+    let cracks = [];        // ground split by an earthquake: { x, y, until }
     const tints = new Map();
     const tinted = (img, c, a) => { const k = img; let m = tints.get(k); if (!m) tints.set(k, m = new Map()); if (!m.has(c)) m.set(c, Sprite.tint(img, c, a)); return m.get(c); };
 
@@ -517,6 +525,15 @@
       if (shake > time) ctx.translate(Math.round(rnd(-2, 2)), Math.round(rnd(-2, 2)));
       ctx.drawImage(bg, 0, 0);
       drawStains();
+      for (const c of cracks) {
+        if (time > c.until) continue;
+        ctx.fillStyle = "#1d1a17";
+        for (let i = -30; i <= 30; i += 3) ctx.fillRect(Math.round(c.x + i), Math.round(c.y + Math.sin(i * 0.7) * 3), 3, 2 + (Math.abs(i) < 10 ? 2 : 0));
+      }
+      if (hole) {
+        for (let i = 4; i >= 1; i--) { ctx.fillStyle = i === 1 ? "#000000" : `rgba(122,74,192,${0.15 * i})`; ctx.beginPath(); ctx.arc(hole.x, hole.y, hole.r * i / 2, 0, Math.PI * 2); ctx.fill(); }
+        if (Math.random() < 0.6) parts.push({ x: hole.x + rnd(-40, 40), y: hole.y + rnd(-30, 30), vx: 0, vy: 0, g: 0, c: "#c8a8ff", s: 1, t0: time, life: 300 });
+      }
       for (const p of portals) {
         if (time > p.until) continue;
         const k = clamp((time - p.t0) / 300, 0, 1), spin = time / 90;
@@ -575,7 +592,7 @@
         ctx.drawImage(img, -Math.floor(img.width / 2), -(img.width - 4));
         ctx.restore();
       }
-      for (const r of rings) { const k = (time - r.t0) / r.ms; if (k < 1) { ctx.strokeStyle = r.c; ctx.globalAlpha = 1 - k; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(r.x, r.y, r.r0 + (r.r1 - r.r0) * k, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } }
+      for (const r of rings) { const k = (time - r.t0) / r.ms; if (k >= 0 && k < 1) { ctx.strokeStyle = r.c; ctx.globalAlpha = 1 - k; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(r.x, r.y, Math.max(0, r.r0 + (r.r1 - r.r0) * k), 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1; } }
       rings = rings.filter(r => time - r.t0 < r.ms);
       for (const s of shots) drawShot(s);
       for (const p of parts) {
@@ -598,6 +615,12 @@
         ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale);
         ctx.drawImage(img, -Math.floor(img.width / 2), -(img.width - 4));
         ctx.restore();
+      }
+      // Time running backwards: the picture goes sepia and scratchy.
+      if (sepiaUntil > time) {
+        ctx.save(); ctx.globalCompositeOperation = "saturation"; ctx.fillStyle = "#808080"; ctx.fillRect(0, 0, W, H);
+        ctx.globalCompositeOperation = "multiply"; ctx.fillStyle = "#e8c890"; ctx.fillRect(0, 0, W, H); ctx.restore();
+        ctx.fillStyle = "rgba(255,255,255,0.35)"; for (let i = 0; i < 4; i++) ctx.fillRect(Math.round(rnd(0, W)), 0, 1, H);
       }
       // Bent reality: the picture ripples in slices and its colours flip.
       if (warpUntil > time) {
@@ -633,6 +656,11 @@
           break; }
         case "anvil": { const px = Math.round(x), py = Math.round(y); ctx.fillStyle = "#3a3f45"; ctx.fillRect(px - 7, py - 6, 14, 3); ctx.fillRect(px - 4, py - 3, 8, 4); ctx.fillRect(px - 6, py + 1, 12, 3);
           ctx.fillStyle = "#ffffff"; ctx.fillRect(px - 7, py - 6, 14, 1); break; }
+        case "tornado": { for (let i = 0; i < 9; i++) { const w = 4 + i * 2.2, yy = y - i * 4; ctx.fillStyle = i % 2 ? "rgba(216,243,230,0.85)" : "rgba(160,190,175,0.85)"; ctx.fillRect(Math.round(x - w / 2 + Math.sin(time / 60 + i) * 2), Math.round(yy), Math.round(w), 3); } break; }
+        case "eyes": { ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(lerp(s.x0, s.x1, Math.min(1, k * 2)), lerp(s.y0, s.y1, Math.min(1, k * 2)));
+          ctx.moveTo(s.x0, s.y0 + 2); ctx.lineTo(lerp(s.x0, s.x1, Math.min(1, k * 2)), lerp(s.y0, s.y1, Math.min(1, k * 2)) + 2); ctx.stroke(); ctx.globalAlpha = 1; break; }
+        case "arm": { ctx.strokeStyle = s.c; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(s.x0, s.y0); ctx.lineTo(x, y); ctx.stroke(); ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 2, Math.round(y) - 2, 5, 5); break; }
+        case "drain": for (let i = 0; i < 5; i++) { const kk = (k + i * 0.18) % 1; ctx.fillStyle = s.c; ctx.fillRect(Math.round(lerp(s.x0, s.x1, kk)), Math.round(lerp(s.y0, s.y1, kk) + Math.sin(kk * 9) * 3), 2, 2); } break;
         case "note": { const px = Math.round(x), py = Math.round(y + Math.sin(time / 120 + s.x0) * 3); ctx.fillStyle = s.c; ctx.fillRect(px, py, 3, 2); ctx.fillRect(px + 2, py - 6, 1, 6); break; }
         case "rock": ctx.fillStyle = s.c; ctx.fillRect(Math.round(x) - 3, Math.round(y) - 3, 6, 5); break;
         case "gear": drawGear(ctx, s.look, s.c, x, y + 4, time); break;
@@ -1385,6 +1413,150 @@
           setPose(actor, "idle");
           break;
         }
+        case "shout": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_shout", 1);
+          for (let i = 0; i < 4; i++) { rings.push({ x: centre(actor).x + actor.facing * 8, y: centre(actor).y, r0: 4, r1: 90, c: i % 2 ? "#ffffff" : FX[b.effect] || "#d8f3e6", t0: time + i * 90, ms: 600 }); }
+          shake = time + 600; await wait(450);
+          const blown = fighters.filter(f => f !== target && f.side !== actor.side && !f.downed && Math.abs(f.pos.y - target.pos.y) < 30);
+          await Promise.all([land(target, b.outcome, "wind", actor), ...blown.slice(0, 2).map(f => land(f, "hurt", "wind", actor))]);
+          setPose(actor, "idle");
+          break;
+        }
+        case "black_hole": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_warp", 1);
+          hole = { x: target.pos.x, y: target.pos.y - 30, r: 2 };
+          await tween(hole, { r: 14 }, 500);
+          await Promise.all([tween(target.pos, { x: hole.x, y: hole.y + 18 }, 700), tween(target, { scale: 0.5, hop: -10 }, 700)]);
+          if (b.outcome === "ko") { await tween(target, { scale: 0.05, alpha: 0 }, 300); target.downed = true; target.dead = true; setHp(target, 0); sfx("b_death", 0.5); }
+          else { await Promise.all([tween(target, { scale: 1, hop: 0 }, 300), tween(target.pos, { x: target.home.x, y: target.home.y }, 300)]); await land(target, b.outcome, "dark", actor); }
+          await tween(hole, { r: 0 }, 300); hole = null;
+          setPose(actor, "idle");
+          break;
+        }
+        case "earthquake": {
+          if (!target) break;
+          setPose(actor, "strike"); sfx("b_quake", 1); shake = time + 1400;
+          const crack = { x: target.pos.x, y: target.pos.y + 2, until: time + 99999 }; cracks.push(crack);
+          for (let i = 0; i < 10; i++) { burst(target.pos.x + rnd(-30, 30), target.pos.y, "earth", 3); await wait(80); }
+          const shaken = fighters.filter(f => f !== target && f.side !== actor.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 45);
+          await Promise.all([land(target, b.outcome, "earth", actor), ...shaken.map(f => land(f, "hurt", "earth", actor))]);
+          crack.until = time + 2500;
+          setPose(actor, "idle");
+          break;
+        }
+        case "tornado": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_wind", 1);
+          const tw = { kind: "tornado", x0: actor.pos.x + actor.facing * 20, y0: actor.pos.y, x1: target.pos.x, y1: target.pos.y, c: "#d8f3e6", t0: time, ms: 900 };
+          shots.push(tw); await wait(900);
+          await tween(target, { hop: -40 }, 400);
+          tw.x0 = tw.x1 = target.pos.x; tw.y0 = tw.y1 = target.pos.y; tw.t0 = time; tw.ms = 600;
+          await wait(500); shots = shots.filter(q => q !== tw);
+          await tween(target, { hop: 0 }, 300, t => t * t);
+          await land(target, b.outcome, "wind", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "lightning_storm": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_charge", 0.8);
+          flash = { c: "#1a1a3a", until: time + 1800, ms: 1800 };
+          const foes = fighters.filter(f => f.side !== actor.side && !f.downed);
+          for (let i = 0; i < 7; i++) {
+            const f = i % 3 === 0 ? target : foes[i % foes.length] || target;
+            const bolt = { kind: "bolt", x0: f.pos.x + rnd(-10, 10), y0: 0, x1: f.pos.x, y1: f.pos.y - 4, c: "#ffe14d", t0: time, ms: 220 };
+            shots.push(bolt); sfx("b_beam", 0.5);
+            setTimeout(() => { shots = shots.filter(q => q !== bolt); }, 240);
+            burst(f.pos.x, f.pos.y - 4, "lightning", 6);
+            await wait(170);
+          }
+          shake = time + 300;
+          const others = foes.filter(f => f !== target).slice(0, 2);
+          await Promise.all([land(target, b.outcome, "lightning", actor), ...others.map(f => land(f, "hurt", "lightning", actor))]);
+          setPose(actor, "idle");
+          break;
+        }
+        case "time_rewind": {
+          setPose(actor, "cast"); sfx("b_rewind", 1);
+          sepiaUntil = time + 1600;
+          stains.splice(Math.max(0, stains.length - 6));   // the latest blood runs backwards
+          for (let i = 0; i < 6; i++) { burst(centre(actor).x, centre(actor).y, "light", 4); await wait(180); }
+          setHp(actor, 100); damageNumber(actor, "rewound", "#e8c890");
+          await wait(500); setPose(actor, "idle");
+          break;
+        }
+        case "stretch": {
+          if (!target) break;
+          setPose(actor, "windup"); await wait(250);
+          setPose(actor, "strike"); sfx("b_whoosh", 0.8);
+          const arm = { kind: "arm", x0: centre(actor).x + actor.facing * 6, y0: centre(actor).y, x1: centre(target).x, y1: centre(target).y, c: actor.sprite.spec.skin, t0: time, ms: 300 };
+          shots.push(arm); await wait(300); sfx("b_punch", 1);
+          burst(centre(target).x, centre(target).y, "impact", 12);
+          shots = shots.filter(q => q !== arm);
+          await land(target, b.outcome, "impact", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "drain": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_drain", 1);
+          const d = { kind: "drain", x0: centre(target).x, y0: centre(target).y, x1: centre(actor).x, y1: centre(actor).y, c: b.effect === "psychic" ? "#ff6ad5" : "#c0262f", t0: time, ms: 1400 };
+          shots.push(d); target.flashUntil = time + 1400;
+          await wait(1400); shots = shots.filter(q => q !== d);
+          setHp(actor, actor.hp + 25); damageNumber(actor, "+25", "#6aff8a");
+          await land(target, b.outcome, b.effect !== "none" ? b.effect : "blood", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "laser_eyes": {
+          if (!target) break;
+          setPose(actor, "shoot"); sfx("b_beam", 1);
+          const eyes = { kind: "eyes", x0: centre(actor).x + actor.facing * 3, y0: actor.pos.y - (actor.sprite.size * 24 - 2), x1: centre(target).x, y1: centre(target).y, c: FX[b.effect] && b.effect !== "none" ? FX[b.effect] : "#ff3a2a", t0: time, ms: 700 };
+          shots.push(eyes); await wait(700); shots = shots.filter(q => q !== eyes);
+          burst(centre(target).x, centre(target).y, "fire", 14);
+          await land(target, b.outcome, "fire", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "self_destruct": {
+          if (!target) break;
+          await approach(actor, target);
+          sfx("b_charge", 0.8);
+          for (let i = 0; i < 6; i++) { actor.flashUntil = time + 120; actor.scale = 1 + i * 0.05; await wait(160); }
+          sfx("b_boom", 1); flash = { c: "#ffffff", until: time + 300, ms: 300 }; shake = time + 800;
+          burst(centre(actor).x, centre(actor).y, "explosion", 40, true);
+          rings.push({ x: centre(actor).x, y: centre(actor).y, r0: 4, r1: 60, c: "#ff9a2a", t0: time, ms: 600 });
+          stains.push({ x: actor.pos.x, y: actor.pos.y + 2, r: 0, max: 18, c: "#2a2420", t0: time, pool: true });
+          actor.alpha = 0; actor.downed = true; actor.dead = true; setHp(actor, 0);
+          await land(target, b.outcome, "explosion", actor);
+          break;
+        }
+        case "telekinesis": {
+          if (!target) break;
+          setPose(actor, "cast"); sfx("b_psychic", 1);
+          for (let i = 0; i < 3; i++) rings.push({ x: centre(target).x, y: centre(target).y, r0: 12, r1: 4, c: "#ff6ad5", t0: time + i * 120, ms: 400 });
+          await tween(target, { hop: -46 }, 700);
+          await wait(250);
+          sfx("b_slam", 0.5);
+          await tween(target, { hop: 0 }, 180, t => t * t);
+          shake = time + 400; burst(target.pos.x, target.pos.y - 2, "earth", 18, true);
+          await land(target, b.outcome, "psychic", actor);
+          setPose(actor, "idle");
+          break;
+        }
+        case "spin_dash": {
+          if (!target) break;
+          sfx("b_spin", 1);
+          setPose(actor, "hurt");
+          for (let i = 0; i < 4; i++) { burst(actor.pos.x - actor.facing * 6, actor.pos.y - 4, "smoke", 3); await wait(90); }
+          await tween(actor.pos, { x: target.pos.x + actor.facing * 10, y: target.pos.y }, 260, t => t);
+          sfx("b_punch", 1); burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "impact", 14);
+          await land(target, b.outcome, "impact", actor);
+          await goHome(actor);
+          break;
+        }
         case "taunt":
           setPose(actor, "victory"); actor.hop = -4; await wait(240); actor.hop = 0; await wait(500); setPose(actor, "idle");
           break;
@@ -1418,7 +1590,9 @@
         foresee: "sees the attack coming and counters", mind_control: "seizes the mind of", clone: "sends copies at", shapeshift: "disguises as",
         summon_dragon: "calls a dragon down on", summon_giant: "summons a colossus against", raise_dead: "raises the dead against", stampede: "stampedes through",
         airstrike: "calls an airstrike on", meteor: "drops a meteor on", lullaby: "sings to sleep", devour: "devours", portal: "drops a portal under",
-        freeze: "freezes", petrify: "turns to stone", anvil: "drops an anvil on",
+        freeze: "freezes", petrify: "turns to stone", anvil: "drops an anvil on", shout: "screams at", black_hole: "opens a black hole under",
+        earthquake: "splits the ground under", tornado: "whips a tornado at", lightning_storm: "calls a lightning storm on", time_rewind: "turns back time",
+        stretch: "stretches a punch at", drain: "drains", laser_eyes: "burns", self_destruct: "self-destructs on", telekinesis: "lifts and slams", spin_dash: "spin-dashes into",
         regenerate: "regenerates", phase: "phases", fly: "takes to the air", grow: "grows huge", shrink: "shrinks down", reality_warp: "bends reality around", block: "braces",
         dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
         team_up: "teams up against", taunt: "taunts the enemy", retreat: "retreats", fall: "falls" };
@@ -1470,7 +1644,7 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
-      skipping = true; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = [];
+      skipping = true; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();

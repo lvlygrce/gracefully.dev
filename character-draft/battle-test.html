@@ -15,6 +15,8 @@
 </head>
 <body>
   <div id="stage"></div>
+  <!-- Test page only: keep drawing even when this tab is hidden. -->
+  <script>window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 30); window.cancelAnimationFrame = id => clearTimeout(id);</script>
   <script>document.write('<script src="characters.js?t=' + Date.now() + '"><\/script>')</script>
   <script>document.write('<script src="sprites.js?t=' + Date.now() + '"><\/script>')</script>
   <script>document.write('<script src="sprite.js?t=' + Date.now() + '"><\/script>')</script>
@@ -23,23 +25,24 @@
     const U = window.UNIVERSES;
     const ch = (world, name) => ({ world, name, note: (U[world].characters.find(c => c[0] === name) || [])[1] || "" });
     const teams = [
-      { name: "Grace", roster: [ch("westeros", "Daenerys Targaryen"), ch("anime", "Yugi Muto"), ch("westeros", "The Night King"), ch("pokemon", "Jigglypuff"), ch("smash", "Kirby")] },
-      { name: "Sam", roster: [ch("shows", "Elsa"), ch("shows", "Rick Sanchez"), ch("shows", "Wile E. Coyote"), ch("famous", "ANZAC Forces"), ch("westeros", "Dothraki Horde")] },
+      { name: "Grace", roster: [ch("dc", "Superman"), ch("dc", "Black Canary"), ch("marvel", "Storm"), ch("anime", "Shigeo Kageyama"), ch("smash", "Sonic")] },
+      { name: "Sam", roster: [ch("anime", "Monkey D. Luffy"), ch("marvel", "Rogue"), ch("minecraft", "Creeper"), ch("mha", "Eri"), ch("anime", "Frieza")] },
     ];
     const verdict = {
-      winner: "Grace", mvp: "Yugi Muto", verdict: "Exodia ended it.", turning_point: "Yugi assembles Exodia.", preps: [],
+      winner: "Grace", mvp: "Superman", verdict: "Test.", turning_point: "Mob lifts Frieza.", preps: [],
       beats: [
-        { actor: "Elsa", action: "freeze", move: "Let it go", target: "Kirby", effect: "ice", outcome: "hit", caption: "Elsa locks Kirby in ice.", line: "" },
-        { actor: "Daenerys Targaryen", action: "summon_dragon", move: "Dracarys", target: "Dothraki Horde", effect: "fire", outcome: "ko", caption: "Drogon answers his mother's call.", line: "Dracarys!" },
-        { actor: "The Night King", action: "raise_dead", move: "Rise", target: "ANZAC Forces", effect: "ice", outcome: "hit", caption: "The burned horde rises again, blue-eyed.", line: "" },
-        { actor: "ANZAC Forces", action: "airstrike", move: "Close air support", target: "The Night King", effect: "explosion", outcome: "hit", caption: "Bombers roar over the field.", line: "" },
-        { actor: "Rick Sanchez", action: "portal", move: "Portal gun", target: "Jigglypuff", effect: "tech", outcome: "hit", caption: "Rick drops Jigglypuff through a portal.", line: "Wubba lubba dub dub!" },
-        { actor: "Jigglypuff", action: "lullaby", move: "Sing", target: "Rick Sanchez", effect: "psychic", outcome: "hit", caption: "Jigglypuff sings Rick to sleep.", line: "Jiggly…" },
-        { actor: "Wile E. Coyote", action: "anvil", move: "ACME anvil", target: "Daenerys Targaryen", effect: "impact", outcome: "hurt", caption: "An ACME anvil falls from nowhere.", line: "" },
-        { actor: "Kirby", action: "devour", move: "Inhale", target: "Wile E. Coyote", effect: "none", outcome: "ko", caption: "Kirby inhales the coyote whole.", line: "Poyo!" },
-        { actor: "Elsa", action: "petrify", move: "Frozen heart", target: "The Night King", effect: "ice", outcome: "hit", caption: "Elsa's curse turns the Night King to stone, briefly.", line: "" },
-        { actor: "Yugi Muto", action: "summon_giant", move: "Exodia, Obliterate!", target: "ANZAC Forces", effect: "light", outcome: "ko", caption: "All five pieces: Exodia rises.", line: "Exodia, obliterate!" },
-        { actor: "Daenerys Targaryen", action: "meteor", move: "Fire from the sky", target: "Elsa", effect: "fire", outcome: "ko", caption: "Fire falls from the sky on Elsa.", line: "" },
+        { actor: "Black Canary", action: "shout", move: "Canary Cry", target: "Luffy", effect: "wind", outcome: "hit", caption: "Canary Cry.", line: "" },
+        { actor: "Monkey D. Luffy", action: "stretch", move: "Gum-Gum Pistol", target: "Sonic", effect: "impact", outcome: "hit", caption: "Gum-Gum Pistol!", line: "" },
+        { actor: "Sonic", action: "spin_dash", move: "Spin Dash", target: "Rogue", effect: "impact", outcome: "hit", caption: "Sonic spin-dashes.", line: "" },
+        { actor: "Rogue", action: "drain", move: "Absorb", target: "Superman", effect: "psychic", outcome: "hurt", caption: "Rogue drains Superman.", line: "" },
+        { actor: "Superman", action: "laser_eyes", move: "Heat Vision", target: "Rogue", effect: "fire", outcome: "ko", caption: "Heat vision.", line: "" },
+        { actor: "Eri", action: "time_rewind", move: "Rewind", target: "none", effect: "none", outcome: "none", caption: "Eri turns back time.", line: "" },
+        { actor: "Storm", action: "lightning_storm", move: "Storm", target: "Frieza", effect: "lightning", outcome: "hit", caption: "Storm calls lightning.", line: "" },
+        { actor: "Frieza", action: "black_hole", move: "Supernova", target: "Storm", effect: "dark", outcome: "hit", caption: "A black hole opens.", line: "" },
+        { actor: "Storm", action: "tornado", move: "Tornado", target: "Eri", effect: "wind", outcome: "hit", caption: "A tornado.", line: "" },
+        { actor: "Superman", action: "earthquake", move: "Ground stomp", target: "Luffy", effect: "earth", outcome: "ko", caption: "The ground splits.", line: "" },
+        { actor: "Creeper", action: "self_destruct", move: "Sssss", target: "Sonic", effect: "explosion", outcome: "hit", caption: "The Creeper explodes.", line: "" },
+        { actor: "Shigeo Kageyama", action: "telekinesis", move: "100%", target: "Frieza", effect: "psychic", outcome: "ko", caption: "Mob lifts Frieza.", line: "" },
       ],
     };
     if (location.search.includes("real")) {
