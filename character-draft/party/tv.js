@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  const { connect, clock, safe, esc, picture, fitter } = window.Party;
+  const { connect, clock, safe, esc, picture, fitter, judgeProgress } = window.Party;
   // Everything fits the TV: text and pictures shrink rather than scroll.
   const fit = fitter(() => Math.min(30, Math.max(15, window.innerWidth * 0.0112)), 8);
   const U = window.UNIVERSES;
@@ -181,6 +181,7 @@
     if (WATCH || !judging.matchId) return;
     const b = judging.battle;
     net.send({ t: "host:show", show: { matchId: judging.matchId, status: judging.status, error: judging.error, preps: judging.preps,
+      teams: judging.teams || null, arena: judging.arena || null,
       battle: b ? { teams: b.teams, verdict: b.verdict, arena: b.arena } : null } });
   }
   function applyShow(sh, quiet) {
@@ -189,6 +190,7 @@
     if (fresh) judging = { matchId: sh.matchId, preps: [null, null], status: "", error: "", film: null, pending: null, sent: true };
     const changed = fresh || (sh.error || "") !== judging.error || JSON.stringify(sh.preps) !== JSON.stringify(judging.preps);
     judging.preps = sh.preps || [null, null];
+    if (sh.teams) { judging.teams = sh.teams; judging.arena = sh.arena || null; }
     judging.status = sh.status || "";
     judging.error = sh.error || "";
     let battle = false;
@@ -200,7 +202,7 @@
     if (quiet) return;   // a state message is about to redraw anyway
     const m = state && state.match;
     if (!m || state.phase !== "match" || m.id !== sh.matchId || m.stage !== "judging") return;
-    if (battle || changed) return render(true);
+    if ((battle && !judging.councilCtl) || changed) return render(true);
     const el = document.getElementById("judge-status");
     if (el) el.textContent = judging.status;
   }
@@ -384,6 +386,15 @@
               ${opt("battle8", "on", "As an 8-bit battle, then the winner", prefs.battle8)}
               ${opt("battle8", "off", "Straight to the winner", !prefs.battle8)}
             </div>
+          </fieldset>
+          <fieldset>
+            <legend>Narrate the battles</legend>
+            <div class="opts">
+              ${opt("narration", "off", "No voice", Narrator.mode === "off")}
+              ${opt("narration", "browser", "This computer's voice (free)", Narrator.mode === "browser")}
+              ${opt("narration", "eleven", "ElevenLabs voice", Narrator.mode === "eleven")}
+            </div>
+            <p class="muted" id="narration-note" style="margin-top:.3rem"></p>
           </fieldset>` : ""}
           <fieldset>
             <legend>Film the fights</legend>
@@ -432,6 +443,11 @@
     }));
     if (prefs.film !== "off") priceFilms();
     app.querySelectorAll('[name="battle8"]').forEach(i => i.addEventListener("change", () => { prefs.battle8 = i.value === "on"; savePrefs(); }));
+    app.querySelectorAll('[name="narration"]').forEach(i => i.addEventListener("change", () => {
+      Narrator.set(i.value); narrationNote();
+      if (i.value !== "off") { Sound.unlock(); Narrator.speak(i.value === "eleven" ? "The ElevenLabs voice will narrate the battles." : "This voice will narrate the battles."); }
+    }));
+    narrationNote();
     app.querySelectorAll('[name="sound"]').forEach(i => i.addEventListener("change", () => setSound(i.value)));
     app.querySelectorAll('[name="announce"]').forEach(i => i.addEventListener("change", () => {
       prefs.announceNames = i.value === "on"; savePrefs();
@@ -517,7 +533,20 @@
     cloud.querySelectorAll("[data-kick]").forEach(b => b.addEventListener("click", () => net.send({ t: "host:kick", playerId: b.dataset.kick })));
   }
 
+  // What narration will cost, for the players in the room: a knockout of n
+  // teams is n − 1 fights.
+  function narrationNote() {
+    const el = document.getElementById("narration-note");
+    if (!el) return;
+    const fights = Math.max(1, (state ? state.players.length : 2) - 1);
+    el.textContent = Narrator.mode === "eleven"
+      ? `Reads the plans, gear, every beat and the verdict. ${Narrator.estimate(fights).text.replace(/^./, c => c.toUpperCase())}. Needs the PIN.`
+      : Narrator.mode === "browser" ? "Reads the plans, gear, every beat and the verdict, free, in the voice built into this computer's browser."
+      : "";
+  }
+
   function updateStart() {
+    narrationNote();
     const b = document.getElementById("start");
     if (!b) return;
     const needKey = prefs.judge === "gemini" && !J.gemini.ready() && !(document.getElementById("key") || {}).value;
@@ -779,7 +808,7 @@
       middle = `<div class="topline"><p class="title title--md">Vote on your phones<span class="accent">.</span> <span class="hand" id="voted">${m.voted} of ${m.voters} voted</span></p>
         <span class="timer" data-ends="${m.endsAt}" data-fmt="{s}"></span></div>
         <div class="bar"><span data-bar="${m.endsAt}" data-total="${s.settings.voteSeconds}"></span></div>`;
-    } else if (m.stage === "judging" && judging.matchId === m.id && judging.battle) {
+    } else if (m.stage === "judging" && judging.matchId === m.id && judging.battle && !judging.councilCtl) {
       // Rebuilding the screen keeps the same battle going rather than restarting it.
       const b = judging.battle;
       app.innerHTML = `<p class="hand">${esc(player(m.a).name)} vs ${esc(player(m.b).name)}${m.final ? " · the final" : ""}</p>`;
@@ -788,6 +817,7 @@
         b.el.className = "tv-film tv-film--full tv-battle";
         app.appendChild(b.el);
         b.ctl = filmCtl = Battle.player(b.el, { teams: b.teams, verdict: b.verdict, arena: b.arena, worldName: w => (U[w] || {}).name || w }, {
+          skipCouncil: !!judging.councilPlayed,
           onState: st => {
             if (judging.battle !== b) return;
             if (st === "playing") net.send({ t: "host:film", matchId: m.id, film: "playing" });
@@ -817,7 +847,9 @@
       return;
     } else if (m.stage === "judging") {
       const f = judging.matchId === m.id && judging.film;
-      middle = `<p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
+      middle = `${judging.matchId === m.id && (judging.councilEl || councilsReady()) && !f ? `<div id="council-live" class="tv-film tv-battle"></div>` : ""}
+        <p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
+        ${f || (judging.matchId === m.id && judging.error) ? "" : `<div class="bar judge-bar"><span data-judge-bar></span></div><p class="hand" data-judge-text></p>`}
         ${f ? `${Film.makingBar(f.startedAt, f.shots.length)}<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
           <button class="btn btn--quiet" type="button" id="skip-film">Skip the film</button>` : ""}
         ${judging.matchId === m.id && judging.error ? `<p class="warn">${esc(judging.error)}</p>
@@ -856,6 +888,7 @@
     on("retry", () => { judging.matchId = null; maybeJudge(); });
     on("crowd", () => net.send({ t: "host:crowd" }));
     on("skip-film", () => { if (judging.film) judging.film.skip = true; net.send({ t: "host:film", matchId: m.id, film: null }); finishJudged(); });
+    mountCouncils();
     if (m.stage === "vote") announce(`${player(m.a).name} against ${player(m.b).name}. Vote on your phones.`);
     if (m.stage === "result") announce(`${player(m.winner).name} wins.`);
   }
@@ -935,13 +968,39 @@
   // The fight as an 8-bit battle on this screen, then the result. The admin's
   // phone can pause or skip it, just like a film.
   const fights = new Map();   // matchId -> { teams, verdict, arena }, for replays and reasoning
+
+  /* The war councils play as soon as both plans are in, while the judge is
+     still deciding the fight; the battle then starts straight after them. */
+  const councilsReady = () => prefs.battle8 && judging.teams && judging.preps[0] && judging.preps[1] && !judging.film;
+  function mountCouncils() {
+    const slot = document.getElementById("council-live");
+    if (!slot) return;
+    if (judging.councilEl) return slot.replaceWith(judging.councilEl);
+    if (!councilsReady() || judging.councilPlayed) return slot.remove();
+    const preps = judging.preps, teams = judging.teams;
+    const attack = preps.findIndex(p => p && p.stance === "attack");
+    const verdict = { preps, attacker: teams[Math.max(0, attack)].name, winner: teams[0].name, beats: [] };
+    const el = document.createElement("div");
+    el.id = "council-live"; el.className = slot.className;
+    slot.replaceWith(el);
+    const matchId = judging.matchId;
+    judging.councilEl = el;
+    judging.councilCtl = Battle.player(el, { teams, verdict, arena: judging.arena, worldName: w => (U[w] || {}).name || w }, {
+      councilOnly: true,
+      onEnd: () => {
+        if (judging.matchId !== matchId) return;
+        judging.councilPlayed = true; judging.councilCtl = null; judging.councilEl = null;
+        render(true);   // on to the battle, if the judge has finished
+      },
+    });
+  }
   function showBattle(matchId, teams, v, arena) {
     fights.set(matchId, { teams, verdict: v, arena });
     if (!prefs.battle8 || judging.matchId !== matchId) return finishJudged();
     judging.battle = { teams, verdict: v, arena, el: null, ctl: null };
     shareShow();
     net.send({ t: "host:film", matchId, film: "playing" });
-    render(true);
+    if (!judging.councilCtl) render(true);   // else the battle follows the councils
   }
 
   function finishJudged() {
@@ -963,6 +1022,7 @@
     const teams = [teamFor(m.a), teamFor(m.b)];
     const a = state.arena;
     const arena = a ? { name: a.name, terrain: a.terrain, world: a.world, image: a.image } : null;
+    judging.teams = teams; judging.arena = arena;
     const setStatus = (t) => {
       if (judging.matchId !== matchId) return;
       judging.status = t;
@@ -981,6 +1041,7 @@
           if (judging.matchId !== matchId) return;
           judging.preps[i] = prep;
           shareShow();
+          if (councilsReady() && !judging.councilEl && !judging.councilPlayed) render(true);
           const el = document.getElementById(`side-${i}`);
           if (el) el.outerHTML = sideHtml(i === 0 ? m.a : m.b, i);
         },
@@ -1089,6 +1150,13 @@
       const left = clock.left(Number(el.dataset.bar));
       el.style.width = `${Math.max(0, Math.min(100, (left / Number(el.dataset.total)) * 100))}%`;
     });
+    const jb = document.querySelector("[data-judge-bar]");
+    if (jb && state && state.match) {
+      const pr = judgeProgress(state.match);
+      jb.style.width = `${pr.pct}%`;
+      const t = document.querySelector("[data-judge-text]");
+      if (t) t.textContent = pr.text;
+    }
   }
   setInterval(() => { tick(); tickSound(); }, 250);
 

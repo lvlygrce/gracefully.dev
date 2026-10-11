@@ -13,7 +13,8 @@
   overflow: hidden;
   border-radius: 10px;
   background: #17120e;
-  font-family: "Pixelify Sans", ui-monospace, monospace;
+  font-family: "Jersey 10", "VT323", ui-monospace, monospace;
+  letter-spacing: 0.03em;
   color: var(--b8-ink);
   user-select: none;
   container-type: inline-size;

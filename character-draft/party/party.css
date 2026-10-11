@@ -480,3 +480,6 @@ html.watching .lobby { grid-template-columns: 1fr; }
   pointer-events: none;
 }
 .watchers { color: var(--ink-muted); }
+.judge-bar { margin-top: var(--space-xs); }
+.judge-bar span { display: block; height: 100%; transition: width 0.25s linear; }
+.judge-bar { height: 0.9rem; }

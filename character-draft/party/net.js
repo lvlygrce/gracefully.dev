@@ -58,7 +58,25 @@
   const clock = {
     sync(serverNow) { if (serverNow) skew = serverNow - Date.now(); },
     left(endsAt) { return Math.max(0, Math.ceil((endsAt - (Date.now() + skew)) / 1000)); },
+    now() { return Date.now() + skew; },
   };
+
+  /* How far along the AI judge is, for the waiting screens: the two war
+     councils, then the battle. Timed from when judging began, nudged on as
+     each step reports in; it never claims to be done until it is. */
+  const JUDGE_SECONDS = 55;
+  function judgeProgress(m) {
+    const j = (m && m.judge) || {};
+    if (j.battle) return { pct: 100, text: "The judge has decided: the battle is on the TV." };
+    const elapsed = m && m.since ? (clock.now() - m.since) / 1000 : 0;
+    let pct = Math.min(94, (elapsed / JUDGE_SECONDS) * 100);
+    const councils = j.councils || 0;
+    if (councils >= 1) pct = Math.max(pct, 30);
+    if (councils >= 2) pct = Math.max(pct, 55);
+    const left = Math.max(5, Math.round(JUDGE_SECONDS * (1 - pct / 100)));
+    const step = councils < 2 ? `The war councils are planning (${councils} of 2 ready)` : "The judge is deciding the fight";
+    return { pct, text: `${step} · about ${left} seconds to go` };
+  }
 
   const safe = {
     get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
@@ -104,5 +122,5 @@
     return soon;
   }
 
-  window.Party = { connect, clock, safe, esc, picture, fitter, SERVER };
+  window.Party = { connect, clock, safe, esc, picture, fitter, SERVER, judgeProgress };
 })();

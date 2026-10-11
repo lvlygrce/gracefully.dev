@@ -1130,6 +1130,7 @@
       const gearItem = b.gear ? gearList.find(g => g.name === b.gear) : null;
       const effect = b.effect !== "none" ? b.effect : actor.sprite.spec.element !== "none" ? actor.sprite.spec.element : "impact";
       caption.textContent = b.caption || describe(b, actor, target);
+      const said = voice(beatLine(b));
       say(actor, b.line);
       if (b.callout) callout(b.callout, gearItem);
       else if (gearItem && !announced.has(gearItem.name)) callout(`${actor.name} brings out the ${gearItem.name}`, gearItem);
@@ -2249,6 +2250,7 @@
       const need = Math.max(2300, (caption.textContent.length || 0) * 50);
       const spent = time - t0;
       if (spent < need) await wait(need - spent);
+      await heard(said);
     }
 
     const gearList = (verdict.preps || []).flatMap((p, side) => (p && p.gear || []).map(g => { const look = gearLook(g); return { name: g.name, side, look, colour: gearColour(g, look), carried_by: g.carried_by || "", effect: g.effect || "" }; }));
@@ -2460,9 +2462,32 @@
     const councilEl = root.querySelector(".b8__council");
     const cText = councilEl.querySelector(".b8__council-text"), cHead = councilEl.querySelector(".b8__council-head");
     councilEl.querySelector(".b8__council-skip").addEventListener("click", () => {
-      councilSkip = true; waits.splice(0).forEach(w => w.res());
+      councilSkip = true; if (N) N.stop(); waits.splice(0).forEach(w => w.res());
     });
     const cwait = ms => councilSkip ? Promise.resolve() : wait(ms);
+
+    /* Narration (narrator.js): the same lines the screen shows, read aloud,
+       and the battle waits for each to finish (never more than 25 seconds). */
+    const N = opts.silent ? null : window.Narrator;
+    const voice = t => (N && N.on() && !skipping && t) ? N.speak(t) : Promise.resolve();
+    const heard = p => skipping ? Promise.resolve() : Promise.race([p, wait(25000)]);
+    const cheard = p => councilSkip ? Promise.resolve() : heard(p);
+    const planLines = prep => (String(prep.plan || "").match(/[^.!?]+[.!?]*/g) || []).map(x => x.trim()).filter(Boolean);
+    const councilIntro = (side, prep) => {
+      const lead = prep && fighters.find(f => f.side === side && (norm(f.name) === norm(prep.leader) || norm(f.key) === norm(prep.leader)));
+      return `${teams[side].name}'s war council, ${side === attackSide ? "attacking" : "defending"}${lead ? `, led by ${lead.name}` : ""}.`;
+    };
+    const gearLine = g => `${/^(already theirs|scavenged)$/i.test(String(g.made_by || "").trim()) ? "Gear" : "New gear"}: ${g.name}. ${g.effect || ""}`;
+    const mapLine = () => arena ? `${arena.name}: ${teams[attackSide].name}'s team attacks, ${teams[defSide].name}'s team holds ${verdict.defences || "its ground"}.` : "";
+    const beatLine = b => [b.caption || describe(b, byKey(b.actor), b.target ? byKey(b.target) : null), b.callout].filter(Boolean).join(". ");
+    const winLine = () => `${teams[winSide].name}'s team wins. ${verdict.verdict || ""}`;
+    // With ElevenLabs, fetch every line ahead so each plays the moment it's needed.
+    if (N && N.mode === "eleven") {
+      const pre = [];
+      if (!opts.skipCouncil) [attackSide, defSide].forEach(sd => { const pr = (verdict.preps || [])[sd]; if (pr) pre.push(councilIntro(sd, pr), ...planLines(pr), ...(pr.gear || []).map(gearLine)); });
+      if (!opts.councilOnly) { pre.push(mapLine(), ...beats.map(beatLine), winLine()); }
+      N.prefetch(pre);
+    }
 
     const TENT = [["#5a2a22", "#4a221c", "#6b3328"], ["#22344a", "#1b2a3d", "#2b4260"]];
     function drawCouncil() {
@@ -2560,7 +2585,8 @@
       councilEl.hidden = false; councilEl.classList.remove("is-leaving"); root.classList.add("is-council");
       sfx("b_council", 0.8);
       caption.textContent = `${team.name}'s team plans its ${stance === "attacking" ? "attack" : "defence"}.`;
-      await cwait(1300);
+      const intro = voice(councilIntro(side, prep));
+      await Promise.all([cwait(1300), cheard(intro)]);
       // The plan, a sentence at a time, with the leader pointing at the map.
       const lines = String(prep.plan || "").match(/[^.!?]+[.!?]*/g) || [];
       const lm = council.members.find(m => m.leader);
@@ -2569,8 +2595,9 @@
         if (lm) { lm.pose = i % 2 ? "cast" : "windup"; lm.poseT = time; }
         council.plan = (i + 1) / lines.length;
         const s = lines[i].trim();
+        const said = voice(s);
         await typeOut(`<span class="b8__council-label">the plan</span><span data-type></span>`, s);
-        await cwait(900 + s.length * 12);
+        await Promise.all([cwait(900 + s.length * 12), cheard(said)]);
       }
       if (lm) lm.pose = "idle";
       // The gear, piece by piece.
@@ -2585,11 +2612,12 @@
           for (let i = 0; i < 3; i++) { sfx("b_forge", 0.5, 1 + i * 0.05); burst(W / 2, 70, "lightning", 6); maker.pose = i % 2 ? "windup" : "strike"; maker.poseT = time; await cwait(220); }
           maker.pose = "idle";
         } else sfx("b_equip", 0.8);
+        const gearSaid = voice(gearLine(g));
         const who = [maker ? `built by ${esc(maker.f.name)}` : esc(g.made_by === "scavenged" ? "scavenged" : "already theirs"), carrier ? `carried by ${esc(carrier.f.name)}` : ""].filter(Boolean).join(" · ");
         await typeOut(`<span class="b8__council-label">${maker ? "new gear" : "gear"}</span><span class="b8__council-gear">${esc(g.name)}</span>
           <span class="b8__council-who">${who}</span><span class="b8__council-effect" data-type></span>`, g.effect || "");
         if (carrier) { carrier.mark = time + 1400; const w = wearFor(look, carrier.f); if (w) { equip(carrier.f, w); sfx("b_equip", 0.7); burst(carrier.x, 96, "light", 8); } }
-        await cwait(1500 + (g.effect || "").length * 14);
+        await Promise.all([cwait(1500 + (g.effect || "").length * 14), cheard(gearSaid)]);
         council.rack.push({ look, colour });
         council.item = null;
       }
@@ -2613,9 +2641,14 @@
       if (Sound) Sound.music("battle");
       fighters.forEach(f => setHp(f, f.hp));
       // Each side's war council, the attackers first; then everyone carries their gear.
-      await showCouncil(attackSide);
-      await showCouncil(defSide);
+      // opts.councilOnly plays just the councils (while the judge is still
+      // deciding the fight); opts.skipCouncil leaves them out (already seen).
+      if (!opts.skipCouncil) {
+        await showCouncil(attackSide);
+        await showCouncil(defSide);
+      }
       councilEl.hidden = true; council = null; root.classList.remove("is-council");
+      if (opts.councilOnly) { if (Sound) Sound.music(null); return finish(); }
       for (const g of gearList) {
         const f = fighters.find(q => q.side === g.side && g.carried_by && (norm(q.key) === norm(g.carried_by) || norm(q.name) === norm(g.carried_by)));
         const w = f && wearFor(g.look, f);
@@ -2631,7 +2664,7 @@
           <span class="b8__map-sides">${esc(raiders)}'s team attacks · ${esc(holders)}'s team defends${verdict.defences ? ` ${esc(verdict.defences)}` : ""}</span></div>`;
         mapEl.hidden = false;
         caption.textContent = `${arena.name}: ${raiders}'s team attacks, ${holders}'s team holds ${verdict.defences || "its ground"}.`;
-        await wait(3400);
+        await Promise.all([wait(3400), heard(voice(mapLine()))]);
         mapEl.classList.add("is-leaving");
         await wait(600);
         mapEl.hidden = true;
@@ -2656,7 +2689,8 @@
       fireworks();
       moveEl.hidden = true;
       caption.textContent = verdict.verdict || "";
-      await showBanner(`<span>${esc(teams[winSide].name)}'s team wins</span>`, 2600);
+      const won = voice(winLine());
+      await Promise.all([showBanner(`<span>${esc(teams[winSide].name)}'s team wins</span>`, 2600), heard(won)]);
       finish();
     }
 
@@ -2687,13 +2721,14 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
+      if (N) N.stop();
       skipping = true; council = null; councilEl.hidden = true; root.classList.remove("is-council"); companions = []; gas = []; spikes = []; domain = null; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();
     }
-    function play() { if (ended) return; playing = true; toggle.textContent = "❚❚"; toggle.setAttribute("aria-label", "Pause"); opts.onState && opts.onState("playing"); }
-    function pause() { if (ended) return; playing = false; toggle.textContent = "▶"; toggle.setAttribute("aria-label", "Play"); opts.onState && opts.onState("paused"); }
+    function play() { if (ended) return; if (N) N.resume(); playing = true; toggle.textContent = "❚❚"; toggle.setAttribute("aria-label", "Pause"); opts.onState && opts.onState("playing"); }
+    function pause() { if (ended) return; if (N) N.pause(); playing = false; toggle.textContent = "▶"; toggle.setAttribute("aria-label", "Play"); opts.onState && opts.onState("paused"); }
     toggle.addEventListener("click", () => (playing ? pause() : play()));
     root.querySelector('[data-act="skip"]').addEventListener("click", skip);
 
@@ -2704,7 +2739,7 @@
 
     return {
       play, pause, skip,
-      destroy() { done = true; ended = true; stopped = true; clearInterval(timer); cancelAnimationFrame(raf); if (Sound) Sound.music(null); container.innerHTML = ""; },
+      destroy() { if (N) N.stop(); done = true; ended = true; stopped = true; clearInterval(timer); cancelAnimationFrame(raf); if (Sound) Sound.music(null); container.innerHTML = ""; },
       get playing() { return playing; },
     };
   }

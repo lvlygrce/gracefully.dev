@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  const { connect, clock, safe, esc, picture, fitter } = window.Party;
+  const { connect, clock, safe, esc, picture, fitter, judgeProgress } = window.Party;
   // Fit the phone's screen where possible; long lists may still scroll below 12px.
   const fit = fitter(() => 16, 12);
   const app = document.getElementById("app");
@@ -393,8 +393,11 @@
     }
     const judgingNote = m.film === "making" ? "The judge has decided, and the film is being made. Look at the TV."
       : m.film ? "The film's on the TV." : "The judge is deciding. Look at the TV.";
+    const waiting = m.stage === "judging" && !m.film;
     app.innerHTML = `${header()}<h1 class="title title--xl">${fighting ? "You're up" : `${esc(a.name)} vs ${esc(b.name)}`}<span class="accent">.</span></h1>
-      <p class="big-note">${fighting && m.stage === "vote" ? "Everyone else is voting. Make your case, out loud." : judgingNote}</p>${fighting ? myTeam() : ""}`;
+      <p class="big-note">${fighting && m.stage === "vote" ? "Everyone else is voting. Make your case, out loud." : judgingNote}</p>
+      ${waiting ? `<div class="bar judge-bar"><span data-judge-bar></span></div><p class="hand" data-judge-text></p>` : ""}${fighting ? myTeam() : ""}`;
+    tick();
   }
 
   function championView() {
@@ -418,6 +421,13 @@
       const left = clock.left(Number(el.dataset.bar));
       el.style.width = `${Math.max(0, Math.min(100, (left / Number(el.dataset.total)) * 100))}%`;
     });
+    const jb = document.querySelector("[data-judge-bar]");
+    if (jb && state && state.match) {
+      const pr = judgeProgress(state.match);
+      jb.style.width = `${pr.pct}%`;
+      const t = document.querySelector("[data-judge-text]");
+      if (t) t.textContent = pr.text;
+    }
   }
   setInterval(tick, 250);
 

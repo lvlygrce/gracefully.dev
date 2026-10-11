@@ -889,6 +889,11 @@
         ${FILM_TIERS.map(t => formatOption(t.id, t.label, t.blurb, format)).join("")}
       </fieldset>
       <p class="judge__fine" id="format-note"></p>
+      ${format === "battle" ? `<fieldset class="chips"><legend class="judge__fine">Narrate the battle</legend>
+        ${[["off", "No voice"], ["browser", "This computer's voice (free)"], ["eleven", "ElevenLabs voice"]].map(([v, l]) => `
+          <label class="chip"><input type="radio" name="narration" value="${v}" ${window.Narrator && Narrator.mode === v ? "checked" : ""} /><span>${l}</span></label>`).join("")}
+      </fieldset>
+      <p class="judge__fine" id="narration-note">${window.Narrator && Narrator.mode === "eleven" ? `${Narrator.estimate(1).text.replace(/^./, c => c.toUpperCase())}. Needs Grace's PIN.` : ""}</p>` : ""}
       ${!filmFormat ? "" : J.pin.get() ? `<p class="judge__key">Films use Grace's PIN.</p>`
         : Film.ownKey.get() ? `<p class="judge__key">Your Higgsfield key is saved in this browser.
             <button class="btn btn--quiet btn--inline" type="button" id="forget-hf">Forget it</button></p>`
@@ -903,6 +908,11 @@
       prefs.format = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
     }));
     priceFormats(mode, worlds, teams);
+    body.querySelectorAll('[name="narration"]').forEach(i => i.addEventListener("change", () => {
+      Narrator.set(i.value);
+      if (i.value !== "off") Narrator.speak(i.value === "eleven" ? "The ElevenLabs voice will narrate the battle." : "This voice will narrate the battle.");
+      renderJudge(worlds, teams, isShared);
+    }));
 
     body.querySelectorAll('[name="judge"]').forEach(i => i.addEventListener("change", () => {
       prefs.judge = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
