@@ -374,3 +374,71 @@ html.tv .select__tag { font-size: 1.05rem; }
 }
 /* Placeholder letters only when there's no picture (see-through renders showed them). */
 .portrait:has(img) .portrait__letters, .pic:has(img) .pic__letters { visibility: hidden; }
+
+/* --- Readability ----------------------------------------------------------
+   Reading text in VT323, a crisp terminal face, a size up; muted and faint
+   text brighter so it holds up on the dark panels. */
+
+html[data-theme], html[data-theme="light"], html[data-theme="dark"] {
+  --font-text: "VT323", "Pixelify Sans", ui-monospace, monospace;
+  --font-hand: "VT323", "Pixelify Sans", ui-monospace, monospace;
+  --font-display: "VT323", "Pixelify Sans", ui-monospace, monospace;
+  --ink: #ffffff;
+  --ink-muted: #ddd8f0;
+  --ink-faint: #b3acd0;
+}
+html { font-size: 118%; }
+body { font-size: 1.15rem; line-height: 1.4; letter-spacing: 0.01em; }
+p, li, label, .lede, .choice__note, .mode__note, .format__note, .block__note, .rules, .muted, .field__label,
+.select__world, .select__tag, .war, .verdict__fight, .roles__list, .edge { letter-spacing: 0.015em; }
+.lede { font-size: 1.35rem; line-height: 1.35; }
+.choice__note, .mode__note, .format__note { color: #e4dff5 !important; font-size: 1.05rem; line-height: 1.25; }
+.select__world { color: #e4dff5; font-size: 0.95rem; }
+.select__tag { color: #d9c8ff; font-size: 1rem; }
+html.tv .select__world { font-size: 1.15rem; }
+html.tv .select__tag { font-size: 1.25rem; }
+.money { font-family: var(--font-gothic); }
+.rules { color: #15121e; font-size: 1.1rem; }
+.rules em, .rules a { color: #2a1e66; }
+.field__input, input, textarea, select { font-size: 1.25rem; }
+
+/* --- Clear selection --------------------------------------------------------
+   Anything chosen in a group of options (worlds, passes, judge, team size,
+   the TV's settings) lights up: a bright frame, a deep blue fill, white text
+   and a tick in the corner. Unchosen options sit back a little. */
+
+.choice__body { position: relative; transition: filter 0.12s steps(2); }
+.choices:has(input:checked) .choice input:not(:checked) + .choice__body { filter: brightness(0.82) saturate(0.8); }
+.choice input:checked + .choice__body,
+.chip--wide input:checked + span {
+  border-image-source: url("/character-draft/pixel/panel-on.svg") !important;
+  box-shadow: 0 0 0 3px #9cc0ff, 6px 6px 0 3px rgba(17, 14, 24, 0.5) !important;
+  filter: none !important;
+}
+.choice input:checked + .choice__body .choice__name { color: #ffffff !important; }
+.choice input:checked + .choice__body::after,
+.chip--wide input:checked + span::after,
+.mode--here::after {
+  content: "";
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 26px;
+  height: 26px;
+  background: url("/character-draft/pixel/tick.svg") center / 100% 100% no-repeat;
+  image-rendering: pixelated;
+}
+.chip--wide span { position: relative; }
+.mode--here { position: relative; border-image-source: url("/character-draft/pixel/panel-on.svg") !important; }
+
+.chip input:checked + span, .opt input:checked + span, .chip-btn.is-on, .slot--full {
+  border-image-source: url("/character-draft/pixel/plate-on.svg") !important;
+  color: #ffffff !important;
+  text-shadow: 2px 2px 0 #0b0a14;
+  box-shadow: 0 0 0 2px #9cc0ff;
+}
+.chip input:not(:checked) + span, .opt input:not(:checked) + span { color: #ddd8f0; }
+.opt input:checked + span::before, .chip input:checked + span::before { content: "✓ "; }
+.choice input:focus-visible + .choice__body, .chip input:focus-visible + span, .opt input:focus-visible + span {
+  outline: 3px dashed #ffffff !important; outline-offset: 4px;
+}
