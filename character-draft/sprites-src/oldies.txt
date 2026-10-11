@@ -1,0 +1,83 @@
+He-Man	h|l|w|e8b88a|e8c050|8a5a32|c0262f|cfd6dd|short|none|bare|sword|belt,gloves_accent,boots_accent|blade|light
+Skeletor	h|m|w|4a7ac8|1a1a1a|5a3a8a|1a1a1a|e8b84a|none|skull|bare|staff|belt,glow_eyes|magic|dark
+She-Ra	h|m|t|f1d0b0|f2cf3a|f2f0ea|e8b84a|c0262f|flowing|crown|dress|sword|cape,boots_accent|blade|light
+Battle Cat	q|l|w|4caf50|e8b84a|4caf50|c0262f|e8b84a|none|helm|armour|none|stripes|claws|none
+Lion-O	h|m|w|e8b88a|c0562a|5a8ac8|5a8ac8|c0262f|messy|none|jumpsuit|sword|glow|blade|light
+Mumm-Ra	h|l|w|5a7a9a|1a1a1a|c0262f|1a1a1a|e8b84a|none|horned_helm|bare|none|cape,glow_eyes,fangs|magic|dark
+Snake Eyes	h|m|n|1a1a1a|1a1a1a|1a1a1a|3a3a44|cfd6dd|none|fullmask|uniform|katana|belt|blade|none
+Cobra Commander	h|m|t|3f7fd6|1a1a1a|3f7fd6|1a1a1a|c0262f|none|helmet|uniform|gun|emblem|gun|none
+Cobra Troopers	h|m|n|3f7fd6|1a1a1a|3f7fd6|1a1a1a|c0262f|none|fullmask|uniform|rifle|horde,emblem|gun|none
+Voltron	r|g|w|f2f0ea|1a1a1a|f2f0ea|3f7fd6|c0262f|none|helm|armour|greatsword|glow_eyes,emblem|blade|light
+Inspector Gadget	h|m|t|f1d0b0|1a1a1a|8a7a5a|5a5a5a|1a1a1a|none|hat|coat|none|moustache|gadget|tech
+Dr. Claw	h|m|n|5a5f66|1a1a1a|3a3a44|5a5f66|c0262f|none|fullmask|armour|claws|glow_eyes|gadget|tech
+Danger Mouse	q|s|t|f2f0ea|f2f0ea|f2f0ea|c0262f|e8b84a|none|none|jumpsuit|gun|eyepatch,ears_round,emblem|gun|none
+Penfold	h|s|t|f1d0b0|1a1a1a|3f7fd6|f2f0ea|1a1a1a|none|none|suit|none|glasses,ears_round|fists|none
+The Smurfs	h|s|n|5aa0e8|f2f0ea|f2f0ea|f2f0ea|c0262f|none|hat|tunic|none|horde|fists|none
+Gargamel	h|m|t|f1d0b0|1a1a1a|1a1a1a|c0262f|5a3a1a|messy|none|robe|wand|grin|magic|poison
+Care Bears	q|m|w|ef8ab0|ef8ab0|ef8ab0|f2f0ea|f2cf3a|none|none|bare|none|horde,ears_round,emblem|beam|light
+Strawberry Shortcake	h|s|t|f1d0b0|c0562a|f2f0ea|c0262f|4caf50|short|hat|dress|none|spots|fists|nature
+Snoopy	q|s|n|f2f0ea|1a1a1a|f2f0ea|8a5a32|c0262f|none|cap|bare|none|ears_floppy,scarf,glasses|gun|none
+Kermit the Frog	h|s|t|4caf50|4caf50|4caf50|4caf50|4caf50|none|none|bare|none|collar|fists|none
+Miss Piggy	h|m|n|f2b0c0|f2cf3a|8e5bd0|f2f0ea|f2f0ea|flowing|none|dress|none|ears,gloves|fists|none
+Animal	h|m|w|c0562a|c0562a|c0262f|1a1a1a|e8b84a|messy|none|bare|club|fangs,collar|blunt|none
+Big Bird	b|l|w|f2cf3a|f2cf3a|f2cf3a|f2cf3a|ef8a2c|none|none|bare|none|feet|fists|none
+Cookie Monster	o|m|w|3f7fd6|3f7fd6|3f7fd6|3f7fd6|1a1a1a|none|none|bare|none|mouth,grin|bite|none
+Oscar the Grouch	o|m|n|4caf50|4caf50|8a8f96|8a8f96|1a1a1a|messy|none|bare|none|grin|fists|smoke
+Teenage Mutant Ninja Turtles	h|m|w|4caf50|1a1a1a|4caf50|8a6a3a|3f7fd6|none|headband|bare|katana|horde,shell,belt|blade|none
+Shredder	h|m|w|f1d0b0|1a1a1a|8e5bd0|9aa3ad|cfd6dd|none|helmet|armour|claws|cape,spikes|blade|none
+Hong Kong Phooey	q|s|n|8a5a32|1a1a1a|c0262f|1a1a1a|f2f0ea|none|mask|robe|none|ears_floppy,belt|fists|none
+Count Duckula	b|s|t|f2f0ea|1a1a1a|1a1a1a|c0262f|f2cf3a|slick|none|bare|none|cape,fangs|bite|dark
+Bananaman	h|m|w|f1d0b0|1a1a1a|f2cf3a|3f7fd6|f2cf3a|short|none|jumpsuit|none|cape,emblem|fists|none
+Skippy	q|m|t|c8a070|8a5a32|c8a070|c8a070|1a1a1a|none|none|bare|none|ears_long,tail|fists|none
+Bagpuss	q|m|w|f0d8c0|c0262f|f0d8c0|c0262f|f2f0ea|none|none|bare|none|stripes,ears_round|fists|none
+The A-Team	h|m|w|8a5a32|1a1a1a|3a5a3a|3a3a44|e8b84a|buzz|none|vest|rifle|horde,belt|gun|explosion
+MacGyver	h|m|n|f1d0b0|c8a060|8a6a3a|3f7fd6|8a5a32|messy|none|coat|dagger|belt|gadget|tech
+KITT	r|l|w|1a1a1a|1a1a1a|1a1a1a|3a3a44|c0262f|none|none|armour|none|noarms,glow_eyes|gadget|tech
+Steve Austin	h|m|n|f1d0b0|c8a060|c0262f|3a3a44|9aa3ad|short|none|jumpsuit|none|glow_eyes|fists|tech
+Jaime Sommers	h|m|t|f1d0b0|c8a060|3f7fd6|3a3a44|9aa3ad|long|none|vest|none|glow_eyes|fists|tech
+The Fonz	h|m|n|f1d0b0|1a1a1a|1a1a1a|3f7fd6|cfd6dd|slick|none|coat|none||fists|none
+Mork	h|m|t|f1d0b0|5a3a1a|c0262f|cfd6dd|e8b84a|messy|none|jumpsuit|none|emblem|psychic|psychic
+Magnum P.I.	h|m|n|e8c4a0|5a3a1a|c0262f|e8e0c8|4caf50|short|cap|vest|gun|moustache|gun|none
+Columbo	h|m|n|e8c4a0|5a5a5a|c8b890|5a5a5a|8a5a32|messy|none|coat|none|scarf|fists|none
+Basil Fawlty	h|l|t|f1d0b0|5a3a1a|3a4a5a|3a4a5a|c0262f|short|none|suit|club|moustache|blunt|none
+Del Boy	h|m|n|f1d0b0|5a3a1a|c8a060|3a3a44|e8b84a|short|none|coat|none|belt|fists|none
+Daleks	r|m|w|a07a3a|1a1a1a|a07a3a|e8b84a|3fa0ff|none|none|armour|gun|horde,noarms,spots,glow_eyes|beam|explosion
+Oddjob	h|m|w|e8c4a0|1a1a1a|1a1a1a|f2f0ea|9aa3ad|short|tophat|suit|none|gloves|fists|none
+Jaws	h|x|n|f1d0b0|5a3a1a|3a3a44|3a3a44|cfd6dd|short|none|suit|none|grin|bite|none
+The Terminator	h|l|w|e8c4a0|1a1a1a|1a1a1a|3a3a44|c0262f|short|none|coat|rifle|glasses,redeyes|gun|tech
+Sarah Connor	h|m|t|f1d0b0|5a3a1a|3a3a3a|3a4a3a|8a5a32|long|none|vest|rifle|belt|gun|none
+John Rambo	h|m|w|e8c4a0|1a1a1a|e8c4a0|3a5a3a|c0262f|long|headband|bare|bow|belt|bow|explosion
+Ivan Drago	h|l|w|f1d0b0|f2e8b0|c0262f|c0262f|f2f0ea|buzz|none|bare|none|gloves_accent,belt|fists|none
+Conan the Barbarian	h|l|w|e8b88a|1a1a1a|8a5a32|8a5a32|cfd6dd|long|none|bare|greatsword|belt|blade|none
+Marty McFly	h|m|t|f1d0b0|5a3a1a|c0262f|3f7fd6|f2f0ea|short|none|vest|none||fists|none
+Doc Brown	h|m|t|f1d0b0|f2f0ea|f2f0ea|3a3a44|e8b84a|messy|none|labcoat|none|glasses|gadget|lightning
+Mr. Miyagi	h|s|n|e8c4a0|5a5a5a|f2f0ea|3a3a44|1a1a1a|short|headband|robe|none|beard|fists|none
+Daniel LaRusso	h|m|t|f1d0b0|1a1a1a|f2f0ea|f2f0ea|1a1a1a|short|headband|robe|none|belt|fists|none
+Ferris Bueller	h|m|t|f1d0b0|8a5a32|5a5a5a|3a3a44|f2f0ea|short|none|vest|none||fists|none
+E.T.	h|s|w|8a6a4a|8a6a4a|8a6a4a|8a6a4a|f2cf3a|none|none|bare|none|glow|psychic|psychic
+Gremlins	q|s|w|4caf50|1a1a1a|4caf50|4caf50|c0262f|mohawk|none|bare|none|horde,fangs,ears_long,redeyes|bite|none
+Gizmo	q|s|n|8a5a32|f2f0ea|f2f0ea|8a5a32|1a1a1a|none|none|bare|none|ears_round,spots|fists|none
+Jareth	h|m|t|f2ece4|f2e8b0|1a1a1a|e8b84a|cfd6dd|huge_spiky|none|coat|orb|glow|magic|psychic
+Beetlejuice	h|m|t|c8d8b0|4caf50|f2f0ea|1a1a1a|4caf50|messy|none|suit|none|stripes,grin|magic|dark
+Sloth	h|x|w|e8c4a0|8a5a32|f2cf3a|3f7fd6|c0262f|messy|none|tunic|none|grin|fists|none
+The Goonies	h|s|t|f1d0b0|5a3a1a|c0262f|3f7fd6|e8b84a|messy|none|vest|none|horde|gadget|none
+Flash Gordon	h|m|w|f1d0b0|f2cf3a|f2f0ea|c0262f|e8b84a|short|none|tunic|none|emblem|fists|lightning
+Ming the Merciless	h|m|t|e8c4a0|1a1a1a|c0262f|1a1a1a|e8b84a|bald|none|robe|staff|cape,moustache|magic|dark
+Connor MacLeod	h|m|n|f1d0b0|5a3a1a|5a4a3a|3a3a44|cfd6dd|long|none|coat|katana||blade|lightning
+The Kurgan	h|x|w|f1d0b0|1a1a1a|1a1a1a|3a3a3a|cfd6dd|bald|helm|armour|greatsword|spikes|blade|lightning
+Stay Puft Marshmallow Man	h|g|w|f2f0ea|f2f0ea|f2f0ea|3f7fd6|c0262f|none|cap|bare|none|scarf|fists|none
+Slimer	o|m|w|7fd34a|7fd34a|7fd34a|7fd34a|7fd34a|none|none|bare|none|mouth,glow|bite|poison
+Hulk Hogan	h|l|w|e8b88a|f2cf3a|c0262f|f2cf3a|f2f0ea|bald|bandana|bare|none|moustache,belt|fists|none
+André the Giant	h|x|w|e8c4a0|1a1a1a|1a1a1a|1a1a1a|f2f0ea|afro|none|bare|none|belt|fists|none
+Evel Knievel	h|m|t|f1d0b0|5a3a1a|f2f0ea|3f7fd6|c0262f|short|helmet|jumpsuit|none|star,stripes|fists|explosion
+ALF	q|s|w|c8a080|c8a080|c8a080|c8a080|1a1a1a|messy|none|bare|none|ears_round,grin|bite|none
+Pee-wee Herman	h|m|t|f2e0d0|1a1a1a|9aa3ad|9aa3ad|c0262f|slick|none|suit|none|scarf|fists|none
+Crocodile Dundee	h|m|n|e8b88a|8a5a32|8a6a3a|3a4a3a|8a5a32|short|cowboy|vest|dagger||blade|none
+Elvis Presley	h|m|n|f1d0b0|1a1a1a|f2f0ea|f2f0ea|e8b84a|pompadour|none|jumpsuit|none|belt,collar|fists|none
+Freddie Mercury	h|m|n|e8c4a0|1a1a1a|f2cf3a|f2f0ea|c0262f|short|none|jumpsuit|staff|moustache|fists|none
+Michael Jackson	h|m|t|e8c4a0|1a1a1a|c0262f|1a1a1a|f2f0ea|long|hat|coat|none|gloves|fists|none
+KISS	h|m|n|f2f0ea|1a1a1a|1a1a1a|1a1a1a|cfd6dd|long|none|armour|guitar|horde,spikes|blunt|fire
+ABBA	h|m|t|f1d0b0|f2e8b0|f2f0ea|3f7fd6|e8b84a|long|none|jumpsuit|none|horde,glow|fists|light
+Space Invaders	k|s|n|7fd34a|7fd34a|7fd34a|7fd34a|7fd34a|none|none|bare|none|horde,antennae|beam|none
+Q*bert	o|s|n|ef8a2c|ef8a2c|ef8a2c|ef8a2c|1a1a1a|none|none|bare|none|feet|fists|none
+Frogger	q|s|t|4caf50|4caf50|4caf50|f2cf3a|4caf50|none|none|bare|none|feet|fists|none

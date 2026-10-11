@@ -5028,5 +5028,339 @@ window.CHARACTER_TAGLINES = {
    "Ancient Warfare",
    "A hundred pointy quacks"
   ]
+ },
+ "oldies": {
+  "He-Man": [
+   "Masters of the Universe",
+   "Has the power"
+  ],
+  "Skeletor": [
+   "Masters of the Universe",
+   "Cackling lord of destruction"
+  ],
+  "She-Ra": [
+   "She-Ra: Princess of Power",
+   "Princess of power"
+  ],
+  "Battle Cat": [
+   "Masters of the Universe",
+   "Armoured fighting tiger"
+  ],
+  "Lion-O": [
+   "ThunderCats",
+   "Sight beyond sight"
+  ],
+  "Mumm-Ra": [
+   "ThunderCats",
+   "The ever-living terror"
+  ],
+  "Snake Eyes": [
+   "G.I. Joe",
+   "Silent deadly ninja"
+  ],
+  "Cobra Commander": [
+   "G.I. Joe",
+   "Retreat is an option"
+  ],
+  "Cobra Troopers": [
+   "G.I. Joe",
+   "Never hit a target"
+  ],
+  "Voltron": [
+   "Voltron",
+   "Defender of the universe"
+  ],
+  "Inspector Gadget": [
+   "Inspector Gadget",
+   "Go-go gadget victory"
+  ],
+  "Dr. Claw": [
+   "Inspector Gadget",
+   "Scheming in shadows"
+  ],
+  "Danger Mouse": [
+   "Danger Mouse",
+   "World's greatest secret agent"
+  ],
+  "Penfold": [
+   "Danger Mouse",
+   "Crumbs, DM"
+  ],
+  "The Smurfs": [
+   "The Smurfs",
+   "A hundred tiny blues"
+  ],
+  "Gargamel": [
+   "The Smurfs",
+   "Wants to eat smurfs"
+  ],
+  "Care Bears": [
+   "Care Bears",
+   "Tummy beam firepower"
+  ],
+  "Strawberry Shortcake": [
+   "Strawberry Shortcake",
+   "Berry sweet fighter"
+  ],
+  "Snoopy": [
+   "Peanuts",
+   "World War I ace"
+  ],
+  "Kermit the Frog": [
+   "The Muppets",
+   "Managing the madness"
+  ],
+  "Miss Piggy": [
+   "The Muppets",
+   "Hi-yah diva"
+  ],
+  "Animal": [
+   "The Muppets",
+   "Beat drums, beat faces"
+  ],
+  "Big Bird": [
+   "Sesame Street",
+   "Eight feet of kindness"
+  ],
+  "Cookie Monster": [
+   "Sesame Street",
+   "Devourer of everything"
+  ],
+  "Oscar the Grouch": [
+   "Sesame Street",
+   "Trash-can curmudgeon"
+  ],
+  "Teenage Mutant Ninja Turtles": [
+   "Teenage Mutant Ninja Turtles",
+   "Heroes in a half-shell"
+  ],
+  "Shredder": [
+   "Teenage Mutant Ninja Turtles",
+   "Bladed Foot Clan master"
+  ],
+  "Hong Kong Phooey": [
+   "Hong Kong Phooey",
+   "Number one super guy"
+  ],
+  "Count Duckula": [
+   "Count Duckula",
+   "Vegetarian bloodsucker"
+  ],
+  "Bananaman": [
+   "Bananaman",
+   "Peel for power"
+  ],
+  "Skippy": [
+   "Skippy the Bush Kangaroo",
+   "Clever bush marsupial"
+  ],
+  "Bagpuss": [
+   "Bagpuss",
+   "Old saggy cloth cat"
+  ],
+  "The A-Team": [
+   "The A-Team",
+   "Junk-van specialists"
+  ],
+  "MacGyver": [
+   "MacGyver",
+   "Paperclip and duct tape"
+  ],
+  "KITT": [
+   "Knight Rider",
+   "Turbo-boosting supercar"
+  ],
+  "Steve Austin": [
+   "The Six Million Dollar Man",
+   "Better, stronger, faster"
+  ],
+  "Jaime Sommers": [
+   "The Bionic Woman",
+   "Super-powered tennis pro"
+  ],
+  "The Fonz": [
+   "Happy Days",
+   "Jukebox-punching cool"
+  ],
+  "Mork": [
+   "Mork & Mindy",
+   "Nanu nanu"
+  ],
+  "Magnum P.I.": [
+   "Magnum, P.I.",
+   "Moustache and a Ferrari"
+  ],
+  "Columbo": [
+   "Columbo",
+   "Just one more thing"
+  ],
+  "Basil Fawlty": [
+   "Fawlty Towers",
+   "Armed with a branch"
+  ],
+  "Del Boy": [
+   "Only Fools and Horses",
+   "Lovely jubbly"
+  ],
+  "Daleks": [
+   "Doctor Who",
+   "Exterminate all life"
+  ],
+  "Oddjob": [
+   "James Bond",
+   "Razor-brimmed bowler"
+  ],
+  "Jaws": [
+   "James Bond",
+   "Steel-toothed giant"
+  ],
+  "The Terminator": [
+   "The Terminator",
+   "Will not stop"
+  ],
+  "Sarah Connor": [
+   "The Terminator",
+   "Mother of the resistance"
+  ],
+  "John Rambo": [
+   "First Blood",
+   "One-man army"
+  ],
+  "Ivan Drago": [
+   "Rocky IV",
+   "I must break you"
+  ],
+  "Conan the Barbarian": [
+   "Conan the Barbarian",
+   "Crush your enemies"
+  ],
+  "Marty McFly": [
+   "Back to the Future",
+   "Time-skating teen"
+  ],
+  "Doc Brown": [
+   "Back to the Future",
+   "Great Scott"
+  ],
+  "Mr. Miyagi": [
+   "The Karate Kid",
+   "Wax on, wax off"
+  ],
+  "Daniel LaRusso": [
+   "The Karate Kid",
+   "Crane kick master"
+  ],
+  "Ferris Bueller": [
+   "Ferris Bueller's Day Off",
+   "Skips school, wins fights"
+  ],
+  "E.T.": [
+   "E.T. the Extra-Terrestrial",
+   "Phone home"
+  ],
+  "Gremlins": [
+   "Gremlins",
+   "Just add water"
+  ],
+  "Gizmo": [
+   "Gremlins",
+   "No food after midnight"
+  ],
+  "Jareth": [
+   "Labyrinth",
+   "Dance magic dance"
+  ],
+  "Beetlejuice": [
+   "Beetlejuice",
+   "The ghost with the most"
+  ],
+  "Sloth": [
+   "The Goonies",
+   "Hey you guys"
+  ],
+  "The Goonies": [
+   "The Goonies",
+   "Goonies never say die"
+  ],
+  "Flash Gordon": [
+   "Flash Gordon",
+   "Savior of the universe"
+  ],
+  "Ming the Merciless": [
+   "Flash Gordon",
+   "Tyrant of Mongo"
+  ],
+  "Connor MacLeod": [
+   "Highlander",
+   "There can be only one"
+  ],
+  "The Kurgan": [
+   "Highlander",
+   "Better to burn out"
+  ],
+  "Stay Puft Marshmallow Man": [
+   "Ghostbusters",
+   "Sweet giant of destruction"
+  ],
+  "Slimer": [
+   "Ghostbusters",
+   "He slimed me"
+  ],
+  "Hulk Hogan": [
+   "Wrestling",
+   "Whatcha gonna do brother"
+  ],
+  "André the Giant": [
+   "Wrestling",
+   "Eighth wonder of the world"
+  ],
+  "Evel Knievel": [
+   "Stunts",
+   "Defier of death"
+  ],
+  "ALF": [
+   "ALF",
+   "Hide your cats"
+  ],
+  "Pee-wee Herman": [
+   "Pee-wee's Playhouse",
+   "Scream real loud"
+  ],
+  "Crocodile Dundee": [
+   "Crocodile Dundee",
+   "That's a knife"
+  ],
+  "Elvis Presley": [
+   "Music",
+   "King of rock and roll"
+  ],
+  "Freddie Mercury": [
+   "Music",
+   "We will rock you"
+  ],
+  "Michael Jackson": [
+   "Music",
+   "The King of Pop"
+  ],
+  "KISS": [
+   "Music",
+   "Spitting fire and blood"
+  ],
+  "ABBA": [
+   "Music",
+   "The dancing queens"
+  ],
+  "Space Invaders": [
+   "Arcade",
+   "Marching from above"
+  ],
+  "Q*bert": [
+   "Arcade",
+   "Swearing in symbols"
+  ],
+  "Frogger": [
+   "Arcade",
+   "Just crossing the road"
+  ]
  }
 };
