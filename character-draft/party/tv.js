@@ -236,7 +236,10 @@
     }
   }
   function syncOpts(matchId) {
-    if (WATCH) return { follow: (kind, n) => (hostSteps.matchId === matchId && hostSteps[kind] >= n) ? Promise.resolve() : new Promise(res => stepWaiters.push({ matchId, kind, n, res })) };
+    if (WATCH) return {
+      follow: (kind, n) => (hostSteps.matchId === matchId && hostSteps[kind] >= n) ? Promise.resolve() : new Promise(res => stepWaiters.push({ matchId, kind, n, res })),
+      lag: (kind, n) => hostSteps.matchId === matchId ? hostSteps[kind] - n : 0,
+    };
     return { onStep: (kind, n) => net.send({ t: "host:step", matchId, kind, n }) };
   }
 

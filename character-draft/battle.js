@@ -754,6 +754,7 @@
     }
 
     /* A clock that stops while paused; every wait in the script uses it. */
+    let speed = 1;          // > 1 while a spectator catches up with the host
     let time = 0, last = performance.now(), playing = !!(opts.autoplay !== false), skipping = false, done = false, raf = 0, ended = false;
     const waits = [];
     const wait = ms => skipping ? Promise.resolve() : new Promise(res => waits.push({ at: time + ms, res }));
@@ -770,7 +771,7 @@
     function step() {
       const now = performance.now();
       const dt = Math.min(250, now - last); last = now;
-      if (playing && !done) time += dt;
+      if (playing && !done) time += dt * speed;
       for (let i = tweens.length - 1; i >= 0; i--) {
         const tw = tweens[i], k = clamp((time - tw.t0) / tw.ms, 0, 1), e = tw.e(k);
         for (const key in tw.to) tw.obj[key] = lerp(tw.from[key], tw.to[key], e);
@@ -2478,6 +2479,8 @@
       const n = ++stepNo[kind];
       if (opts.onStep) opts.onStep(kind, n);
       if (opts.follow && !skipping && !(kind === "council" && councilSkip)) await Promise.race([opts.follow(kind, n), wait(20000)]);
+      // Behind the host (a slow device, a late arrival): fast-forward, quietly, until level.
+      speed = opts.lag && opts.lag(kind, n) >= 1 ? 3 : 1;
     }
 
     async function wipeIn(title, sub) {
@@ -2499,7 +2502,7 @@
     /* Narration (narrator.js): the same lines the screen shows, read aloud,
        and the battle waits for each to finish (never more than 25 seconds). */
     const N = opts.silent ? null : window.Narrator;
-    const voice = t => (N && N.on() && !skipping && t) ? N.speak(t) : Promise.resolve();
+    const voice = t => (N && N.on() && !skipping && speed === 1 && t) ? N.speak(t) : Promise.resolve();
     const heard = p => skipping ? Promise.resolve() : Promise.race([p, wait(25000)]);
     const cheard = p => councilSkip ? Promise.resolve() : heard(p);
     const planLines = prep => (String(prep.plan || "").match(/[^.!?]+[.!?]*/g) || []).map(x => x.trim()).filter(Boolean);
