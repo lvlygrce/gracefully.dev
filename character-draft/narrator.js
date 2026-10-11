@@ -23,7 +23,7 @@
   const get = () => { try { return localStorage.getItem(KEY) || "off"; } catch { return "off"; } };
   let mode = get();
   if (!["off", "browser", "eleven"].includes(mode)) mode = "off";
-  let audio = null, paused = false, warned = "";
+  let audio = null, paused = false, warned = "", room = "";
 
   // ElevenLabs bills by character: about this many per fight, with
   // Flash v2.5 at half a credit a character.
@@ -66,7 +66,7 @@
   async function fetchVoice(text) {
     if (cache.has(text)) return cache.get(text);
     const p = (async () => {
-      const r = await fetch(`${SERVER}/tts`, { method: "POST", headers: { "content-type": "application/json", "x-draft-pin": pin() || "" }, body: JSON.stringify({ text }) });
+      const r = await fetch(`${SERVER}/tts`, { method: "POST", headers: { "content-type": "application/json", "x-draft-pin": pin() || "", "x-party-room": room }, body: JSON.stringify({ text }) });
       if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || "Narration failed."); }
       return URL.createObjectURL(await r.blob());
     })();
@@ -93,6 +93,8 @@
     get mode() { return mode; },
     set(m) { mode = ["off", "browser", "eleven"].includes(m) ? m : "off"; try { localStorage.setItem(KEY, mode); } catch { /* fine */ } if (mode === "off") this.stop(); },
     on() { return mode !== "off"; },
+    // The party this screen belongs to: spectators share the host's voice.
+    setRoom(p) { room = String(p || ""); },
     available: { browser: !!window.speechSynthesis, eleven: true },
     estimate,
     // Fetch ElevenLabs audio ahead, so a line plays the moment it's needed.

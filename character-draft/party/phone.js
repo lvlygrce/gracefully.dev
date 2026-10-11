@@ -53,6 +53,7 @@
         if (location.hash) history.replaceState(null, "", location.pathname);
       } else if (msg.t === "state") {
         if (switching || leaving) return;
+        if (session && session.pin && msg.state.pin && msg.state.pin !== session.pin) return;   // an old game still talking
         clock.sync(msg.state.serverNow);
         const was = state;
         state = msg.state; me = msg.me;

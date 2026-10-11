@@ -206,3 +206,28 @@
 .b8__council-skip:hover, .b8__council-skip:focus-visible { background: #2b7d58; outline: none; }
 @media (prefers-reduced-motion: reduce) { .b8__call, .b8__council { animation: none; } }
 .b8.is-council .b8__hud { visibility: hidden; }
+
+/* A page turn between scenes: pixel curtains sweep across with a title card. */
+.b8__wipe {
+  position: absolute; inset: 0; z-index: 6; display: grid; place-content: center; gap: 1cqw; text-align: center;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.04) 0 2cqw, transparent 2cqw 4cqw),
+    linear-gradient(135deg, #2b2050, #141024 70%);
+  color: #ffffff; pointer-events: none;
+  box-shadow: inset 0 0 0 0.6cqw #9cc0ff;
+}
+.b8__wipe[hidden] { display: none; }
+.b8__wipe-title { font-size: 5.5cqw; line-height: 1; text-shadow: 0.5cqw 0.5cqw 0 #0b0a14; }
+.b8__wipe-sub { font-size: 2.4cqw; color: #c9dcff; }
+.b8__wipe.is-in { animation: b8-wipe-in 0.48s steps(8) both; }
+.b8__wipe.is-out { animation: b8-wipe-out 0.48s steps(8) both; }
+.b8__wipe.is-in .b8__wipe-title { animation: b8-title-in 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) 0.3s both; }
+@keyframes b8-wipe-in { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes b8-wipe-out { from { clip-path: inset(0 0 0 0); } to { clip-path: inset(0 100% 0 0); } }
+@keyframes b8-title-in { from { transform: scale(2.2); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .b8__wipe.is-in, .b8__wipe.is-out, .b8__wipe.is-in .b8__wipe-title { animation-duration: 0.01s; } }
+
+/* A full-screen stage arriving like a new page. */
+.tv-film--full { animation: b8-page-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) both; }
+@keyframes b8-page-in { from { transform: translateX(10%) scale(0.94); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .tv-film--full { animation: none; } }

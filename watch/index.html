@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" class="phone">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Watch Character Draft</title>
+  <meta name="description" content="Put a Character Draft party on this screen too: enter the PIN to watch it live." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=VT323&family=Pixelify+Sans:wght@400..600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css?v=3" />
+  <link rel="stylesheet" href="/character-draft/party/party.css?v=14" />
+  <link rel="stylesheet" href="/character-draft/pixel.css?v=6" />
+</head>
+<body>
+  <a class="home-button" href="/" aria-label="Back to Gracefully" title="Back to Gracefully">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3.5 11.2 12 4l8.5 7.2" /><path d="M5.8 9.6V19.3c0 .4.3.7.7.7h3.9v-5.4h3.2V20h3.9c.4 0 .7-.3.7-.7V9.6" /></svg>
+  </a>
+  <main class="stage">
+    <p class="hand">Character Draft</p>
+    <h1 class="title title--xl">Watch a game<span class="accent">.</span></h1>
+    <p class="big-note">Put a party on this screen too: another room's TV, a laptop, anywhere. It plays in step with the host, and you can turn the narration on here.</p>
+    <form id="watch" style="margin-top: var(--space-md)">
+      <label class="field"><span class="field__label">Game PIN, from the host's screen</span>
+        <input class="field__input field__input--pin" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" required /></label>
+      <p class="warn" id="msg" hidden></p>
+      <button class="btn btn--primary btn--big btn--wide" type="submit">Watch</button>
+    </form>
+  </main>
+  <script>
+    const f = document.getElementById("watch");
+    const fromHash = (location.hash.match(/\d{5}/) || [])[0];
+    if (fromHash) f.pin.value = fromHash;
+    f.addEventListener("submit", e => {
+      e.preventDefault();
+      const pin = f.pin.value.replace(/\D/g, "");
+      if (pin.length !== 5) { const m = document.getElementById("msg"); m.textContent = "Enter the 5-digit PIN."; m.hidden = false; return; }
+      location.href = "/character-draft/party/?watch=" + pin;
+    });
+    f.pin.focus();
+  </script>
+  <script src="/feedback.js?v=2" defer></script>
+</body>
+</html>

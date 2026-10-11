@@ -127,9 +127,24 @@
   }
 
   // Lower the music while something else (a film, a name read out) needs the room.
+  // A voice that never reports finishing can't leave the music quiet for good.
+  let duckTimer = null;
   function duck(on) {
     ducked = on;
+    clearTimeout(duckTimer);
+    if (on) duckTimer = setTimeout(() => duck(false), 12000);
     if (musicGain) musicGain.gain.linearRampToValueAtTime(level(), ctx.currentTime + 0.3);
+  }
+
+  // Stop a bed only if it's the one playing: a battle ending late mustn't
+  // silence the next game's music.
+  function release(name) { if (musicName === name) music(null); }
+
+  // A clean slate for a new game: no stale bed, no ducking, audio awake.
+  function reset() {
+    stopMusic(0.2);
+    musicName = null; ducked = false; clearTimeout(duckTimer);
+    if (ctx && ctx.state !== "running") ctx.resume().catch(() => {});
   }
 
   // Read a character's name like a game-show host, after the reveal sting.
@@ -165,5 +180,5 @@
     if (mode === "off" && "speechSynthesis" in window) speechSynthesis.cancel();
   }
 
-  window.Sound = { unlock, play, music, duck, say, setMode, get mode() { return mode; }, get unlocked() { return live(); } };
+  window.Sound = { unlock, play, music, release, reset, duck, say, setMode, get mode() { return mode; }, get unlocked() { return live(); } };
 })();

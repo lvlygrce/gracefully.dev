@@ -1074,7 +1074,7 @@ window.CHARACTER_IMAGES = {
     "Kylo Ren": "https://upload.wikimedia.org/wikipedia/en/3/34/Kylo_Ren.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "Ahsoka Tano": "https://upload.wikimedia.org/wikipedia/en/d/d7/Ahsoka_Tano.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "Po": "https://upload.wikimedia.org/wikipedia/en/3/3d/Po_from_DreamWorks_Animation%27s_Kung_Fu_Panda.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
-    "Tai Lung": "https://upload.wikimedia.org/wikipedia/en/7/76/Kungfupanda.jpg?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
+    "Tai Lung": "https://static.wikia.nocookie.net/kungfupanda/images/4/48/Tai_Lung_Kung_Fu_Panda_1023.jpg/revision/latest/scale-to-width-down/400",
     "Puss in Boots": "https://upload.wikimedia.org/wikipedia/en/8/8a/Puss_in_Boots_from_Shrek.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "Elsa": "https://upload.wikimedia.org/wikipedia/en/5/5e/Elsa_from_Disney%27s_Frozen.png?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",
     "Maui": "https://upload.wikimedia.org/wikipedia/en/5/57/Maui_Disney.webp?utm_source=en.wikipedia.org&utm_campaign=api&utm_content=thumbnail_unscaled",

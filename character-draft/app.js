@@ -413,6 +413,14 @@
     }));
   }
 
+  // Online: on a phone, host from the phone itself (no TV needed); on a
+  // computer, this screen becomes the TV. Either can choose the other.
+  const phoneish = () => matchMedia("(pointer: coarse)").matches && Math.min(screen.width, screen.height) < 700;
+  const onlineHref = () => phoneish() ? "party/?pocket=1" : "party/";
+  const onlineNote = () => phoneish()
+    ? "Host from this phone and play too. Friends join on theirs, here or anywhere; no TV needed."
+    : "This screen becomes the TV. Up to 24 people bid from their phones, then a knockout of 8-bit battles.";
+
   function renderSetup() {
     const worlds = Object.entries(U).map(([key, u]) => `
       <label class="choice">
@@ -426,18 +434,20 @@
     app.innerHTML = `
       <nav class="modes" aria-label="How to play">
         <div class="mode mode--here">
-          <span class="mode__name">Two players</span>
-          <span class="mode__note">One screen, passed between you. Set it up below.</span>
+          <span class="mode__name">One device</span>
+          <span class="mode__note">Two players, one screen passed between you. Set it up below.</span>
         </div>
-        <a class="mode" href="party/">
-          <span class="mode__name">Party mode <span class="mode__go" aria-hidden="true">→</span></span>
-          <span class="mode__note">Put it on a TV. Up to 24 people bid from their phones, then a knockout tournament of 8-bit battles.</span>
+        <a class="mode" href="${onlineHref()}">
+          <span class="mode__name">Online <span class="mode__go" aria-hidden="true">→</span></span>
+          <span class="mode__note">${onlineNote()}</span>
         </a>
         <a class="mode mode--small" href="/play/">
-          <span class="mode__name">Join a party <span class="mode__go" aria-hidden="true">→</span></span>
-          <span class="mode__note">Got a game PIN from the TV? Join on your phone.</span>
+          <span class="mode__name">Join a game <span class="mode__go" aria-hidden="true">→</span></span>
+          <span class="mode__note">Got a PIN? Join on your phone, or just watch.</span>
         </a>
       </nav>
+      <p class="party-link">${phoneish() ? `Hosting from this phone; <a href="party/">use this screen as the TV instead</a>.` : `This screen will be the TV; <a href="party/?pocket=1">host from a phone with no TV instead</a>.`}
+        In another room? Put the same game on that TV at <a href="/watch/">${location.host}/watch</a>.</p>
       <form class="setup" id="setup">
         <h2 class="section-label">Who's drafting</h2>
         <div class="names">
@@ -474,8 +484,8 @@
         </p>
 
         <button class="btn btn--primary" type="submit">Shuffle and begin</button>
-        <p class="party-link">More than two of you? <a href="party/">Party mode</a> puts the game on a TV,
-          with up to 24 players joining on their phones.</p>
+        <p class="party-link">More than two of you, or not in the same room? <a href="${onlineHref()}">Play online</a>:
+          up to 24 players on their phones, with or without a TV.</p>
       </form>`;
 
     const form = document.getElementById("setup");

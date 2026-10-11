@@ -453,3 +453,11 @@ em, .lede em, .accent { color: #e0d0ff !important; }
 .tv-overlay__body .big-note, .verdict .big-note { max-width: none !important; }
 .verdict__fight p, .verdict__reasoning p, .reasoning__fight p, .big-note { font-size: 1.2rem; line-height: 1.4; color: #ffffff; }
 html.phone .big-note { font-size: 1.3rem; }
+
+/* The arena strip: kicker, name and description each on their own line,
+   so the big pixel name can't ride up over the text around it. */
+.strip p > span, .arena-strip p > span { display: block; }
+.strip p br { display: none; }
+.strip .title, .arena-strip__name { font-size: clamp(1.6rem, 2.6vw, 2.3rem) !important; line-height: 1.1 !important; margin: 0.15rem 0 0.25rem; }
+.strip .muted, .arena-strip__terrain { line-height: 1.3; }
+.strip img, .arena-strip__img { image-rendering: auto; }

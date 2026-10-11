@@ -524,6 +524,7 @@
         <div class="b8__move" hidden></div>
         <div class="b8__map" hidden></div>
         <div class="b8__call" hidden></div>
+        <div class="b8__wipe" hidden aria-hidden="true"><span class="b8__wipe-title"></span><span class="b8__wipe-sub"></span></div>
         <div class="b8__council" hidden>
           <div class="b8__council-head"></div>
           <div class="b8__council-text" aria-live="polite"></div>
@@ -2466,6 +2467,35 @@
     });
     const cwait = ms => councilSkip ? Promise.resolve() : wait(ms);
 
+    /* A page turn between scenes: a curtain sweeps across with a title card,
+       the scene changes behind it, and it sweeps away. */
+    const wipeEl = root.querySelector(".b8__wipe");
+    /* Keeping several screens in step: each scene change is a numbered step.
+       The host reports its steps (opts.onStep); a spectator waits at each
+       step until the host has reached it (opts.follow), never more than 20s. */
+    const stepNo = { council: 0, battle: 0 };
+    async function gate(kind) {
+      const n = ++stepNo[kind];
+      if (opts.onStep) opts.onStep(kind, n);
+      if (opts.follow && !skipping && !(kind === "council" && councilSkip)) await Promise.race([opts.follow(kind, n), wait(20000)]);
+    }
+
+    async function wipeIn(title, sub) {
+      if (councilSkip || skipping) return;
+      wipeEl.querySelector(".b8__wipe-title").textContent = title;
+      wipeEl.querySelector(".b8__wipe-sub").textContent = sub || "";
+      wipeEl.hidden = false; wipeEl.className = "b8__wipe is-in";
+      sfx("b_whoosh", 0.8);
+      await cwait(480);
+      await cwait(1000);
+    }
+    async function wipeOut() {
+      if (wipeEl.hidden) return;
+      wipeEl.className = "b8__wipe is-out";
+      await cwait(480);
+      wipeEl.hidden = true; wipeEl.className = "b8__wipe";
+    }
+
     /* Narration (narrator.js): the same lines the screen shows, read aloud,
        and the battle waits for each to finish (never more than 25 seconds). */
     const N = opts.silent ? null : window.Narrator;
@@ -2574,6 +2604,10 @@
       const mine = fighters.filter(f => f.side === side);
       const leader = mine.find(f => norm(f.name) === norm(prep.leader) || norm(f.key) === norm(prep.leader));
       const n = mine.length, gap = Math.min(64, 300 / Math.max(1, n - 1));
+      // A new page for each council: the curtain falls with its title, the
+      // tent is set behind it, and the curtain lifts.
+      await gate("council");
+      await wipeIn(`${team.name}'s war council`, side === attackSide ? "planning the attack" : "planning the defence");
       council = {
         side, rack: [], item: null, plan: 0,
         members: mine.map((f, i) => ({ f, x: W / 2 + (i - (n - 1) / 2) * gap, y: 148, facing: i < n / 2 ? 1 : -1, leader: f === leader })),
@@ -2583,6 +2617,7 @@
         <span class="b8__council-stance b8__council-stance--${side === attackSide ? "attack" : "defend"}">${stance}</span>
         ${leader ? `<span class="b8__council-lead">led by ${esc(leader.name)}</span>` : ""}`;
       councilEl.hidden = false; councilEl.classList.remove("is-leaving"); root.classList.add("is-council");
+      await wipeOut();
       sfx("b_council", 0.8);
       caption.textContent = `${team.name}'s team plans its ${stance === "attacking" ? "attack" : "defence"}.`;
       const intro = voice(councilIntro(side, prep));
@@ -2593,6 +2628,7 @@
       sfx("b_plan", 0.7);
       for (let i = 0; i < lines.length && !councilSkip; i++) {
         if (lm) { lm.pose = i % 2 ? "cast" : "windup"; lm.poseT = time; }
+        await gate("council");
         council.plan = (i + 1) / lines.length;
         const s = lines[i].trim();
         const said = voice(s);
@@ -2603,6 +2639,7 @@
       // The gear, piece by piece.
       for (const g of (prep.gear || [])) {
         if (councilSkip) break;
+        await gate("council");
         const look = gearLook(g), colour = gearColour(g, look);
         const maker = council.members.find(m => norm(m.f.name) === norm(g.made_by));
         const carrier = council.members.find(m => g.carried_by && (norm(m.f.key) === norm(g.carried_by) || norm(m.f.name) === norm(g.carried_by)));
@@ -2648,7 +2685,7 @@
         await showCouncil(defSide);
       }
       councilEl.hidden = true; council = null; root.classList.remove("is-council");
-      if (opts.councilOnly) { if (Sound) Sound.music(null); return finish(); }
+      if (opts.councilOnly) { if (Sound && Sound.release) Sound.release("battle"); return finish(); }
       for (const g of gearList) {
         const f = fighters.find(q => q.side === g.side && g.carried_by && (norm(q.key) === norm(g.carried_by) || norm(q.name) === norm(g.carried_by)));
         const w = f && wearFor(g.look, f);
@@ -2657,6 +2694,7 @@
       // The battlefield itself first: its picture, its name, and who holds what.
       const holders = teams[defSide].name, raiders = teams[attackSide].name;
       const mapEl = root.querySelector(".b8__map");
+      await gate("battle");
       if (arena) {
         mapEl.innerHTML = `${arena.image ? `<img src="${esc(arena.image)}" alt="" referrerpolicy="origin" onerror="this.remove()" />` : ""}
           <div class="b8__map-text"><span class="b8__map-name">${esc(arena.name)}</span>
@@ -2678,12 +2716,14 @@
       await showBanner(`<span>Fight!</span>`, 650);
       for (let i = 0; i < beats.length; i++) {
         progress = i / beats.length;
+        await gate("battle");
         await act(beats[i]);
         if (done) return;
       }
       progress = 1;
+      await gate("battle");
       // The winners celebrate.
-      if (Sound) Sound.music(null);
+      if (Sound && Sound.release) Sound.release("battle");
       sfx("b_win", 1);
       fighters.filter(f => f.side === winSide && !f.downed).forEach(f => setPose(f, "victory"));
       fireworks();
@@ -2713,7 +2753,7 @@
     function finish() {
       if (ended) return;
       ended = true; done = true;
-      if (Sound) Sound.music(null);
+      if (Sound && Sound.release) Sound.release("battle");
       opts.onState && opts.onState("ended");
       opts.onEnd && opts.onEnd();
     }
@@ -2739,7 +2779,7 @@
 
     return {
       play, pause, skip,
-      destroy() { if (N) N.stop(); done = true; ended = true; stopped = true; clearInterval(timer); cancelAnimationFrame(raf); if (Sound) Sound.music(null); container.innerHTML = ""; },
+      destroy() { if (N) N.stop(); done = true; ended = true; stopped = true; clearInterval(timer); cancelAnimationFrame(raf); if (Sound && Sound.release) Sound.release("battle"); container.innerHTML = ""; },
       get playing() { return playing; },
     };
   }

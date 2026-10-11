@@ -474,12 +474,35 @@ html.watching .join__watch { display: none !important; }
 html.watching .lobby { grid-template-columns: 1fr; }
 .watch-badge {
   position: fixed; bottom: 0.8rem; left: 50%; transform: translateX(-50%); z-index: 30; margin: 0;
-  max-width: calc(100vw - 9rem); padding: 0.3rem 0.9rem; text-align: center;
+  max-width: calc(100vw - 9rem); padding: 0.3rem 0.6rem 0.3rem 0.9rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.3rem 0.8rem;
   font-family: var(--font-hand); font-size: 1rem; line-height: 1.2; color: #ffffff; background: #3550b8;
   box-shadow: 0 0 0 2px #0b0a14, 0 0 0 4px #9cc0ff, 4px 4px 0 4px rgba(11, 10, 20, 0.5);
-  pointer-events: none;
 }
+.watch-voice { font: inherit; color: #0b0a14; background: #c9dcff; border: 2px solid #0b0a14; padding: 0.05rem 0.5rem; cursor: pointer; }
+.watch-voice:hover, .watch-voice:focus-visible { background: #ffffff; outline: none; }
+.watch-tap { color: #c9dcff; }
 .watchers { color: var(--ink-muted); }
 .judge-bar { margin-top: var(--space-xs); }
 .judge-bar span { display: block; height: 100%; transition: width 0.25s linear; }
 .judge-bar { height: 0.9rem; }
+
+/* Shown inside a phone's "screen" view: just the picture. */
+html.embedded .home-button, html.embedded .theme-toggle, html.embedded .gfb-button, html.embedded .gfb-panel,
+html.embedded .watch-badge > span:first-child { display: none !important; }
+html.embedded .watch-badge { bottom: 0.4rem; }
+
+/* Hosting from a phone: the host's own controls in a drawer at the bottom. */
+.pocket-drawer {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; height: 3rem;
+  background: #1d1928; box-shadow: 0 -3px 0 #0b0a14, 0 -6px 0 #9cc0ff; transition: height 0.25s steps(5);
+}
+.pocket-drawer.is-open { height: min(62vh, 34rem); }
+.pocket-drawer__tab {
+  display: block; width: 100%; height: 3rem; font-family: var(--font-gothic, inherit); font-size: 1.4rem; color: #ffffff;
+  background: #3550b8; border: 0; cursor: pointer;
+}
+.pocket-drawer__tab::after { content: " ▾"; }
+.pocket-drawer:not(.is-open) .pocket-drawer__tab::after { content: " ▴"; }
+.pocket-drawer iframe { display: block; width: 100%; height: calc(100% - 3rem); border: 0; background: var(--paper); }
+html.pocket body { padding-bottom: min(62vh, 34rem); }
+html.pocket .gfb-button { bottom: calc(min(62vh, 34rem) + 0.8rem); }

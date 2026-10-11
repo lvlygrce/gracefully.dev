@@ -18,13 +18,35 @@
   // Spectators open this page with ?watch=PIN: they see everything the TV
   // shows, but nothing they do changes the game.
   const WATCH = (new URLSearchParams(location.search).get("watch") || "").replace(/\D/g, "").slice(0, 8);
+  // ?embed=1: shown inside a phone (the player's "screen" view), so the page
+  // keeps to the picture. ?pocket=1: hosting from a phone, which also plays.
+  const params = new URLSearchParams(location.search);
+  const EMBED = params.get("embed") === "1";
+  const POCKET = !WATCH && params.get("pocket") === "1";
+  if (EMBED) document.documentElement.classList.add("embedded");
+  if (POCKET) document.documentElement.classList.add("pocket");
   if (WATCH) {
     document.documentElement.classList.add("watching");
     document.title = "Watching Character Draft";
-    const badge = document.createElement("p");
-    badge.className = "watch-badge";
-    badge.textContent = `Watching party ${WATCH}`;
-    document.body.prepend(badge);
+    // Spectators choose their own sound and narration: a tap turns sound on,
+    // and the voice button cycles through the narrators.
+    const bar = document.createElement("div");
+    bar.className = "watch-badge";
+    const VOICES = { off: "Voice: off", browser: "Voice: this device", eleven: "Voice: ElevenLabs" };
+    bar.innerHTML = `<span>Watching party ${WATCH}</span>
+      <button type="button" class="watch-voice"></button>
+      <span class="watch-tap">tap the screen once for sound</span>`;
+    const vb = bar.querySelector(".watch-voice");
+    const label = () => { vb.textContent = VOICES[window.Narrator ? Narrator.mode : "off"]; };
+    vb.addEventListener("click", e => {
+      e.stopPropagation();
+      const order = ["off", "browser", "eleven"], next = order[(order.indexOf(Narrator.mode) + 1) % order.length];
+      Narrator.set(next); label();
+      if (next !== "off") Narrator.speak("Narration on.");
+    });
+    label();
+    document.addEventListener("pointerdown", () => { const t = bar.querySelector(".watch-tap"); if (t) t.remove(); }, { once: true });
+    document.body.prepend(bar);
   }
 
   const HOST_KEY = "character-draft:party:host";
@@ -137,10 +159,12 @@
     },
     onStatus(s) { status = s; const el = document.getElementById("net-status"); if (el) el.textContent = statusText(); },
     onMessage(msg) {
-      if (msg.t === "watching") { pin = msg.pin; }
+      if (msg.t === "watching") { pin = msg.pin; if (window.Narrator) Narrator.setRoom(msg.pin); }
+      else if (msg.t === "hosting" && POCKET) { pin = msg.pin; if (window.Narrator) Narrator.setRoom(msg.pin); safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); pocketDrawer(msg.pin); }
       else if (msg.t === "show") { applyShow(msg.show); }
+      else if (msg.t === "step") { hostReached(msg.matchId, msg.kind, msg.n); }
       else if (WATCH && msg.t === "gone") { error = "That party has ended."; render(true); }
-      else if (msg.t === "hosting") { pin = msg.pin; safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
+      else if (msg.t === "hosting") { pin = msg.pin; if (window.Narrator) Narrator.setRoom(msg.pin); safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
       else if (msg.t === "gone") { safe.remove(HOST_KEY); createRoom(); }
       else if (msg.t === "admin-start") { if (state && state.phase === "lobby") startDraft(); }
       else if (msg.t === "film") {   // the admin's phone controls the film on this screen
@@ -152,6 +176,7 @@
       else if (msg.t === "replaced") { error = "This party is now being shown on another screen."; render(true); }
       else if (msg.t === "error") { error = msg.message; render(true); }
       else if (msg.t === "state") {
+        if (pin && msg.state.pin && msg.state.pin !== pin) return;   // an old room still talking
         clock.sync(msg.state.serverNow);
         const was = state;
         state = msg.state;
@@ -172,6 +197,20 @@
     },
   });
 
+  /* Hosting from a phone: the host plays too, in a drawer of player controls
+     (the ordinary phone page, framed) under this screen. */
+  function pocketDrawer(p) {
+    let d = document.getElementById("pocket");
+    if (d && d.dataset.pin === p) return;
+    if (d) d.remove();
+    d = document.createElement("section");
+    d.id = "pocket"; d.className = "pocket-drawer is-open"; d.dataset.pin = p;
+    d.innerHTML = `<button type="button" class="pocket-drawer__tab">Your controls</button>
+      <iframe title="Your player controls" src="/play/?embed=1#${p}"></iframe>`;
+    d.querySelector(".pocket-drawer__tab").addEventListener("click", () => d.classList.toggle("is-open"));
+    document.body.appendChild(d);
+  }
+
   // A spectator's messages go nowhere but the request to watch.
   const net = { send: m => { if (!WATCH || m.t === "watch") link.send(m); } };
 
@@ -184,8 +223,26 @@
       teams: judging.teams || null, arena: judging.arena || null,
       battle: b ? { teams: b.teams, verdict: b.verdict, arena: b.arena } : null } });
   }
+  // Playback in step across screens: the host reports each step, spectators
+  // wait for it (see Battle's gate).
+  let hostSteps = { matchId: null, council: 0, battle: 0 };
+  const stepWaiters = [];
+  function hostReached(matchId, kind, n) {
+    if (hostSteps.matchId !== matchId) hostSteps = { matchId, council: 0, battle: 0 };
+    hostSteps[kind] = Math.max(hostSteps[kind], n);
+    for (let i = stepWaiters.length - 1; i >= 0; i--) {
+      const w = stepWaiters[i];
+      if (w.matchId === matchId && hostSteps[w.kind] >= w.n) { stepWaiters.splice(i, 1); w.res(); }
+    }
+  }
+  function syncOpts(matchId) {
+    if (WATCH) return { follow: (kind, n) => (hostSteps.matchId === matchId && hostSteps[kind] >= n) ? Promise.resolve() : new Promise(res => stepWaiters.push({ matchId, kind, n, res })) };
+    return { onStep: (kind, n) => net.send({ t: "host:step", matchId, kind, n }) };
+  }
+
   function applyShow(sh, quiet) {
     if (!WATCH || !sh || !sh.matchId) return;
+    if (sh.steps) { hostReached(sh.matchId, "council", sh.steps.council || 0); hostReached(sh.matchId, "battle", sh.steps.battle || 0); }
     const fresh = judging.matchId !== sh.matchId;
     if (fresh) judging = { matchId: sh.matchId, preps: [null, null], status: "", error: "", film: null, pending: null, sent: true };
     const changed = fresh || (sh.error || "") !== judging.error || JSON.stringify(sh.preps) !== JSON.stringify(judging.preps);
@@ -207,7 +264,21 @@
     if (el) el.textContent = judging.status;
   }
 
+  // A new room or a new game: drop everything the last one left running.
+  function freshStart() {
+    if (filmCtl && filmCtl.destroy) try { filmCtl.destroy(); } catch { /* gone */ }
+    if (judging.councilCtl && judging.councilCtl.destroy) try { judging.councilCtl.destroy(); } catch { /* gone */ }
+    if (judging.battle && judging.battle.ctl && judging.battle.ctl.destroy) try { judging.battle.ctl.destroy(); } catch { /* gone */ }
+    filmCtl = null;
+    judging = { matchId: null, preps: [null, null], status: "", error: "", film: null };
+    if (window.Narrator) Narrator.stop();
+    Sound.reset();
+    view = null;
+  }
+
   function createRoom() {
+    freshStart();
+    state = null; pin = null;
     net.send({ t: "host:create", settings: serverSettings() });
   }
 
@@ -313,6 +384,7 @@
               <p class="hand">and enter</p>
               <p class="join__pin" aria-label="Game PIN ${esc(state.pin.split("").join(" "))}">${esc(state.pin)}</p>
               <p class="hand join__watch">just watching? pick "Just watch" there instead</p>
+              <p class="hand join__watch">another room's TV? open ${esc(location.host)}/watch there and enter the PIN</p>
             </div>
           </div>
           <p class="hand" id="count" style="margin-top: var(--space-md)"></p>
@@ -599,6 +671,16 @@
       try { ok = await J.pin.verify(typed); } catch (err) { error = err.message; return render(true); }
       if (!ok) { error = "That PIN isn't right."; return render(true); }
     } else if (typed) J.gemini.saveKey(typed);
+    // Make sure the judge can actually be reached before anyone drafts, not
+    // when the first fight is already waiting for it.
+    if (prefs.judge === "gemini") {
+      if (!J.gemini.ready()) { error = "Add a Gemini key or the PIN before starting: the AI judge needs one."; return render(true); }
+      const b = document.getElementById("start");
+      if (b) { b.disabled = true; b.textContent = "Checking the judge…"; }
+      try { await J.gemini.request("models?pageSize=5"); }
+      catch (err) { error = `The AI judge isn't reachable: ${err.message} Fix the key or PIN, or pick the crowd vote.`; updateStart(); return render(true); }
+      error = "";
+    }
     net.send({ t: "host:start", settings: serverSettings(), deck: buildDeck(), arena: drawArena() });
   }
 
@@ -818,6 +900,7 @@
         app.appendChild(b.el);
         b.ctl = filmCtl = Battle.player(b.el, { teams: b.teams, verdict: b.verdict, arena: b.arena, worldName: w => (U[w] || {}).name || w }, {
           skipCouncil: !!judging.councilPlayed,
+          ...syncOpts(m.id),
           onState: st => {
             if (judging.battle !== b) return;
             if (st === "playing") net.send({ t: "host:film", matchId: m.id, film: "playing" });
@@ -830,6 +913,14 @@
           },
         });
       } else app.appendChild(b.el);
+      return;
+    } else if (m.stage === "judging" && judging.matchId === m.id && !judging.councilPlayed && (judging.councilEl || councilsReady())) {
+      // The war councils get the whole screen, like the battle that follows.
+      app.innerHTML = `<p class="hand">${esc(player(m.a).name)} vs ${esc(player(m.b).name)}${m.final ? " · the final" : ""} · the war councils</p>
+        <div id="council-live" class="tv-film tv-film--full tv-battle"></div>
+        <p class="hand" id="judge-status">${esc(judging.status)}</p>
+        <div class="bar judge-bar"><span data-judge-bar></span></div><p class="hand" data-judge-text></p>`;
+      mountCouncils();
       return;
     } else if (m.stage === "judging" && judging.matchId === m.id && judging.film && judging.film.ready) {
       // The film gets the whole screen.
@@ -847,8 +938,7 @@
       return;
     } else if (m.stage === "judging") {
       const f = judging.matchId === m.id && judging.film;
-      middle = `${judging.matchId === m.id && (judging.councilEl || councilsReady()) && !f ? `<div id="council-live" class="tv-film tv-battle"></div>` : ""}
-        <p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
+      middle = `<p class="hand" id="judge-status">${esc(judging.matchId === m.id ? judging.status : "the judge is getting ready…")}</p>
         ${f || (judging.matchId === m.id && judging.error) ? "" : `<div class="bar judge-bar"><span data-judge-bar></span></div><p class="hand" data-judge-text></p>`}
         ${f ? `${Film.makingBar(f.startedAt, f.shots.length)}<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
           <button class="btn btn--quiet" type="button" id="skip-film">Skip the film</button>` : ""}
@@ -908,7 +998,7 @@
         </div>
       </div>` : `<p class="hand">Nobody drafted a team, so there's no tournament.</p>
         <div class="controls"><button class="btn btn--primary" type="button" id="again">Play again</button></div>`;
-    on("again", () => net.send({ t: "host:again" }));
+    on("again", () => { freshStart(); net.send({ t: "host:again" }); });
     on("new-room", () => { safe.remove(HOST_KEY); createRoom(); });
     on("replay-final", () => replay(lastId()));
     on("reasoning-final", () => reasoning(lastId()));
@@ -987,6 +1077,7 @@
     judging.councilEl = el;
     judging.councilCtl = Battle.player(el, { teams, verdict, arena: judging.arena, worldName: w => (U[w] || {}).name || w }, {
       councilOnly: true,
+      ...syncOpts(matchId),
       onEnd: () => {
         if (judging.matchId !== matchId) return;
         judging.councilPlayed = true; judging.councilCtl = null; judging.councilEl = null;
