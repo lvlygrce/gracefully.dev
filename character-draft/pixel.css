@@ -29,7 +29,7 @@ html[data-theme="dark"] {
 
   --font-display: "Pixelify Sans", ui-monospace, monospace;
   --font-hand:    "Pixelify Sans", ui-monospace, monospace;
-  --font-gothic:  "Jacquarda Bastarda 9", "Pixelify Sans", ui-monospace, monospace;
+  --font-gothic:  "Jersey 10", "Pixelify Sans", ui-monospace, monospace;
   --font-text:    "Pixelify Sans", ui-monospace, monospace;
 
   --radius-blob: 0;
@@ -247,7 +247,7 @@ input::placeholder, textarea::placeholder { color: var(--ink-faint); }
 
 /* The feedback panel, in the same stone. */
 .gfb-panel { color: var(--ink) !important; padding: 0.4rem 0.6rem 0.6rem !important; }
-.gfb-title { font-family: var(--font-gothic) !important; font-size: 1.9rem !important; color: var(--silver); }
+.gfb-title { font-family: var(--font-gothic) !important; font-size: 2.1rem !important; color: #ffffff; }
 .gfb-note, .gfb-status { color: var(--ink-muted) !important; font-style: normal !important; }
 .gfb-close { color: var(--silver) !important; font-family: var(--font-text); }
 
@@ -268,3 +268,30 @@ input::placeholder, textarea::placeholder { color: var(--ink-faint); }
 /* Keep motion where the originals had it, but no smooth rotations on cards. */
 .choice:hover .choice__body { transform: translate(0, -2px) !important; }
 html.tv .chip--locked, html.phone .chip--locked { border-image-source: url("/character-draft/pixel/plate-blue.svg") !important; }
+
+/* Titles: a chunky pixel face, large and bright white so they read at a glance. */
+.wordmark, h1, h2, .title, .mode__name, .choice__name, .format__name, .block__name, .edge__team, .final__name,
+.player__name, .done__title, .verdict__winner, .team__name, .card__name, .b8__council-team, .b8__map-name, .verdict__mvp, .join__pin {
+  color: #ffffff !important;
+  text-shadow: 2px 2px 0 #110e18, 4px 4px 0 rgba(17, 14, 24, 0.35);
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+}
+.wordmark { font-size: clamp(4rem, 13vw, 7.5rem); text-shadow: 4px 4px 0 #110e18, 8px 8px 0 rgba(17, 14, 24, 0.35); }
+.mode__name, .choice__name, .format__name, .player__name, .edge__team, .final__name, .team__name, .card__name { font-size: 1.75rem !important; }
+.block__name { font-size: clamp(2.6rem, 8vw, 4.2rem) !important; }
+.title--xl { font-size: clamp(4rem, 9vw, 7rem) !important; }
+.title--lg { font-size: clamp(3rem, 6vw, 5rem) !important; }
+.title--md { font-size: clamp(2.2rem, 4vw, 3.2rem) !important; }
+.section-label { font-size: 2.2rem; letter-spacing: 0.04em; color: #15121e; }
+.btn { font-size: 1.6rem; letter-spacing: 0.03em; }
+.masthead__meta { font-size: 1.4rem; color: #ece9f6; }
+.wordmark__mark { color: var(--violet) !important; }
+.section-label {
+  color: #ffffff !important;
+  border-image: url("/character-draft/pixel/plate-blue.svg") 4 fill / 8px stretch !important;
+  border-width: 8px !important;
+  padding: 0.1rem 1.1rem 0.25rem !important;
+  text-shadow: 2px 2px 0 #110e18 !important;
+}
+.choice__name, .format__name { font-size: 1.5rem !important; }
