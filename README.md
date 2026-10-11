@@ -51,6 +51,7 @@ the house style, and do not treat it as a precedent.
 | `mount-ever-rarest/` | **Mount Ever-Rarest** — an unlimited rare-answers trivia climb up Everest, after Krillion, at [/mount-ever-rarest/](https://gracefully.dev/mount-ever-rarest/) |
 | `character-draft/` | **Character Draft** — a two-player blind auction draft across fourteen worlds, from Westeros and Marvel to Pokémon, Harry Potter and famous people, at [/character-draft/](https://gracefully.dev/character-draft/) |
 | `character-draft/party/` | **Character Draft party mode**: the TV screen for up to 24 players, at [/character-draft/party/](https://gracefully.dev/character-draft/party/). Talks to a small WebSocket server on Railway (`~/Development/character-draft-server`). |
+| `study-cafes/` | **Auckland study cafes** — a map of study- and laptop-friendly cafes with power, wifi, noise, price and menu notes, at [/study-cafes/](https://gracefully.dev/study-cafes/). Data lives in `study-cafes/cafes.js`. |
 | `play/` | The phone side of party mode, at [/play](https://gracefully.dev/play): join with the PIN on the TV. |
 
 ## Working on it locally

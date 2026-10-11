@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auckland study cafes</title>
+  <meta name="description" content="A map of Auckland cafes that people actually study and work in, with power, wifi, noise, price and menu notes." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:title" content="Auckland study cafes" />
+  <meta property="og:description" content="A map of Auckland cafes people actually study in, with power, wifi, noise, price and menu notes." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://gracefully.dev/study-cafes/" />
+
+  <link rel="canonical" href="https://gracefully.dev/study-cafes/" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%98%95%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="/style.css?v=3" />
+  <link rel="stylesheet" href="study-cafes.css?v=1" />
+
+  <script>
+    try {
+      var t = localStorage.getItem("theme");
+      document.documentElement.setAttribute("data-theme", t === "dark" ? "dark" : "light");
+    } catch (e) { /* blocked storage — stay on light */ }
+
+    if (!(window.CSS && CSS.supports && CSS.supports("offset-path", 'path("M0 0 L1 1")'))) {
+      document.documentElement.className += " no-motionpath";
+    }
+  </script>
+</head>
+<body>
+  <a class="home-button" href="/" aria-label="Back to Gracefully" title="Back to Gracefully">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M3.5 11.2 12 4l8.5 7.2" />
+      <path d="M5.8 9.6V19.3c0 .4.3.7.7.7h3.9v-5.4h3.2V20h3.9c.4 0 .7-.3.7-.7V9.6" />
+    </svg>
+  </a>
+  <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.25" />
+      <path d="M12 2v2.5M12 19.5V22M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M2 12h2.5M19.5 12H22M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77" />
+    </svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M20.5 14.4A8.5 8.5 0 1 1 9.6 3.5a6.8 6.8 0 0 0 10.9 10.9Z" />
+    </svg>
+  </button>
+
+  <main class="page page--wide">
+    <header class="masthead masthead--compact">
+      <p class="masthead__meta reveal reveal--rule" style="--i:0">a field guide, gathered October 2026</p>
+
+      <h1 class="wordmark reveal reveal--display" style="--i:1">Study cafes<span class="wordmark__mark">.</span></h1>
+
+      <div class="penstroke penstroke--swash reveal" style="--i:3" aria-hidden="true">
+        <svg class="penstroke__svg" viewBox="0 0 420 46" fill="none">
+          <path class="penstroke__ink" pathLength="1"
+                d="M10 30 C 74 8 132 40 198 26 C 258 13 312 34 366 22 C 384 18 398 22 410 32" />
+          <g class="penstroke__pen">
+            <g transform="rotate(-26) scale(0.86)">
+              <path class="penstroke__nib" d="M0 0 C-1.4 -6.5 -4.8 -11.5 -5.6 -17 C-6.3 -21.6 -3.2 -24.6 0 -24.6 C3.2 -24.6 6.3 -21.6 5.6 -17 C4.8 -11.5 1.4 -6.5 0 0 Z" />
+              <path class="penstroke__slit" d="M0 -4 V-15" />
+              <circle class="penstroke__hole" cx="0" cy="-17" r="1.6" />
+              <path class="penstroke__collar" d="M-5.1 -24.2 C-5.9 -28 -6.1 -31 -5.9 -33.4 C-5.8 -35.2 5.8 -35.2 5.9 -33.4 C6.1 -31 5.9 -28 5.1 -24.2 Z" />
+              <path class="penstroke__grip" d="M-5.9 -33.4 C-6 -38 -5.6 -43 -4.9 -47.5 C-4.6 -49.6 4.6 -49.6 4.9 -47.5 C5.6 -43 6 -38 5.9 -33.4 Z" />
+            </g>
+          </g>
+        </svg>
+      </div>
+
+      <p class="lede reveal" style="--i:4">
+        Auckland cafes that people actually <em>study and work in</em>, pulled from guides, directories,
+        reviews and student TikToks, and checked against Google Maps to make sure they're still open.
+      </p>
+    </header>
+
+    <section class="filters reveal" style="--i:5" aria-label="Filter cafes">
+      <label class="search">
+        <span class="visually-hidden">Search cafes</span>
+        <input id="search" type="search" placeholder="Search by name, suburb or menu…" autocomplete="off" />
+      </label>
+
+      <div class="chip-row" role="group" aria-label="Area" id="area-chips"></div>
+
+      <div class="chip-row" role="group" aria-label="Needs">
+        <button class="chip" type="button" data-flag="power" aria-pressed="false">Power points mentioned</button>
+        <button class="chip" type="button" data-flag="late" aria-pressed="false">Open after 6pm</button>
+        <button class="chip" type="button" data-flag="study" aria-pressed="false">Dedicated study cafes</button>
+        <span class="chip-row__gap" aria-hidden="true"></span>
+        <button class="chip chip--price" type="button" data-price="1" aria-pressed="false" aria-label="Price: cheap">$</button>
+        <button class="chip chip--price" type="button" data-price="2" aria-pressed="false" aria-label="Price: mid">$$</button>
+        <button class="chip chip--price" type="button" data-price="3" aria-pressed="false" aria-label="Price: pricier">$$$</button>
+      </div>
+
+      <div class="tally">
+        <p id="count" aria-live="polite"></p>
+        <label class="sort">
+          <span>Sort by</span>
+          <select id="sort">
+            <option value="rating">rating</option>
+            <option value="reviews">most reviewed</option>
+            <option value="name">name</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <div class="atlas">
+      <section class="atlas__list" aria-label="Cafes">
+        <ol class="cafes" id="cafes"></ol>
+        <p class="empty" id="empty" hidden><span>Nothing matches those filters. Try loosening one.</span></p>
+      </section>
+
+      <div class="atlas__map reveal" style="--i:6">
+        <div id="map" role="region" aria-label="Map of study cafes"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="colophon colophon--wide">
+    <span><a href="/">Gracefully</a> &middot; ratings and hours come from Google Maps (October 2026). Everything else comes from the linked sources, so check before a long session.</span>
+    <span>Map tiles © Esri, HERE, Garmin, <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script type="module" src="app.js?v=1"></script>
+  <script src="/feedback.js?v=2" defer></script>
+</body>
+</html>
