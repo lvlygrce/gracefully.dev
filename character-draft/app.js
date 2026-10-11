@@ -49,7 +49,7 @@
   if (!prefs.battleV) { if (!prefs.format || prefs.format === "text") prefs.format = "battle"; prefs.battleV = 1; store.set(PREFS_KEY, prefs); }
   if (!Array.isArray(prefs.names) || prefs.names.length < 2) prefs.names = ["Player one", "Player two"];
   if (!Array.isArray(prefs.worlds)) prefs.worlds = U[prefs.universe] ? [prefs.universe] : ["westeros"];
-  prefs.worlds = prefs.worlds.filter(w => U[w]);
+  prefs.worlds = prefs.worlds.filter(w => U[w] && !U[w].retired);
   if (!prefs.worlds.length) prefs.worlds = ["westeros"];
   if (!PASS_OPTIONS.includes(prefs.passes)) prefs.passes = DEFAULT_PASSES;
 

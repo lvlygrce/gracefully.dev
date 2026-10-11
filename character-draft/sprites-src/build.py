@@ -24,7 +24,7 @@ FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent", "
 
 chars = json.loads(subprocess.run(["node", "-e", """
 global.window={};eval(require('fs').readFileSync('../characters.js','utf8'));
-const o={};for(const [k,w] of Object.entries(window.UNIVERSES))o[k]=w.characters.map(c=>c[0]);console.log(JSON.stringify(o))"""],
+const o={};for(const k of Object.getOwnPropertyNames(window.UNIVERSES)){const w=window.UNIVERSES[k];o[k]=w.characters.map(c=>c[0])};console.log(JSON.stringify(o))"""],
     cwd=HERE, capture_output=True, text=True, check=True).stdout)
 
 out, bad = {}, 0

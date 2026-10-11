@@ -27,7 +27,7 @@
   // The crowd vote used to be the default, so older saved settings carry it
   // without anyone having picked it: move them to Gemini once.
   if (!prefs.v) { if (prefs.judge === "crowd") prefs.judge = "gemini"; prefs.v = 2; safe.set(PREFS_KEY, prefs); }
-  prefs.worlds = (prefs.worlds || []).filter(w => U[w]);
+  prefs.worlds = (prefs.worlds || []).filter(w => U[w] && !U[w].retired);
   if (!prefs.worlds.length) prefs.worlds = Object.keys(U);
 
   let state = null;
