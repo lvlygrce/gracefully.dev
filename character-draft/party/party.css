@@ -465,3 +465,18 @@ html.tv .stage { padding-top: 3.4rem; }
 }
 .tv-overlay__body .big-note { max-width: 60rem; }
 .reasoning__fight p { max-width: 60rem; color: var(--ink-muted); }
+
+/* Spectators (?watch=PIN): the same screens, with every control taken away. */
+html.watching #start, html.watching #next, html.watching #again, html.watching #new-room, html.watching #close-vote,
+html.watching #crowd, html.watching #retry, html.watching #skip-film, html.watching [data-kick], html.watching .settings,
+html.watching #all-worlds, html.watching #sound-note, html.watching .b8__ctl [data-act="skip"], html.watching .b8__council-skip,
+html.watching .join__watch { display: none !important; }
+html.watching .lobby { grid-template-columns: 1fr; }
+.watch-badge {
+  position: fixed; bottom: 0.8rem; left: 50%; transform: translateX(-50%); z-index: 30; margin: 0;
+  max-width: calc(100vw - 9rem); padding: 0.3rem 0.9rem; text-align: center;
+  font-family: var(--font-hand); font-size: 1rem; line-height: 1.2; color: #ffffff; background: #3550b8;
+  box-shadow: 0 0 0 2px #0b0a14, 0 0 0 4px #9cc0ff, 4px 4px 0 4px rgba(11, 10, 20, 0.5);
+  pointer-events: none;
+}
+.watchers { color: var(--ink-muted); }

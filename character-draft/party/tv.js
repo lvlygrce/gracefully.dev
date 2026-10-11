@@ -15,6 +15,18 @@
   const app = document.getElementById("app");
   const announcer = document.getElementById("announce");
 
+  // Spectators open this page with ?watch=PIN: they see everything the TV
+  // shows, but nothing they do changes the game.
+  const WATCH = (new URLSearchParams(location.search).get("watch") || "").replace(/\D/g, "").slice(0, 8);
+  if (WATCH) {
+    document.documentElement.classList.add("watching");
+    document.title = "Watching Character Draft";
+    const badge = document.createElement("p");
+    badge.className = "watch-badge";
+    badge.textContent = `Watching party ${WATCH}`;
+    document.body.prepend(badge);
+  }
+
   const HOST_KEY = "character-draft:party:host";
   const PREFS_KEY = "character-draft:party:prefs";
   const JOIN_URL = `${location.origin}/play/`;
@@ -116,15 +128,19 @@
 
   /* --- Connection ------------------------------------------------------ */
 
-  const net = connect({
+  const link = connect({
     onOpen() {
+      if (WATCH) return net.send({ t: "watch", pin: WATCH });
       const host = safe.get(HOST_KEY);
       if (host && host.pin) net.send({ t: "host:resume", pin: host.pin, hostToken: host.hostToken });
       else createRoom();
     },
     onStatus(s) { status = s; const el = document.getElementById("net-status"); if (el) el.textContent = statusText(); },
     onMessage(msg) {
-      if (msg.t === "hosting") { pin = msg.pin; safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
+      if (msg.t === "watching") { pin = msg.pin; }
+      else if (msg.t === "show") { applyShow(msg.show); }
+      else if (WATCH && msg.t === "gone") { error = "That party has ended."; render(true); }
+      else if (msg.t === "hosting") { pin = msg.pin; safe.set(HOST_KEY, { pin: msg.pin, hostToken: msg.hostToken }); }
       else if (msg.t === "gone") { safe.remove(HOST_KEY); createRoom(); }
       else if (msg.t === "admin-start") { if (state && state.phase === "lobby") startDraft(); }
       else if (msg.t === "film") {   // the admin's phone controls the film on this screen
@@ -143,7 +159,8 @@
         // The admin can change the pace from their phone: keep this screen's
         // settings in step, so the next game (or the start) doesn't undo it.
         const st = state.settings;
-        if (st.bidSeconds !== prefs.bidSeconds || st.autoNext !== prefs.autoNext) {
+        if (WATCH) applyShow(msg.show, true);
+        else if (st.bidSeconds !== prefs.bidSeconds || st.autoNext !== prefs.autoNext) {
           prefs.bidSeconds = st.bidSeconds; prefs.autoNext = st.autoNext; savePrefs();
           if (state.phase === "lobby") view = null;   // redraw the settings
         }
@@ -154,6 +171,39 @@
       }
     },
   });
+
+  // A spectator's messages go nowhere but the request to watch.
+  const net = { send: m => { if (!WATCH || m.t === "watch") link.send(m); } };
+
+  /* What the TV is showing during a fight, passed to spectators through the
+     server: the councils' plans, the judge's progress and the battle. */
+  function shareShow() {
+    if (WATCH || !judging.matchId) return;
+    const b = judging.battle;
+    net.send({ t: "host:show", show: { matchId: judging.matchId, status: judging.status, error: judging.error, preps: judging.preps,
+      battle: b ? { teams: b.teams, verdict: b.verdict, arena: b.arena } : null } });
+  }
+  function applyShow(sh, quiet) {
+    if (!WATCH || !sh || !sh.matchId) return;
+    const fresh = judging.matchId !== sh.matchId;
+    if (fresh) judging = { matchId: sh.matchId, preps: [null, null], status: "", error: "", film: null, pending: null, sent: true };
+    const changed = fresh || (sh.error || "") !== judging.error || JSON.stringify(sh.preps) !== JSON.stringify(judging.preps);
+    judging.preps = sh.preps || [null, null];
+    judging.status = sh.status || "";
+    judging.error = sh.error || "";
+    let battle = false;
+    if (sh.battle && !judging.battle) {
+      fights.set(sh.matchId, sh.battle);
+      judging.battle = { ...sh.battle, el: null, ctl: null };
+      battle = true;
+    }
+    if (quiet) return;   // a state message is about to redraw anyway
+    const m = state && state.match;
+    if (!m || state.phase !== "match" || m.id !== sh.matchId || m.stage !== "judging") return;
+    if (battle || changed) return render(true);
+    const el = document.getElementById("judge-status");
+    if (el) el.textContent = judging.status;
+  }
 
   function createRoom() {
     net.send({ t: "host:create", settings: serverSettings() });
@@ -220,9 +270,11 @@
     }
   }
 
+  const watchers = () => state && state.watching ? `<span class="hand watchers">${state.watching} watching</span>` : "";
   const foot = (extra = "") => `
     <div class="controls">
       ${extra}
+      ${watchers()}
       <span class="status-dot" id="net-status">${esc(statusText())}</span>
       ${error ? `<p class="warn">${esc(error)}</p>` : ""}
     </div>`;
@@ -258,6 +310,7 @@
               <p class="join__url">${esc(JOIN_LABEL)}</p>
               <p class="hand">and enter</p>
               <p class="join__pin" aria-label="Game PIN ${esc(state.pin.split("").join(" "))}">${esc(state.pin)}</p>
+              <p class="hand join__watch">just watching? pick "Just watch" there instead</p>
             </div>
           </div>
           <p class="hand" id="count" style="margin-top: var(--space-md)"></p>
@@ -886,6 +939,7 @@
     fights.set(matchId, { teams, verdict: v, arena });
     if (!prefs.battle8 || judging.matchId !== matchId) return finishJudged();
     judging.battle = { teams, verdict: v, arena, el: null, ctl: null };
+    shareShow();
     net.send({ t: "host:film", matchId, film: "playing" });
     render(true);
   }
@@ -898,12 +952,14 @@
   }
 
   async function maybeJudge() {
+    if (WATCH) return;
     const m = state && state.match;
     if (!m || state.phase !== "match" || m.stage !== "judging") return;
     if (judging.matchId === m.id) return;
     const matchId = m.id;
     judging = { matchId, preps: [null, null], status: "The war councils are meeting…", error: "", film: null, pending: null, sent: false };
     render(true);
+    shareShow();
     const teams = [teamFor(m.a), teamFor(m.b)];
     const a = state.arena;
     const arena = a ? { name: a.name, terrain: a.terrain, world: a.world, image: a.image } : null;
@@ -912,6 +968,7 @@
       judging.status = t;
       const el = document.getElementById("judge-status");
       if (el) el.textContent = t;
+      shareShow();
     };
     try {
       J.local.modelId = J.local.models[0].id;
@@ -923,6 +980,7 @@
         onPrep: (i, prep) => {
           if (judging.matchId !== matchId) return;
           judging.preps[i] = prep;
+          shareShow();
           const el = document.getElementById(`side-${i}`);
           if (el) el.outerHTML = sideHtml(i === 0 ? m.a : m.b, i);
         },
@@ -978,12 +1036,14 @@
       if (judging.matchId !== matchId) return;
       judging.error = err.message || "The judge couldn't decide.";
       render(true);
+      shareShow();
     }
   }
 
   // After a crowd vote, reason out what the fight cost (never rolled).
   let reasonedFor = null;
   async function maybeReason() {
+    if (WATCH) return;
     const m = state && state.match;
     if (!m || state.phase !== "match" || m.stage !== "result" || m.verdict || m.walkover) return;
     if (!lasting() || (m.aftermath || []).length || reasonedFor === m.id) return;

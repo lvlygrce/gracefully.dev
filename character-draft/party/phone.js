@@ -131,6 +131,8 @@
           <input class="field__input" name="name" maxlength="18" autocomplete="nickname" value="${esc(name)}" required /></label>
         ${flash ? `<p class="warn">${esc(flash)}</p>` : ""}
         <button class="btn btn--primary btn--big btn--wide" type="submit" ${joining ? "disabled" : ""}>${joining ? "Joining…" : "Join"}</button>
+        <button class="btn btn--wide" type="button" id="watch">Just watch</button>
+        <p class="muted">Watching shows you the TV screen live, without playing. No name needed.</p>
       </form>`;
     const form = document.getElementById("join");
     form.addEventListener("submit", e => {
@@ -145,6 +147,12 @@
       if (session && session.pin !== pin) { leaving = true; net.send({ t: "leave" }); }
       net.send({ t: "join", pin, name: nm });
       render(true);
+    });
+    // Spectating: the TV's view, live, on this screen. Only the PIN is needed.
+    on("watch", () => {
+      const pin = String(new FormData(form).get("pin")).replace(/\D/g, "");
+      if (pin.length !== 5) { flash = "Enter the 5-digit PIN from the TV to watch."; return render(true); }
+      location.href = `/character-draft/party/?watch=${pin}`;
     });
     on("forget", () => {
       // The old game may be gone or unreachable; forget it either way.
