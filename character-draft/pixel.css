@@ -1,0 +1,270 @@
+/* Character Draft in pixels: a dark-fantasy 8-bit skin over the game's own
+   styles. Loaded last on the game's pages (single player, the party TV and
+   the phone), it swaps the paper palette for night purples, blues and
+   silver, sets everything in pixel lettering, and frames panels and buttons
+   with hand-made pixel borders (the images in pixel/). Layout, behaviour
+   and animation all stay with the original stylesheets. */
+
+/* --- Palette and type -------------------------------------------------- */
+
+html[data-theme],
+html[data-theme="light"],
+html[data-theme="dark"] {
+  --paper:       #4a4360;   /* the stone backdrop */
+  --paper-warm:  #1d1928;   /* panels */
+  --paper-sunk:  #15121e;   /* wells and slots */
+  --ink:         #ece9f6;
+  --ink-muted:   #b9b3cf;
+  --ink-faint:   #857e9e;
+  --rule:        #7c7794;
+  --rule-strong: #b8b4c9;
+  --accent:      #9cc0ff;   /* a cold blue */
+  --accent-wash: rgba(110, 150, 240, 0.22);
+  --violet:      #b18cff;
+  --silver:      #cfcce0;
+  --heart:       #e0567f;
+  --gold:        #e8c25a;
+  --grain: 0;
+  --blotch: transparent;
+
+  --font-display: "Pixelify Sans", ui-monospace, monospace;
+  --font-hand:    "Pixelify Sans", ui-monospace, monospace;
+  --font-gothic:  "Jacquarda Bastarda 9", "Pixelify Sans", ui-monospace, monospace;
+  --font-text:    "Pixelify Sans", ui-monospace, monospace;
+
+  --radius-blob: 0;
+  --radius-soft: 0;
+
+  /* Rules become a pixel line with a diamond at each repeat. */
+  --wave-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='6' viewBox='0 0 40 6' shape-rendering='crispEdges'%3E%3Crect y='2' width='40' height='2'/%3E%3Crect x='19' y='0' width='2' height='6'/%3E%3Crect x='17' y='1' width='6' height='4'/%3E%3C/svg%3E");
+
+  --frame-panel: url("/character-draft/pixel/panel.svg");
+  --frame-card:  url("/character-draft/pixel/card.svg");
+  --frame-blue:  url("/character-draft/pixel/panel-blue.svg");
+}
+/* The dark theme sinks the backdrop to a night sky; panels stay the same. */
+html[data-theme="dark"] { --paper: #1f1a2e; }
+
+
+html { image-rendering: pixelated; }
+
+body {
+  background-color: var(--paper);
+  /* A faint two-tone dither, like stone. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' shape-rendering='crispEdges'%3E%3Crect width='2' height='2' fill='%23000' fill-opacity='.07'/%3E%3Crect x='4' y='4' width='2' height='2' fill='%23000' fill-opacity='.07'/%3E%3Crect x='6' y='0' width='2' height='2' fill='%23fff' fill-opacity='.03'/%3E%3C/svg%3E");
+  background-size: 8px 8px;
+  font-weight: 400;
+  -webkit-font-smoothing: none;
+  text-rendering: optimizeSpeed;
+}
+body::before, body::after { display: none; }
+
+/* Pixel corners everywhere; nothing soft or blobby. */
+*, *::before, *::after { border-radius: 0 !important; }
+
+/* Blackletter for names, titles and buttons; pixel sans for reading. */
+.wordmark, h1, h2, .title, .section-label, .masthead__meta, .btn, .mode__name, .choice__name, .format__name,
+.block__name, .edge__team, .final__name, .player__name, .done__title, .verdict__winner, .team__name, .card__name,
+.gfb-title, .join__pin, .b8__council-team, .b8__map-name, .b8__banner span, .versus__vs, .bracket__label, .verdict__mvp {
+  font-family: var(--font-gothic) !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+em, i, .lede em, .choice__note, .mode__note, .format__note { font-style: normal !important; }
+.wordmark, h1, h2, h3, .title, .section-label, .masthead__meta, .btn, .chip span, .money, .price,
+.mode__name, .choice__name, .format__name, .block__name, .edge__team, .final__name, .player__name,
+.done__title, .verdict__winner, .verdict__label, .judge__status, .hand, .team__name, .card__name {
+  font-variation-settings: normal !important;
+  letter-spacing: 0.01em;
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.95;
+  color: var(--silver);
+  text-shadow: 3px 3px 0 #110e18, 6px 6px 0 rgba(17, 14, 24, 0.35);
+}
+.wordmark__mark { color: var(--violet); }
+.masthead__meta { color: var(--ink-muted); font-size: 1.6rem; }
+.lede, .lede em { color: var(--ink); }
+.lede em { color: var(--violet); font-style: normal; }
+em { font-style: normal; color: var(--violet); }
+.section-label {
+  display: inline-block;
+  color: #1d1928;
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  line-height: 1.1;
+  padding: 0.25rem 1.6rem 0.35rem;
+  border: 8px solid transparent;
+  border-width: 8px 12px;
+  border-image: url("/character-draft/pixel/ribbon.svg") 4 6 fill / 8px 12px stretch;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.35);
+}
+.section-label::after { display: none !important; }
+
+a { color: var(--accent); }
+::selection { background: var(--violet); color: #110e18; }
+:focus-visible { outline: 3px solid var(--accent) !important; outline-offset: 3px; }
+
+/* --- Panels ------------------------------------------------------------ */
+
+.mode, .choice__body, .format, .player, .block, .reveal-card, .edge, .war, .arena__card, .arena-strip,
+.final__team, .recent__item, .stepper, .verdict, .judge, .roles__team, .chip--wide span,
+.side, .team, .card, .bout, .settings, .join, .tv-overlay__box, .vote__btn, .pick__card,
+.phone-lot, .dock, .admin-bar, .champion, .aftermath,
+.gfb-panel {
+  background: transparent !important;
+  border: 16px solid transparent !important;
+  border-image: var(--frame-panel) 8 fill / 16px stretch !important;
+  box-shadow: 6px 6px 0 rgba(17, 14, 24, 0.45) !important;
+}
+/* Frames replace padding's job at the edge, so tighten the inside a touch. */
+.mode, .format, .player, .edge, .war, .side, .team, .card, .bout { padding: 0.5rem 0.7rem; }
+
+/* Chosen, active or winning things glow blue. */
+.choice input:checked + .choice__body, .chip--wide input:checked + span, .player--active, .mode--here,
+.side--won, .bout--now, .vote__btn[aria-pressed="true"], .team.is-me {
+  border-image-source: var(--frame-blue) !important;
+}
+.side--lost { opacity: 0.55; }
+
+/* Light parchment cards, like a note pinned to the stone. */
+.rules, .tv-overlay__body .big-note {
+  border: 16px solid transparent;
+  border-image: var(--frame-card) 8 fill / 16px stretch;
+  color: #1d1928;
+  padding: 0.2rem 0.4rem;
+  box-shadow: 6px 6px 0 rgba(17, 14, 24, 0.45);
+}
+.rules em { color: #3b2a6e; }
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.btn, .chip-btn, .stepper__btn, .film__play, .gfb-btn, .b8__btn, .b8__council-skip {
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--ink) !important;
+  background: transparent !important;
+  border: 8px solid transparent !important;
+  border-image: url("/character-draft/pixel/plate-dark.svg") 4 fill / 8px stretch !important;
+  padding: 0.25rem 0.9rem 0.35rem;
+  text-shadow: 2px 2px 0 #110e18;
+  transform: none;
+  transition: filter 0.12s steps(2);
+}
+.btn--primary, .btn--big, .gfb-btn--go {
+  color: #1d1928 !important;
+  border-image-source: url("/character-draft/pixel/plate.svg") !important;
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.4);
+}
+.btn:hover:not(:disabled), .chip-btn:hover, .stepper__btn:hover, .gfb-btn:hover, .film__play:hover {
+  filter: brightness(1.18);
+  transform: translate(0, -2px) !important;
+}
+.btn:active:not(:disabled), .chip-btn:active, .stepper__btn:active, .gfb-btn:active {
+  transform: translate(2px, 2px) !important;
+  filter: brightness(0.9);
+}
+.btn--quiet {
+  border-image: none !important;
+  border: 0 !important;
+  color: var(--ink-muted) !important;
+  text-decoration: underline 2px;
+  text-underline-offset: 5px;
+  text-shadow: none;
+}
+.btn:disabled { opacity: 0.4; filter: grayscale(0.6); }
+
+
+/* Round chips (the little picks and toggles) become square stone tiles. */
+.chip span, .slot, .opt span {
+  background: transparent !important;
+  border: 6px solid transparent !important;
+  border-image: url("/character-draft/pixel/plate-dark.svg") 4 fill / 6px stretch !important;
+  color: var(--ink);
+}
+html.tv .chip, html.phone .chip {
+  background: transparent !important;
+  border: 6px solid transparent !important;
+  border-image: url("/character-draft/pixel/plate-dark.svg") 4 fill / 6px stretch !important;
+}
+.chip-btn.is-on, .chip--locked,
+.chip input:checked + span, .slot--full, .opt input:checked + span {
+  border-image-source: url("/character-draft/pixel/plate-blue.svg") !important;
+  color: #ffffff;
+}
+
+/* --- Fields -------------------------------------------------------------- */
+
+input[type="text"], input[type="password"], input[type="number"], input:not([type]), textarea, select,
+.field__input, .gfb-text {
+  font-family: var(--font-text);
+  color: var(--ink) !important;
+  background: transparent !important;
+  border: 6px solid transparent !important;
+  border-image: url("/character-draft/pixel/slot.svg") 3 fill / 6px stretch !important;
+}
+.field__label, label { color: var(--ink-muted); }
+input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+
+/* --- Pictures ------------------------------------------------------------ */
+
+.portrait, .pic {
+  background: var(--paper-sunk) !important;
+  box-shadow: 0 0 0 2px #110e18, 0 0 0 4px #9995ae, 0 0 0 6px #110e18, 5px 5px 0 6px rgba(17, 14, 24, 0.4) !important;
+  image-rendering: auto;
+}
+.portrait img, .pic img { image-rendering: auto; }
+.portrait__badge, .pic__badge { box-shadow: 0 0 0 2px #110e18, 0 0 0 3px #cfcce0 !important; border: 0 !important; }
+.portrait__letters, .pic__letters { color: var(--ink-faint); font-family: var(--font-display); }
+
+/* --- Bars, timers and money -------------------------------------------------- */
+
+.judge__bar, .bar, .film__progress, .b8__bar {
+  background: #110e18 !important;
+  box-shadow: 0 0 0 2px #110e18, 0 0 0 4px #9995ae;
+}
+.judge__bar > *, .bar > span, .film__bar { background: linear-gradient(#ff9ab8 0 30%, var(--heart) 30% 80%, #9c2c52 80%) !important; }
+.money { color: var(--gold); text-shadow: 2px 2px 0 #110e18; }
+.timer { color: var(--silver); text-shadow: 2px 2px 0 #110e18; }
+.timer--low { color: var(--heart); }
+
+/* --- Corner buttons: home, sound, theme, feedback -------------------------------- */
+
+.home-button, .theme-toggle, .gfb-button {
+  background: transparent !important;
+  border: 8px solid transparent !important;
+  border-image: url("/character-draft/pixel/plate-dark.svg") 4 fill / 8px stretch !important;
+  color: var(--silver) !important;
+  box-shadow: 4px 4px 0 rgba(17, 14, 24, 0.45);
+}
+.home-button:hover, .theme-toggle:hover, .gfb-button:hover, .gfb-button:focus-visible {
+  transform: translate(0, -2px) !important;
+  filter: brightness(1.2);
+}
+.home-button svg, .theme-toggle svg, .gfb-button svg { stroke-width: 2.4; shape-rendering: crispEdges; }
+
+/* The feedback panel, in the same stone. */
+.gfb-panel { color: var(--ink) !important; padding: 0.4rem 0.6rem 0.6rem !important; }
+.gfb-title { font-family: var(--font-gothic) !important; font-size: 1.9rem !important; color: var(--silver); }
+.gfb-note, .gfb-status { color: var(--ink-muted) !important; font-style: normal !important; }
+.gfb-close { color: var(--silver) !important; font-family: var(--font-text); }
+
+/* --- Battle and film frames ------------------------------------------------- */
+
+.b8, .battle-view__inner, .film__screen, .tv-battle, .tv-film {
+  box-shadow: 0 0 0 3px #110e18, 0 0 0 6px #9995ae, 0 0 0 9px #110e18, 8px 8px 0 9px rgba(17, 14, 24, 0.45) !important;
+}
+.battle-view::backdrop { background: rgba(17, 14, 24, 0.7); }
+
+/* The party TV's big headings and the phone's notes. */
+.title { font-family: var(--font-display); font-weight: 400; color: var(--silver); text-shadow: 3px 3px 0 #110e18; }
+.accent { color: var(--violet) !important; }
+.hand { font-family: var(--font-hand); color: var(--ink-muted); }
+.join__qr { background: #ffffff !important; box-shadow: 0 0 0 4px #110e18, 0 0 0 8px #9995ae, 0 0 0 10px #110e18; }
+.join__pin { font-family: var(--font-display); color: var(--silver); text-shadow: 4px 4px 0 #110e18; }
+
+/* Keep motion where the originals had it, but no smooth rotations on cards. */
+.choice:hover .choice__body { transform: translate(0, -2px) !important; }
+html.tv .chip--locked, html.phone .chip--locked { border-image-source: url("/character-draft/pixel/plate-blue.svg") !important; }
