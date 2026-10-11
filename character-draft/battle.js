@@ -675,6 +675,7 @@
     // of smoke (Minecraft), or fading away (ghosts).
     let deathStyle = "normal";   // how this beat's kills die
     async function die(f, dir, how = deathStyle) {
+      koStamp(f);
       // A summoned partner fades when its summoner falls.
       companions.filter(p => p.owner === f).forEach(p => { burst(p.pos.x, p.pos.y - 10, "smoke", 12); tween(p, { alpha: 0 }, 500); });
       companions = companions.filter(p => p.owner !== f);
@@ -797,6 +798,7 @@
 
     /* A clock that stops while paused; every wait in the script uses it. */
     let speed = 1;          // > 1 while a spectator catches up with the host
+    let slow = 1;           // < 1 for the final blow's slow motion
     let time = 0, last = performance.now(), playing = !!(opts.autoplay !== false), skipping = false, done = false, raf = 0, ended = false;
     const waits = [];
     const wait = ms => skipping ? Promise.resolve() : new Promise(res => waits.push({ at: time + ms, res }));
@@ -813,7 +815,7 @@
     function step() {
       const now = performance.now();
       const dt = Math.min(250, now - last); last = now;
-      if (playing && !done) time += dt * speed;
+      if (playing && !done) time += dt * speed * slow;
       for (let i = tweens.length - 1; i >= 0; i--) {
         const tw = tweens[i], k = clamp((time - tw.t0) / tw.ms, 0, 1), e = tw.e(k);
         for (const key in tw.to) tw.obj[key] = lerp(tw.from[key], tw.to[key], e);
@@ -834,9 +836,15 @@
       if (council) { drawCouncil(); placeBubbles(); return; }
       ctx.save();
       if (shake > time) ctx.translate(Math.round(rnd(-2, 2)), Math.round(rnd(-2, 2)));
+      if (punch && time - punch.t0 < punch.ms) {
+        const z = 1 + 0.14 * (1 - (time - punch.t0) / punch.ms);
+        ctx.translate(punch.x, punch.y); ctx.scale(z, z); ctx.translate(-punch.x, -punch.y);
+      }
       ctx.drawImage(bg, 0, 0);
+      drawScenery();
       ctx.drawImage(ground.canvas, 0, 0);
       drawStains();
+      weather();
       if (domain && domain.until > time) {
         ctx.fillStyle = domain.colour; ctx.globalAlpha = 0.55; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1;
         ctx.strokeStyle = "rgba(255,255,255,0.35)"; ctx.lineWidth = 1;
@@ -901,6 +909,8 @@
         const S = img.width;
         const x = Math.round(f.pos.x), y = Math.round(f.pos.y + (f.hop || 0));
         if (f.alpha <= 0.01) continue;
+        // Dust kicked up by running feet.
+        if (f.pose === "walk" && !f.downed && !f.sprite.flies && Math.random() < 0.25) parts.push({ x: x + rnd(-4, 4), y: Math.round(f.pos.y) - 1, vx: -f.facing * rnd(8, 20), vy: -rnd(4, 12), g: 10, c: "#c8b89a", s: 1, t0: time, life: 420 });
         ctx.fillStyle = `rgba(0,0,0,${(0.22 * clamp(f.alpha, 0, 1)).toFixed(2)})`;
         ctx.fillRect(x - Math.round(6 * f.sprite.size * f.scale), Math.round(f.pos.y) - 1, Math.round(12 * f.sprite.size * f.scale), 2);
         ctx.save();
@@ -1112,7 +1122,7 @@
       const dmg = { hit: 28, crit: 44, hurt: 15, ko: 100 }[outcome] || 20;
       burst(c.x, c.y, effect === "none" ? "impact" : effect, outcome === "crit" || outcome === "ko" ? 22 : 12, outcome === "crit");
       sfx(outcome === "crit" || outcome === "ko" ? "b_crit" : "b_hit", outcome === "hurt" ? 0.7 : 1);
-      if (outcome === "crit" || outcome === "ko") { shake = time + 280; flash = { c: "#ffffff", until: time + 120, ms: 120 }; }
+      if (outcome === "crit" || outcome === "ko") { shake = time + 280; flash = { c: "#ffffff", until: time + 120, ms: 120 }; punch = { x: c.x, y: c.y, t0: time, ms: 380 }; }
       target.flashUntil = time + 360;
       setPose(target, "hurt");
       bleed(target, outcome === "ko" ? 18 : outcome === "crit" ? 14 : outcome === "hurt" ? 5 : 9, dir);
@@ -2311,6 +2321,108 @@
     }
 
     const gearList = (verdict.preps || []).flatMap((p, side) => (p && p.gear || []).map(g => { const look = gearLook(g); return { name: g.name, side, look, colour: gearColour(g, look), carried_by: g.carried_by || "", effect: g.effect || "" }; }));
+    /* --- The place itself -----------------------------------------------------
+       Weather that never stops (snow, embers, leaves, sand, dust) and, now and
+       then between beats, something in the background that belongs to this
+       battlefield or world: a dragon far off over Westeros, a Creeper, a
+       helicopter's searchlight, a ship on the horizon. Scenery only: it never
+       changes the fight. */
+    let scenery = [];
+    let lastScene = -3;
+    function weather() {
+      if (council || skipping) return;
+      const r = Math.random();
+      if (kind === "snow" && r < 0.5) parts.push({ x: rnd(0, W), y: -2, vx: rnd(-8, 4), vy: rnd(14, 26), g: 0, c: "#ffffff", s: r < 0.15 ? 2 : 1, t0: time, life: 9000 });
+      else if (kind === "volcano" && r < 0.35) parts.push({ x: rnd(0, W), y: H - rnd(0, 40), vx: rnd(-6, 6), vy: -rnd(16, 34), g: 0, c: r < 0.15 ? "#ffcc33" : "#ff7a1a", s: 1, t0: time, life: 4000 });
+      else if (kind === "forest" && r < 0.08) parts.push({ x: rnd(0, W), y: -2, vx: rnd(-10, 10), vy: rnd(10, 18), g: 0, c: ["#6a9a3a", "#c88a2a", "#a0522d"][Math.floor(rnd(0, 3))], s: 2, t0: time, life: 9000 });
+      else if (kind === "desert" && r < 0.25) parts.push({ x: -2, y: rnd(120, H), vx: rnd(60, 110), vy: rnd(-4, 4), g: 0, c: "#e8d29a", s: 1, t0: time, life: 4500 });
+      else if (kind === "cave" && r < 0.06) parts.push({ x: rnd(0, W), y: 0, vx: 0, vy: 40, g: 120, c: "#9fd0ff", s: 1, t0: time, life: 1500 });
+      else if (kind === "sea" && r < 0.05) parts.push({ x: rnd(0, W), y: rnd(110, 130), vx: rnd(-4, 4), vy: -rnd(8, 20), g: 30, c: "#e8f4ff", s: 1, t0: time, life: 800 });
+      else if (night && r < 0.004) scenery.push({ kind: "star", x0: rnd(40, W), y0: rnd(8, 40), x1: 0, y1: 0, t0: time, ms: 700 });
+    }
+    function scene(k, extra) { scenery.push({ kind: k, t0: time, ...extra }); }
+    // Something from this place passes by in the background.
+    function randomScene(i) {
+      if (skipping || i - lastScene < 3 || Math.random() > 0.35) return;
+      lastScene = i;
+      const dir = Math.random() < 0.5 ? 1 : -1, x0 = dir > 0 ? -60 : W + 60, x1 = dir > 0 ? W + 60 : -60;
+      const far = who => { const c = characterNamed(who); return c ? Sprite.of(c) : null; };
+      const pick = [];
+      if (world === "westeros") pick.push(() => { const s = far(["Drogon", "Rhaegal", "Viserion"][Math.floor(rnd(0, 3))]); if (s) { scene("sprite", { sprite: s, x0, y0: 46, x1, y1: 30, ms: 4200, scale: 0.4, dir }); sfx("b_roar", 0.35); } });
+      if (world === "minecraft") pick.push(() => { const s = far("Creeper"); if (s) { const xs = dir > 0 ? 20 : W - 20; scene("sprite", { sprite: s, x0: xs, y0: 132, x1: xs + dir * 50, y1: 132, ms: 2600, scale: 0.6, dir, boom: true }); } });
+      if (world === "pokemon") pick.push(() => { const s = far("Pidgey") || far("Pidgeot"); if (s) scene("sprite", { sprite: s, x0, y0: 40, x1, y1: 52, ms: 3400, scale: 0.45, dir }); });
+      if (world === "league") pick.push(() => { const s = far("Minion Wave"); if (s) scene("sprite", { sprite: s, x0, y0: 128, x1, y1: 128, ms: 6000, scale: 0.5, dir }); });
+      if (world === "hp") pick.push(() => scene("birds", { x0, y0: 40, x1, y1: 34, ms: 3600, n: 1, c: "#e8e0d0", owl: true }));
+      if (world === "shows" || world === "oldies") pick.push(() => scene("plane", { x0, y0: 26, x1, y1: 22, ms: 4200, dir }));
+      const byKind = {
+        castle: () => scene("birds", { x0, y0: 44, x1, y1: 30, ms: 3800, n: 6, c: "#1d1a17" }),
+        snow: () => { scene("gust", { ms: 1800, dir }); sfx("b_wind", 0.5); },
+        volcano: () => { scene("lava", { x0: rnd(60, W - 60), ms: 1400 }); sfx("b_boom", 0.3); shake = time + 250; },
+        sea: () => Math.random() < 0.5 ? scene("ship", { x0, y0: 112, x1, y1: 112, ms: 7000, dir }) : scene("tentacle", { x0: rnd(40, W - 40), y0: 120, ms: 2600 }),
+        city: () => Math.random() < 0.5 ? scene("heli", { x0, y0: 30, x1, y1: 34, ms: 5200, dir }) : scene("car", { x0, y0: 150, x1, y1: 150, ms: 1600, dir }),
+        cave: () => { scene("birds", { x0, y0: 30, x1, y1: 50, ms: 2000, n: 9, c: "#2a2030", bats: true }); sfx("b_whoosh", 0.4); },
+        arena: () => { scene("flashes", { ms: 1200 }); sfx("b_shout", 0.25); },
+        tech: () => { scene("alarm", { ms: 1600 }); sfx("b_announce", 0.3); },
+        forest: () => scene("birds", { x0: rnd(60, W - 60), y0: 96, x1: rnd(0, W), y1: 10, ms: 2200, n: 7, c: "#3a2a1a", burst: true }),
+        desert: () => scene("tumbleweed", { x0, y0: 168, x1, y1: 168, ms: 3200, dir }),
+        sky: () => { scene("bolt", { x0: rnd(40, W - 40), ms: 300 }); flash = { c: "#cfe8ff", until: time + 120, ms: 120 }; sfx("b_chain", 0.4); },
+        blocky: () => scene("birds", { x0, y0: 40, x1, y1: 40, ms: 4000, n: 3, c: "#f2f0ea" }),
+      };
+      if (byKind[kind]) pick.push(byKind[kind]);
+      pick.push(() => scene("birds", { x0, y0: 38, x1, y1: 28, ms: 4000, n: 4, c: "#2a2a2a" }));
+      pick[Math.floor(rnd(0, pick.length))]();
+    }
+    function drawScenery() {
+      scenery = scenery.filter(s => time - s.t0 < s.ms);
+      for (const s of scenery) {
+        const k = clamp((time - s.t0) / s.ms, 0, 1), x = lerp(s.x0 || 0, s.x1 || 0, k), y = lerp(s.y0 || 0, s.y1 || 0, k);
+        const R = (a, b, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(Math.round(a), Math.round(b), w, h); };
+        switch (s.kind) {
+          case "sprite": {
+            const img = s.sprite.frame("walk", time), S = img.width;
+            ctx.save(); ctx.globalAlpha = 0.85; ctx.translate(Math.round(x), Math.round(y)); ctx.scale(s.dir * s.scale, s.scale);
+            ctx.drawImage(img, -Math.floor(S / 2), -(S - 4)); ctx.restore();
+            if (s.boom && k > 0.95 && !s.boomed) { s.boomed = true; burst(x, y - 6, "explosion", 18, true); sfx("b_boom", 0.4); }
+            break;
+          }
+          case "birds": for (let i = 0; i < s.n; i++) {
+            const bx = x + (i % 3) * 9 * (s.burst ? Math.cos(i) * 3 : 1), by = y + Math.floor(i / 3) * 6 + (s.burst ? Math.sin(i * 2) * 10 * k : 0);
+            const up = ((time / (s.bats ? 70 : 140) + i) | 0) % 2;
+            R(bx - 2, by - up, 2, 1, s.c); R(bx, by, 1, 1, s.c); R(bx + 1, by - up, 2, 1, s.c);
+            if (s.owl) { R(bx - 1, by - 2, 3, 3, s.c); }
+          } break;
+          case "plane": R(x - 7, y, 14, 2, "#cfd6dd"); R(x - 1, y - 3, 3, 8, "#cfd6dd"); R(x - 7 * s.dir, y - 3, 2, 3, "#cfd6dd"); break;
+          case "ship": R(x - 10, y, 20, 3, "#5a3a22"); R(x - 1, y - 12, 1, 12, "#3a2a1a"); R(x - 6, y - 11, 6, 8, "#e8e0d0"); R(x + 1, y - 9, 5, 6, "#e8e0d0"); break;
+          case "tentacle": { const h = Math.sin(k * Math.PI) * 30; for (let i = 0; i < h; i += 2) R(s.x0 + Math.sin(i / 5 + time / 200) * 3, s.y0 - i, 3, 2, "#5a3a6a"); break; }
+          case "heli": {
+            R(x - 6, y, 12, 4, "#2a2a33"); R(x + 6 * s.dir, y + 1, 7 * s.dir > 0 ? 7 : -7, 1, "#2a2a33"); R(x - 8 + ((time / 40) | 0) % 2 * 4, y - 2, 12, 1, "#8c939b");
+            ctx.fillStyle = "rgba(255,250,200,0.18)"; ctx.beginPath(); ctx.moveTo(x - 2, y + 4); ctx.lineTo(x - 26 + Math.sin(time / 500) * 30, 200); ctx.lineTo(x + 26 + Math.sin(time / 500) * 30, 200); ctx.fill();
+            break;
+          }
+          case "car": R(x - 9, y, 18, 4, "#c0262f"); R(x - 5, y - 3, 9, 3, "#c0262f"); R(x - 3, y - 2, 5, 2, "#9fe3ff"); R(x - 7, y + 4, 3, 2, "#1d1a17"); R(x + 4, y + 4, 3, 2, "#1d1a17"); break;
+          case "tumbleweed": { const a = time / 120; ctx.strokeStyle = "#a07a4a"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y - 4 - Math.abs(Math.sin(a)) * 6, 5, a, a + 5); ctx.stroke(); break; }
+          case "lava": for (let i = 0; i < 5; i++) { const t = k * 1.4 - i * 0.1, lx = s.x0 + (i - 2) * 14 * t, ly = 120 - Math.sin(Math.min(1, t) * Math.PI) * 60; if (t > 0 && t < 1) R(lx, ly, 3, 3, i % 2 ? "#ff7a1a" : "#ffcc33"); } break;
+          case "gust": { ctx.fillStyle = "rgba(255,255,255,0.35)"; for (let i = 0; i < 12; i++) R((((time / 3) * s.dir + i * 37) % W + W) % W, 30 + i * 13, 18, 1, "rgba(255,255,255,0.5)"); break; }
+          case "flashes": if (Math.random() < 0.3) R(rnd(0, W), rnd(60, 120), 2, 2, "#ffffff"); break;
+          case "alarm": if (((time / 200) | 0) % 2) { ctx.fillStyle = "rgba(255,40,40,0.18)"; ctx.fillRect(0, 0, W, H); } break;
+          case "bolt": { ctx.strokeStyle = "#e8f4ff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s.x0, 0); for (let i = 1; i <= 5; i++) ctx.lineTo(s.x0 + rnd(-8, 8), i * 18); ctx.stroke(); break; }
+          case "star": R(s.x0 - k * 40, s.y0 + k * 14, 2, 1, "#ffffff"); R(s.x0 - k * 40 + 2, s.y0 + k * 14 - 1, 6, 1, "rgba(255,255,255,0.4)"); break;
+        }
+      }
+    }
+
+    /* A big moment's camera: a punch in on heavy hits, a K.O. stamp on kills. */
+    let punch = null;
+    function koStamp(f) {
+      if (skipping) return;
+      const b = document.createElement("span");
+      b.className = "b8__ko"; b.textContent = "K.O.";
+      const p = centre(f);
+      b.style.left = `${(p.x / W) * 100}%`; b.style.top = `${((p.y - 10) / H) * 100}%`;
+      bubbles.appendChild(b);
+      setTimeout(() => b.remove(), 1200);
+    }
+
     /* The battlefield strikes: what (or who) does it decides how it looks. */
     function eventKind(by) {
       const t = norm(by);
@@ -2859,10 +2971,15 @@
       await showBanner(`<span>Ready…</span>`, 700);
       sfx("b_fight", 1);
       await showBanner(`<span>Fight!</span>`, 650);
+      // The killing blow that ends it plays in slow motion.
+      const lastKill = beats.reduce((n, b, i) => b.outcome === "ko" ? i : n, -1);
       for (let i = 0; i < beats.length; i++) {
         progress = i / beats.length;
         await gate("battle");
+        randomScene(i);
+        if (i === lastKill && !skipping) slow = 0.45;
         await act(beats[i]);
+        slow = 1;
         if (done) return;
       }
       progress = 1;
@@ -2907,6 +3024,7 @@
     function skip() {
       if (ended) return;
       if (N) N.stop();
+      scenery = []; punch = null; slow = 1;
       skipping = true; council = null; councilEl.hidden = true; root.classList.remove("is-council"); companions = []; gas = []; spikes = []; domain = null; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });

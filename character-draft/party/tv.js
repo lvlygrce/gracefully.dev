@@ -190,6 +190,7 @@
           if (state.phase === "lobby") view = null;   // redraw the settings
         }
         render();
+        pocketAuto(was, state);
         cues(was, state);
         maybeJudge();
         maybeReason();
@@ -197,18 +198,39 @@
     },
   });
 
-  /* Hosting from a phone: the host plays too, in a drawer of player controls
-     (the ordinary phone page, framed) under this screen. */
+  /* Hosting from a phone: two tabs, the screen (this page) and the host's
+     own player controls (the phone page, framed), each filling the phone.
+     It flips to the controls when there's bidding or voting to do. */
+  let pocketTab = "screen";
   function pocketDrawer(p) {
-    let d = document.getElementById("pocket");
-    if (d && d.dataset.pin === p) return;
-    if (d) d.remove();
-    d = document.createElement("section");
-    d.id = "pocket"; d.className = "pocket-drawer is-open"; d.dataset.pin = p;
-    d.innerHTML = `<button type="button" class="pocket-drawer__tab">Your controls</button>
-      <iframe title="Your player controls" src="/play/?embed=1#${p}"></iframe>`;
-    d.querySelector(".pocket-drawer__tab").addEventListener("click", () => d.classList.toggle("is-open"));
-    document.body.appendChild(d);
+    let bar = document.getElementById("pocket-tabs");
+    if (bar && bar.dataset.pin === p) return;
+    if (bar) bar.remove();
+    const old = document.getElementById("pocket"); if (old) old.remove();
+    bar = document.createElement("nav");
+    bar.id = "pocket-tabs"; bar.className = "screen-tabs pocket-tabs"; bar.dataset.pin = p;
+    bar.innerHTML = `<button type="button" data-tab="screen">The screen</button><button type="button" data-tab="controls">Your controls</button>`;
+    const pane = document.createElement("div");
+    pane.id = "pocket"; pane.className = "screen-pane"; pane.hidden = true;
+    pane.innerHTML = `<iframe title="Your player controls" src="/play/?embed=1#${p}"></iframe>`;
+    bar.querySelectorAll("button").forEach(b => b.addEventListener("click", () => pocketShow(b.dataset.tab)));
+    document.body.prepend(pane); document.body.prepend(bar);
+    // The host has to join as a player first, so start on the controls.
+    pocketShow("controls");
+  }
+  function pocketShow(t) {
+    pocketTab = t;
+    const pane = document.getElementById("pocket"), bar = document.getElementById("pocket-tabs");
+    if (!pane || !bar) return;
+    pane.hidden = t !== "controls";
+    bar.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === t)));
+  }
+  function pocketAuto(was, s) {
+    if (!POCKET || !s || !document.getElementById("pocket-tabs")) return;
+    const k = st => st ? st.phase + (st.match ? st.match.stage : "") : "";
+    if (k(was) === k(s)) return;
+    if (s.phase === "lobby" && was) return;
+    pocketShow(["auction", "sold"].includes(s.phase) || (s.phase === "match" && s.match.stage === "vote") ? "controls" : "screen");
   }
 
   // A spectator's messages go nowhere but the request to watch.
@@ -397,7 +419,7 @@
           ${foot(`<button class="btn btn--primary btn--big" type="button" id="start">Start the draft</button>`)}
         </section>
 
-        <section class="settings arrive" style="--i:3">
+        ${POCKET ? `<details class="pocket-settings"><summary>Game settings</summary>` : ""}<section class="settings arrive" style="--i:3">
           <fieldset>
             <legend>Worlds in the deck</legend>
             <div class="opts">${worlds}</div>
@@ -496,7 +518,7 @@
             opens the bidding or spends a skip to send it away. Then anyone can raise from their phone, and every bid resets the clock.
             Highest bid when it runs out takes them. Then it's a knockout tournament on this screen.</p>
           <p class="hand" id="estimate"></p>
-        </section>
+        </section>${POCKET ? `</details>` : ""}
       </div>`;
 
     try {

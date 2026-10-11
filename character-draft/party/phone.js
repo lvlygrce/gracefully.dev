@@ -8,6 +8,10 @@
   // Fit the phone's screen where possible; long lists may still scroll below 12px.
   const fit = fitter(() => 16, 12);
   const app = document.getElementById("app");
+  // Inside the host's own phone (pocket hosting), the screen is right there.
+  const EMBED = new URLSearchParams(location.search).get("embed") === "1";
+  const WHERE_KEY = "character-draft:party:where";
+  const where = () => EMBED ? "tv" : (safe.get(WHERE_KEY) || "tv");
   const announcer = document.getElementById("announce");
   const ME_KEY = "character-draft:party:me";
   const NAME_KEY = "character-draft:party:name";
@@ -62,6 +66,7 @@
           if (state.phase === "match" && state.match && (state.match.a === me.id || state.match.b === me.id || me.canVote)) buzz([40, 60, 40]);
         }
         render();
+        autoTab(was, state);
       } else if (msg.t === "error") {
         joining = false; flash = msg.message; render(true);
       } else if (msg.t === "gone" || msg.t === "kicked") {
@@ -96,7 +101,47 @@
     return `${s.phase}:${me.admin}`;
   }
 
+  /* Remote players get the TV on their phone: a Screen tab (the spectator
+     view, kept running so it stays in step) beside their controls. It flips
+     to the screen when a fight starts and back when they're needed. */
+  let tab = "controls", tabsFor = null;
+  function screenTabs() {
+    const want = !EMBED && where() === "remote" && session && state && me;
+    let bar = document.getElementById("screen-tabs"), pane = document.getElementById("screen-pane");
+    if (!want) { if (bar) bar.remove(); if (pane) pane.remove(); document.documentElement.classList.remove("has-screen"); tabsFor = null; return; }
+    if (!bar || tabsFor !== session.pin) {
+      if (bar) bar.remove(); if (pane) pane.remove();
+      bar = document.createElement("nav"); bar.id = "screen-tabs"; bar.className = "screen-tabs";
+      bar.innerHTML = `<button type="button" data-tab="controls">Your controls</button><button type="button" data-tab="screen">The screen</button>`;
+      pane = document.createElement("div"); pane.id = "screen-pane"; pane.className = "screen-pane";
+      pane.innerHTML = `<iframe title="The game screen" allow="autoplay" src="/character-draft/party/?watch=${encodeURIComponent(session.pin)}&embed=1"></iframe>`;
+      bar.querySelectorAll("button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+      document.body.prepend(pane); document.body.prepend(bar);
+      document.documentElement.classList.add("has-screen");
+      tabsFor = session.pin;
+    }
+    showTab(tab);
+  }
+  function showTab(t) {
+    tab = t;
+    const pane = document.getElementById("screen-pane"), bar = document.getElementById("screen-tabs");
+    if (!pane || !bar) return;
+    pane.hidden = t !== "screen";
+    document.documentElement.classList.toggle("on-screen", t === "screen");
+    bar.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.tab === t)));
+  }
+  // Flip to the screen for fights, back to the controls when there's something to do.
+  function autoTab(was, s) {
+    if (!document.getElementById("screen-tabs") || !s) return;
+    const stage = st => st && st.phase === "match" ? st.match.stage : st && st.phase;
+    if (stage(was) === stage(s) && (was && was.phase) === s.phase) return;
+    if (s.phase === "match" && (s.match.stage === "judging" || s.match.stage === "result")) showTab("screen");
+    else if (s.phase === "champion") showTab("screen");
+    else showTab("controls");
+  }
+
   function render(force) {
+    screenTabs();
     window.gracefullyScreen = () => `party phone: ${view || "joining"}${me && me.admin ? " (admin)" : ""}`;
     const key = keyFor();
     if (!force && key === view) return tick();
@@ -128,6 +173,10 @@
       <form id="join" class="arrive" style="--i:2; margin-top: var(--space-md)">
         <label class="field"><span class="field__label">Game PIN, from the TV</span>
           <input class="field__input field__input--pin" name="pin" inputmode="numeric" pattern="[0-9]*" maxlength="5" autocomplete="off" value="${esc(hashPin)}" required /></label>
+        ${EMBED ? "" : `<fieldset class="where"><legend class="field__label">Where are you?</legend>
+          <label class="opt"><input type="radio" name="where" value="tv" ${where() === "tv" ? "checked" : ""} /><span>In the room with the TV</span></label>
+          <label class="opt"><input type="radio" name="where" value="remote" ${where() === "remote" ? "checked" : ""} /><span>Somewhere else: show me the fights here</span></label>
+        </fieldset>`}
         <label class="field"><span class="field__label">Your name</span>
           <input class="field__input" name="name" maxlength="18" autocomplete="nickname" value="${esc(name)}" required /></label>
         ${flash ? `<p class="warn">${esc(flash)}</p>` : ""}
@@ -143,6 +192,7 @@
       const nm = String(f.get("name")).trim();
       if (pin.length !== 5 || !nm) { flash = "Enter the 5-digit PIN and your name."; return render(true); }
       safe.set(NAME_KEY, nm);
+      if (f.get("where")) safe.set(WHERE_KEY, String(f.get("where")));
       flash = ""; joining = true;
       // Still attached to another game: leave it, then join this one.
       if (session && session.pin !== pin) { leaving = true; net.send({ t: "leave" }); }
@@ -262,8 +312,10 @@
   function leaveLink() {
     const box = document.createElement("div");
     box.className = "controls leave-link";
-    box.innerHTML = `<button class="btn btn--quiet" type="button" id="leave">Leave this game</button>`;
+    box.innerHTML = `${EMBED ? "" : `<button class="btn btn--quiet" type="button" id="where-toggle">${where() === "remote" ? "I'm with the TV now" : "I'm not with the TV: show me the fights"}</button>`}
+      <button class="btn btn--quiet" type="button" id="leave">Leave this game</button>`;
     app.appendChild(box);
+    on("where-toggle", () => { safe.set(WHERE_KEY, where() === "remote" ? "tv" : "remote"); render(true); });
     on("leave", () => {
       if (state.phase !== "lobby" && !confirm("Leave this game? You won't be able to rejoin it, but your team stays in the tournament.")) return;
       leaving = true;

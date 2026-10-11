@@ -491,18 +491,31 @@ html.embedded .home-button, html.embedded .theme-toggle, html.embedded .gfb-butt
 html.embedded .watch-badge > span:first-child { display: none !important; }
 html.embedded .watch-badge { bottom: 0.4rem; }
 
-/* Hosting from a phone: the host's own controls in a drawer at the bottom. */
-.pocket-drawer {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 35; height: 3rem;
-  background: #1d1928; box-shadow: 0 -3px 0 #0b0a14, 0 -6px 0 #9cc0ff; transition: height 0.25s steps(5);
+
+/* Remote players: their controls and the game screen as two tabs. */
+.screen-tabs {
+  position: sticky; top: 0; z-index: 36; display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+  background: #0b0a14; box-shadow: 0 3px 0 #9cc0ff;
 }
-.pocket-drawer.is-open { height: min(62vh, 34rem); }
-.pocket-drawer__tab {
-  display: block; width: 100%; height: 3rem; font-family: var(--font-gothic, inherit); font-size: 1.4rem; color: #ffffff;
-  background: #3550b8; border: 0; cursor: pointer;
+.screen-tabs button {
+  font-family: var(--font-gothic, inherit); font-size: 1.25rem; padding: 0.45rem 0.4rem; color: #c9dcff;
+  background: #1d1928; border: 0; cursor: pointer;
 }
-.pocket-drawer__tab::after { content: " ▾"; }
-.pocket-drawer:not(.is-open) .pocket-drawer__tab::after { content: " ▴"; }
-.pocket-drawer iframe { display: block; width: 100%; height: calc(100% - 3rem); border: 0; background: var(--paper); }
-html.pocket body { padding-bottom: min(62vh, 34rem); }
-html.pocket .gfb-button { bottom: calc(min(62vh, 34rem) + 0.8rem); }
+.screen-tabs button[aria-pressed="true"] { color: #ffffff; background: #3550b8; }
+.screen-pane { position: fixed; inset: 2.6rem 0 0 0; z-index: 35; background: var(--paper); }
+.screen-pane[hidden] { display: none; }
+.screen-pane iframe { display: block; width: 100%; height: 100%; border: 0; }
+html.on-screen .gfb-button { display: none; }
+.where { border: 0; margin: 0 0 var(--space-xs); display: grid; gap: 0.4rem; }
+.where .opt span { display: block; }
+
+/* Hosting from a phone: the screen is this page, so it scrolls normally,
+   with the settings folded away until wanted. */
+html.pocket body { padding-bottom: 0; }
+html.pocket .lobby { grid-template-columns: 1fr; gap: var(--space-sm); }
+html.pocket .join__qr { width: 7rem; }
+html.pocket .stage { padding: var(--space-xs) var(--space-xs) var(--space-lg); }
+html.pocket .title--xl { font-size: clamp(2.2rem, 9vw, 3.2rem) !important; }
+.pocket-settings > summary { cursor: pointer; font-family: var(--font-gothic, inherit); font-size: 1.4rem; padding: 0.4rem 0; color: #ffffff; }
+.pocket-settings[open] > summary { margin-bottom: var(--space-xs); }
+@media (max-height: 420px) { .screen-tabs button { font-size: 1.05rem; padding: 0.25rem; } .screen-pane { inset: 2.1rem 0 0 0; } }
