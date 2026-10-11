@@ -687,25 +687,37 @@
     if (el) el.addEventListener("click", fn);
   }
 
+  // A character's source and select-screen tagline, from taglines.js, else
+  // from its note ("Halo · Spartan super-soldier…") and its world.
+  function taglineOf(r) {
+    const t = ((window.CHARACTER_TAGLINES || {})[r.world] || {})[r.name];
+    if (t) return t;
+    const note = String(r.note || ""), cut = note.indexOf(" · ");
+    return cut > 0 ? [note.slice(0, cut), note.slice(cut + 3)] : [(U[r.world] || {}).name || "", note];
+  }
+
   function renderTeams(worlds, teams, isShared) {
     const cards = teams.map(t => {
       const spent = BUDGET - t.left;
+      // Laid out like a fighting game's character select: five across.
       const rows = t.roster.length
-        ? t.roster.map(r => `
-            <li class="final__row">
-              ${portrait(r.world, r.name, "md")}
-              <span class="final__body">
-                <span class="final__name">${esc(r.name)}</span>
-                <span class="final__note">${esc(r.note)}${worlds.length > 1 ? ` · ${esc(U[r.world].name)}` : ""}</span>
-              </span>
+        ? t.roster.map(r => {
+            const [source, tagline] = taglineOf(r);
+            return `
+            <li class="select__tile">
+              <span class="select__frame">${portrait(r.world, r.name, "lg")}</span>
+              <span class="select__name">${esc(r.name)}</span>
+              <span class="select__world">${esc(source)}</span>
+              <span class="select__tag">${esc(tagline)}</span>
               <span class="price">$${r.price}</span>
-            </li>`).join("")
+            </li>`;
+          }).join("")
         : `<li class="roster__empty">nobody</li>`;
       return `
         <article class="final">
           <h3 class="final__team">${esc(t.name)}</h3>
           <p class="muted">${t.roster.length} drafted · $${spent} spent · $${t.left} left</p>
-          <ol class="final__list">${rows}</ol>
+          <ol class="select">${rows}</ol>
         </article>`;
     }).join("");
 

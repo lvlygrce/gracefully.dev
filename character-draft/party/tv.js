@@ -624,12 +624,35 @@
     return `<span class="cpic ${k ? `cpic--${k.status}` : ""}" title="${k ? esc(`${condWord(k)}: ${k.note}`) : ""}">${picture(c, size)}${k ? `<span class="cpic__tag">${condWord(k)}</span>` : ""}</span>`;
   }
 
+  // A character's source and select-screen tagline, from taglines.js, else
+  // from its note ("Halo · Spartan super-soldier…") and its world.
+  function taglineOf(c) {
+    const t = ((window.CHARACTER_TAGLINES || {})[c.world] || {})[c.name];
+    if (t) return t;
+    const note = String(c.note || ""), cut = note.indexOf(" · ");
+    return cut > 0 ? [note.slice(0, cut), note.slice(cut + 3)] : [c.worldName || "", note];
+  }
+  // A team as a fighting game's character select: five across, each with
+  // its picture, name, source and tagline.
+  function selectHtml(cards) {
+    if (!cards.length) return `<p class="muted">nobody</p>`;
+    return `<ol class="select">${cards.map(c => {
+      const [source, tagline] = taglineOf(c), x = condition(c.id);
+      return `<li class="select__tile">
+        <span class="select__frame">${marked(c, "pic--lg")}</span>
+        <span class="select__name">${esc(c.name)}</span>
+        <span class="select__world">${esc(source)}</span>
+        <span class="select__tag">${esc(tagline)}</span>
+        ${x ? `<span class="cond">${condWord(x)}</span>` : ""}
+      </li>`;
+    }).join("")}</ol>`;
+  }
+
   function teamHtml(p, k) {
     const cards = p.roster.map(r => card(r.card)).filter(Boolean);
     return `<article class="team arrive" style="--i:${k}">
       <p class="team__name">${esc(p.name)} <span class="chip__meta">$${p.budget} left</span></p>
-      <div class="team__pics">${cards.map(c => marked(c, "pic--sm")).join("") || `<span class="muted">nobody</span>`}</div>
-      <ul class="team__list">${cards.map(c => { const x = condition(c.id); return `<li>${esc(c.name)}${x ? ` <span class="cond">(${condWord(x)})</span>` : ""}</li>`; }).join("")}</ul></article>`;
+      ${selectHtml(cards)}</article>`;
   }
 
   function teamsView() {
@@ -690,8 +713,7 @@
     return `<section class="side ${won}" id="side-${k}">
       <p class="hand">${k === 0 ? "in this corner" : "and in this corner"}</p>
       <h2 class="title title--lg">${esc(p.name)}</h2>
-      <div class="side__pics">${cards.map(c => marked(c, "pic--lg")).join("")}</div>
-      <p class="side__names">${cards.map(c => { const x = condition(c.id); return esc(c.name) + (x ? ` <span class="cond">(${condWord(x)})</span>` : ""); }).join(" · ")}</p>
+      ${selectHtml(cards)}
       ${prep ? `<div class="side__plan"><span class="hand">led by ${esc(prep.leader)}</span><br />${esc(prep.plan)}
         ${(prep.gear || []).length ? `<br /><span class="hand">gear:</span> ${prep.gear.map(g => esc(g.name)).join(", ")}` : ""}</div>` : ""}
     </section>`;
