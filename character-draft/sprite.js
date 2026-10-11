@@ -281,7 +281,13 @@
     const tLeft = cx - Math.floor(torsoW / 2) + lean;
     const legW = Math.max(2, Math.floor(torsoW / 2) - (blocky ? 0 : 0));
 
-    // Behind the body: aura, cape, wings, tail.
+    // Behind the body: a jetpack, aura, cape, wings, tail.
+    if (x.has("jetpack")) {
+      const jw = Math.max(3, R(3 * u)), jh = Math.max(5, torsoH - 1), jx = tLeft - jw + 1, jy = tTop + 1;
+      g.rect(jx, jy, jw, jh, "#8c939b"); g.rect(jx, jy, jw, 1, "#cfd6dd"); g.rect(jx, jy + jh, jw, 1, "#3a3530");
+      const fl = 2 + (f % 2) * 2;
+      g.rect(jx + Math.floor(jw / 2) - 1, jy + jh + 1, 2, fl, "#ff9a2a"); g.rect(jx + Math.floor(jw / 2) - 1, jy + jh + 1, 2, 1, "#fff4b0");
+    }
     if (x.has("cape")) {
       const flap = f % 2;
       g.tri(tLeft + 1, tTop, tLeft - R(4 * u) - flap, base - 1, tLeft + torsoW - 1, base - 2, s.accent);
@@ -338,6 +344,7 @@
       default: g.rect(tLeft, tTop + torsoH - 1, torsoW, 1, s.outfit === "uniform" ? s.accent : s.second); if (s.outfit === "uniform") g.rect(tLeft + 1, tTop + 1, 1, 1, GOLD);
     }
     if (x.has("stripes")) for (let i = 1; i < torsoH; i += 2) g.rect(tLeft, tTop + i, torsoW, 1, shade(top, -0.35));
+    if (x.has("plate")) { g.rect(tLeft, tTop + 1, torsoW, Math.max(2, R(torsoH * 0.55)), "#a8b0b8"); g.rect(tLeft + 1, tTop + 1, Math.max(1, torsoW - 2), 1, "#e4e8ec"); g.rect(tLeft, tTop + 1 + Math.max(2, R(torsoH * 0.55)), torsoW, 1, "#5a5f66"); }
     if (x.has("emblem")) g.rect(tLeft + Math.floor(torsoW / 2) - 1, tTop + 2, 2, 2, s.accent);
     if (x.has("webbing") && s.head === "fullmask") { const w = shade(top, -0.45); for (let i = 1; i < torsoW; i += 2) g.rect(tLeft + i, tTop, 1, torsoH, w); }
     if (x.has("star")) { const sx = tLeft + Math.floor(torsoW / 2), sy = tTop + R(torsoH * 0.4); g.rect(sx - 1, sy - 2, 2, 5, "#f2f0ea"); g.rect(sx - 2, sy - 1, 4, 2, "#f2f0ea"); }
@@ -721,7 +728,9 @@
       else if (spec.style === "fists") spec.style = "blade";
     }
     (o.extras || []).forEach(x => spec.extras.add(x));
-    const key = `${c.world}|${c.name}|${c.spec || ""}|${o.weapon || ""}|${(o.extras || []).join(",")}|${o.size || ""}`;
+    // o.single: one member of a group, drawn alone rather than as a crowd.
+    if (o.single) spec.extras.delete("horde");
+    const key = `${c.world}|${c.name}|${c.spec || ""}|${o.weapon || ""}|${(o.extras || []).join(",")}|${o.size || ""}|${o.single ? 1 : ""}`;
     if (!cache.has(key)) cache.set(key, new Map());
     const mine = cache.get(key);
     const get = (pose, f, flash) => {

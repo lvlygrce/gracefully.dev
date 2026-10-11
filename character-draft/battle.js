@@ -20,7 +20,7 @@
     "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead",
     "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole",
     "earthquake", "tornado", "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct",
-    "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike",
+    "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike", "flank",
     "block", "dodge", "deploy_gear", "build", "heal",
     "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
@@ -28,14 +28,16 @@
     "teleport", "summon", "stealth", "trap", "team_up", "time_stop", "foresee", "mind_control", "clone", "shapeshift",
     "reality_warp", "summon_dragon", "summon_giant", "raise_dead", "stampede", "airstrike", "meteor", "lullaby", "devour",
     "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado", "lightning_storm", "stretch",
-    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike"];
+    "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike", "flank"];
   // Abilities that can be used on their own, with or without a target.
   const SOLO = ["stealth", "teleport", "phase", "fly", "grow", "shrink", "time_stop"];
   const EFFECTS = ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light",
     "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"];
   const OUTCOMES = ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"];
   const LOOKS = ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle",
-    "potion", "armour", "banner", "beast", "device", "rope", "wall"];
+    "potion", "armour", "banner", "beast", "device", "rope", "wall",
+    "jetpack", "drone", "mech", "grapple", "smoke", "flamethrower", "rocket", "hammer", "axe", "spear", "scope", "medkit", "charm",
+    "catapult", "mine", "boomerang", "cloak", "ram"];
   const COLOURS = { red: "#d6402f", orange: "#ef8a2c", yellow: "#f2cf3a", green: "#4caf50", blue: "#3f7fd6", purple: "#8e5bd0",
     white: "#f2f0ea", black: "#2b2b2b", grey: "#8c939b", gold: "#e8b84a", silver: "#cfd6dd", brown: "#8a5a32", pink: "#f08cc0", cyan: "#4fd6e6" };
   const FX = {
@@ -75,7 +77,15 @@
     if (LOOKS.includes(g.look)) return g.look;
     const t = norm(`${g.name} ${g.effect}`);
     const has = re => re.test(t);
-    return has(/bomb|grenade|explosive|charge|dynamite|mine\b/) ? "bomb" : has(/trap|snare|spike|pit/) ? "trap" : has(/net\b|web/) ? "net"
+    const extra = has(/jet ?pack|rocket boots|thruster/) ? "jetpack" : has(/drone/) ? "drone" : has(/mech\b|exosuit|power armou?r|walker|robot/) ? "mech"
+      : has(/grappl|hookshot|zipline/) ? "grapple" : has(/smoke/) ? "smoke" : has(/flamethrower|flame thrower|incinerat/) ? "flamethrower"
+      : has(/rocket|missile|bazooka|launcher|rpg/) ? "rocket" : has(/landmine|\bmine\b|claymore/) ? "mine" : has(/hammer|mallet|maul/) ? "hammer"
+      : has(/\baxe\b|hatchet/) ? "axe" : has(/spear|javelin|pike|lance|trident/) ? "spear" : has(/scope|sniper|binocular|goggle/) ? "scope"
+      : has(/medkit|med kit|first aid|bandage|stim/) ? "medkit" : has(/amulet|charm|talisman|ward|rune|crystal|totem/) ? "charm"
+      : has(/catapult|trebuchet|siege/) ? "catapult" : has(/boomerang|chakram|disc/) ? "boomerang" : has(/cloak|invisib|camo/) ? "cloak"
+      : has(/battering|\bram\b/) ? "ram" : "";
+    if (extra) return extra;
+    return has(/bomb|grenade|explosive|charge|dynamite/) ? "bomb" : has(/trap|snare|spike|pit/) ? "trap" : has(/net\b|web/) ? "net"
       : has(/turret|ballista|catapult|trebuchet|sentry/) ? "turret" : has(/cannon|artillery/) ? "cannon" : has(/potion|elixir|tonic|salve|medic|heal/) ? "potion"
       : has(/armou?r|plate|mail|suit|helm/) ? "armour" : has(/shield|barrier|wall|barricade/) ? "shield" : has(/banner|flag|standard|horn/) ? "banner"
       : has(/gun|rifle|pistol|blaster|laser/) ? "gun" : has(/bow|crossbow|arrow/) ? "bow" : has(/staff|wand|rod/) ? "staff"
@@ -86,7 +96,10 @@
     if (COLOURS[g.colour]) return COLOURS[g.colour];
     return ({ bomb: COLOURS.black, trap: COLOURS.grey, net: COLOURS.white, turret: COLOURS.brown, cannon: COLOURS.black, potion: COLOURS.green,
       armour: COLOURS.silver, shield: COLOURS.blue, banner: COLOURS.red, gun: COLOURS.grey, bow: COLOURS.brown, staff: COLOURS.purple,
-      blade: COLOURS.silver, vehicle: COLOURS.brown, rope: COLOURS.brown, beast: COLOURS.brown, device: COLOURS.cyan, wall: COLOURS.grey })[look] || COLOURS.cyan;
+      blade: COLOURS.silver, vehicle: COLOURS.brown, rope: COLOURS.brown, beast: COLOURS.brown, device: COLOURS.cyan, wall: COLOURS.grey,
+      jetpack: COLOURS.silver, drone: COLOURS.grey, mech: COLOURS.grey, grapple: COLOURS.black, smoke: COLOURS.grey, flamethrower: COLOURS.grey,
+      rocket: COLOURS.green, hammer: COLOURS.silver, axe: COLOURS.silver, spear: COLOURS.silver, scope: COLOURS.black, medkit: COLOURS.white,
+      charm: COLOURS.purple, catapult: COLOURS.grey, mine: COLOURS.grey, boomerang: COLOURS.brown, cloak: COLOURS.black, ram: COLOURS.grey })[look] || COLOURS.cyan;
   }
 
   /* Clean a model's beats into something that always plays sensibly:
@@ -110,6 +123,12 @@
     const dead = new Set((verdict.aftermath || []).filter(a => a.status === "dead").map(a => find(a.name)).filter(Boolean).map(p => p.key));
 
     const out = [];
+    // An army or horde dies in parts: a single blow only takes all of it when
+    // it has already been thinned, unless the move wipes out whole sides.
+    const groupsOf = w => ((window.UNIVERSES || {})[w] || {}).groups || [];
+    const horde = q => { try { return window.Sprite.of(q).spec.extras.has("horde"); } catch { return false; } };
+    const isGroup = q => groupsOf(q.world).includes(q.name) || horde(q);
+    const hits = new Map();
     for (const raw of Array.isArray(verdict.beats) ? verdict.beats.slice(0, 40) : []) {
       const actor = find(raw.actor);
       if (!actor || down.has(actor.key)) continue;
@@ -150,6 +169,12 @@
       }
       if (victims && outcome === "ko" && victims.some(k => people.find(q => q.key === k).side === winSide)
         && standing(people.filter(q => q.side === winSide)).length <= victims.filter(k => people.find(q => q.key === k).side === winSide).length) outcome = "crit";
+      if (outcome === "ko" && target && !victims && isGroup(target) && !(hits.get(target.key) > 0) && !["self_destruct", "devour", "black_hole"].includes(action)) {
+        out.push({ actor: actor.key, action, target: target.key, victims: null, gear: g ? g.name : null, effect: EFFECTS.includes(raw.effect) ? raw.effect : "none",
+          outcome: "crit", move: String(raw.move || "").trim().slice(0, 32), also: [], death: "normal",
+          caption: `${actor.name} cuts into ${target.name}: a whole flank falls, but the rest fight on.`, line: "", callout: `${target.name} loses a flank` });
+      }
+      if (target && ["hit", "crit", "hurt"].includes(outcome)) hits.set(target.key, (hits.get(target.key) || 0) + 1);
       out.push({
         actor: actor.key, action, target: target ? target.key : null, victims,
         gear: g ? g.name : null, effect: EFFECTS.includes(raw.effect) ? raw.effect : "none", outcome,
@@ -157,6 +182,7 @@
         also: victims ? [] : [...new Set(also)],
         death: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"].includes(raw.death) ? raw.death : "normal",
         caption: String(raw.caption || "").trim().slice(0, 160), line: String(raw.line || "").trim().slice(0, 60),
+        callout: String(raw.callout || "").trim().slice(0, 70),
       });
       if (outcome === "ko" && victims) victims.forEach(k => down.add(k));
       else if (outcome === "ko" && target) { down.add(target.key); also.forEach(k => down.add(k)); }
@@ -393,6 +419,24 @@
       case "bow": for (let i = -5; i <= 5; i++) r(Math.round(2 - (i * i) / 10), -6 + i, 1, 1, colour); r(-1, -11, 1, 11, "#f4f1ea"); break;
       case "staff": r(0, -14, 1, 14, "#8a5a32"); r(-1, -16, 3, 3, colour); break;
       case "blade": r(0, -12, 2, 10, "#d9dee4"); r(-2, -3, 6, 1, colour); r(0, -2, 2, 2, "#8a5a32"); break;
+      case "jetpack": r(-4, -11, 3, 9, colour); r(1, -11, 3, 9, colour); r(-1, -10, 2, 6, "#5a5f66"); if ((t / 90 | 0) % 2) { r(-4, -2, 3, 3, "#ff9a2a"); r(1, -2, 3, 3, "#ffcc33"); } else { r(-4, -2, 3, 2, "#ffcc33"); r(1, -2, 3, 2, "#ff9a2a"); } break;
+      case "drone": { const bob = Math.round(Math.sin(t / 150) * 1); r(-3, -8 + bob, 6, 3, colour); r(-1, -6 + bob, 2, 1, "#ff2828"); const s = (t / 50 | 0) % 2 ? 4 : 2; r(-4 - s, -10 + bob, s, 1, "#cfd6dd"); r(4, -10 + bob, s, 1, "#cfd6dd"); r(-4, -9 + bob, 1, 2, dark); r(3, -9 + bob, 1, 2, dark); break; }
+      case "mech": r(-5, -16, 10, 8, colour); r(-3, -14, 6, 3, "#8fe9ff"); r(-7, -14, 2, 6, colour); r(5, -14, 2, 6, colour); r(-4, -8, 3, 8, dark); r(1, -8, 3, 8, dark); r(-5, -1, 4, 1, colour); r(1, -1, 4, 1, colour); break;
+      case "grapple": r(-5, -5, 6, 3, colour); r(-5, -2, 2, 2, colour); r(1, -5, 2, 1, "#cfd6dd"); r(3, -6, 1, 3, "#cfd6dd"); r(4, -7, 1, 1, "#cfd6dd"); r(4, -3, 1, 1, "#cfd6dd"); break;
+      case "smoke": r(-3, -6, 6, 6, colour); r(-1, -8, 2, 2, "#cfd6dd"); r(-2, -5, 1, 1, "#ffffff"); if ((t / 160 | 0) % 2) r(1, -11, 2, 2, "rgba(200,200,200,0.8)"); break;
+      case "flamethrower": r(-6, -5, 10, 3, colour); r(4, -4, 3, 1, dark); r(-5, -2, 2, 3, dark); r(-3, -9, 3, 4, "#c0262f"); if ((t / 80 | 0) % 2) r(7, -5, 2, 2, "#ff7a1a"); break;
+      case "rocket": r(-7, -6, 12, 3, colour); r(5, -7, 2, 5, dark); r(-4, -3, 2, 3, dark); r(-8, -7, 2, 5, "#5a5f66"); break;
+      case "hammer": r(0, -12, 1, 12, "#8a5a32"); r(-3, -15, 7, 4, colour); r(-3, -15, 7, 1, "#ffffff"); break;
+      case "axe": r(0, -13, 1, 13, "#8a5a32"); r(1, -13, 4, 5, colour); r(4, -14, 1, 7, colour); r(1, -13, 3, 1, "#ffffff"); break;
+      case "spear": r(0, -16, 1, 16, "#8a5a32"); r(-1, -19, 3, 3, colour); r(0, -20, 1, 1, colour); break;
+      case "scope": r(-5, -6, 10, 3, colour); r(-3, -7, 5, 1, dark); r(5, -6, 2, 1, "#9fe3ff"); break;
+      case "medkit": r(-4, -7, 8, 6, colour); r(-1, -6, 2, 4, "#ffffff"); r(-2, -5, 4, 2, "#ffffff"); r(-2, -8, 4, 1, dark); break;
+      case "charm": r(-1, -10, 2, 1, "#e8b84a"); r(-2, -9, 1, 2, "#e8b84a"); r(1, -9, 1, 2, "#e8b84a"); r(-2, -7, 4, 4, colour); r(-1, -6, 1, 1, "#ffffff"); if ((t / 250 | 0) % 2) r(2, -8, 1, 1, "#ffffff"); break;
+      case "catapult": r(-8, -3, 16, 3, "#6b4a2a"); r(-7, 0, 3, 2, dark); r(4, 0, 3, 2, dark); r(-2, -10, 2, 7, "#8a5a32"); r(-6, -12, 10, 2, "#8a5a32"); r(-7, -14, 3, 2, colour); break;
+      case "mine": r(-4, -2, 8, 2, colour); r(-2, -3, 4, 1, colour); if ((t / 300 | 0) % 2) r(0, -4, 1, 1, "#ff2828"); break;
+      case "boomerang": r(-5, -6, 5, 2, colour); r(-1, -6, 2, 6, colour); r(-5, -6, 1, 1, "#ffffff"); break;
+      case "cloak": r(-4, -13, 8, 3, colour); r(-5, -10, 10, 9, colour); r(-2, -12, 4, 2, dark); r(-5, -1, 2, 1, colour); r(3, -1, 2, 1, colour); break;
+      case "ram": r(-10, -6, 20, 4, "#8a5a32"); r(10, -7, 3, 6, colour); r(-8, -2, 2, 2, dark); r(5, -2, 2, 2, dark); r(-6, -9, 1, 3, "#6b4a2a"); r(4, -9, 1, 3, "#6b4a2a"); break;
       default: r(-4, -7, 8, 7, colour); r(-2, -5, 4, 2, "#ffffff"); r(-1, -9, 1, 2, dark); if ((t / 200 | 0) % 2) r(0, -10, 1, 1, colour);
     }
   }
@@ -479,6 +523,12 @@
         <div class="b8__banner" hidden></div>
         <div class="b8__move" hidden></div>
         <div class="b8__map" hidden></div>
+        <div class="b8__call" hidden></div>
+        <div class="b8__council" hidden>
+          <div class="b8__council-head"></div>
+          <div class="b8__council-text" aria-live="polite"></div>
+          <button type="button" class="b8__council-skip">Skip the plans</button>
+        </div>
        </div>
         <p class="b8__caption" aria-live="polite"></p>
         <div class="b8__ctl">
@@ -497,8 +547,31 @@
     // Fighters, lined up on their side, biggest at the back.
     const fighters = people.map(p => {
       const sprite = window.Sprite.of(p);
-      return { ...p, sprite, hp: p.condition && p.condition.status === "injured" ? 70 : 100, downed: false, facing: p.side ? -1 : 1, alpha: 1, scale: 1 };
+      const group = (((window.UNIVERSES || {})[p.world] || {}).groups || []).includes(p.name) || sprite.spec.extras.has("horde");
+      return { ...p, sprite, group, unit: group ? window.Sprite.of(p, { single: true }) : null, gearOpts: {},
+        hp: p.condition && p.condition.status === "injured" ? 70 : 100, downed: false, facing: p.side ? -1 : 1, alpha: 1, scale: 1 };
     });
+    // Gear changes how someone looks: extras are added, a weapon replaces theirs.
+    function equip(f, o) {
+      const g = f.gearOpts;
+      if (o.weapon) g.weapon = o.weapon;
+      if (o.extras) g.extras = [...new Set([...(g.extras || []), ...o.extras])];
+      f.sprite = Sprite.of(f, g);
+      if (f.group) f.unit = Sprite.of(f, { ...g, single: true });
+    }
+    // What carrying a piece of gear looks like, if it shows.
+    const WEAR = { jetpack: { extras: ["jetpack"] }, armour: { extras: ["plate"] }, mech: { extras: ["plate"] }, cloak: { extras: ["cape"] },
+      scope: { extras: ["glasses"] }, shield: { extras: ["shield"] }, charm: { extras: ["glow"] } };
+    const HELD = { blade: "sword", bow: "bow", gun: "gun", staff: "staff", hammer: "hammer", axe: "axe", spear: "spear", flamethrower: "gun", rocket: "cannon", cannon: "cannon" };
+    function wearFor(look, f) {
+      if (WEAR[look]) return WEAR[look];
+      if (HELD[look] && f.sprite.spec.weapon === "none") return { weapon: HELD[look] };
+      return null;
+    }
+    // A group's members, front to back, and the bodies it leaves behind.
+    const RANKS = [[0, 0], [-10, -5], [10, -6], [-18, 2], [17, 1]];
+    const fallen = [];
+    const membersOf = f => f.downed ? 0 : Math.max(1, Math.min(RANKS.length, Math.ceil(f.hp / 20)));
     [0, 1].forEach(side => {
       const mine = fighters.filter(f => f.side === side).sort((a, b) => a.sprite.size - b.sprite.size);
       mine.forEach((f, i) => {
@@ -666,8 +739,8 @@
     const WIELD = { blade: "sword", bow: "bow", gun: "gun", staff: "staff", cannon: "cannon", rope: "whip", net: "whip" };
     function wield(f, item) {
       if (!item || item.side !== f.side) return;
-      if (WIELD[item.look]) f.sprite = Sprite.of(f, { weapon: WIELD[item.look] });
-      else if (item.look === "shield") f.sprite = Sprite.of(f, { extras: ["shield"] });
+      if (WIELD[item.look] || HELD[item.look]) equip(f, { weapon: WIELD[item.look] || HELD[item.look] });
+      else if (WEAR[item.look]) equip(f, WEAR[item.look]);
     }
     let moveTimer = null;
     function callMove(name) {
@@ -714,6 +787,7 @@
     const timer = setInterval(() => { if (stopped) return clearInterval(timer); step(); }, 30);
 
     function draw() {
+      if (council) { drawCouncil(); placeBubbles(); return; }
       ctx.save();
       if (shake > time) ctx.translate(Math.round(rnd(-2, 2)), Math.round(rnd(-2, 2)));
       ctx.drawImage(bg, 0, 0);
@@ -756,12 +830,27 @@
         ctx.drawImage(img, -Math.floor(S / 2), -(S - 4));
         ctx.restore();
       }
+      for (const c of fallen) {
+        ctx.save(); ctx.translate(Math.round(c.x), Math.round(c.y)); ctx.scale(c.facing * c.k, c.k);
+        ctx.drawImage(c.img, -Math.floor(c.img.width / 2), -(c.img.height - 4)); ctx.restore();
+      }
       for (const it of fieldGear) drawGear(ctx, it.look, it.colour, it.x, it.y, time);
       const list = fighters.concat(clones).sort((a, b) => a.pos.y - b.pos.y);
       for (const f of list) {
         const pose = f.downed || f.asleep ? "ko" : f.pose;
         const t = frozen && f !== frozen.by ? frozen.at : time;   // the frozen don't move
-        let img = (f.disguise || f.sprite).frame(pose, t - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
+        const body = f.disguise || (f.group ? f.unit : f.sprite);
+        let img = body.frame(pose, t - f.poseT, f.flashUntil > time && ((time / 60) | 0) % 2 === 0);
+        // The rest of a group, behind the one in front: fewer as it thins.
+        if (f.group && !f.disguise && f.alpha > 0.01) {
+          const n = membersOf(f), su = f.sprite.size * f.scale;
+          for (let i = n - 1; i >= 1; i--) {
+            const [dx, dy] = RANKS[i], mi = tinted(f.unit.frame(pose === "ko" ? "idle" : pose, t - f.poseT + i * 90), "#1d1a17", 0.2), MS = mi.width;
+            ctx.save(); ctx.translate(Math.round(f.pos.x + dx * su * (f.facing || 1)), Math.round(f.pos.y + dy * su + (f.hop || 0)));
+            ctx.scale((f.facing < 0 ? -1 : 1) * f.scale * 0.9, f.scale * 0.9); ctx.globalAlpha = clamp(f.alpha, 0, 1);
+            ctx.drawImage(mi, -Math.floor(MS / 2), -(MS - 4)); ctx.restore();
+          }
+        }
         if (f.stone) img = tinted(img, "#8c8c8c", 0.8);
         else if (f.charred) img = tinted(img, "#1d1a17", f.charred);
         else if (f.tint) img = tinted(img, f.tint, 0.45);
@@ -795,7 +884,7 @@
       for (const gc of gas) {
         if (time > gc.until) continue;
         const fade = clamp((gc.until - time) / 600, 0, 1);
-        for (let i = 0; i < 7; i++) { ctx.fillStyle = `rgba(139,211,74,${(0.28 * fade).toFixed(2)})`; ctx.beginPath(); ctx.arc(gc.x + Math.sin(time / 400 + i) * 14, gc.y - 10 - (i % 3) * 7, 10 + (i % 3) * 3, 0, Math.PI * 2); ctx.fill(); }
+        for (let i = 0; i < 7; i++) { ctx.fillStyle = `rgba(${gc.rgb || "139,211,74"},${(0.28 * fade).toFixed(2)})`; ctx.beginPath(); ctx.arc(gc.x + Math.sin(time / 400 + i) * 14, gc.y - 10 - (i % 3) * 7, 10 + (i % 3) * 3, 0, Math.PI * 2); ctx.fill(); }
       }
       if (flyer) {
         const img = flyer.sprite.frame("walk", time), S = img.width;
@@ -927,13 +1016,26 @@
       talk = { f, b, until: time + Math.max(1800, line.length * 70) };
     }
     function placeBubbles() {
+      if (callUntil && time > callUntil) { callEl.hidden = true; callUntil = 0; }
       if (!talk) return;
       if (time > talk.until) { talk.b.remove(); talk = null; return; }
       const p = talk.f.pos, top = p.y - 30 * talk.f.sprite.size;
       talk.b.style.left = `${(p.x / W) * 100}%`; talk.b.style.top = `${(top / H) * 100}%`;
     }
     function setHp(f, hp) {
+      const before = f.group ? membersOf(f) : 0;
       f.hp = clamp(hp, 0, 100);
+      if (f.group && f.pos && !f.downed) {
+        const after = membersOf(f), su = f.sprite.size * f.scale;
+        for (let i = before - 1; i >= after; i--) {
+          const [dx, dy] = RANKS[i];
+          const x = f.pos.x + dx * su * (f.facing || 1), y = f.pos.y + dy * su;
+          fallen.push({ x, y: y + 2, img: f.unit.frame("ko", 0), facing: f.facing, k: f.scale * 0.9 });
+          const g = gore(f);
+          if (g.kind === "blood" || g.kind === "goo" || g.kind === "oil") stains.push({ x, y: y + 2, r: 0, max: rnd(2, 4), c: g.c, t0: time });
+          burst(x, y - 8, g.kind === "blood" ? "blood" : "impact", 6);
+        }
+      }
       const el = root.querySelector(`.b8__f[data-k="${CSS.escape(f.key)}"]`);
       if (!el) return;
       el.querySelector("i").style.width = `${f.hp}%`;
@@ -973,9 +1075,10 @@
       if (gore(target).kind === "blood" || gore(target).kind === "goo") sfx("b_splat", outcome === "hurt" ? 0.5 : 0.8);
       const left = outcome === "ko" ? 0 : Math.max(6, target.hp - dmg);
       damageNumber(target, outcome === "crit" ? `${target.hp - left}!` : `${target.hp - left}`, outcome === "crit" ? "#ffcc33" : "#ffffff");
-      setHp(target, left);
+      if (!(outcome === "ko" && target.group)) setHp(target, left);
       await tween(target.pos, { x: target.pos.x + dir * (outcome === "crit" || outcome === "ko" ? 14 : 7) }, 160);
       if (outcome === "ko") {
+        if (target.group && !skipping) for (let h = membersOf(target); h > 1; h--) { target.hp = h * 20; setHp(target, (h - 1) * 20 - 1); sfx("b_splat", 0.4, 1 + h * 0.05); await wait(130); }
         await die(target, dir);
       } else {
         await wait(220);
@@ -1028,6 +1131,10 @@
       const effect = b.effect !== "none" ? b.effect : actor.sprite.spec.element !== "none" ? actor.sprite.spec.element : "impact";
       caption.textContent = b.caption || describe(b, actor, target);
       say(actor, b.line);
+      if (b.callout) callout(b.callout, gearItem);
+      else if (gearItem && !announced.has(gearItem.name)) callout(`${actor.name} brings out the ${gearItem.name}`, gearItem);
+      else if (b.action === "fall") callout(`${feature && feature !== "open" ? `The ${feature}` : "The battlefield"} claims ${actor.name}`);
+      if (gearItem) announced.add(gearItem.name);
       wield(actor, gearItem);
       callMove(b.move);
       deathStyle = b.death || "normal";
@@ -1105,6 +1212,32 @@
           await wait(300); setPose(actor, "idle");
           break;
         }
+        case "flank": {
+          if (!target) break;
+          // The group splits: parties swing round above and below to hit from
+          // the sides while the main body comes straight on.
+          sfx("b_rise", 0.6); sfx("b_whoosh", 0.8);
+          const unit = actor.unit || actor.sprite;
+          const parties = [-1, 1].map(k => ({ ...actor, group: false, sprite: unit, key: `${actor.key}~f${k}`, pos: { x: actor.pos.x, y: actor.pos.y + k * 6 }, alpha: 1, pose: "walk", poseT: time, hop: 0 }));
+          parties.forEach(c => clones.push(c));
+          const lost = actor.group ? Math.min(2, membersOf(actor) - 1) : 0;
+          if (lost > 0) actor.hp = Math.max(21, actor.hp - lost * 20) ;
+          await Promise.all([
+            approach(actor, target),
+            ...parties.map((c, i) => tween(c.pos, { x: lerp(actor.pos.x, target.pos.x, 0.5), y: target.pos.y + (i ? 34 : -34) }, 380)
+              .then(() => tween(c.pos, { x: target.pos.x + actor.facing * (i ? 12 : 16), y: target.pos.y + (i ? 6 : -6) }, 320))
+              .then(() => { c.facing = -actor.facing; })),
+          ]);
+          [actor, ...parties].forEach(f => setPose(f, "windup")); await wait(140);
+          [actor, ...parties].forEach(f => setPose(f, "strike")); sfx("b_slash", 1); sfx("b_punch", 0.7);
+          burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "slash", 18);
+          await land(target, b.outcome, effect, actor);
+          await Promise.all(parties.map(c => { setPose(c, "walk"); c.facing = actor.facing; return tween(c.pos, { x: actor.home.x, y: actor.home.y + (c.pos.y > target.pos.y ? 8 : -8) }, 450); }));
+          clones = clones.filter(c => !parties.includes(c));
+          if (lost > 0) setHp(actor, actor.hp);
+          await goHome(actor);
+          break;
+        }
         case "deploy_gear": case "trap": {
           const item = gearItem || { look: b.action === "trap" ? "trap" : "device", colour: COLOURS.cyan, name: "" };
           const placed = placeGear(item, actor);
@@ -1112,7 +1245,15 @@
           await wait(350);
           const look = item.look;
           const support = ["potion", "armour", "banner", "shield", "wall"].includes(look);
-          if (support) {
+          if (look === "medkit" || look === "charm") {
+            fieldGear.splice(fieldGear.indexOf(placed), 1);
+            await supportGear(look, actor);
+          } else if (target && GEAR_MOVES.has(look)) {
+            fieldGear.splice(fieldGear.indexOf(placed), 1);
+            const fx = await gearMove(look, actor, target, item, b);
+            await land(target, b.outcome, b.effect !== "none" ? b.effect : fx || "impact", actor);
+            if (!actor.downed && Math.abs(actor.pos.x - actor.home.x) > 4) await goHome(actor);
+          } else if (support) {
             // Help for the user's own side; a banner lifts everyone standing.
             const who = look === "banner" ? fighters.filter(f => f.side === actor.side && !f.downed) : [actor];
             for (const f of who) {
@@ -1884,7 +2025,7 @@
         }
         case "hook": {
           if (!target) break;
-          setPose(actor, "shoot"); sfx("b_throw", 0.9);
+          setPose(actor, "shoot"); sfx("b_hook", 1);
           const hk = { kind: "hook", x0: centre(actor).x, y0: centre(actor).y, x1: centre(target).x, y1: centre(target).y, c: "#cfd6dd", t0: time, ms: 350 };
           shots.push(hk); await wait(350);
           if (["dodged", "miss"].includes(b.outcome)) { shots = shots.filter(q => q !== hk); await land(target, b.outcome, "impact", actor); setPose(actor, "idle"); break; }
@@ -1908,7 +2049,7 @@
           let from = actor;
           for (const f of chain) {
             const bolt = { kind: "bolt", x0: centre(from).x, y0: centre(from).y, x1: centre(f).x, y1: centre(f).y, c: "#ffe14d", t0: time, ms: 240 };
-            shots.push(bolt); sfx("b_beam", 0.6); burst(centre(f).x, centre(f).y, "lightning", 8);
+            shots.push(bolt); sfx("b_chain", 0.8); burst(centre(f).x, centre(f).y, "lightning", 8);
             await wait(200); shots = shots.filter(q => q !== bolt);
             if (f !== target) land(f, "hurt", "lightning", actor);
             from = f;
@@ -1919,7 +2060,7 @@
         }
         case "earth_spikes": {
           if (!target) break;
-          setPose(actor, "strike"); sfx("b_quake", 0.7); shake = time + 300;
+          setPose(actor, "strike"); sfx("b_spikes", 0.9); shake = time + 300;
           burst(actor.pos.x + actor.facing * 8, actor.pos.y, "earth", 8);
           await wait(250);
           spikes.push({ x: target.pos.x, y: target.pos.y + 2, t0: time, until: time + 1600 });
@@ -1937,7 +2078,7 @@
           shots.push(sight);
           await wait(1100);
           shots = shots.filter(q => q !== sight);
-          flash = { c: "#ffffff", until: time + 80, ms: 80 }; sfx("b_gun", 1, 0.7); shake = time + 120;
+          flash = { c: "#ffffff", until: time + 80, ms: 80 }; sfx("b_snipe", 1); shake = time + 120;
           const round = { kind: "bullet", x0: sight.x0, y0: sight.y0, x1: sight.x1, y1: sight.y1, c: "#ffe08a", t0: time, ms: 120 };
           shots.push(round); await wait(120); shots = shots.filter(q => q !== round);
           await land(target, b.outcome === "hit" ? "crit" : b.outcome, "impact", actor);
@@ -1946,9 +2087,9 @@
         }
         case "grenade": {
           if (!target) break;
-          setPose(actor, "windup"); await wait(180); setPose(actor, "strike"); sfx("b_throw", 0.8);
+          setPose(actor, "windup"); await wait(180); setPose(actor, "strike"); sfx("b_grenade", 1);
           await fire(actor, target, "gear", "explosion", { look: "bomb", c: "#3a4a2a", ms: 650, arc: 34 });
-          sfx("b_boom", 1); shake = time + 350; burst(target.pos.x, target.pos.y - 4, "explosion", 26, true);
+          shake = time + 350; burst(target.pos.x, target.pos.y - 4, "explosion", 26, true);
           const near = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 36);
           await Promise.all([land(target, b.outcome, "explosion", actor), ...near.map(f => land(f, "hurt", "explosion", actor))]);
           setPose(actor, "idle");
@@ -1956,7 +2097,7 @@
         }
         case "poison_cloud": {
           if (!target) break;
-          setPose(actor, "cast"); sfx("b_drain", 0.6);
+          setPose(actor, "cast"); sfx("b_gas", 0.9);
           gas.push({ x: target.pos.x, y: target.pos.y, until: time + 4000 });
           for (let i = 0; i < 4; i++) { burst(centre(target).x, centre(target).y, "poison", 4); target.flashUntil = time + 120; await wait(250); }
           await land(target, b.outcome, "poison", actor);
@@ -1966,7 +2107,7 @@
         case "spin_slash": {
           if (!target) break;
           await approach(actor, target);
-          sfx("b_spin", 0.9);
+          sfx("b_spinslash", 1);
           const near = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(f.pos.x - target.pos.x) < 34);
           for (let i = 0; i < 8; i++) { actor.facing = -actor.facing; setPose(actor, "strike"); burst(centre(actor).x + actor.facing * 10, centre(actor).y, "slash", 3); await wait(90); }
           actor.facing = actor.side ? -1 : 1;
@@ -1982,7 +2123,7 @@
           for (const f of [target, ...others]) {
             const d = { kind: "disc", x0: from.x, y0: from.y, x1: centre(f).x, y1: centre(f).y, c: "#c0262f", t0: time, ms: 260 };
             shots.push(d); await wait(260); shots = shots.filter(q => q !== d);
-            sfx("b_block", 0.8); burst(centre(f).x, centre(f).y, "impact", 8);
+            sfx("b_ricochet", 0.8); burst(centre(f).x, centre(f).y, "impact", 8);
             if (f !== target) land(f, "hurt", "impact", actor);
             from = centre(f);
           }
@@ -1995,7 +2136,7 @@
         }
         case "web_swing": {
           if (!target) break;
-          sfx("b_whoosh", 0.9);
+          sfx("b_web", 1);
           // Swinging in on a web line from somewhere overhead.
           const anchor = { x: (actor.pos.x + target.pos.x) / 2, y: 20 };
           const line = { kind: "web", x0: anchor.x, y0: anchor.y, x1: actor.pos.x, y1: actor.pos.y - 20, c: "#ffffff", t0: time - 2, ms: 1 };
@@ -2012,10 +2153,10 @@
         }
         case "mega_beam": {
           if (!target) break;
-          setPose(actor, "cast"); sfx("b_charge", 1);
+          setPose(actor, "cast"); sfx("b_megabeam", 1);
           const glow = FX[b.effect] && b.effect !== "none" ? FX[b.effect] : "#8fd0ff";
           for (let i = 0; i < 10; i++) { burst(centre(actor).x + actor.facing * 8, centre(actor).y, b.effect !== "none" ? b.effect : "light", 4); await wait(100); }
-          shake = time + 1000; flash = { c: glow, until: time + 300, ms: 300 }; sfx("b_beam", 1, 0.7);
+          shake = time + 1000; flash = { c: glow, until: time + 300, ms: 300 }; sfx("b_boom", 0.6);
           const beam = { kind: "beam", w: 12, x0: centre(actor).x + actor.facing * 8, y0: centre(actor).y, x1: actor.facing > 0 ? W + 20 : -20, y1: centre(target).y, c: glow, t0: time, ms: 900 };
           shots.push(beam);
           const inLine = fighters.filter(f => f !== target && f.side === target.side && !f.downed && Math.abs(centre(f).y - centre(target).y) < 14);
@@ -2031,7 +2172,7 @@
           setPose(actor, "idle"); await wait(500);
           damageNumber(actor, "serious punch", "#ffe14d");
           setPose(actor, "windup"); await wait(300);
-          setPose(actor, "strike"); sfx("b_boom", 1); flash = { c: "#ffffff", until: time + 300, ms: 300 }; shake = time + 1200;
+          setPose(actor, "strike"); sfx("b_onepunch", 1); flash = { c: "#ffffff", until: time + 300, ms: 300 }; shake = time + 1200;
           rings.push({ x: centre(target).x, y: centre(target).y, r0: 4, r1: 400, c: "#ffffff", t0: time, ms: 700 });
           for (let i = 0; i < 30; i++) parts.push({ x: centre(target).x, y: centre(target).y + rnd(-20, 20), vx: actor.facing * rnd(200, 500), vy: rnd(-30, 30), g: 0, c: "#ffffff", s: 2, t0: time, life: 500 });
           await land(target, b.outcome === "hit" ? "crit" : b.outcome, "impact", actor);
@@ -2040,7 +2181,7 @@
         }
         case "domain_expansion": {
           if (!target) break;
-          setPose(actor, "cast"); sfx("b_warp", 1, 0.6);
+          setPose(actor, "cast"); sfx("b_domain", 1);
           damageNumber(actor, "domain expansion", "#ff6ad5");
           const sukuna = /sukuna|malevolent|shrine/i.test(`${b.move} ${actor.name}`);
           domain = { colour: sukuna ? "#3a0a0a" : "#14082a", until: time + 99999 };
@@ -2060,7 +2201,7 @@
         }
         case "orb_strike": {
           if (!target) break;
-          setPose(actor, "cast"); sfx("b_charge", 0.8);
+          setPose(actor, "cast"); sfx("b_orb", 1);
           const col = b.effect === "lightning" || /chidori/i.test(b.move || "") ? "#9fe3ff" : FX[b.effect] && b.effect !== "none" ? FX[b.effect] : "#7fc8ff";
           for (let i = 0; i < 6; i++) { rings.push({ x: centre(actor).x + actor.facing * 8, y: centre(actor).y, r0: 6, r1: 2, c: col, t0: time, ms: 200 }); await wait(90); }
           await approach(actor, target);
@@ -2110,7 +2251,178 @@
       if (spent < need) await wait(need - spent);
     }
 
-    const gearList = (verdict.preps || []).flatMap((p, side) => (p && p.gear || []).map(g => { const look = gearLook(g); return { name: g.name, side, look, colour: gearColour(g, look) }; }));
+    const gearList = (verdict.preps || []).flatMap((p, side) => (p && p.gear || []).map(g => { const look = gearLook(g); return { name: g.name, side, look, colour: gearColour(g, look), carried_by: g.carried_by || "", effect: g.effect || "" }; }));
+    /* Gear in use: each kind of prepared gear has its own way of coming into
+       the fight. Returns the effect the hit lands with, or null when the look
+       has no special move here. */
+    const GEAR_MOVES = new Set(["jetpack", "drone", "mech", "grapple", "smoke", "flamethrower", "rocket", "hammer", "axe", "spear",
+      "scope", "catapult", "mine", "boomerang", "cloak", "ram", "medkit", "charm"]);
+    async function gearMove(look, actor, target, item, b) {
+      const tc = () => centre(target);
+      switch (look) {
+        case "jetpack": {
+          equip(actor, { extras: ["jetpack"] });
+          sfx("b_jetpack", 1); setPose(actor, "walk");
+          const trail = setInterval(() => burst(actor.pos.x - actor.facing * 4, actor.pos.y - 2, "fire", 2), 60);
+          await tween(actor.pos, { y: actor.pos.y - 60, x: actor.pos.x + actor.facing * 20 }, 450);
+          setPose(actor, "strike");
+          await tween(actor.pos, { x: target.pos.x - actor.facing * 12, y: target.pos.y }, 300);
+          clearInterval(trail); shake = time + 200;
+          burst(tc().x, tc().y, "explosion", 14);
+          return "impact";
+        }
+        case "drone": {
+          sfx("b_drone", 1);
+          const d = { kind: "gear", look: "drone", c: item.colour, x0: actor.pos.x, y0: actor.pos.y - 30, x1: target.pos.x, y1: target.pos.y - 52, t0: time, ms: 700 };
+          shots.push(d); await wait(700);
+          for (let i = 0; i < 3; i++) {
+            const z = { kind: "beam", c: "#ff2828", w: 1, x0: target.pos.x, y0: target.pos.y - 50, x1: target.pos.x + rnd(-3, 3), y1: tc().y, t0: time, ms: 160 };
+            shots.push(z); burst(tc().x, tc().y, "tech", 5); await wait(170); shots = shots.filter(q => q !== z);
+          }
+          shots = shots.filter(q => q !== d);
+          return "tech";
+        }
+        case "mech": {
+          sfx("b_mech", 1);
+          const from = actor.pos.x - actor.facing * 30;
+          const m = { kind: "gear", look: "mech", c: item.colour, scale: 3, x0: from, y0: target.pos.y - 4, x1: target.pos.x - actor.facing * 22, y1: target.pos.y - 4, t0: time, ms: 900 };
+          shots.push(m);
+          for (let i = 0; i < 4; i++) { await wait(225); shake = time + 90; burst(lerp(m.x0, m.x1, (i + 1) / 4), target.pos.y, "earth", 4); }
+          sfx("b_slam", 1); shake = time + 400; burst(tc().x, target.pos.y - 4, "impact", 20, true);
+          await wait(200); shots = shots.filter(q => q !== m);
+          return "impact";
+        }
+        case "grapple": {
+          sfx("b_hook", 1);
+          const h = { kind: "hook", c: item.colour, x0: centre(actor).x, y0: centre(actor).y, x1: tc().x, y1: tc().y, t0: time, ms: 260 };
+          shots.push(h); await wait(260);
+          setPose(actor, "walk");
+          const line = { kind: "web", x0: tc().x, y0: tc().y, x1: tc().x, y1: tc().y, t0: time, ms: 1 };
+          shots = shots.filter(q => q !== h); shots.push(line);
+          await tween(actor.pos, { x: target.pos.x - actor.facing * 12, y: target.pos.y }, 260);
+          shots = shots.filter(q => q !== line);
+          setPose(actor, "strike"); sfx("b_punch", 1);
+          return "impact";
+        }
+        case "smoke": {
+          sfx("b_smoke", 1);
+          await fire(actor, target, "gear", "smoke", { look: "smoke", c: item.colour, ms: 420, arc: 24 });
+          gas.push({ x: target.pos.x, y: target.pos.y, until: time + 2600, rgb: "170,170,170" });
+          actor.alpha = 0.15; await wait(300);
+          actor.pos.x = target.pos.x + actor.facing * 14; actor.facing *= -1; actor.alpha = 1;
+          setPose(actor, "strike"); sfx("b_slash", 1);
+          await wait(120); actor.facing *= -1;
+          return "slash";
+        }
+        case "flamethrower": {
+          equip(actor, { weapon: "gun" });
+          setPose(actor, "shoot"); sfx("b_flame", 1);
+          for (let i = 0; i < 4; i++) { fire(actor, target, "breath", "fire"); await wait(110); }
+          await wait(380);
+          burst(tc().x, tc().y, "fire", 16);
+          return "fire";
+        }
+        case "rocket": {
+          equip(actor, { weapon: "cannon" });
+          setPose(actor, "shoot"); sfx("b_rocket", 1);
+          const rk = { kind: "gear", look: "rocket", c: item.colour, x0: centre(actor).x, y0: centre(actor).y - 4, x1: tc().x, y1: tc().y - 4, t0: time, ms: 520, arc: 12, scale: 1 };
+          shots.push(rk);
+          const smoke = setInterval(() => { const k = clamp((time - rk.t0) / rk.ms, 0, 1); burst(lerp(rk.x0, rk.x1, k), lerp(rk.y0, rk.y1, k), "smoke", 2); }, 50);
+          await wait(520); clearInterval(smoke); shots = shots.filter(q => q !== rk);
+          shake = time + 380; burst(tc().x, target.pos.y - 6, "explosion", 26, true);
+          return "explosion";
+        }
+        case "hammer": {
+          equip(actor, { weapon: "hammer" });
+          await approach(actor, target);
+          setPose(actor, "windup"); actor.hop = -14; await wait(240); actor.hop = 0;
+          setPose(actor, "strike"); sfx("b_slam", 1); shake = time + 350;
+          rings.push({ x: target.pos.x, y: target.pos.y, r0: 2, r1: 34, c: "#fff2c0", t0: time, ms: 450 });
+          cracks.push({ x: target.pos.x, y: target.pos.y, until: time + 2500 });
+          return "impact";
+        }
+        case "axe": case "spear": case "boomerang": {
+          setPose(actor, "windup"); await wait(160); setPose(actor, "strike"); sfx("b_throw", 0.9);
+          const s = { kind: "spin", c: item.colour, x0: centre(actor).x, y0: centre(actor).y, x1: tc().x, y1: tc().y, t0: time, ms: 360 };
+          shots.push(s); await wait(360); shots = shots.filter(q => q !== s);
+          if (look === "boomerang") {
+            const back = { kind: "spin", c: item.colour, x0: tc().x, y0: tc().y, x1: centre(actor).x, y1: centre(actor).y, t0: time, ms: 360, arc: 18 };
+            shots.push(back); wait(360).then(() => { shots = shots.filter(q => q !== back); });
+          }
+          return "slash";
+        }
+        case "scope": {
+          equip(actor, { extras: ["glasses"] });
+          setPose(actor, "shoot");
+          const sight = { kind: "sight", x0: centre(actor).x, y0: centre(actor).y - 2, x1: tc().x, y1: tc().y, t0: time, ms: 900 };
+          shots.push(sight); await wait(900); shots = shots.filter(q => q !== sight);
+          sfx("b_snipe", 1); flash = { c: "#ffffff", until: time + 70, ms: 70 };
+          await fire(actor, target, "bullet", "impact", { ms: 140 });
+          return "impact";
+        }
+        case "catapult": {
+          const cp = { look: "catapult", colour: item.colour, x: actor.pos.x - actor.facing * 18, y: actor.pos.y + 4 };
+          fieldGear.push(cp); sfx("b_throw", 1); await wait(250);
+          const rock = { kind: "rock", c: "#8a8f96", x0: cp.x, y0: cp.y - 14, x1: tc().x, y1: tc().y, t0: time, ms: 750, arc: 70 };
+          shots.push(rock); await wait(750); shots = shots.filter(q => q !== rock);
+          sfx("b_boom", 0.9); shake = time + 400; burst(tc().x, target.pos.y - 4, "earth", 22, true);
+          return "impact";
+        }
+        case "mine": {
+          const mn = { look: "mine", colour: item.colour, x: target.pos.x, y: target.pos.y + 1 };
+          fieldGear.push(mn); sfx("b_deploy", 0.6);
+          await wait(700);
+          fieldGear.splice(fieldGear.indexOf(mn), 1);
+          sfx("b_boom", 1); shake = time + 400; burst(target.pos.x, target.pos.y - 2, "explosion", 26, true);
+          target.hop = -10; await wait(150); target.hop = 0;
+          return "explosion";
+        }
+        case "cloak": {
+          equip(actor, { extras: ["cape"] });
+          sfx("b_teleport", 0.8);
+          await tween(actor, { alpha: 0.1 }, 300);
+          actor.pos.x = target.pos.x - actor.facing * 12; actor.pos.y = target.pos.y;
+          await tween(actor, { alpha: 1 }, 150);
+          setPose(actor, "strike"); sfx("b_slash", 1);
+          return "slash";
+        }
+        case "ram": {
+          sfx("b_mech", 0.6);
+          const rm = { kind: "gear", look: "ram", c: item.colour, scale: 2, x0: actor.pos.x, y0: target.pos.y - 2, x1: target.pos.x - actor.facing * 10, y1: target.pos.y - 2, t0: time, ms: 650 };
+          shots.push(rm); await wait(650);
+          sfx("b_slam", 1); shake = time + 500; burst(tc().x, tc().y, "earth", 22, true);
+          await wait(150); shots = shots.filter(q => q !== rm);
+          return "impact";
+        }
+      }
+      return null;
+    }
+    // Support gear: a medkit patches up the user's side, a charm wards everyone.
+    async function supportGear(look, actor) {
+      const who = look === "charm" ? fighters.filter(f => f.side === actor.side && !f.downed) : [actor, ...fighters.filter(f => f.side === actor.side && !f.downed && f !== actor && f.hp < 60).slice(0, 1)];
+      for (const f of who) {
+        burst(centre(f).x, centre(f).y, look === "medkit" ? "heal" : "light", 10);
+        if (look === "medkit") { setHp(f, f.hp + 30); damageNumber(f, "+30", "#6aff8a"); }
+        else f.shield = time + 2400;
+      }
+      sfx(look === "medkit" ? "b_heal" : "b_shield", 0.9);
+      await wait(550);
+    }
+
+    // An announcer's call across the top of the screen: plans, gear, terrain.
+    const announced = new Set();
+    const callEl = root.querySelector(".b8__call");
+    let callUntil = 0;
+    function callout(text, item) {
+      if (!text || skipping) return;
+      callEl.innerHTML = `${item ? `<canvas width="24" height="24" aria-hidden="true"></canvas>` : ""}<span>${esc(text)}</span>`;
+      if (item) { const c = callEl.querySelector("canvas").getContext("2d"); c.imageSmoothingEnabled = false; c.save(); c.translate(12, 20); c.scale(1.2, 1.2); drawGear(c, item.look, item.colour, 0, 0, time); c.restore(); }
+      callEl.hidden = false;
+      callEl.style.animation = "none"; void callEl.offsetWidth; callEl.style.animation = "";
+      sfx("b_announce", 0.55);
+      callUntil = time + 2600;
+    }
+
     function placeGear(item, actor) {
       const it = { look: item.look, colour: item.colour, x: actor.pos.x + actor.facing * 16, y: actor.pos.y };
       fieldGear.push(it);
@@ -2132,9 +2444,161 @@
         mega_beam: "fires everything at", one_punch: "punches", domain_expansion: "traps in a domain", orb_strike: "drives an orb into",
         stretch: "stretches a punch at", drain: "drains", laser_eyes: "burns", self_destruct: "self-destructs on", telekinesis: "lifts and slams", spin_dash: "spin-dashes into",
         regenerate: "regenerates", phase: "phases", fly: "takes to the air", grow: "grows huge", shrink: "shrinks down", reality_warp: "bends reality around", block: "braces",
-        dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
+        flank: "splits up and flanks", dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
         team_up: "teams up against", taunt: "taunts the enemy", retreat: "retreats", fall: "falls" };
       return `${a.name} ${verbs[b.action] || "acts"}${t && !["block", "dodge", "build", "taunt", "retreat", "fall"].includes(b.action) ? ` ${t.name}` : ""}.`;
+    }
+
+    /* --- The war councils ---------------------------------------------------
+       Before the battle, each team's council is shown in its tent: the team
+       around a map table, the leader marked, the plan read out line by line,
+       and every piece of gear built or brought out and handed to whoever
+       carries it. */
+
+    let council = null;      // { side, members, rack: [items], item, sparks }
+    let councilSkip = false;
+    const councilEl = root.querySelector(".b8__council");
+    const cText = councilEl.querySelector(".b8__council-text"), cHead = councilEl.querySelector(".b8__council-head");
+    councilEl.querySelector(".b8__council-skip").addEventListener("click", () => {
+      councilSkip = true; waits.splice(0).forEach(w => w.res());
+    });
+    const cwait = ms => councilSkip ? Promise.resolve() : wait(ms);
+
+    const TENT = [["#5a2a22", "#4a221c", "#6b3328"], ["#22344a", "#1b2a3d", "#2b4260"]];
+    function drawCouncil() {
+      const [a, b2, c] = TENT[council.side];
+      for (let x = 0; x < W; x += 24) { ctx.fillStyle = (x / 24) % 2 ? a : b2; ctx.fillRect(x, 0, 24, 126); }
+      ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(W / 2, 18); ctx.lineTo(W, 0); ctx.fill();
+      ctx.fillStyle = "#3a2a1e"; ctx.fillRect(0, 126, W, H - 126);
+      ctx.fillStyle = "#2e2117"; for (let x = 0; x < W; x += 16) ctx.fillRect(x, 126, 1, H - 126);
+      // A lantern, flickering.
+      const fl = 0.75 + Math.sin(time / 90) * 0.08 + Math.sin(time / 37) * 0.05;
+      const LX = 330;
+      const glow = ctx.createRadialGradient(LX, 40, 2, LX, 40, 170);
+      glow.addColorStop(0, `rgba(255,200,110,${(0.35 * fl).toFixed(3)})`); glow.addColorStop(1, "rgba(255,200,110,0)");
+      ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = "#1d1a17"; ctx.fillRect(LX, 4, 1, 28); ctx.fillRect(LX - 4, 32, 9, 2); ctx.fillRect(LX - 4, 42, 9, 2);
+      ctx.fillStyle = "#ffd27a"; ctx.fillRect(LX - 3, 34, 7, 8);
+      // The team, behind the table, scaled to fit.
+      ctx.save(); ctx.translate(0, -24);
+      for (const m of council.members) {
+        const f = m.f, pose = m.pose || "idle";
+        const img = f.sprite.frame(pose, time - (m.poseT || 0)), S = img.width;
+        const k = clamp(2.3 / f.sprite.size, 0.9, 2.3);
+        ctx.save(); ctx.translate(Math.round(m.x), Math.round(m.y + (m.hop || 0)));
+        ctx.scale(m.facing * k, k); ctx.drawImage(img, -Math.floor(S / 2), -(S - 4)); ctx.restore();
+        if (m.leader) {
+          const hy = Math.round(m.y - 34 * f.sprite.size * k - 4 + Math.sin(time / 300) * 1.5);
+          ctx.fillStyle = "#e8b84a"; ctx.fillRect(Math.round(m.x) - 5, hy, 11, 3); ctx.fillRect(Math.round(m.x) - 5, hy - 3, 2, 3); ctx.fillRect(Math.round(m.x), hy - 4, 1, 4); ctx.fillRect(Math.round(m.x) + 4, hy - 3, 2, 3);
+          ctx.fillStyle = "#c0262f"; ctx.fillRect(Math.round(m.x), hy + 1, 1, 1);
+        }
+        if (m.mark && m.mark > time) { ctx.fillStyle = "#fff2c0"; const ay = Math.round(m.y - 34 * f.sprite.size * k - 12 + Math.sin(time / 80) * 2); ctx.fillRect(Math.round(m.x) - 2, ay, 5, 2); ctx.fillRect(Math.round(m.x) - 1, ay + 2, 3, 1); ctx.fillRect(Math.round(m.x), ay + 3, 1, 1); }
+      }
+      // The table and the battle map on it, with the plan's arrows crawling across.
+      ctx.fillStyle = "#6b4a2a"; ctx.fillRect(70, 150, W - 140, 10); ctx.fillStyle = "#5a3e22"; ctx.fillRect(70, 160, W - 140, 4);
+      ctx.fillStyle = "#4a3220"; ctx.fillRect(80, 164, 6, 40); ctx.fillRect(W - 86, 164, 6, 40);
+      ctx.fillStyle = "#e8d9b0"; ctx.fillRect(130, 146, W - 260, 8); ctx.fillStyle = "#cdb98a"; ctx.fillRect(130, 153, W - 260, 1);
+      const prog = council.plan || 0;
+      ctx.fillStyle = council.side === attackSide ? "#c0262f" : "#1f4fa8";
+      for (let i = 0; i < 20 * prog; i++) ctx.fillRect(140 + i * 5, 149 + Math.round(Math.sin(i / 2) * 1.5), 3, 1);
+      ctx.fillStyle = "#1d1a17"; ctx.fillRect(W - 142, 148, 3, 1); ctx.fillRect(W - 141, 147, 1, 3);
+      ctx.restore();
+      // Gear: the piece being made, big over the table; the rest on the rack.
+      council.rack.forEach((it, i) => {
+        ctx.save(); ctx.translate(26 + i * 26, 64); ctx.scale(2, 2); drawGear(ctx, it.look, it.colour, 0, 0, time); ctx.restore();
+        ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.fillRect(14 + i * 26, 65, 24, 2);
+      });
+      if (council.item) {
+        const it = council.item, k = clamp((time - it.t0) / 400, 0, 1);
+        const y = 80 - ease(k) * 26 + Math.sin(time / 200) * 2;
+        const halo = ctx.createRadialGradient(W / 2, y - 10, 1, W / 2, y - 10, 30);
+        halo.addColorStop(0, "rgba(255,240,180,0.55)"); halo.addColorStop(1, "rgba(255,240,180,0)");
+        ctx.fillStyle = halo; ctx.fillRect(W / 2 - 30, y - 40, 60, 60);
+        ctx.save(); ctx.translate(W / 2, y); ctx.scale(3 * k + 0.5, 3 * k + 0.5); drawGear(ctx, it.look, it.colour, 0, 0, time); ctx.restore();
+      }
+      for (const p of parts) {
+        const age = time - p.t0; if (age > p.life) continue;
+        const s = age / 1000;
+        ctx.globalAlpha = 1 - age / p.life; ctx.fillStyle = p.c;
+        ctx.fillRect(Math.round(p.x + p.vx * s), Math.round(p.y + p.vy * s + p.g * s * s / 2), p.s, p.s);
+      }
+      ctx.globalAlpha = 1;
+      parts = parts.filter(p => time - p.t0 < p.life);
+    }
+
+    async function typeOut(html, text) {
+      cText.innerHTML = html;
+      const el = cText.querySelector("[data-type]");
+      if (!el) return;
+      sfx("b_type", 0.35);
+      if (councilSkip || skipping) { el.textContent = text; return; }
+      const t0 = time;
+      while (true) {
+        const n = Math.min(text.length, Math.floor((time - t0) / 22));
+        el.textContent = text.slice(0, n);
+        if (n >= text.length || councilSkip || skipping) break;
+        await wait(30);
+      }
+      el.textContent = text;
+    }
+
+    async function showCouncil(side) {
+      const prep = (verdict.preps || [])[side];
+      if (!prep || councilSkip || skipping) return;
+      const team = teams[side];
+      const mine = fighters.filter(f => f.side === side);
+      const leader = mine.find(f => norm(f.name) === norm(prep.leader) || norm(f.key) === norm(prep.leader));
+      const n = mine.length, gap = Math.min(64, 300 / Math.max(1, n - 1));
+      council = {
+        side, rack: [], item: null, plan: 0,
+        members: mine.map((f, i) => ({ f, x: W / 2 + (i - (n - 1) / 2) * gap, y: 148, facing: i < n / 2 ? 1 : -1, leader: f === leader })),
+      };
+      const stance = side === attackSide ? "attacking" : "defending";
+      cHead.innerHTML = `<span class="b8__council-team">${esc(team.name)}'s war council</span>
+        <span class="b8__council-stance b8__council-stance--${side === attackSide ? "attack" : "defend"}">${stance}</span>
+        ${leader ? `<span class="b8__council-lead">led by ${esc(leader.name)}</span>` : ""}`;
+      councilEl.hidden = false; councilEl.classList.remove("is-leaving"); root.classList.add("is-council");
+      sfx("b_council", 0.8);
+      caption.textContent = `${team.name}'s team plans its ${stance === "attacking" ? "attack" : "defence"}.`;
+      await cwait(1300);
+      // The plan, a sentence at a time, with the leader pointing at the map.
+      const lines = String(prep.plan || "").match(/[^.!?]+[.!?]*/g) || [];
+      const lm = council.members.find(m => m.leader);
+      sfx("b_plan", 0.7);
+      for (let i = 0; i < lines.length && !councilSkip; i++) {
+        if (lm) { lm.pose = i % 2 ? "cast" : "windup"; lm.poseT = time; }
+        council.plan = (i + 1) / lines.length;
+        const s = lines[i].trim();
+        await typeOut(`<span class="b8__council-label">the plan</span><span data-type></span>`, s);
+        await cwait(900 + s.length * 12);
+      }
+      if (lm) lm.pose = "idle";
+      // The gear, piece by piece.
+      for (const g of (prep.gear || [])) {
+        if (councilSkip) break;
+        const look = gearLook(g), colour = gearColour(g, look);
+        const maker = council.members.find(m => norm(m.f.name) === norm(g.made_by));
+        const carrier = council.members.find(m => g.carried_by && (norm(m.f.key) === norm(g.carried_by) || norm(m.f.name) === norm(g.carried_by)));
+        council.item = { look, colour, t0: time };
+        if (maker) {
+          maker.pose = "strike"; maker.poseT = time;
+          for (let i = 0; i < 3; i++) { sfx("b_forge", 0.5, 1 + i * 0.05); burst(W / 2, 70, "lightning", 6); maker.pose = i % 2 ? "windup" : "strike"; maker.poseT = time; await cwait(220); }
+          maker.pose = "idle";
+        } else sfx("b_equip", 0.8);
+        const who = [maker ? `built by ${esc(maker.f.name)}` : esc(g.made_by === "scavenged" ? "scavenged" : "already theirs"), carrier ? `carried by ${esc(carrier.f.name)}` : ""].filter(Boolean).join(" · ");
+        await typeOut(`<span class="b8__council-label">${maker ? "new gear" : "gear"}</span><span class="b8__council-gear">${esc(g.name)}</span>
+          <span class="b8__council-who">${who}</span><span class="b8__council-effect" data-type></span>`, g.effect || "");
+        if (carrier) { carrier.mark = time + 1400; const w = wearFor(look, carrier.f); if (w) { equip(carrier.f, w); sfx("b_equip", 0.7); burst(carrier.x, 96, "light", 8); } }
+        await cwait(1500 + (g.effect || "").length * 14);
+        council.rack.push({ look, colour });
+        council.item = null;
+      }
+      if (!(prep.gear || []).length) { await typeOut(`<span class="b8__council-label">gear</span><span data-type></span>`, "Nothing but what they carry."); await cwait(1200); }
+      councilEl.classList.add("is-leaving");
+      await cwait(400);
+      councilEl.hidden = true; root.classList.remove("is-council");
+      cText.innerHTML = "";
+      council = null;
     }
 
     /* --- The whole show ----------------------------------------------------- */
@@ -2148,6 +2612,15 @@
     async function run() {
       if (Sound) Sound.music("battle");
       fighters.forEach(f => setHp(f, f.hp));
+      // Each side's war council, the attackers first; then everyone carries their gear.
+      await showCouncil(attackSide);
+      await showCouncil(defSide);
+      councilEl.hidden = true; council = null; root.classList.remove("is-council");
+      for (const g of gearList) {
+        const f = fighters.find(q => q.side === g.side && g.carried_by && (norm(q.key) === norm(g.carried_by) || norm(q.name) === norm(g.carried_by)));
+        const w = f && wearFor(g.look, f);
+        if (w) equip(f, w);
+      }
       // The battlefield itself first: its picture, its name, and who holds what.
       const holders = teams[defSide].name, raiders = teams[attackSide].name;
       const mapEl = root.querySelector(".b8__map");
@@ -2180,10 +2653,27 @@
       if (Sound) Sound.music(null);
       sfx("b_win", 1);
       fighters.filter(f => f.side === winSide && !f.downed).forEach(f => setPose(f, "victory"));
+      fireworks();
       moveEl.hidden = true;
       caption.textContent = verdict.verdict || "";
       await showBanner(`<span>${esc(teams[winSide].name)}'s team wins</span>`, 2600);
       finish();
+    }
+
+    // Fireworks over the winners.
+    function fireworks() {
+      if (skipping) return;
+      sfx("b_firework", 0.7);
+      const xs = fighters.filter(f => f.side === winSide).map(f => f.pos.x);
+      const mid = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : W / 2;
+      const cols = ["#ff6ad5", "#ffe14d", "#6af0ff", "#6aff8a", "#ff9a2a"];
+      for (let i = 0; i < 6; i++) {
+        setTimeout(() => {
+          const x = mid + rnd(-70, 70), y = rnd(25, 75), c = cols[i % cols.length];
+          for (let j = 0; j < 26; j++) { const a = (j / 26) * Math.PI * 2, sp = rnd(40, 75); parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, g: 40, c: j % 3 ? c : "#ffffff", s: 2, t0: time, life: rnd(700, 1100) }); }
+          rings.push({ x, y, r0: 2, r1: 14, c, t0: time, ms: 300 });
+        }, i * 320);
+      }
     }
 
     function finish() {
@@ -2197,7 +2687,7 @@
     // Skip: everything resolves at once and the result shows.
     function skip() {
       if (ended) return;
-      skipping = true; companions = []; gas = []; spikes = []; domain = null; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
+      skipping = true; council = null; councilEl.hidden = true; root.classList.remove("is-council"); companions = []; gas = []; spikes = []; domain = null; frozen = null; ghost = null; warpUntil = 0; clones = []; giant = null; flyer = null; portals = []; hole = null; sepiaUntil = 0; cracks = [];
       waits.splice(0).forEach(w => w.res());
       tweens.splice(0).forEach(t => { Object.assign(t.obj, t.to); t.res(); });
       finish();

@@ -172,3 +172,36 @@
 @keyframes b8-map-in { from { opacity: 0; } }
 @keyframes b8-map-zoom { from { transform: scale(1.08); } to { transform: scale(1); } }
 @media (prefers-reduced-motion: reduce) { .b8__map, .b8__map img { animation: none; } }
+
+/* The announcer's call: plans, gear and terrain as they come into play. */
+.b8__call {
+  position: absolute; left: 50%; top: 15%; transform: translateX(-50%); z-index: 3;
+  display: flex; align-items: center; gap: 0.8cqw; max-width: 80cqw;
+  padding: 0.6cqw 1.6cqw; background: rgba(23, 18, 14, 0.85); color: #fff2c0;
+  border: 0.3cqw solid #e8b84a; font-size: 2.1cqw; line-height: 1.2; white-space: nowrap;
+  animation: b8-call 0.35s ease-out; pointer-events: none;
+}
+.b8__call[hidden] { display: none; }
+.b8__call span { overflow: hidden; text-overflow: ellipsis; }
+.b8__call canvas { width: 3cqw; height: 3cqw; image-rendering: pixelated; flex: none; }
+@keyframes b8-call { from { opacity: 0; transform: translate(-50%, -40%); } }
+
+/* The war councils, shown before the fight. */
+.b8__council { position: absolute; inset: 0; z-index: 4; display: grid; grid-template-rows: auto 1fr auto; pointer-events: none; transition: opacity 0.4s ease; animation: b8-map-in 0.5s ease-out; }
+.b8__council[hidden] { display: none; }
+.b8__council.is-leaving { opacity: 0; }
+.b8__council-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6cqw 1.4cqw; margin: 2cqw 2.4cqw 0; }
+.b8__council-team { font-size: 3.6cqw; text-shadow: 0.3cqw 0.3cqw 0 #1d1a17; }
+.b8__council-stance { font-size: 1.8cqw; padding: 0.2cqw 1cqw; background: #1f4fa8; }
+.b8__council-stance--attack { background: #c0262f; }
+.b8__council-lead { font-size: 1.9cqw; color: #ffe08a; }
+.b8__council-text { grid-row: 3; display: grid; gap: 0.4cqw; margin: 0 2.4cqw 1.6cqw; padding: 0.9cqw 1.6cqw; min-height: 7cqw; background: rgba(23, 18, 14, 0.86); border: 0.3cqw solid #fbf7ef; font-size: 2.2cqw; line-height: 1.3; }
+.b8__council-text:empty { visibility: hidden; }
+.b8__council-label { font-size: 1.6cqw; color: #ffe08a; }
+.b8__council-gear { font-size: 2.8cqw; color: #ffffff; }
+.b8__council-who { font-size: 1.7cqw; color: #cfe8ff; }
+.b8__council-effect { font-size: 1.9cqw; opacity: 0.92; }
+.b8__council-skip { position: absolute; right: 2cqw; top: 2cqw; pointer-events: auto; font: inherit; font-size: 1.6cqw; padding: 0.4cqw 1.2cqw; color: #fbf7ef; background: rgba(23, 18, 14, 0.7); border: 0.25cqw solid #fbf7ef; cursor: pointer; }
+.b8__council-skip:hover, .b8__council-skip:focus-visible { background: #2b7d58; outline: none; }
+@media (prefers-reduced-motion: reduce) { .b8__call, .b8__council { animation: none; } }
+.b8.is-council .b8__hud { visibility: hidden; }

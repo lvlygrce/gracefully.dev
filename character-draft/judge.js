@@ -44,11 +44,12 @@
       "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado",
       "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes",
       "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch",
-      "domain_expansion", "orb_strike", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "domain_expansion", "orb_strike", "flank", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
       "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
-    looks: ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle", "potion", "armour", "banner", "beast", "device", "rope", "wall"],
+    looks: ["blade", "bow", "gun", "staff", "shield", "bomb", "trap", "net", "turret", "cannon", "vehicle", "potion", "armour", "banner", "beast", "device", "rope", "wall",
+      "jetpack", "drone", "mech", "grapple", "smoke", "flamethrower", "rocket", "hammer", "axe", "spear", "scope", "medkit", "charm", "catapult", "mine", "boomerang", "cloak", "ram"],
     colours: ["red", "orange", "yellow", "green", "blue", "purple", "white", "black", "grey", "gold", "silver", "brown", "pink", "cyan"],
   };
 
@@ -57,7 +58,11 @@ comics, books). When teams mix worlds, scale power fairly. Stick to what each ch
 never invent powers they don't have. The two players only drafted the teams; they are not in the fight.
 A character marked [group] is many fighters, not one: an army, horde, crew or swarm. It can fight in several places
 at once and swarm or surround a single enemy, it takes a lot to wipe out (casualties thin it rather than end it), and
-it counts as dead only when the whole group is destroyed. Numbers matter against ordinary fighters; they matter far
+it counts as dead only when the whole group is destroyed. Use a group the way a real commander would: split it to
+come from several sides, send it in waves, hold a line with it or screen the others. It dies in parts: each blow
+that lands on it kills a share of it (say which part falls: "the left flank breaks", "half the riders go down"),
+and it takes several of those before the last of it falls, unless a power truly able to wipe out an army at once
+does so, and then say how. Numbers matter against ordinary fighters; they matter far
 less against a being who can level a city.`;
 
   const PREP_SYSTEM = `You are the war council for one team in a fantasy battle between two drafted teams of
@@ -203,7 +208,7 @@ Reply as JSON:
   how strong they are, and their main limits or weaknesses (an object with one key per character name, exactly as listed)
 - "leader": the character who leads your team
 - "plan": your plan in three sentences: the approach, how you use the terrain, and how you deal with the enemy's most dangerous members
-- "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged". "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
+- "gear": the devices, weapons and supplies you go in with (array of {"name", "made_by", "carried_by", "effect", "look", "colour"}). ${gearRule} "made_by" is the maker who built it, or "already theirs" or "scavenged"; "carried_by" is the team member who carries or works it in the fight. "look" and "colour" say how to draw it in a little 8-bit animation of the fight: the nearest of the given kinds and colours.
 - "jobs": one short sentence per character on your team, saying their job in the plan (an object with one key per character name, exactly as listed)`;
     const schema = {
       type: "OBJECT",
@@ -220,9 +225,10 @@ Reply as JSON:
               effect: { type: "STRING" },
               look: { type: "STRING", enum: ANIM.looks },
               colour: { type: "STRING", enum: ANIM.colours },
+              carried_by: { type: "STRING", enum: keys.map(c => c.key) },
             },
-            required: ["name", "made_by", "effect", "look", "colour"],
-            propertyOrdering: ["name", "made_by", "effect", "look", "colour"],
+            required: ["name", "made_by", "carried_by", "effect", "look", "colour"],
+            propertyOrdering: ["name", "made_by", "carried_by", "effect", "look", "colour"],
           },
         },
         jobs: keyedObject(keys.map(c => c.key)),
@@ -236,7 +242,7 @@ Reply as JSON:
 
   function prepText(prep) {
     const gear = prep.gear.length
-      ? prep.gear.map(g => `  - ${g.name} (${g.made_by}): ${g.effect}`).join("\n")
+      ? prep.gear.map(g => `  - ${g.name} (${g.made_by}${g.carried_by ? `, carried by ${g.carried_by}` : ""}): ${g.effect}`).join("\n")
       : "  - nothing beyond what they carry";
     const jobs = prep.jobs.map(j => `  - ${j.name}: ${j.job}${j.kit ? `\n      abilities and limits: ${j.kit}` : ""}`).join("\n");
     return `Leader: ${prep.leader}\nStance: ${prep.stance === "defend" ? "holds ground and defends" : "goes on the attack"}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
@@ -278,7 +284,10 @@ Reply as JSON:
   characters caught by the same move, when one blow really takes out several: a sweep through a line, a blast, a
   giant stepping on a squad; the outcome applies to them too; usually []), and "death" (how a "ko" kills: normal,
   disintegrate, blast_off sends them flying off into the sky, vaporize, explode, crush, melt, shatter, burn; pick
-  what fits the move, and "normal" when there's no kill). Pick the action
+  what fits the move, and "normal" when there's no kill), and "callout" (an announcer's line, under 60
+  characters, for the moments the audience should notice: a plan working or breaking, a piece of gear coming into
+  play or being destroyed, the terrain changing the fight, an army splitting or losing a flank; "" for the rest,
+  roughly one beat in three has one). Pick the action
   that looks most like what the character really does: strike is a melee blow, combo a flurry of blows, shoot a
   weapon fired, cast a spell or power, special a big signature move (use it for the turning point), throw hurls a
   weapon or object, slam hits the ground and everyone near, barrage rains many shots down, grab seizes and hurls
@@ -317,7 +326,7 @@ Reply as JSON:
   America), web_swing swings in on a web line to kick (Spider-Man), mega_beam is a huge charged beam (Kamehameha,
   Final Flash), one_punch is Saitama's single serious punch, domain_expansion traps the target in the actor's own
   domain where the attack cannot miss (Gojo, Sukuna), orb_strike drives a spinning energy orb into the target at
-  close range (Rasengan, Chidori); use these when they truly fit the character; annihilate is an overwhelming
+  close range (Rasengan, Chidori), flank is a group splitting to hit the target from several sides at once; use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
@@ -358,9 +367,10 @@ Reply as JSON:
         death: { type: "STRING", enum: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"] },
         caption: { type: "STRING" },
         line: { type: "STRING" },
+        callout: { type: "STRING" },
       },
-      required: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line"],
-      propertyOrdering: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line"],
+      required: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
+      propertyOrdering: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
     };
     // Reason first (the prose), then script it, then commit to a winner.
     const order = ["reasoning", "defences", "feature", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
@@ -420,6 +430,7 @@ Reply as JSON:
       const item = {
         name: String(g.name || "").trim(), made_by: String(g.made_by || "").trim(), effect: String(g.effect || "").trim(),
         look: ANIM.looks.includes(g.look) ? g.look : "", colour: ANIM.colours.includes(g.colour) ? g.colour : "",
+        carried_by: (keys.find(c => c.key === g.carried_by || c.name === g.carried_by) || {}).key || "",
       };
       if (!item.name) continue;
       const maker = makers.find(m => m.toLowerCase() === item.made_by.toLowerCase());
