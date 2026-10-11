@@ -17,7 +17,7 @@
 
   const FIELDS = ["body", "size", "build", "skin", "hair", "main", "second", "accent",
     "hairStyle", "head", "outfit", "weapon", "extras", "style", "element"];
-  const SIZE = { s: 0.75, m: 1, l: 1.3, x: 1.7, g: 2.4 };
+  const SIZE = { s: 0.75, m: 1, l: 1.3, x: 1.7, g: 2.4, c: 4.5 };   // c: colossal, true to scale, bigger than the screen
   const OUTLINE = [23, 18, 14];
   const STEEL = "#d9dee4", STEEL_D = "#8e98a3", WOOD = "#7a4a24", GOLD = "#e8b84a", BONE = "#efe4c8", DARK = "#1d1a17";
 

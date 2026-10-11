@@ -44,10 +44,10 @@ Aragorn	h|m|n|f1d0b0|3b2a1a|3a3a2a|5a4632|cfd6dd|long|none|coat|sword|beard|blad
 Legolas	h|m|t|f3d6bf|f2e8b0|2e6b3a|8a6a3a|e8b84a|flowing|none|tunic|bow|ears|bow|none
 Gollum	h|s|t|bfc0a8|9aa3ad|bfc0a8|bfc0a8|8fe9ff|bald|none|bare|none|ears,glow_eyes|bite|none
 Sauron	h|x|w|3a3a3a|1a1a1a|3a3a3a|1f1f1f|ff7a1a|none|helm|armour|mace|spikes,glow_eyes|blunt|fire
-Optimus Prime	r|x|w|c0262f|3f4fa8|c0262f|3f4fa8|8fe9ff|none|none|armour|blaster|glow_eyes|gun|tech
-Megatron	r|x|w|9aa3ad|1a1a1a|9aa3ad|5a5f66|c0262f|none|none|armour|cannon|redeyes|gun|tech
-Godzilla	h|x|w|3f4f4a|1a1a1a|3f4f4a|3f4f4a|8fe9ff|none|none|bare|none|spikes,tail|breath|light
-King Kong	h|x|w|3a2a2a|1a1a1a|3a2a2a|3a2a2a|e8b84a|none|none|fur|none||fists|none
+Optimus Prime	r|g|w|c0262f|3f4fa8|c0262f|3f4fa8|8fe9ff|none|none|armour|blaster|glow_eyes|gun|tech
+Megatron	r|g|w|9aa3ad|1a1a1a|9aa3ad|5a5f66|c0262f|none|none|armour|cannon|redeyes|gun|tech
+Godzilla	h|c|w|3f4f4a|1a1a1a|3f4f4a|3f4f4a|8fe9ff|none|none|bare|none|spikes,tail|breath|light
+King Kong	h|g|w|3a2a2a|1a1a1a|3a2a2a|3a2a2a|e8b84a|none|none|fur|none||fists|none
 Aang	h|s|t|f1d0b0|f1d0b0|ef8a2c|f2cf3a|3fa0ff|bald|none|robe|staff|stripes|magic|wind
 Zuko	h|m|t|f3d6bf|1a1a1a|c0262f|1f1f1f|ff7a1a|ponytail|none|tunic|sword||magic|fire
 Toph Beifong	h|s|t|f3d6bf|1a1a1a|2e8b3a|f2cf3a|2e8b3a|bun|headband|tunic|none||magic|earth

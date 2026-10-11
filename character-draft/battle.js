@@ -20,7 +20,7 @@
     "regenerate", "phase", "fly", "grow", "shrink", "reality_warp", "summon_dragon", "summon_giant", "raise_dead",
     "stampede", "airstrike", "meteor", "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole",
     "earthquake", "tornado", "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct",
-    "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike", "flank",
+    "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes", "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch", "domain_expansion", "orb_strike", "flank", "arena_event", "return",
     "block", "dodge", "deploy_gear", "build", "heal",
     "shield", "trap", "team_up", "taunt", "retreat", "fall"];
   // Actions that need someone to hit.
@@ -129,7 +129,37 @@
     const horde = q => { try { return window.Sprite.of(q).spec.extras.has("horde"); } catch { return false; } };
     const isGroup = q => groupsOf(q.world).includes(q.name) || horde(q);
     const hits = new Map();
+    const fallenPool = Array.isArray(verdict.fallen) ? verdict.fallen : [];
+    const returned = new Set();
     for (const raw of Array.isArray(verdict.beats) ? verdict.beats.slice(0, 40) : []) {
+      // The battlefield itself strikes: a passing dragon, the warden, a rockslide.
+      if (raw.action === "arena_event" || norm(raw.actor) === "the battlefield") {
+        let target = find(raw.target);
+        if (!target || down.has(target.key)) continue;
+        let outcome = OUTCOMES.includes(raw.outcome) ? raw.outcome : "hit";
+        if (outcome === "ko" && target.side === winSide && standing(people.filter(q => q.side === winSide)).length <= 1) outcome = "hurt";
+        if (outcome === "ko" && target === mvp) outcome = "hurt";
+        const by = String(raw.event_by || "").trim().slice(0, 60) || "The battlefield";
+        out.push({ actor: null, action: "arena_event", eventBy: by, target: target.key, victims: null, gear: null,
+          effect: EFFECTS.includes(raw.effect) ? raw.effect : "none", outcome, move: String(raw.move || "").trim().slice(0, 32), also: [],
+          death: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"].includes(raw.death) ? raw.death : "normal",
+          caption: String(raw.caption || `${by} strikes ${target.name}.`).trim().slice(0, 160), line: "", callout: String(raw.callout || `${by}!`).trim().slice(0, 70) });
+        if (outcome === "ko") down.add(target.key);
+        continue;
+      }
+      // Someone killed earlier in the tournament turns out not to be dead.
+      if (raw.action === "return" && !find(raw.actor)) {
+        const f = fallenPool.find(q => norm(q.name) === norm(raw.actor));
+        if (!f || returned.has(f.name) || returned.size >= 1) continue;
+        const side = Math.max(0, teams.findIndex(t => norm(t.name) === norm(raw.event_by)));
+        const key = people.some(q => q.key === f.name) ? `${f.name} (returned)` : f.name;
+        const person = { name: f.name, world: f.world, note: f.note || "", team: teams[side].name, side, key, returned: true };
+        people.push(person); returned.add(f.name);
+        out.push({ actor: key, action: "return", person, target: null, victims: null, gear: null, effect: "none", outcome: "none", move: "", also: [], death: "normal",
+          caption: String(raw.caption || `${f.name} isn't dead after all, and joins ${teams[side].name}'s team!`).trim().slice(0, 160), line: String(raw.line || "").trim().slice(0, 60),
+          callout: String(raw.callout || `${f.name} returns!`).trim().slice(0, 70) });
+        continue;
+      }
       const actor = find(raw.actor);
       if (!actor || down.has(actor.key)) continue;
       let action = ACTIONS.includes(raw.action) ? raw.action : "strike";
@@ -576,14 +606,26 @@
     [0, 1].forEach(side => {
       const mine = fighters.filter(f => f.side === side).sort((a, b) => a.sprite.size - b.sprite.size);
       mine.forEach((f, i) => {
-        const [sx, sy] = SLOTS[i % SLOTS.length];
-        const high = side === defSide && ground.top;
+        let [sx, sy] = SLOTS[i % SLOTS.length];
+        // The truly colossal loom at the back, far out to the side, and run off
+        // the top of the screen: true to scale, however ridiculous.
+        if (f.sprite.size >= 4) { sx = 30; sy = 140; }
+        const high = side === defSide && ground.top && f.sprite.size < 4;
         f.home = { x: side ? W - sx : sx, y: high ? ground.top + 2 + (i % 3) * 3 : sy };
         // Defenders are already in place; attackers march in from the edge.
         f.pos = side === defSide ? { ...f.home } : { x: side ? W + 40 : -40, y: sy };
         f.pose = side === defSide ? "idle" : "walk"; f.poseT = 0;
       });
     });
+    // Fighters back from the dead (see Battle.script) wait off-stage, unseen, until their beat.
+    for (const b of beats) {
+      if (b.action !== "return" || !b.person || fighters.some(f => f.key === b.person.key)) continue;
+      const p = b.person, sprite = window.Sprite.of(p);
+      const f = { ...p, sprite, group: false, unit: null, gearOpts: {}, hp: 100, downed: false, facing: p.side ? -1 : 1, alpha: 0, scale: 1, returning: true };
+      f.home = { x: p.side ? W - 92 : 92, y: 198 };
+      f.pos = { x: p.side ? W + 30 : -30, y: 198 }; f.pose = "idle"; f.poseT = 0;
+      fighters.push(f);
+    }
     const byKey = k => fighters.find(f => f.key === k);
     const fieldGear = [];   // items placed on the ground
     const stains = [];      // blood, oil and goo left on the ground
@@ -1127,6 +1169,7 @@
     /* --- Acting out a beat ------------------------------------------------- */
 
     async function act(b) {
+      if (b.action === "arena_event") return arenaEvent(b);
       const actor = byKey(b.actor), target = b.target ? byKey(b.target) : null;
       if (!actor || actor.downed) return;
       const gearItem = b.gear ? gearList.find(g => g.name === b.gear) : null;
@@ -1144,6 +1187,18 @@
       const ranged = RANGED.has(actor.sprite.spec.style);
       const t0 = time;
       switch (b.action) {
+        case "return": {
+          // Not dead after all: a ghostly rise at the edge of the field, then into line.
+          sfx("b_rise", 1); sfx("b_council", 0.6);
+          showBanner(`<span>${esc(actor.name)} returns!</span>`, 1800);
+          actor.pos = { x: actor.home.x, y: actor.home.y }; actor.alpha = 0;
+          burst(actor.pos.x, actor.pos.y - 10, "dark", 20, true); shake = time + 300;
+          actor.tint = "#9cc0ff";
+          await tween(actor, { alpha: 1 }, 900);
+          actor.tint = null;
+          setPose(actor, "victory"); await wait(600); setPose(actor, "idle");
+          break;
+        }
         case "advance":
           setPose(actor, "walk");
           await tween(actor.pos, { x: actor.pos.x + actor.facing * 34 }, 500);
@@ -2256,6 +2311,90 @@
     }
 
     const gearList = (verdict.preps || []).flatMap((p, side) => (p && p.gear || []).map(g => { const look = gearLook(g); return { name: g.name, side, look, colour: gearColour(g, look), carried_by: g.carried_by || "", effect: g.effect || "" }; }));
+    /* The battlefield strikes: what (or who) does it decides how it looks. */
+    function eventKind(by) {
+      const t = norm(by);
+      if (/dragon|drogon|rhaegal|viserion|vhagar|caraxes|wyvern|eagle|bird|plane|jet|ship|nazg|phoenix|griffin|bat\b/.test(t)) return "flyby";
+      if (/warden|guard|police|soldier|sheriff|security|knight|sniper|turret|army|cop|ranger|officer/.test(t)) return "authority";
+      if (/storm|lightning|thunder|blizzard|snow|wind|flood|wave|rain|tornado|hurricane|tide/.test(t)) return "weather";
+      if (/crowd|fans|audience|mob|stampede|spectator/.test(t)) return "crowd";
+      return "hazard";
+    }
+    function characterNamed(name) {
+      const U = window.UNIVERSES || {};
+      for (const w of Object.keys(U)) { const c = U[w].characters.find(x => norm(x[0]) === norm(name) || norm(name).includes(norm(x[0]))); if (c) return { name: c[0], world: w, note: c[1] }; }
+      return null;
+    }
+    async function arenaEvent(b) {
+      const target = byKey(b.target);
+      if (!target || target.downed) return;
+      const t0 = time, by = b.eventBy || "The battlefield", kind = eventKind(by);
+      caption.textContent = b.caption;
+      callout(b.callout || `${by}!`);
+      const said = voice(beatLine(b));
+      deathStyle = b.death || "normal";
+      const from = { pos: { x: target.pos.x - (target.side ? -12 : 12), y: target.pos.y }, sprite: target.sprite, facing: target.side ? -1 : 1 };
+      let effect = b.effect !== "none" ? b.effect : "impact";
+      if (kind === "flyby") {
+        const who = characterNamed(by);
+        const sprite = who ? Sprite.of(who, { size: "g" }) : Sprite.parse ? Sprite.of({ name: "dragon", world: "", spec: "d|g|w|3a3a3a|1a1a1a|3a3a3a|3a3a3a|c0262f|none|none|bare|none|spikes,redeyes|breath|fire" }) : null;
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        sfx("b_roar", 1);
+        flyer = { sprite, x: dir > 0 ? -80 : W + 80, y: 64, facing: dir, scale: 1 };
+        await tween(flyer, { x: target.pos.x - dir * 60, y: 72 }, 1100);
+        if (b.outcome !== "none" && b.outcome !== "miss") {
+          effect = b.effect !== "none" ? b.effect : "fire";
+          const breath = { kind: "breath", x0: flyer.x + dir * 20, y0: flyer.y - 18, x1: target.pos.x, y1: target.pos.y - 10, c: FX[effect] || FX.fire, t0: time, ms: 650 };
+          shots.push(breath); sfx("b_fire", 1); await wait(650); shots = shots.filter(q => q !== breath);
+          burst(centre(target).x, centre(target).y, effect, 22, true); shake = time + 350;
+        }
+        const leaving = tween(flyer, { x: dir > 0 ? W + 90 : -90, y: 28 }, 1000).then(() => { flyer = null; });
+        await land(target, b.outcome, effect, from);
+        await leaving;
+      } else if (kind === "authority") {
+        const edge = target.pos.x < W / 2 ? -20 : W + 20, dir = edge < 0 ? 1 : -1;
+        const guard = { key: "~event", name: by, sprite: Sprite.of({ name: by, world: "", spec: "h|m|n|f1d0b0|1a1a1a|3a4a5a|1a1a1a|e8b84a|short|cap|uniform|gun|belt|gun|none" }),
+          pos: { x: edge, y: target.pos.y + 6 }, facing: dir, alpha: 1, scale: 1, pose: "walk", poseT: time, hop: 0, side: -1 };
+        clones.push(guard);
+        await tween(guard.pos, { x: target.pos.x - dir * 46 }, 700);
+        setPose(guard, "shoot"); sfx("b_gun", 1); flash = { c: "#ffffff", until: time + 60, ms: 60 };
+        const shot = { kind: "bullet", x0: guard.pos.x + dir * 8, y0: guard.pos.y - 14, x1: target.pos.x, y1: target.pos.y - 12, c: "#ffe08a", t0: time, ms: 160 };
+        shots.push(shot); await wait(160); shots = shots.filter(q => q !== shot);
+        await land(target, b.outcome, "impact", from);
+        setPose(guard, "walk"); guard.facing = -dir;
+        await tween(guard.pos, { x: edge }, 600);
+        clones = clones.filter(c => c !== guard);
+      } else if (kind === "weather") {
+        effect = b.effect !== "none" ? b.effect : "lightning";
+        flash = { c: "#cfe8ff", until: time + 200, ms: 200 }; sfx("b_chain", 1); shake = time + 300;
+        const bolt = { kind: "bolt", x0: target.pos.x + rnd(-20, 20), y0: 0, x1: target.pos.x, y1: target.pos.y - 8, c: FX[effect] || FX.lightning, t0: time, ms: 260 };
+        shots.push(bolt); await wait(260); shots = shots.filter(q => q !== bolt);
+        burst(centre(target).x, centre(target).y, effect, 20, true);
+        await land(target, b.outcome, effect, from);
+      } else if (kind === "crowd") {
+        sfx("b_shout", 0.9);
+        for (let i = 0; i < 7; i++) {
+          const x0 = rnd(0, W), s1 = { kind: "rock", x0, y0: H, x1: target.pos.x + rnd(-6, 6), y1: target.pos.y - 10, c: ["#e8b84a", "#c0262f", "#f2f0ea"][i % 3], t0: time, ms: 500, arc: 50 };
+          shots.push(s1); setTimeout(() => { shots = shots.filter(q => q !== s1); }, 600); await wait(90);
+        }
+        await wait(400);
+        await land(target, b.outcome, "impact", from);
+      } else {
+        sfx("b_quake", 0.9); shake = time + 700;
+        for (let i = 0; i < 4; i++) {
+          const r = { kind: "rock", x0: target.pos.x + rnd(-14, 14), y0: -10, x1: target.pos.x + rnd(-5, 5), y1: target.pos.y - 6, c: "#8a8f96", t0: time, ms: 420 };
+          shots.push(r); setTimeout(() => { shots = shots.filter(q => q !== r); }, 450); await wait(110);
+        }
+        await wait(300);
+        burst(target.pos.x, target.pos.y - 4, "earth", 22, true); sfx("b_slam", 1);
+        await land(target, b.outcome, "earth", from);
+      }
+      deathStyle = "normal";
+      const need = Math.max(2300, (caption.textContent.length || 0) * 50), spent = time - t0;
+      if (spent < need) await wait(need - spent);
+      await heard(said);
+    }
+
     /* Gear in use: each kind of prepared gear has its own way of coming into
        the fight. Returns the effect the hit lands with, or null when the look
        has no special move here. */
@@ -2448,7 +2587,7 @@
         mega_beam: "fires everything at", one_punch: "punches", domain_expansion: "traps in a domain", orb_strike: "drives an orb into",
         stretch: "stretches a punch at", drain: "drains", laser_eyes: "burns", self_destruct: "self-destructs on", telekinesis: "lifts and slams", spin_dash: "spin-dashes into",
         regenerate: "regenerates", phase: "phases", fly: "takes to the air", grow: "grows huge", shrink: "shrinks down", reality_warp: "bends reality around", block: "braces",
-        flank: "splits up and flanks", dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
+        flank: "splits up and flanks", arena_event: "is struck by the battlefield", return: "returns from the dead", dodge: "dodges", deploy_gear: "deploys gear against", build: "builds something", heal: "heals", shield: "shields", trap: "springs a trap on",
         team_up: "teams up against", taunt: "taunts the enemy", retreat: "retreats", fall: "falls" };
       return `${a.name} ${verbs[b.action] || "acts"}${t && !["block", "dodge", "build", "taunt", "retreat", "fall"].includes(b.action) ? ` ${t.name}` : ""}.`;
     }
@@ -2466,7 +2605,10 @@
     councilEl.querySelector(".b8__council-skip").addEventListener("click", () => {
       councilSkip = true; if (N) N.stop(); waits.splice(0).forEach(w => w.res());
     });
-    const cwait = ms => councilSkip ? Promise.resolve() : wait(ms);
+    // opts.councilPace "quick": the councils at about a third of the time,
+    // typed fast, with only the headline read aloud.
+    const QUICK = opts.councilPace === "quick";
+    const cwait = ms => councilSkip ? Promise.resolve() : wait(QUICK ? ms * 0.35 : ms);
 
     /* A page turn between scenes: a curtain sweeps across with a title card,
        the scene changes behind it, and it sweeps away. */
@@ -2512,12 +2654,12 @@
     };
     const gearLine = g => `${/^(already theirs|scavenged)$/i.test(String(g.made_by || "").trim()) ? "Gear" : "New gear"}: ${g.name}. ${g.effect || ""}`;
     const mapLine = () => arena ? `${arena.name}: ${teams[attackSide].name}'s team attacks, ${teams[defSide].name}'s team holds ${verdict.defences || "its ground"}.` : "";
-    const beatLine = b => [b.caption || describe(b, byKey(b.actor), b.target ? byKey(b.target) : null), b.callout].filter(Boolean).join(". ");
+    const beatLine = b => [b.caption || (b.actor ? describe(b, byKey(b.actor), b.target ? byKey(b.target) : null) : ""), b.callout].filter(Boolean).join(". ");
     const winLine = () => `${teams[winSide].name}'s team wins. ${verdict.verdict || ""}`;
     // With ElevenLabs, fetch every line ahead so each plays the moment it's needed.
     if (N && N.mode === "eleven") {
       const pre = [];
-      if (!opts.skipCouncil) [attackSide, defSide].forEach(sd => { const pr = (verdict.preps || [])[sd]; if (pr) pre.push(councilIntro(sd, pr), ...planLines(pr), ...(pr.gear || []).map(gearLine)); });
+      if (!opts.skipCouncil) [attackSide, defSide].forEach(sd => { const pr = (verdict.preps || [])[sd]; if (pr) pre.push(councilIntro(sd, pr), ...(opts.councilPace === "quick" ? [] : [...planLines(pr), ...(pr.gear || []).map(gearLine)])); });
       if (!opts.councilOnly) { pre.push(mapLine(), ...beats.map(beatLine), winLine()); }
       N.prefetch(pre);
     }
@@ -2542,7 +2684,7 @@
       for (const m of council.members) {
         const f = m.f, pose = m.pose || "idle";
         const img = f.sprite.frame(pose, time - (m.poseT || 0)), S = img.width;
-        const k = clamp(2.3 / f.sprite.size, 0.9, 2.3);
+        const k = clamp(2.3 / f.sprite.size, 0.5, 2.3);
         ctx.save(); ctx.translate(Math.round(m.x), Math.round(m.y + (m.hop || 0)));
         ctx.scale(m.facing * k, k); ctx.drawImage(img, -Math.floor(S / 2), -(S - 4)); ctx.restore();
         if (m.leader) {
@@ -2592,7 +2734,7 @@
       if (councilSkip || skipping) { el.textContent = text; return; }
       const t0 = time;
       while (true) {
-        const n = Math.min(text.length, Math.floor((time - t0) / 22));
+        const n = Math.min(text.length, Math.floor((time - t0) / (QUICK ? 6 : 22)));
         el.textContent = text.slice(0, n);
         if (n >= text.length || councilSkip || skipping) break;
         await wait(30);
@@ -2634,7 +2776,7 @@
         await gate("council");
         council.plan = (i + 1) / lines.length;
         const s = lines[i].trim();
-        const said = voice(s);
+        const said = QUICK ? Promise.resolve() : voice(s);
         await typeOut(`<span class="b8__council-label">the plan</span><span data-type></span>`, s);
         await Promise.all([cwait(900 + s.length * 12), cheard(said)]);
       }
@@ -2652,7 +2794,7 @@
           for (let i = 0; i < 3; i++) { sfx("b_forge", 0.5, 1 + i * 0.05); burst(W / 2, 70, "lightning", 6); maker.pose = i % 2 ? "windup" : "strike"; maker.poseT = time; await cwait(220); }
           maker.pose = "idle";
         } else sfx("b_equip", 0.8);
-        const gearSaid = voice(gearLine(g));
+        const gearSaid = QUICK ? Promise.resolve() : voice(gearLine(g));
         const who = [maker ? `built by ${esc(maker.f.name)}` : esc(g.made_by === "scavenged" ? "scavenged" : "already theirs"), carrier ? `carried by ${esc(carrier.f.name)}` : ""].filter(Boolean).join(" · ");
         await typeOut(`<span class="b8__council-label">${maker ? "new gear" : "gear"}</span><span class="b8__council-gear">${esc(g.name)}</span>
           <span class="b8__council-who">${who}</span><span class="b8__council-effect" data-type></span>`, g.effect || "");

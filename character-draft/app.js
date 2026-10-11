@@ -899,6 +899,10 @@
         ${FILM_TIERS.map(t => formatOption(t.id, t.label, t.blurb, format)).join("")}
       </fieldset>
       <p class="judge__fine" id="format-note"></p>
+      ${format === "battle" ? `<fieldset class="chips"><legend class="judge__fine">War councils before the fight</legend>
+        ${[["full", "The full show"], ["quick", "Quick"], ["skip", "Skip them"]].map(([v, l]) => `
+          <label class="chip"><input type="radio" name="pace" value="${v}" ${(prefs.councilPace || "full") === v ? "checked" : ""} /><span>${l}</span></label>`).join("")}
+      </fieldset>` : ""}
       ${format === "battle" ? `<fieldset class="chips"><legend class="judge__fine">Narrate the battle</legend>
         ${[["off", "No voice"], ["browser", "This computer's voice (free)"], ["eleven", "ElevenLabs voice"]].map(([v, l]) => `
           <label class="chip"><input type="radio" name="narration" value="${v}" ${window.Narrator && Narrator.mode === v ? "checked" : ""} /><span>${l}</span></label>`).join("")}
@@ -918,6 +922,7 @@
       prefs.format = i.value; store.set(PREFS_KEY, prefs); judging.error = ""; renderJudge(worlds, teams, isShared);
     }));
     priceFormats(mode, worlds, teams);
+    body.querySelectorAll('[name="pace"]').forEach(i => i.addEventListener("change", () => { prefs.councilPace = i.value; store.set(PREFS_KEY, prefs); }));
     body.querySelectorAll('[name="narration"]').forEach(i => i.addEventListener("change", () => {
       Narrator.set(i.value);
       if (i.value !== "off") Narrator.speak(i.value === "eleven" ? "The ElevenLabs voice will narrate the battle." : "This voice will narrate the battle.");
@@ -1173,6 +1178,7 @@
     if (battleCtl) battleCtl.destroy();
     const field = arenaInfo(isShared ? shared.a : state.arena);
     battleCtl = Battle.player(document.getElementById("battle-box"), { teams, verdict, arena: field, worldName: w => U[w].name }, {
+      councilPace: prefs.councilPace || "full", skipCouncil: prefs.councilPace === "skip",
       onEnd: () => {
         battleCtl = null;
         verdict.battle.watched = true;

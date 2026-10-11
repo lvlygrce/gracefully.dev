@@ -61,10 +61,10 @@ Larys Strong	h|m|n|f1cfb0|3b2a1a|3a3a3a|1f1f1f|8a5a32|short|none|coat|staff||gad
 Mysaria	h|m|t|f3d6bf|f2eee4|f2f0ea|cfd6dd|c0262f|bun|none|robe|dagger||gadget|none
 Cregan Stark	h|m|w|ecc8a8|1a1a1a|4a3f36|3b3026|6b6b6b|long|none|fur|sword|beard,cape|blade|ice
 Alys Rivers	h|m|t|f3d6bf|1a1a1a|7a1f1f|2a1a1a|8bd34a|long|none|robe|staff||magic|dark
-Drogon	d|x|w|2b2422|7a1f1a|2b2422|2b2422|8b1e1e|none|none|bare|none|redeyes|breath|fire
-Rhaegal	d|x|w|2f6b3a|b8823a|2f6b3a|2f6b3a|b8823a|none|none|bare|none||breath|fire
-Viserion	d|x|w|e8d9b0|d9b45a|e8d9b0|e8d9b0|6af0ff|none|none|bare|none|glow_eyes|breath|ice
-Vhagar	d|g|w|6b6a4a|4a4a3a|6b6a4a|6b6a4a|8a7a5a|none|none|bare|none||breath|fire
+Drogon	d|g|w|2b2422|7a1f1a|2b2422|2b2422|8b1e1e|none|none|bare|none|redeyes|breath|fire
+Rhaegal	d|g|w|2f6b3a|b8823a|2f6b3a|2f6b3a|b8823a|none|none|bare|none||breath|fire
+Viserion	d|g|w|e8d9b0|d9b45a|e8d9b0|e8d9b0|6af0ff|none|none|bare|none|glow_eyes|breath|ice
+Vhagar	d|c|w|6b6a4a|4a4a3a|6b6a4a|6b6a4a|8a7a5a|none|none|bare|none||breath|fire
 Caraxes	d|x|t|b8202a|e8b84a|b8202a|b8202a|7a1b1b|none|none|bare|none||breath|fire
 Meleys	d|x|w|c0262f|e86a8a|c0262f|c0262f|f2a03a|none|none|bare|none||breath|fire
 Sunfyre	d|x|w|e8b84a|f2e0a0|e8b84a|e8b84a|ef8a2c|none|none|bare|none||breath|fire

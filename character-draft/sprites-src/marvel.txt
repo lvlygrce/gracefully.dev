@@ -39,7 +39,7 @@ Mystique	h|m|t|3f6bb8|c0262f|3f6bb8|3f6bb8|e8b84a|slick|none|bare|none|redeyes|f
 Juggernaut	h|x|w|c06a2a|c06a2a|c06a2a|5a3a1a|9aa3ad|none|helm|armour|none||fists|none
 Nightcrawler	h|m|t|3f4fa8|1a1a2a|1f1f1f|c0262f|e8b84a|messy|none|jumpsuit|sword|tail,ears|blade|smoke
 Silver Surfer	h|m|t|cfd6dd|cfd6dd|cfd6dd|cfd6dd|8fe9ff|bald|none|bare|none|glow|beam|light
-Galactus	h|x|w|8e5bd0|5b3a7a|3f7fd6|8e5bd0|c0262f|none|helmet|armour|none|horns|beam|psychic
+Galactus	h|c|w|8e5bd0|5b3a7a|3f7fd6|8e5bd0|c0262f|none|helmet|armour|none|horns|beam|psychic
 Doctor Doom	h|m|n|9aa3ad|9aa3ad|2e6b3a|5a5f66|2e8b3a|none|helm|armour|none|cape,hood|magic|tech
 Mister Fantastic	h|m|t|f1d0b0|5a3a1a|1f4fa8|1f1f1f|f2f0ea|short|none|jumpsuit|none|emblem|fists|none
 Invisible Woman	h|m|t|f3d6bf|e6c35c|1f4fa8|1f1f1f|8fd0ff|long|none|jumpsuit|none|emblem,glow|psychic|shield
@@ -88,7 +88,7 @@ Crossbones	h|l|w|f1d0b0|1a1a1a|1f1f1f|1f1f1f|f2f0ea|none|fullmask|vest|gun|emble
 Baron Zemo	h|m|n|8e5bd0|1a1a1a|8e5bd0|5b3a7a|e8b84a|none|fullmask|coat|gun||gun|none
 Arnim Zola	r|m|w|c0262f|1a1a1a|c0262f|3a3a3a|8fe9ff|none|none|armour|none|glow_eyes|beam|tech
 MODOK	c|l|n|e8c4a0|1a1a1a|e8b84a|3a3a3a|3fa0ff|none|none|bare|none|noarms|beam|psychic
-Ego	o|x|w|6a8caf|3f7fd6|6a8caf|6a8caf|e8b84a|none|none|bare|none|glow|summon|psychic
+Ego	o|c|w|6a8caf|3f7fd6|6a8caf|6a8caf|e8b84a|none|none|bare|none|glow|summon|psychic
 Yondu	h|m|n|3f6bb8|c0262f|8a3a1a|3a2a2a|c0262f|mohawk|none|coat|whip||bow|none
 Cosmo	q|m|n|b8823a|f2f0ea|b8823a|b8823a|c0262f|none|none|bare|none|ears_floppy,collar|psychic|psychic
 Beta Ray Bill	h|l|w|e8b84a|e8b84a|3a3a3a|8a5a32|c0262f|none|none|armour|hammer|cape|blunt|lightning

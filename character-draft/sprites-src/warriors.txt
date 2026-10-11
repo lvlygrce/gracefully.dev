@@ -54,7 +54,7 @@ Longtail	q|m|t|e8d9a0|1f1f1f|e8d9a0|e8d9a0|e8b84a|none|none|bare|none|stripes|cl
 Rusty	q|s|n|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none|collar|claws|none
 Midnight	q|m|w|1f1f24|f2f0ea|1f1f24|1f1f24|e8b84a|none|none|bare|none|stripes,ears_round|psychic|psychic
 Stoneteller	q|m|n|8a8f96|cfd6dd|8a8f96|8a8f96|e8b84a|none|none|bare|none||magic|earth
-Sharptooth	q|x|w|e8c48a|f2e0b8|e8c48a|e8c48a|c0262f|none|none|bare|none|fangs,redeyes|bite|none
+Sharptooth	q|g|w|e8c48a|f2e0b8|e8c48a|e8c48a|c0262f|none|none|bare|none|fangs,redeyes|bite|none
 Fireheart	q|m|t|e8742a|f2a85a|e8742a|e8742a|4caf50|none|none|bare|none||claws|fire
 Tawnypelt	q|m|n|c8803a|6b4a2a|c8803a|c8803a|4caf50|none|none|bare|none|stripes|claws|none
 Crookedstar	q|m|n|8a6a4a|cfd6dd|8a6a4a|8a6a4a|e8b84a|none|none|bare|none|stripes|claws|water

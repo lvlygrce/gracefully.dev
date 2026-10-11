@@ -41,7 +41,7 @@ Leona	h|m|n|e8c4a0|8a3a1a|e8b84a|c0262f|ffe14d|long|helmet|armour|sword|shield|b
 Diana	h|m|t|e8e0d8|f2f0ea|5b3a7a|1f1f2a|cfd6dd|long|helmet|armour|scythe||blade|dark
 Pantheon	h|m|w|e0ac69|1a1a1a|e8b84a|c0262f|c0262f|none|helm|armour|spear|shield,cape|blade|none
 Aphelios	h|m|t|e8e0d8|f2f0ea|1f1f2a|1f1f1f|8fd0ff|long|facemask|robe|gun||gun|light
-Aurelion Sol	s|x|n|1f3f8a|e8b84a|1f3f8a|1f3f8a|ffe14d|none|none|bare|none|horns,glow,whiskers|magic|light
+Aurelion Sol	s|c|n|1f3f8a|e8b84a|1f3f8a|1f3f8a|ffe14d|none|none|bare|none|horns,glow,whiskers|magic|light
 Miss Fortune	h|m|t|f3d6bf|c0262f|1f1f1f|3a2a2a|e8b84a|long|hat|coat|gun||gun|none
 Gangplank	h|m|w|f1d0b0|f2f0ea|7a1b1b|1f1f1f|e8b84a|long|hat|coat|gun|beard,eyepatch|gun|explosion
 Graves	h|m|w|e0ac69|3b2a1a|5a4632|1f1f1f|ef8a2c|slick|none|vest|rifle|beard|gun|smoke
@@ -172,4 +172,4 @@ Zilean	h|m|t|f1d0b0|f2f0ea|3fa0ff|e8b84a|f2cf3a|bald|none|robe|staff|beard|magic
 Zoe	h|s|t|f3d6bf|f2cf3a|8e5bd0|f2cf3a|ff6ad5|long|none|tunic|none|glow|magic|light
 Zyra	h|m|t|4caf50|c0262f|2e6b3a|1f1f1f|c0262f|long|none|bare|none|spikes,glow|summon|nature
 Minion Wave	c|s|n|5a7aa8|1a1a1a|3f7fd6|5a5f66|9aa3ad|none|helmet|armour|sword|horde|blade|none
-Baron Nashor	s|x|w|8e5bd0|ff6ad5|8e5bd0|8e5bd0|f2cf3a|none|none|bare|none|horns,spikes,glow_eyes|beam|dark
+Baron Nashor	s|g|w|8e5bd0|ff6ad5|8e5bd0|8e5bd0|f2cf3a|none|none|bare|none|horns,spikes,glow_eyes|beam|dark

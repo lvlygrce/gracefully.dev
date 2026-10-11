@@ -44,7 +44,7 @@
       "lullaby", "devour", "portal", "freeze", "petrify", "anvil", "shout", "black_hole", "earthquake", "tornado",
       "lightning_storm", "time_rewind", "stretch", "drain", "laser_eyes", "self_destruct", "telekinesis", "spin_dash", "summon_companion", "hook", "chain_lightning", "earth_spikes",
       "sniper_shot", "grenade", "poison_cloud", "spin_slash", "shield_bounce", "web_swing", "mega_beam", "one_punch",
-      "domain_expansion", "orb_strike", "flank", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
+      "domain_expansion", "orb_strike", "flank", "arena_event", "return", "block", "dodge", "deploy_gear", "build", "heal", "shield", "trap", "team_up",
       "taunt", "fall"],
     effects: ["none", "slash", "impact", "fire", "ice", "lightning", "water", "earth", "wind", "poison", "light", "dark", "psychic", "tech", "web", "smoke", "explosion", "heal", "shield", "nature", "blood"],
     outcomes: ["hit", "crit", "hurt", "blocked", "dodged", "miss", "ko", "none"],
@@ -248,8 +248,11 @@ Reply as JSON:
     return `Leader: ${prep.leader}\nStance: ${prep.stance === "defend" ? "holds ground and defends" : "goes on the attack"}\nPlan: ${prep.plan}\nGear:\n${gear}\nEach member's job, abilities and limits:\n${jobs}`;
   }
 
-  function battleQuestion(teams, preps, worldName, arena, aftermath, small, attackerIndex = 0) {
+  function battleQuestion(teams, preps, worldName, arena, aftermath, small, attackerIndex = 0, fallen = []) {
     const keys = roleKeys(teams).map(c => c.key);
+    const fallenNames = [...new Set(fallen.map(f => f.name).filter(n => !keys.includes(n)))].slice(0, 20);
+    const fallenText = fallenNames.length ? `
+Fallen in earlier fights of this tournament (they are not on either team): ${fallen.filter(f => fallenNames.includes(f.name)).map(f => `${f.name} (${f.note}; drafted by ${f.team})`).join("; ")}.` : "";
     const gearNames = [...new Set(preps.flatMap(p => p.gear.map(g => g.name)).filter(Boolean))];
     const [lo, hi] = small ? [8, 12] : [12, 20];
     const user = `${context(teams, arena, worldName)}
@@ -258,6 +261,7 @@ Your role: the judge. The team drafted by ${teams[attackerIndex].name} attacks; 
 ${teams[1 - attackerIndex].name} defends its position and was waiting for them. Each team prepared in secret:
 
 ${shown(teams).map(t => `The preparation of the team drafted by ${t.name}:\n${prepText(preps[teams.indexOf(t)])}`).join("\n\n")}
+${fallenText}
 
 Reply as JSON:
 - "reasoning": your analysis before anything else is decided, six to ten sentences. First make the strongest honest
@@ -284,7 +288,8 @@ Reply as JSON:
   characters caught by the same move, when one blow really takes out several: a sweep through a line, a blast, a
   giant stepping on a squad; the outcome applies to them too; usually []), and "death" (how a "ko" kills: normal,
   disintegrate, blast_off sends them flying off into the sky, vaporize, explode, crush, melt, shatter, burn; pick
-  what fits the move, and "normal" when there's no kill), and "callout" (an announcer's line, under 60
+  what fits the move, and "normal" when there's no kill), "event_by" (for arena_event, who or what strikes; for return,
+  the team the returning fighter fights for; "" for everything else), and "callout" (an announcer's line, under 60
   characters, for the moments the audience should notice: a plan working or breaking, a piece of gear coming into
   play or being destroyed, the terrain changing the fight, an army splitting or losing a flank; "" for the rest,
   roughly one beat in three has one). Pick the action
@@ -326,7 +331,11 @@ Reply as JSON:
   America), web_swing swings in on a web line to kick (Spider-Man), mega_beam is a huge charged beam (Kamehameha,
   Final Flash), one_punch is Saitama's single serious punch, domain_expansion traps the target in the actor's own
   domain where the attack cannot miss (Gojo, Sukuna), orb_strike drives a spinning energy orb into the target at
-  close range (Rasengan, Chidori), flank is a group splitting to hit the target from several sides at once; use these when they truly fit the character; annihilate is an overwhelming
+  close range (Rasengan, Chidori), arena_event is the battlefield itself striking (actor "the battlefield"; say who or
+  what in "event_by": the Warden of Arkham turning the guns on someone, a dragon passing over Westeros and torching a
+  fighter, a rockslide, a lightning storm, a stampede of the crowd; it can kill), return is a fighter killed in an
+  earlier fight of this tournament turning out not to be dead (actor: their name from the fallen list; "event_by":
+  the name of the team they now fight for) after which they act like anyone else, flank is a group splitting to hit the target from several sides at once; use these when they truly fit the character; annihilate is an overwhelming
   power that hits the whole enemy team at once (for characters far above the rest; its outcome applies to every
   enemy still alive); build and deploy_gear bring in
   prepared gear, trap springs a prepared trap, heal and shield help an ally (target an ally), block/dodge/taunt/
@@ -340,7 +349,10 @@ Reply as JSON:
   with the beats: the fight paragraphs, the roles, the turning point (one of the beats), the MVP (a winner who
   matters in the beats) and the verdict. Strong characters may kill several enemies in one beat when it makes
   sense. In a close fight, order the beats so the deaths alternate between the sides and the winner is not obvious
-  until the last few beats${aftermath ? `
+  until the last few beats. The location can join in: when it truly fits this battlefield, add one arena_event (about
+  one fight in three; never more than two). ${fallenNames.length ? `A fallen fighter may return: rarely (about one
+  fight in five), only for a great twist, at most one, and they can die again. ` : ""}Arena events and returns must
+  agree with everything else you return${aftermath ? `
 - "aftermath": what this fight did to each character, which carries into their next fight: "fine", "injured",
   "gear_broken" or "dead", with a short note (an object with one key per character name). It was a fight to the
   death: everyone killed in your beats is "dead"; survivors are "fine", "injured" or "gear_broken".` : ""}`;
@@ -356,21 +368,22 @@ Reply as JSON:
     const beat = {
       type: "OBJECT",
       properties: {
-        actor: { type: "STRING", enum: keys },
+        actor: { type: "STRING", enum: [...keys, ...fallenNames, "the battlefield"] },
         action: { type: "STRING", enum: ANIM.actions },
-        target: { type: "STRING", enum: [...keys, "none"] },
+        target: { type: "STRING", enum: [...keys, ...fallenNames, "none"] },
         gear: { type: "STRING", enum: [...gearNames, "none"] },
         effect: { type: "STRING", enum: ANIM.effects },
         outcome: { type: "STRING", enum: ANIM.outcomes },
         move: { type: "STRING" },
-        also: { type: "ARRAY", items: { type: "STRING", enum: keys } },
+        also: { type: "ARRAY", items: { type: "STRING", enum: [...keys, ...fallenNames] } },
+        event_by: { type: "STRING" },
         death: { type: "STRING", enum: ["normal", "disintegrate", "blast_off", "vaporize", "explode", "crush", "melt", "shatter", "burn"] },
         caption: { type: "STRING" },
         line: { type: "STRING" },
         callout: { type: "STRING" },
       },
-      required: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
-      propertyOrdering: ["actor", "action", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
+      required: ["actor", "action", "event_by", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
+      propertyOrdering: ["actor", "action", "event_by", "move", "target", "also", "gear", "effect", "outcome", "death", "caption", "line", "callout"],
     };
     // Reason first (the prose), then script it, then commit to a winner.
     const order = ["reasoning", "defences", "feature", "fight", "turning_point", "beats", "roles", "mvp", "winner", "verdict", ...(aftermath ? ["aftermath"] : [])];
@@ -724,7 +737,7 @@ Reply as JSON:
   // For checking the questions against the models without running a fight.
   const questions = { prepQuestion, battleQuestion };
 
-  async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep, aftermath = false }) {
+  async function run(kind, { teams, worldName, arena, preps = [], onStatus, onPrep, aftermath = false, fallen = [] }) {
     const backend = kind === "gemini" ? gemini : local;
     await backend.prepare(onStatus);
     const done = [preps[0] || null, preps[1] || null];
@@ -752,9 +765,9 @@ Reply as JSON:
     }
 
     onStatus("Both sides are ready. The battle is being fought…");
-    const q = battleQuestion(teams, done, worldName, arena, aftermath, kind !== "gemini", attackerIndex);
+    const q = battleQuestion(teams, done, worldName, arena, aftermath, kind !== "gemini", attackerIndex, fallen);
     const battle = tidyBattle(await backend.ask(q, onStatus, "the battle"), teams);
-    return { ...battle, attacker: teams[attackerIndex].name, preps: done, by: backend.label() };
+    return { ...battle, attacker: teams[attackerIndex].name, preps: done, by: backend.label(), fallen: fallen.slice(0, 20) };
   }
 
   /* --- The director ------------------------------------------------

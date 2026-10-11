@@ -8,7 +8,7 @@ import json, re, subprocess, sys, pathlib
 HERE = pathlib.Path(__file__).parent
 ENUMS = {
     "body": "h k r c q d b s o g".split(),
-    "size": "s m l x g".split(),
+    "size": "s m l x g c".split(),
     "build": "t n w".split(),
     "hairStyle": "short long spiky bald ponytail bun mohawk afro slick braids buzz messy none huge_spiky twintails pompadour topknot flowing".split(),
     "head": "none helmet helm hood fullmask cowl mask facemask hat tophat wizard cap crown headband bandana visor straw_hat cowboy horned_helm skull faceplate".split(),

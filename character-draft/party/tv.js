@@ -55,7 +55,7 @@
   const JOIN_LABEL = `${location.host}/play`;
 
   const prefs = Object.assign(
-    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, sound: "all", announceNames: true, battle8: true, voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
+    { worlds: Object.keys(U), judge: "gemini", team: 5, skips: 2, bidSeconds: 10, autoNext: false, sound: "all", announceNames: true, battle8: true, councilPace: "full", voteSeconds: 20, casualties: true, film: "off", filmTier: "quick" },
     safe.get(PREFS_KEY) || {},
   );
   // The crowd vote used to be the default, so older saved settings carry it
@@ -220,7 +220,7 @@
     if (WATCH || !judging.matchId) return;
     const b = judging.battle;
     net.send({ t: "host:show", show: { matchId: judging.matchId, status: judging.status, error: judging.error, preps: judging.preps,
-      teams: judging.teams || null, arena: judging.arena || null,
+      teams: judging.teams || null, arena: judging.arena || null, pace: prefs.councilPace || "full",
       battle: b ? { teams: b.teams, verdict: b.verdict, arena: b.arena } : null } });
   }
   // Playback in step across screens: the host reports each step, spectators
@@ -251,6 +251,7 @@
     const changed = fresh || (sh.error || "") !== judging.error || JSON.stringify(sh.preps) !== JSON.stringify(judging.preps);
     judging.preps = sh.preps || [null, null];
     if (sh.teams) { judging.teams = sh.teams; judging.arena = sh.arena || null; }
+    judging.pace = sh.pace || "full";
     judging.status = sh.status || "";
     judging.error = sh.error || "";
     let battle = false;
@@ -463,6 +464,14 @@
             </div>
           </fieldset>
           <fieldset>
+            <legend>War councils before each fight</legend>
+            <div class="opts">
+              ${opt("pace", "full", "The full show", prefs.councilPace === "full")}
+              ${opt("pace", "quick", "Quick: about a third of the time", prefs.councilPace === "quick")}
+              ${opt("pace", "skip", "Skip them", prefs.councilPace === "skip")}
+            </div>
+          </fieldset>
+          <fieldset>
             <legend>Narrate the battles</legend>
             <div class="opts">
               ${opt("narration", "off", "No voice", Narrator.mode === "off")}
@@ -518,6 +527,7 @@
     }));
     if (prefs.film !== "off") priceFilms();
     app.querySelectorAll('[name="battle8"]').forEach(i => i.addEventListener("change", () => { prefs.battle8 = i.value === "on"; savePrefs(); }));
+    app.querySelectorAll('[name="pace"]').forEach(i => i.addEventListener("change", () => { prefs.councilPace = i.value; savePrefs(); }));
     app.querySelectorAll('[name="narration"]').forEach(i => i.addEventListener("change", () => {
       Narrator.set(i.value); narrationNote();
       if (i.value !== "off") { Sound.unlock(); Narrator.speak(i.value === "eleven" ? "The ElevenLabs voice will narrate the battles." : "This voice will narrate the battles."); }
@@ -902,7 +912,8 @@
         b.el.className = "tv-film tv-film--full tv-battle";
         app.appendChild(b.el);
         b.ctl = filmCtl = Battle.player(b.el, { teams: b.teams, verdict: b.verdict, arena: b.arena, worldName: w => (U[w] || {}).name || w }, {
-          skipCouncil: !!judging.councilPlayed,
+          skipCouncil: !!judging.councilPlayed || councilPace() === "skip",
+          councilPace: councilPace(),
           ...syncOpts(m.id),
           onState: st => {
             if (judging.battle !== b) return;
@@ -1064,7 +1075,8 @@
 
   /* The war councils play as soon as both plans are in, while the judge is
      still deciding the fight; the battle then starts straight after them. */
-  const councilsReady = () => prefs.battle8 && judging.teams && judging.preps[0] && judging.preps[1] && !judging.film;
+  const councilPace = () => (WATCH ? judging.pace : prefs.councilPace) || "full";
+  const councilsReady = () => prefs.battle8 && councilPace() !== "skip" && judging.teams && judging.preps[0] && judging.preps[1] && !judging.film;
   function mountCouncils() {
     const slot = document.getElementById("council-live");
     if (!slot) return;
@@ -1080,6 +1092,7 @@
     judging.councilEl = el;
     judging.councilCtl = Battle.player(el, { teams, verdict, arena: judging.arena, worldName: w => (U[w] || {}).name || w }, {
       councilOnly: true,
+      councilPace: councilPace(),
       ...syncOpts(matchId),
       onEnd: () => {
         if (judging.matchId !== matchId) return;
@@ -1127,8 +1140,13 @@
     try {
       J.local.modelId = J.local.models[0].id;
       const kind = prefs.judge === "local" ? "local" : "gemini";
+      // Everyone killed earlier in the tournament: one might not be dead after all.
+      const fallen = state.players.flatMap(p => p.roster.filter(r => (condition(r.card) || {}).status === "dead").map(r => {
+        const c = card(r.card);
+        return c ? { name: c.name, world: c.world, note: c.note, team: p.name } : null;
+      })).filter(Boolean);
       const v = await J.run(kind, {
-        teams, arena, aftermath: lasting(),
+        teams, arena, aftermath: lasting(), fallen,
         worldName: w => (U[w] || {}).name || w,
         onStatus: setStatus,
         onPrep: (i, prep) => {

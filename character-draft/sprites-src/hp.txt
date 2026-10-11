@@ -44,7 +44,7 @@ Fawkes	b|m|n|c0262f|f2cf3a|c0262f|c0262f|f2cf3a|none|none|bare|none|crest|magic|
 Aragog	q|x|w|2a2a2a|5a5a5a|2a2a2a|2a2a2a|f2f0ea|none|none|bare|none|no_ears,spots,glow_eyes|bite|poison
 Hedwig	b|s|n|f2f0ea|1a1a1a|f2f0ea|f2f0ea|f2cf3a|none|none|bare|none|spots|claws|wind
 Grawp	h|x|w|c0a080|5a3a1a|8a6a4a|5a3a1a|8a5a32|messy|none|bare|club|belt|blunt|none
-Basilisk	s|x|w|3f6a3a|f2cf3a|3f6a3a|3f6a3a|f2cf3a|none|none|bare|none|glow_eyes|bite|poison
+Basilisk	s|g|w|3f6a3a|f2cf3a|3f6a3a|3f6a3a|f2cf3a|none|none|bare|none|glow_eyes|bite|poison
 Norbert	d|m|n|3a4a3a|8a6a4a|3a4a3a|3a4a3a|ef8a2c|none|none|bare|none||breath|fire
 Vernon Dursley	h|m|w|f1c0b0|5a3a1a|5a6a8a|3a3a44|f2f0ea|short|none|suit|none|moustache|fists|none
 Dudley Dursley	h|m|w|f3c8b8|f2e0a0|f2cf3a|5a3a1a|f2f0ea|short|none|tunic|none|tail|fists|none
