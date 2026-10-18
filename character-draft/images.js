@@ -883,7 +883,7 @@ window.CHARACTER_IMAGES = {
     "Glow Squid": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/c/c3/Glow_Squid_JE1.gif/revision/latest/scale-to-width-down/400?cb=20240729214706",
     "Turtle": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e9/Turtle.png/revision/latest/scale-to-width-down/500?cb=20240729213403",
     "Strider": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/a/a6/Strider_JE2_BE2.gif/revision/latest/scale-to-width-down/400?cb=20240729214354",
-    "Endermite": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/6/6e/Endermite.gif/revision/latest/scale-to-width-down/400?cb=20200126021254",
+    "Endermite": "https://minecraft.wiki/images/Endermite.gif?920c2",
     "Stray": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/38/Stray_JE2_BE4.png/revision/latest/scale-to-width-down/323?cb=20191001180649",
     "Husk": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/e/e4/Husk_JE2_BE2.png/revision/latest/scale-to-width-down/300?cb=20190510101810",
     "Wandering Trader": "https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/52/Wandering_Trader.png/revision/latest/scale-to-width-down/248?cb=20200310000215",
