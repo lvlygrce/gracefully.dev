@@ -146,3 +146,16 @@ Kingo	h|m|n|e0ac69|1a1a1a|8e5bd0|e8b84a|e8b84a|slick|none|suit|none|glow|beam|li
 Leech	h|s|t|9fd06a|1a1a1a|1f3f8a|f2f0ea|f2f0ea|bald|none|robe|none|ears|psychic|none
 Chitauri Army	h|m|n|8a8a7a|1a1a1a|5a5f66|3a3a3a|8fe9ff|none|none|armour|blaster|horde,spikes|gun|tech
 Hydra Agents	h|m|n|f1d0b0|1a1a1a|2e6b3a|1f1f1f|c0262f|none|helmet|uniform|gun|horde|gun|none
+Miles Morales	h|m|t|8d5524|1a1a1a|1c1c1c|1c1c1c|cc1122|none|fullmask|jumpsuit|none|emblem,webbing|fists|lightning
+Spider-Gwen	h|m|t|f5d0b5|eed672|f0eff2|1b1b26|de3a7d|short|hood|jumpsuit|none|webbing|fists|web
+Spider-Man 2099	h|m|w|dca682|3b271d|102554|102554|cb1c2b|none|fullmask|jumpsuit|claws|cape,spikes|claws|web
+Yelena Belova	h|m|n|f1d0b0|edd285|303328|212224|d4a017|braids|none|vest|bat|belt,gloves|gadget|tech
+Red Guardian	h|m|w|f1cfb3|70655d|a61b22|a61b22|e6e6e6|short|helmet|uniform|shield|beard,star,belt|blunt|shield
+Sandman	h|l|w|e0ba74|624021|306637|685743|1e3d23|short|none|jersey|mace|stripes|blunt|earth
+Lizard	h|l|w|467c3b|22471b|e9edf0|563a6b|ebd234|none|none|labcoat|claws|tail,fangs,redeyes|claws|nature
+Mister Sinister	h|m|w|dbe3e8|101214|1c2230|1c2230|c8102e|short|none|armour|none|cape,redeyes,glow|beam|dark
+Uatu the Watcher	h|x|w|edd0bd|edd0bd|2f4e91|ffffff|e0b83b|bald|none|robe|none|glow_eyes,collar|psychic|psychic
+Fin Fang Foom	d|c|w|2e8540|1b5226|572675|572675|dfb426|none|none|bare|none|wings_dark,tail,horns,trunks|breath|fire
+Silver Sable	h|m|t|f3d2be|d7dde3|c0c9d1|c0c9d1|3b4249|flowing|none|jumpsuit|gun|belt,boots_light|gun|none
+Hulkling	h|l|w|73ab48|e8d646|2b3040|1a1b24|c92a2a|messy|none|armour|greatsword|batwings,ears|blade|light
+Wiccan	h|m|n|f3ceb8|1c1d21|1c1e29|1c1e29|3fa9f5|messy|headband|tunic|staff|cape,glow|magic|lightning

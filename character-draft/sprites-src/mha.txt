@@ -56,3 +56,14 @@ Ryukyu	d|x|n|f2a0b0|f2f0ea|f2a0b0|f2a0b0|f2cf3a|none|none|bare|none||claws|none
 Mei Hatsume	h|m|t|f3d6bf|f2a0c0|8a5a32|1f1f1f|f2cf3a|long|visor|jumpsuit|blaster|belt|gadget|tech
 Nomu Horde	h|l|w|2a2a3a|1a1a1a|2a2a3a|2a2a3a|e8b84a|none|none|bare|none|horde,glow_eyes,fangs|fists|none
 Class 1-A	h|m|n|f1d0b0|2e6b3a|2e8b3a|1f1f1f|c0262f|messy|none|jumpsuit|none|horde|fists|lightning
+Ectoplasm	h|l|t|e0e0e0|1a1a1a|d8d3c5|222222|c82233|none|helmet|coat|none|redeyes|summon|dark
+Cementoss	k|l|w|9aa0a6|9aa0a6|8a6a4a|7a5a3a|ffffff|none|none|tunic|none||blunt|earth
+Power Loader	h|s|n|f1d0b0|1a1a1a|f2a829|3a3a3a|c85a1a|short|helmet|jumpsuit|claws|belt|claws|earth
+Snipe	h|m|n|f1d0b0|4a2d1d|d24d28|3c2d25|e0c080|braids|cowboy|coat|gun|cape,belt|gun|none
+Vlad King	h|l|w|ead5c3|d8d8d8|9e1923|f0f0f0|c99b3b|slick|cowl|jumpsuit|none|collar,belt|blade|blood
+Edgeshot	h|m|t|f1d0b0|8b8c8d|1f2937|9333ea|e0e0e0|spiky|facemask|uniform|none|scarf|blade|none
+Kamui Woods	h|m|t|6b4423|6b4423|2b1810|1e110b|d4a359|none|none|uniform|none|horns,belt|fists|nature
+Mt. Lady	h|g|n|f6d8c0|f0d58a|5b2382|efd8be|d95b28|flowing|mask|jumpsuit|none|horns|fists|none
+Nine	h|m|n|ead5c3|9e9eb0|20232a|373a47|9333ea|slick|mask|coat|none|glow_eyes,cape|beam|lightning
+Gentle Criminal	h|m|n|f1d0b0|f0f0f0|4a2d52|f0f0f0|c4a35a|slick|none|coat|none|moustache,scarf|fists|shield
+La Brava	h|s|n|f6d8c0|c43d5c|1f1f1f|f0f0f0|c43d5c|twintails|none|dress|none|cheeks|magic|light

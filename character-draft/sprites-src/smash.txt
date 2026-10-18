@@ -94,3 +94,18 @@ Jak and Daxter	h|m|t|f1d0b0|4caf50|3f7fd6|8a5a32|ef8a2c|spiky|none|tunic|gun|ear
 Sly Cooper	h|s|t|8a8f96|1a1a1a|3f7fd6|3f7fd6|e8b84a|none|mask|tunic|staff|ears,tail|blade|none
 The Covenant	h|l|n|6a4aa0|1a1a1a|6a4aa0|3a2a5a|9fe3ff|none|helmet|armour|blaster|horde,glow_eyes|gun|tech
 Zerg Swarm	q|m|w|6a3a8a|1a1a1a|6a3a8a|3a2a5a|c0262f|none|none|bare|claws|horde,spikes,redeyes|claws|poison
+Waluigi	h|l|t|ffcc99|59381c|4b287d|1c2859|ff6600|spiky|cap|jumpsuit|bat|moustache,gloves|blunt|none
+Toad	h|s|n|ffcc99|ffffff|1c3a99|ffffff|e62214|none|hat|vest|none|spots,feet|fists|none
+Daisy	h|m|n|ffcc99|a8501e|f5a623|ffffff|2ecc71|short|crown|dress|none|gloves|fists|nature
+Knuckles	h|m|n|d62828|d62828|d62828|1a6428|ffcc00|long|none|bare|claws|gloves_accent,tail|fists|earth
+Tails	h|s|n|f29b1d|f29b1d|ffffff|e62214|ffffff|short|none|bare|none|ears,gloves,tail|gadget|tech
+Shadow the Hedgehog	h|m|n|1c1c1c|1c1c1c|1c1c1c|ffffff|d62828|huge_spiky|none|bare|none|ears,gloves_accent,tail,redeyes|psychic|dark
+Dr. Eggman	h|l|w|ffcc99|633b1e|d62828|1c1c1c|ffcc00|bald|none|coat|blaster|glasses,moustache,gloves|gadget|tech
+Skull Kid	h|s|t|5a3921|e66014|d66828|3f6a29|a12d8a|none|fullmask|tunic|none|collar,glow_eyes|magic|dark
+Calamity Ganon	g|g|w|3a0823|b31010|1c0b17|ff3366|00ffff|flowing|skull|armour|greatsword|horns,glow_eyes,flame_head|magic|dark
+Dracula	h|l|t|e0dfdc|dcdcdc|111116|111116|990000|slick|none|suit|none|cape,fangs,redeyes|magic|dark
+Malenia	h|l|t|e8c4a0|b83321|c49a45|4a4237|e67e22|long|helmet|dress|katana|cape,wings|blade|poison
+The Tarnished	h|m|n|e0b890|47382d|545048|33302a|cda851|messy|helm|armour|greatsword|cape,shield|blade|fire
+Hornet	h|s|t|1c1c1c|ffffff|b52d3a|1c1c1c|ffffff|none|horned_helm|robe|spear|horns,glow_eyes|blade|web
+Madeline	h|s|t|fcd0a1|d9383a|226b80|3b2f5c|f472b6|long|none|coat|none|scarf|fists|wind
+Isaac	h|s|n|ffccaa|ffccaa|ffccaa|ffccaa|3b82f6|bald|none|bare|none|no_ears|beam|water

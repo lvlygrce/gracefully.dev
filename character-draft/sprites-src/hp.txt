@@ -58,3 +58,15 @@ Regulus Black	h|m|t|f3d6bf|1a1a1a|1f1f1f|2e6b3a|2e8b3a|short|none|robe|wand||mag
 Aberforth Dumbledore	h|m|n|f1d8c8|d9d4c7|5a4632|3a3a3a|3fa0ff|long|none|coat|wand|beard,glasses|magic|none
 Death Eaters	h|m|t|e8e0d8|1a1a1a|1f1f1f|1f1f1f|4caf50|none|hood|robe|wand|horde|magic|dark
 Dementors	g|m|t|2a2a2a|1a1a1a|2a2a2a|2a2a2a|9fe3ff|none|none|bare|none|horde,nubs|psychic|ice
+Hungarian Horntail	d|g|w|242526|1a1a1a|242526|333333|c87d32|none|none|bare|none|horns,spikes,wings,tail,batwings|breath|fire
+Fluffy	q|x|w|3c2415|2b180d|3c2415|2b180d|bf360c|none|none|bare|none|fangs,ears_floppy,tail|bite|none
+Crookshanks	q|s|n|d97724|d97724|d97724|b85c14|ffe082|none|none|fur|none|ears,tail,whiskers|claws|none
+Mrs Norris	q|s|t|736357|736357|736357|52463e|ffd54f|none|none|fur|none|ears,tail,glow_eyes|claws|none
+Nearly Headless Nick	g|m|n|d5e8f0|cbdde6|b0d0e0|96bccc|e6f4fa|short|hat|tunic|none|collar,glow,moustache|magic|none
+The Bloody Baron	g|m|t|d2e4ea|1a1a1a|8fa0a8|6e8088|b30000|long|none|robe|dagger|glow|blade|dark
+Igor Karkaroff	h|m|t|ebd0be|c0c0c0|404552|252930|8d99ae|short|none|coat|wand|beard|magic|dark
+Olympe Maxime	h|l|w|ebd1bf|38241d|542234|381622|ffd700|bun|none|robe|wand||magic|nature
+Bill Weasley	h|m|t|f5d2b8|c83e1c|302824|1e1c1a|bf360c|ponytail|none|vest|wand|boots_accent|magic|fire
+Charlie Weasley	h|m|w|f2caa7|c83e1c|5c4033|2f241d|d35400|short|none|vest|wand|gloves|magic|fire
+Percy Weasley	h|m|t|f7d7c4|c83e1c|1c2833|17202a|ffd700|short|none|suit|wand|glasses,emblem|magic|shield
+Cornish Pixies	h|s|t|2979ff|1565c0|2979ff|1565c0|ffffff|none|none|bare|none|horde,wings,ears_long,grin|fists|wind

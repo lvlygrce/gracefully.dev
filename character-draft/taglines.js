@@ -307,6 +307,54 @@ window.CHARACTER_TAGLINES = {
   "The Golden Company": [
    "Game of Thrones",
    "Never breaks a contract"
+  ],
+  "Ser Duncan the Tall": [
+   "A Song of Ice and Fire",
+   "Dunk the Lunk"
+  ],
+  "Egg": [
+   "A Song of Ice and Fire",
+   "The squire prince"
+  ],
+  "Wun Wun": [
+   "A Song of Ice and Fire",
+   "Last of the giants"
+  ],
+  "Lyanna Mormont": [
+   "Game of Thrones",
+   "Lady of Bear Island"
+  ],
+  "The High Sparrow": [
+   "Game of Thrones",
+   "Voice of the gods"
+  ],
+  "Qyburn": [
+   "Game of Thrones",
+   "Unethical innovator"
+  ],
+  "Walder Frey": [
+   "A Song of Ice and Fire",
+   "Lord of the Crossing"
+  ],
+  "Hot Pie": [
+   "A Song of Ice and Fire",
+   "Never give up on gravy"
+  ],
+  "The Three-Eyed Raven": [
+   "A Song of Ice and Fire",
+   "Sight beyond time"
+  ],
+  "Balerion": [
+   "A Song of Ice and Fire",
+   "The Black Dread"
+  ],
+  "Syrax": [
+   "House of the Dragon",
+   "The yellow she-dragon"
+  ],
+  "Shireen Baratheon": [
+   "Game of Thrones",
+   "Gentle stag princess"
   ]
  },
  "marvel": {
@@ -901,6 +949,58 @@ window.CHARACTER_TAGLINES = {
   "Hydra Agents": [
    "Marvel Comics",
    "Cut off one head"
+  ],
+  "Miles Morales": [
+   "Marvel",
+   "Leap of faith"
+  ],
+  "Spider-Gwen": [
+   "Marvel",
+   "Ghost spider rhythm"
+  ],
+  "Spider-Man 2099": [
+   "Marvel",
+   "Shock to the future"
+  ],
+  "Yelena Belova": [
+   "Marvel",
+   "Ruthless sister operative"
+  ],
+  "Red Guardian": [
+   "Marvel",
+   "Soviet shield bearer"
+  ],
+  "Sandman": [
+   "Marvel",
+   "Shifting desert force"
+  ],
+  "Lizard": [
+   "Marvel",
+   "Cold blooded fury"
+  ],
+  "Mister Sinister": [
+   "Marvel",
+   "Master of mutation"
+  ],
+  "Uatu the Watcher": [
+   "Marvel",
+   "I observe all"
+  ],
+  "Fin Fang Foom": [
+   "Marvel",
+   "Ancient cosmic dragon"
+  ],
+  "Silver Sable": [
+   "Marvel",
+   "Silver bullet mercenary"
+  ],
+  "Hulkling": [
+   "Marvel",
+   "King of space"
+  ],
+  "Wiccan": [
+   "Marvel",
+   "Sorcerous spark of reality"
   ]
  },
  "league": {
@@ -1603,6 +1703,74 @@ window.CHARACTER_TAGLINES = {
   "Baron Nashor": [
    "League of Legends",
    "Ruler of the pit"
+  ],
+  "Caster Minion": [
+   "League of Legends",
+   "Arcane backline cannon fodder"
+  ],
+  "Melee Minion": [
+   "League of Legends",
+   "Relentless lane pusher"
+  ],
+  "Siege Minion": [
+   "League of Legends",
+   "Armored lane artillery"
+  ],
+  "Super Minion": [
+   "League of Legends",
+   "Lane crushing titan"
+  ],
+  "Gromp": [
+   "League of Legends",
+   "Toxic marsh amphibian"
+  ],
+  "Raptors": [
+   "League of Legends",
+   "Sharp beaked flock"
+  ],
+  "Krugs": [
+   "League of Legends",
+   "Living split rock"
+  ],
+  "Murk Wolves": [
+   "League of Legends",
+   "Twin headed shadowstalkers"
+  ],
+  "Blue Sentinel": [
+   "League of Legends",
+   "Ancient crest of insight"
+  ],
+  "Red Brambleback": [
+   "League of Legends",
+   "Crest of cinders"
+  ],
+  "Rift Scuttler": [
+   "League of Legends",
+   "Peaceful river runner"
+  ],
+  "Rift Herald": [
+   "League of Legends",
+   "Voidborn siege battering ram"
+  ],
+  "Voidgrubs": [
+   "League of Legends",
+   "Chitinous void swarm"
+  ],
+  "Elder Dragon": [
+   "League of Legends",
+   "Executioner of the pit"
+  ],
+  "Atakhan": [
+   "League of Legends",
+   "Bringer of ruin"
+  ],
+  "Poros": [
+   "League of Legends",
+   "Heart of the Freljord"
+  ],
+  "Turret": [
+   "League of Legends",
+   "Indomitable lane bastion"
   ]
  },
  "pokemon": {
@@ -1945,6 +2113,62 @@ window.CHARACTER_TAGLINES = {
   "Beedrill Swarm": [
    "Pokémon",
    "Furious cloud of stingers"
+  ],
+  "Pidgey": [
+   "Pokémon",
+   "Tiny bird of Kanto"
+  ],
+  "Rattata": [
+   "Pokémon",
+   "Top percentage rodent"
+  ],
+  "Caterpie": [
+   "Pokémon",
+   "Humble little worm"
+  ],
+  "Metapod": [
+   "Pokémon",
+   "Impenetrable green cocoon"
+  ],
+  "Zubat": [
+   "Pokémon",
+   "Endless cave stalker"
+  ],
+  "Wobbuffet": [
+   "Pokémon",
+   "Patient counter puncher"
+  ],
+  "Slowpoke": [
+   "Pokémon",
+   "Dopey riverside lounger"
+  ],
+  "Togepi": [
+   "Pokémon",
+   "Spike-shelled baby"
+  ],
+  "Wooper": [
+   "Pokémon",
+   "Armless mud dweller"
+  ],
+  "Reshiram": [
+   "Pokémon",
+   "Blazing white truth"
+  ],
+  "Zekrom": [
+   "Pokémon",
+   "Thundering jet of ideals"
+  ],
+  "Kyurem": [
+   "Pokémon",
+   "Frozen boundless hollow"
+  ],
+  "Yveltal": [
+   "Pokémon",
+   "Destruction in the skies"
+  ],
+  "Xerneas": [
+   "Pokémon",
+   "Radiant beast of creation"
   ]
  },
  "warriors": {
@@ -2195,6 +2419,42 @@ window.CHARACTER_TAGLINES = {
   "StarClan Warriors": [
    "Warrior Cats",
    "Guiding from the skies"
+  ],
+  "Darktail": [
+   "Warriors",
+   "Drowned in darkness"
+  ],
+  "Bristlefrost": [
+   "Warriors",
+   "Faded from forever"
+  ],
+  "Tigerheart": [
+   "Warriors",
+   "ShadowClan's bold rebuilder"
+  ],
+  "Needletail": [
+   "Warriors",
+   "Fiercely loyal rebel"
+  ],
+  "Mousefur": [
+   "Warriors",
+   "Grumpy battle elder"
+  ],
+  "Dustpelt": [
+   "Warriors",
+   "ThunderClan's loyal protector"
+  ],
+  "Goosefeather": [
+   "Warriors",
+   "Cursed with omen sight"
+  ],
+  "Frostpaw": [
+   "Warriors",
+   "Seeking true destiny"
+  ],
+  "Brackenfur": [
+   "Warriors",
+   "Rock of ThunderClan"
   ]
  },
  "anime": {
@@ -2553,6 +2813,74 @@ window.CHARACTER_TAGLINES = {
   "Survey Corps": [
    "Attack on Titan",
    "Wings of Freedom"
+  ],
+  "Piccolo": [
+   "Dragon Ball",
+   "Namekian warrior monk"
+  ],
+  "Gohan": [
+   "Dragon Ball",
+   "Scholar of dormant fury"
+  ],
+  "Krillin": [
+   "Dragon Ball",
+   "Earth's stouthearted martial artist"
+  ],
+  "Broly": [
+   "Dragon Ball",
+   "Uncontrollable legendary power"
+  ],
+  "Bulma": [
+   "Dragon Ball",
+   "Capsule Corp genius inventor"
+  ],
+  "Toji Fushiguro": [
+   "Jujutsu Kaisen",
+   "The sorcerer killer"
+  ],
+  "Megumi Fushiguro": [
+   "Jujutsu Kaisen",
+   "Ten Shadows tactician"
+  ],
+  "Nobara Kugisaki": [
+   "Jujutsu Kaisen",
+   "Fierce Straw Doll striker"
+  ],
+  "Muzan Kibutsuji": [
+   "Demon Slayer",
+   "King of all demons"
+  ],
+  "Tengen Uzui": [
+   "Demon Slayer",
+   "Flamboyant Sound Hashira"
+  ],
+  "Inosuke Hashibira": [
+   "Demon Slayer",
+   "Wild mountain beast"
+  ],
+  "Pain": [
+   "Naruto",
+   "God of the Six Paths"
+  ],
+  "Gaara": [
+   "Naruto",
+   "Kazekage of the sand"
+  ],
+  "Rock Lee": [
+   "Naruto",
+   "Handsome Devil of the Leaf"
+  ],
+  "Hinata Hyuga": [
+   "Naruto",
+   "Gentle Fist heiress"
+  ],
+  "Kaido": [
+   "One Piece",
+   "Strongest creature alive"
+  ],
+  "Anya Forger": [
+   "Spy x Family",
+   "Peanut loving psychic child"
   ]
  },
  "dc": {
@@ -2847,6 +3175,70 @@ window.CHARACTER_TAGLINES = {
   "Parademon Swarm": [
    "DC Comics",
    "Die for Darkseid"
+  ],
+  "Black Lightning": [
+   "DC Comics",
+   "Ride the lightning"
+  ],
+  "Vixen": [
+   "DC Comics",
+   "Primal spirit unleashed"
+  ],
+  "Hawkgirl": [
+   "DC Comics",
+   "Thunder from above"
+  ],
+  "Red Tornado": [
+   "DC Comics",
+   "The living cyclone"
+  ],
+  "Jonah Hex": [
+   "DC Comics",
+   "Grim western justice"
+  ],
+  "Bizarro": [
+   "DC Comics",
+   "Me am number one"
+  ],
+  "Metallo": [
+   "DC Comics",
+   "Heart of kryptonite"
+  ],
+  "Parasite": [
+   "DC Comics",
+   "Drains your power"
+  ],
+  "Mister Mxyzptlk": [
+   "DC Comics",
+   "Dimension-hopping prankster"
+  ],
+  "Etrigan the Demon": [
+   "DC Comics",
+   "Gone, gone the form of man"
+  ],
+  "Krypto the Superdog": [
+   "DC Comics",
+   "Man of steel's best friend"
+  ],
+  "Ace the Bat-Hound": [
+   "DC Comics",
+   "The dark knight's hound"
+  ],
+  "Killer Moth": [
+   "DC Comics",
+   "Underworld anti-batman"
+  ],
+  "Condiment King": [
+   "DC Comics",
+   "Hold the mayo"
+  ],
+  "Calendar Man": [
+   "DC Comics",
+   "Date with destiny"
+  ],
+  "Anti-Monitor": [
+   "DC Comics",
+   "Devourer of realities"
   ]
  },
  "minecraft": {
@@ -3061,6 +3453,70 @@ window.CHARACTER_TAGLINES = {
   "Pillager Raid": [
    "Minecraft",
    "The horn sounds"
+  ],
+  "Chicken": [
+   "Minecraft",
+   "Gentle feather fall"
+  ],
+  "Cow": [
+   "Minecraft",
+   "Pasture grazing friend"
+  ],
+  "Pig": [
+   "Minecraft",
+   "Trot along peacefully"
+  ],
+  "Sheep": [
+   "Minecraft",
+   "Fluffy wool gatherer"
+  ],
+  "Mooshroom": [
+   "Minecraft",
+   "Spotted fungal grazer"
+  ],
+  "Squid": [
+   "Minecraft",
+   "Drifter of the depths"
+  ],
+  "Glow Squid": [
+   "Minecraft",
+   "Luminous deep swimmer"
+  ],
+  "Turtle": [
+   "Minecraft",
+   "Shelled ocean voyager"
+  ],
+  "Strider": [
+   "Minecraft",
+   "Lava lake walker"
+  ],
+  "Endermite": [
+   "Minecraft",
+   "Pesky pearl parasite"
+  ],
+  "Stray": [
+   "Minecraft",
+   "Frozen tundra archer"
+  ],
+  "Husk": [
+   "Minecraft",
+   "Sunbaked desert brawler"
+  ],
+  "Wandering Trader": [
+   "Minecraft",
+   "Nomadic barter peddler"
+  ],
+  "Armadillo": [
+   "Minecraft",
+   "Curled scute protector"
+  ],
+  "Camel": [
+   "Minecraft",
+   "Towering desert runner"
+  ],
+  "Frog": [
+   "Minecraft",
+   "Bouncy swamp leaper"
   ]
  },
  "smash": {
@@ -3447,6 +3903,66 @@ window.CHARACTER_TAGLINES = {
   "Zerg Swarm": [
    "StarCraft",
    "The endless ravenous horde"
+  ],
+  "Waluigi": [
+   "Super Mario",
+   "Time to cheat"
+  ],
+  "Toad": [
+   "Super Mario",
+   "Ready for adventure"
+  ],
+  "Daisy": [
+   "Super Mario",
+   "Full of bloom"
+  ],
+  "Knuckles": [
+   "Sonic the Hedgehog",
+   "Fists of fury"
+  ],
+  "Tails": [
+   "Sonic the Hedgehog",
+   "Flying high above"
+  ],
+  "Shadow the Hedgehog": [
+   "Sonic the Hedgehog",
+   "The ultimate lifeform"
+  ],
+  "Dr. Eggman": [
+   "Sonic the Hedgehog",
+   "Genius takes control"
+  ],
+  "Skull Kid": [
+   "The Legend of Zelda",
+   "Cursed moon caller"
+  ],
+  "Calamity Ganon": [
+   "The Legend of Zelda",
+   "Ancient primal scourge"
+  ],
+  "Dracula": [
+   "Castlevania",
+   "Lord of the night"
+  ],
+  "Malenia": [
+   "Elden Ring",
+   "Blade of Miquella"
+  ],
+  "The Tarnished": [
+   "Elden Ring",
+   "Seek the Elden Ring"
+  ],
+  "Hornet": [
+   "Hollow Knight",
+   "Princess protector"
+  ],
+  "Madeline": [
+   "Celeste",
+   "Breathe and climb"
+  ],
+  "Isaac": [
+   "The Binding of Isaac",
+   "Crying through hell"
   ]
  },
  "famous": {
@@ -3697,6 +4213,66 @@ window.CHARACTER_TAGLINES = {
   "Samurai Army": [
    "Feudal Japan",
    "Disciplined masters of war"
+  ],
+  "Boudica": [
+   "History",
+   "Queen of the Iceni"
+  ],
+  "Saladin": [
+   "History",
+   "Sultan of the Levant"
+  ],
+  "Richard the Lionheart": [
+   "History",
+   "The crusader king"
+  ],
+  "Shaka Zulu": [
+   "History",
+   "King of the Zulus"
+  ],
+  "Tomoe Gozen": [
+   "History",
+   "Legendary onna-musha"
+  ],
+  "Ching Shih": [
+   "History",
+   "Pirate lord of the seas"
+  ],
+  "Grace O'Malley": [
+   "History",
+   "The pirate queen of Connacht"
+  ],
+  "Ned Kelly": [
+   "History",
+   "The iron bushranger"
+  ],
+  "Annie Oakley": [
+   "History",
+   "Little sure shot"
+  ],
+  "Mike Tyson": [
+   "Boxing",
+   "The baddest man on Earth"
+  ],
+  "Serena Williams": [
+   "Tennis",
+   "Queen of the court"
+  ],
+  "Usain Bolt": [
+   "Athletics",
+   "Lightning in human form"
+  ],
+  "Steve Irwin": [
+   "Television",
+   "The crocodile hunter"
+  ],
+  "David Attenborough": [
+   "Television",
+   "Voice of the planet"
+  ],
+  "Florence Nightingale": [
+   "History",
+   "The lady with the lamp"
   ]
  },
  "shows": {
@@ -4179,6 +4755,66 @@ window.CHARACTER_TAGLINES = {
   "Oompa Loompas": [
    "Willy Wonka",
    "A song for downfall"
+  ],
+  "Bluey": [
+   "Bluey",
+   "Queen of make believe"
+  ],
+  "Bandit Heeler": [
+   "Bluey",
+   "World's best dad"
+  ],
+  "Peppa Pig": [
+   "Peppa Pig",
+   "Puddle jumping pro"
+  ],
+  "Mickey Mouse": [
+   "Disney",
+   "The mouse himself"
+  ],
+  "Dwight Schrute": [
+   "The Office",
+   "Assistant to the manager"
+  ],
+  "Michael Scott": [
+   "The Office",
+   "World's best boss"
+  ],
+  "Jesse Pinkman": [
+   "Breaking Bad",
+   "Yeah science"
+  ],
+  "Saul Goodman": [
+   "Breaking Bad",
+   "Better call him"
+  ],
+  "Tony Soprano": [
+   "The Sopranos",
+   "Boss of North Jersey"
+  ],
+  "Thomas Shelby": [
+   "Peaky Blinders",
+   "Razor in the cap"
+  ],
+  "Paul Atreides": [
+   "Dune",
+   "The Kwisatz Haderach"
+  ],
+  "Shai-Hulud": [
+   "Dune",
+   "Grandfather of the desert"
+  ],
+  "Ted Lasso": [
+   "Ted Lasso",
+   "Believe in yourself"
+  ],
+  "Jack Reacher": [
+   "Reacher",
+   "One man army"
+  ],
+  "Hercule Poirot": [
+   "Agatha Christie",
+   "Little grey cells"
   ]
  },
  "mha": {
@@ -4413,6 +5049,50 @@ window.CHARACTER_TAGLINES = {
   "Class 1-A": [
    "My Hero Academia",
    "Plus Ultra united"
+  ],
+  "Ectoplasm": [
+   "My Hero Academia",
+   "Master of phantom legions"
+  ],
+  "Cementoss": [
+   "My Hero Academia",
+   "Master of modern mortar"
+  ],
+  "Power Loader": [
+   "My Hero Academia",
+   "Dug deep and geared up"
+  ],
+  "Snipe": [
+   "My Hero Academia",
+   "Never misses a mark"
+  ],
+  "Vlad King": [
+   "My Hero Academia",
+   "Hardened by his own veins"
+  ],
+  "Edgeshot": [
+   "My Hero Academia",
+   "Folded into absolute precision"
+  ],
+  "Kamui Woods": [
+   "My Hero Academia",
+   "Rooted in swift justice"
+  ],
+  "Mt. Lady": [
+   "My Hero Academia",
+   "Larger than life justice"
+  ],
+  "Nine": [
+   "My Hero Academia",
+   "The storm of evolution"
+  ],
+  "Gentle Criminal": [
+   "My Hero Academia",
+   "Dapper deeds of rebellion"
+  ],
+  "La Brava": [
+   "My Hero Academia",
+   "Devotion turns to power"
   ]
  },
  "boys": {
@@ -4571,6 +5251,34 @@ window.CHARACTER_TAGLINES = {
   "Polarity": [
    "Gen V",
    "The magnetic legacy"
+  ],
+  "Mesmer": [
+   "The Boys",
+   "Reading your mind"
+  ],
+  "Doppelganger": [
+   "The Boys",
+   "Never trust a face"
+  ],
+  "Blue Hawk": [
+   "The Boys",
+   "Brutal street justice"
+  ],
+  "Splinter": [
+   "The Boys",
+   "Strength in numbers"
+  ],
+  "Cindy": [
+   "The Boys",
+   "Crushed without a touch"
+  ],
+  "Tommy TNT": [
+   "The Boys",
+   "Sparking a short fuse"
+  ],
+  "Webweaver": [
+   "The Boys",
+   "Tangled in dirty silk"
   ]
  },
  "hp": {
@@ -4813,6 +5521,54 @@ window.CHARACTER_TAGLINES = {
   "Dementors": [
    "Harry Potter",
    "Soul-draining cold"
+  ],
+  "Hungarian Horntail": [
+   "Harry Potter",
+   "Fiercest of the dragons"
+  ],
+  "Fluffy": [
+   "Harry Potter",
+   "Three heads, zero chill"
+  ],
+  "Crookshanks": [
+   "Harry Potter",
+   "The clever ginger kneazle"
+  ],
+  "Mrs Norris": [
+   "Harry Potter",
+   "The caretaker's spy"
+  ],
+  "Nearly Headless Nick": [
+   "Harry Potter",
+   "Nearly headless nobleman"
+  ],
+  "The Bloody Baron": [
+   "Harry Potter",
+   "Bound in eternal sorrow"
+  ],
+  "Igor Karkaroff": [
+   "Harry Potter",
+   "Turncoat of the north"
+  ],
+  "Olympe Maxime": [
+   "Harry Potter",
+   "Elegance on colossal scale"
+  ],
+  "Bill Weasley": [
+   "Harry Potter",
+   "Curse-breaker with flair"
+  ],
+  "Charlie Weasley": [
+   "Harry Potter",
+   "Handler of great beasts"
+  ],
+  "Percy Weasley": [
+   "Harry Potter",
+   "Stickler for protocol"
+  ],
+  "Cornish Pixies": [
+   "Harry Potter",
+   "Unruly blue pranksters"
   ]
  },
  "armed": {
@@ -5361,6 +6117,54 @@ window.CHARACTER_TAGLINES = {
   "Frogger": [
    "Arcade",
    "Just crossing the road"
+  ],
+  "Cheetara": [
+   "ThunderCats",
+   "Fastest of the ThunderCats"
+  ],
+  "Panthro": [
+   "ThunderCats",
+   "Muscle and mechanics"
+  ],
+  "Captain Planet": [
+   "Captain Planet and the Planeteers",
+   "The power is yours"
+  ],
+  "Darkwing Duck": [
+   "Darkwing Duck",
+   "Terror that flaps"
+  ],
+  "Scrooge McDuck": [
+   "DuckTales",
+   "Richest duck in town"
+  ],
+  "Bucky O'Hare": [
+   "Bucky O'Hare and the Toad Wars",
+   "Righteous mammal captain"
+  ],
+  "Jem": [
+   "Jem and the Holograms",
+   "Truly outrageous superstar"
+  ],
+  "Rainbow Brite": [
+   "Rainbow Brite",
+   "Bringing color back"
+  ],
+  "Speed Racer": [
+   "Speed Racer",
+   "Go Speed Racer go"
+  ],
+  "Astro Boy": [
+   "Astro Boy",
+   "Mighty atomic defender"
+  ],
+  "Inspector Clouseau": [
+   "The Pink Panther",
+   "Bumbling French inspector"
+  ],
+  "Willy Wonka": [
+   "Charlie and the Chocolate Factory",
+   "Pure confectionary imagination"
   ]
  }
 };

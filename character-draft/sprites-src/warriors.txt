@@ -60,3 +60,12 @@ Tawnypelt	q|m|n|c8803a|6b4a2a|c8803a|c8803a|4caf50|none|none|bare|none|stripes|c
 Crookedstar	q|m|n|8a6a4a|cfd6dd|8a6a4a|8a6a4a|e8b84a|none|none|bare|none|stripes|claws|water
 BloodClan	q|s|t|2a2a2a|8a8f96|2a2a2a|2a2a2a|c0262f|none|none|bare|claws|horde,collar|claws|blood
 StarClan Warriors	q|m|n|cfe0f8|f2f0ea|cfe0f8|cfe0f8|8fd0ff|none|none|bare|none|horde,glow,spots|claws|light
+Darktail	q|l|w|f2f0ea|1f1f24|f2f0ea|1f1f24|3b82f6|none|none|bare|none|spots,tail,ears|bite|water
+Bristlefrost	q|s|n|94a3b8|64748b|94a3b8|94a3b8|38bdf8|none|none|bare|none|stripes,tail,ears|claws|ice
+Tigerheart	q|l|w|784928|3f2010|784928|3f2010|388e3c|none|none|bare|none|stripes,tail,ears|claws|earth
+Needletail	q|s|t|9ca3af|f3f4f6|9ca3af|f3f4f6|22c55e|none|none|bare|none|tail,ears|claws|wind
+Mousefur	q|s|t|8d6e63|5d4037|8d6e63|8d6e63|eab308|none|none|bare|none|tail,ears|claws|none
+Dustpelt	q|m|w|6d4c41|3e2723|6d4c41|3e2723|eab308|none|none|bare|none|stripes,tail,ears|claws|earth
+Goosefeather	q|s|t|cbd5e1|64748b|cbd5e1|64748b|0284c7|none|none|bare|none|spots,tail,ears|psychic|psychic
+Frostpaw	q|s|t|e2e8f0|cbd5e1|e2e8f0|cbd5e1|38bdf8|none|none|bare|none|tail,ears|magic|water
+Brackenfur	q|m|n|d97706|92400e|d97706|92400e|eab308|none|none|bare|none|stripes,tail,ears|claws|none

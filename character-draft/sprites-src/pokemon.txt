@@ -56,30 +56,29 @@ Palkia	h|g|w|f2c8d8|8e5bd0|f2c8d8|f2c8d8|8e5bd0|none|none|bare|none|spikes,wings
 Giratina	d|g|w|9aa3ad|1a1a1a|9aa3ad|9aa3ad|c0262f|none|none|bare|none|glow_eyes|breath|dark
 Arceus	q|x|n|f2f0ea|e8b84a|f2f0ea|f2f0ea|4caf50|none|none|bare|none|mane,glow|beam|light
 Zoroark	h|m|t|3a3a44|c0262f|3a3a44|3a3a44|c0262f|long|none|bare|claws|ears|claws|dark
-Hydreigon	d|l|w|3f3f5a|1a1a1a|3f3f5a|3f3f5a|8e5bd0|none|none|bare|none|glow_eyes|breath|dark
-Volcarona	b|l|n|f2f0ea|ef8a2c|f2f0ea|f2f0ea|ff7a1a|none|none|bare|none|antennae,crest|magic|fire
-Conkeldurr	h|l|w|b8906a|b8906a|b8906a|b8906a|8a5a32|bald|none|bare|club|beard|blunt|none
-Ferrothorn	o|m|n|5a8a4a|9aa3ad|5a8a4a|5a8a4a|f2cf3a|none|none|bare|none|spikes,nubs|fists|nature
 Greninja	h|m|t|3f4fa8|1a1a1a|3f4fa8|f2e0a0|e86a8a|none|none|bare|none|scarf|magic|water
-Aegislash	r|m|t|9aa3ad|e8b84a|9aa3ad|8e5bd0|e8b84a|none|none|bare|sword|shield,glow_eyes|blade|dark
-Decidueye	b|m|n|8a6a3a|2e8b3a|8a6a3a|8a6a3a|f2f0ea|none|none|bare|bow|crest|bow|nature
 Incineroar	h|l|w|c0262f|1a1a1a|1f1f1f|c0262f|e8b84a|none|none|bare|none|stripes,ears,belt|fists|fire
-Primarina	c|m|t|f2f0ea|3fa0ff|f2f0ea|3fa0ff|ff6ad5|long|none|bare|none|fins|magic|water
 Mimikyu	g|s|n|f2cf3a|1a1a1a|f2cf3a|f2cf3a|1f1f1f|none|none|bare|none|ears,grin|claws|dark
-Toxapex	o|m|n|5a8ab8|e86ab8|5a8ab8|5a8ab8|e86ab8|none|none|bare|none|spikes,nubs|claws|poison
 Necrozma	h|x|w|1f1f24|ffe14d|1f1f24|1f1f24|ffe14d|none|none|armour|claws|spikes,glow|beam|light
-Corviknight	b|l|n|3f3f5a|1a1a1a|3f3f5a|3f3f5a|c0262f|none|none|bare|none|crest,redeyes|claws|wind
-Dragapult	d|l|t|4f8a6a|e86a3a|4f8a6a|4f8a6a|f2cf3a|none|none|bare|none|horns|beam|dark
-Cinderace	h|m|t|f2f0ea|f2cf3a|f2f0ea|c0262f|ff7a1a|none|none|bare|none|ears_long|blunt|fire
 Zacian	q|l|n|3f6bb8|e8b84a|3f6bb8|3f6bb8|c0262f|none|none|bare|sword|mane|blade|light
 Zamazenta	q|l|w|c0262f|3f6bb8|c0262f|c0262f|e8b84a|none|none|bare|shield|mane|blunt|none
 Eternatus	s|c|w|5b3a7a|c0262f|5b3a7a|5b3a7a|ff6ad5|none|none|bare|none|spikes,glow_eyes|beam|poison
-Tinkaton	c|s|t|f2c8d8|3fa0ff|f2c8d8|f2c8d8|9aa3ad|braids|none|bare|hammer|ears|blunt|none
-Kingambit	r|l|n|c0262f|e8b84a|1f1f1f|c0262f|e8b84a|none|crown|armour|claws|cape|blade|dark
-Ceruledge	h|m|t|5b3a7a|e8b84a|5b3a7a|1f1f1f|3f7fd6|none|helm|armour|sword|glow_eyes|blade|fire
-Annihilape	h|m|w|9aa3ad|1a1a1a|9aa3ad|9aa3ad|8e5bd0|messy|none|bare|none|redeyes,glow|fists|dark
 Koraidon	d|l|w|c0262f|f2e0a0|c0262f|c0262f|3fa0ff|none|none|bare|none|horns|claws|none
 Miraidon	d|l|w|3f3f5a|8e5bd0|3f3f5a|3f3f5a|f2cf3a|none|none|bare|none|horns,glow|beam|lightning
 Team Rocket	h|m|t|f3d6bf|c0262f|f2f0ea|1f1f1f|c0262f|long|none|uniform|none|horde,emblem|summon|none
 Eeveelution Squad	q|s|n|9a6a3a|f2e0a0|9a6a3a|9a6a3a|1f1f1f|none|none|bare|none|horde,mane,ears|magic|psychic
 Beedrill Swarm	b|s|n|f2cf3a|1f1f1f|f2cf3a|f2cf3a|c0262f|none|none|bare|none|horde,stripes,antennae|bite|poison
+Pidgey	b|s|n|9a6838|f2cf3a|d8be92|9a6838|1f1f1f|none|none|bare|none|wings|bite|wind
+Rattata	q|s|t|7b5294|7b5294|d9ceb2|7b5294|c0262f|none|none|bare|none|whiskers,tail,ears_round,fangs|bite|none
+Caterpie	s|s|n|60b044|e04030|e8d878|60b044|e04030|none|none|bare|none|antennae,spots|gadget|web
+Metapod	o|s|n|58a838|58a838|58a838|408028|1f1f1f|none|none|bare|none|shell|blunt|shield
+Zubat	b|s|t|3a58b8|904080|3a58b8|904080|ffffff|none|none|bare|none|batwings,fangs,no_ears|bite|poison
+Wobbuffet	o|m|w|3892d8|3892d8|3892d8|1f1f1f|1f1f1f|none|none|bare|none|tail,mouth|psychic|shield
+Slowpoke	q|m|w|f088a8|f088a8|f088a8|d8c898|1f1f1f|none|none|bare|none|tail,ears_round|psychic|water
+Togepi	o|s|n|f8f0d8|f8f0d8|f8f0d8|c0262f|3a70c0|none|crown|bare|none|shell,spots|magic|light
+Wooper	o|s|n|58a8d8|784860|58a8d8|304870|784860|none|none|bare|none|antennae,noarms,tail|blunt|water
+Reshiram	d|g|n|f2f2f8|f2f2f8|f2f2f8|e05020|50a0f0|flowing|none|bare|none|wings,tail_flame,crest,glow_eyes|breath|fire
+Zekrom	d|g|w|2b2e38|2b2e38|2b2e38|20b0f0|e02020|none|horned_helm|armour|none|wings_dark,horn,glow,tail|beam|lightning
+Kyurem	d|g|w|687888|88d8f8|687888|88d8f8|f8f830|none|none|bare|none|wings,spikes,horns,glow_eyes|breath|ice
+Yveltal	b|g|w|d02030|606068|181820|d02030|80d0f8|none|none|bare|none|wings_dark,horns,collar,glow_eyes|beam|dark
+Xerneas	q|x|t|182038|283868|182038|f0d030|40d0f0|none|crown|bare|none|horns,glow,glow_eyes|magic|light

@@ -262,6 +262,7 @@
 
   function backdropKind(arena, world) {
     if (world === "minecraft") return "blocky";
+    if (/\bmoon\b|lunar|crater|mars\b/i.test(arena ? `${arena.name} ${arena.terrain}` : "")) return "moon";
     const t = norm(arena ? `${arena.name} ${arena.terrain}` : "");
     const has = re => re.test(t);
     return has(/lava|volcan|nether|magma|inferno|hell|mordor|mustafar/) ? "volcano"
@@ -288,6 +289,7 @@
     cave: { sky: ["#1f1a22", "#2a2430", "#3a3240"], far: "#2a2430", mid: "#3a3138", ground: "#4a4048", ground2: "#3a3238", line: "#2a2428" },
     volcano: { sky: ["#3a1414", "#7a2a1a", "#c4521f"], far: "#2a1a1a", mid: "#3a2020", ground: "#3a2a28", ground2: "#2a1e1c", line: "#ff6a1a" },
     tech: { sky: ["#1a2a3a", "#24384a", "#2f4a5f"], far: "#2a3f52", mid: "#3a5468", ground: "#5a6a78", ground2: "#4a5866", line: "#6af0ff" },
+    moon: { sky: ["#05060c", "#0b0d18", "#141728"], far: "#5a5d66", mid: "#73767f", ground: "#9a9da5", ground2: "#868991", line: "#62656d" },
     sky: { sky: ["#6fb2ef", "#a6d3f6", "#e8f4fb"], far: "#ffffff", mid: "#d6e6f2", ground: "#c9b48a", ground2: "#b39e74", line: "#8f7c56" },
     arena: { sky: ["#e0a85a", "#efc78a", "#f6e2b8"], far: "#8a5a3a", mid: "#a06a42", ground: "#d9b47a", ground2: "#c9a066", line: "#a8804a" },
     castle: { sky: ["#6a7fb0", "#9fb0d0", "#d9dbe6"], far: "#5a607a", mid: "#6a7088", ground: "#8a8f96", ground2: "#7a7f86", line: "#5f646b" },
@@ -312,7 +314,12 @@
         rect(x, y, 2, 1, c);
       }
     }
-    if (night || kind === "city" || kind === "cave") for (let i = 0; i < 40; i++) rect(rand() * W, rand() * 80, 1, 1, kind === "cave" ? "#5a5060" : "#f4f1ea");
+    if (kind === "moon") {
+      for (let i = 0; i < 90; i++) rect(rand() * W, rand() * 110, 1, 1, rand() < 0.2 ? "#ffffff" : "#9aa0b8");
+      // The Earth, hanging in the black.
+      rect(300, 18, 22, 22, "#2f6fd6"); rect(304, 22, 8, 6, "#4caf50"); rect(312, 30, 6, 6, "#4caf50"); rect(300, 18, 22, 3, "#cfe8ff");
+    }
+    else if (night || kind === "city" || kind === "cave") for (let i = 0; i < 40; i++) rect(rand() * W, rand() * 80, 1, 1, kind === "cave" ? "#5a5060" : "#f4f1ea");
     else if (kind !== "volcano" && kind !== "tech") {
       rect(320, 22, 14, 14, kind === "desert" || kind === "arena" ? "#fff2b0" : "#fff7d6");
       for (let i = 0; i < 4; i++) { const cx = rand() * W, cy = 20 + rand() * 50; rect(cx, cy, 30, 6, "#ffffff"); rect(cx + 6, cy - 4, 16, 4, "#ffffff"); }
@@ -2343,8 +2350,10 @@
     function scene(k, extra) { scenery.push({ kind: k, t0: time, ...extra }); }
     // Something from this place passes by in the background.
     function randomScene(i) {
-      if (skipping || i - lastScene < 3 || Math.random() > 0.35) return;
+      if (skipping || i - lastScene < 2 || Math.random() > 0.45) return;
       lastScene = i;
+      const own = MAP_SCENES.filter(([re]) => re.test(arenaName));
+      if (own.length && Math.random() < 0.7) return own[Math.floor(rnd(0, own.length))][1]();
       const dir = Math.random() < 0.5 ? 1 : -1, x0 = dir > 0 ? -60 : W + 60, x1 = dir > 0 ? W + 60 : -60;
       const far = who => { const c = characterNamed(who); return c ? Sprite.of(c) : null; };
       const pick = [];
@@ -2372,6 +2381,62 @@
       pick.push(() => scene("birds", { x0, y0: 38, x1, y1: 28, ms: 4000, n: 4, c: "#2a2a2a" }));
       pick[Math.floor(rnd(0, pick.length))]();
     }
+    /* Moments that belong to one particular battlefield, by its name. Like the
+       rest of the scenery they never change the fight; they just make each
+       place feel like itself. */
+    const arenaName = arena ? `${arena.name} ${arena.terrain || ""}` : "";
+    function flyName(name, y, ms, scale) { const s = (() => { const c = characterNamed(name); return c ? Sprite.of(c) : null; })(); if (!s) return false; const dir = Math.random() < 0.5 ? 1 : -1; scene("sprite", { sprite: s, x0: dir > 0 ? -50 : W + 50, y0: y, x1: dir > 0 ? W + 50 : -50, y1: y - 6, ms, scale, dir }); return true; }
+    const across = () => { const dir = Math.random() < 0.5 ? 1 : -1; return { dir, x0: dir > 0 ? -60 : W + 60, x1: dir > 0 ? W + 60 : -60 }; };
+    const MAP_SCENES = [
+      [/gotham|arkham|batcave/i, () => { scene("signal", { ms: 4200 }); scene("searchlight", { ms: 4200 }); }],
+      [/metropolis/i, () => { flyName("Superman", 40, 2200, 0.5) || scene("plane", { ...across(), y0: 30, y1: 26, ms: 2600 }); callout("It's a bird… it's a plane…"); }],
+      [/new york|lumiose|deika|jaku|hosu/i, () => scene("car", { ...across(), y0: 152, y1: 152, ms: 1500, c: "#f2cf3a" })],
+      [/asgard|bifrost/i, () => { scene("beam", { x0: rnd(40, W - 40), ms: 1400, c: "#ffffff", rainbow: true }); sfx("b_beam", 0.4); }],
+      [/wakanda|avengers/i, () => scene("plane", { ...across(), y0: 34, y1: 30, ms: 2400, c: "#2a2a33" })],
+      [/titan|knowhere|sakaar/i, () => { scene("rocks", { ms: 1800 }); shake = time + 250; }],
+      [/summoner'?s rift/i, () => Math.random() < 0.5 ? (flyName("Elder Dragon", 46, 4200, 0.35) || 0) : flyName("Minion Wave", 128, 6000, 0.5)],
+      [/howling abyss|freljord/i, () => { const s = characterNamed("Poros"); if (s) { const a = across(); scene("sprite", { sprite: Sprite.of(s), ...a, y0: 160, y1: 160, ms: 2600, scale: 0.6 }); sfx("b_whoosh", 0.3); } }],
+      [/zaun/i, () => scene("fog", { ms: 3200, c: "120,200,90" })],
+      [/piltover/i, () => scene("blimp", { ...across(), y0: 28, y1: 28, ms: 7000, c: "#c8a060" })],
+      [/bilgewater/i, () => Math.random() < 0.5 ? scene("tentacle", { x0: rnd(40, W - 40), y0: 124, ms: 2600 }) : (scene("ship", { ...across(), y0: 112, y1: 112, ms: 6000 }), sfx("b_boom", 0.3))],
+      [/shadow isles/i, () => scene("fog", { ms: 3400, c: "60,180,140" })],
+      [/shurima|pyramid|tatooine|desert/i, () => scene("gust", { ms: 2400, dir: 1, c: "232,210,154" })],
+      [/mount doom|mordor/i, () => { scene("eye", { ms: 3600 }); sfx("b_domain", 0.35); }],
+      [/death star/i, () => { for (let i = 0; i < 3; i++) setTimeout(() => scene("plane", { ...across(), y0: 24 + i * 10, y1: 30 + i * 10, ms: 1400, c: "#8c939b", tie: true }), i * 220); sfx("b_plane", 0.4); }],
+      [/isla nublar|jurassic/i, () => { scene("dino", { ms: 2600, x0: rnd(60, W - 60) }); sfx("b_roar", 0.6); shake = time + 400; }],
+      [/hawkins|upside down/i, () => { scene("alarm", { ms: 1800, c: "200,20,40" }); scene("spores", { ms: 3000 }); }],
+      [/bikini bottom|atlantis|ocean monument|seafoam/i, () => scene("bubbles", { ms: 3000 })],
+      [/springfield/i, () => scene("blimp", { ...across(), y0: 30, y1: 30, ms: 7000, c: "#c0262f" })],
+      [/zion|matrix/i, () => scene("rain", { ms: 2600, c: "#6aff8a" })],
+      [/hill valley/i, () => { scene("car", { ...across(), y0: 150, y1: 150, ms: 900, c: "#cfd6dd", fire: true }); flash = { c: "#9fe3ff", until: time + 160, ms: 160 }; sfx("b_chain", 0.5); }],
+      [/grayskull/i, () => { scene("bolt", { x0: 60, ms: 300 }); flash = { c: "#cfe8ff", until: time + 120, ms: 120 }; sfx("b_chain", 0.4); }],
+      [/area 51|the moon/i, () => scene("ufo", { ...across(), y0: 40, y1: 46, ms: 3600 })],
+      [/the moon/i, () => { fighters.forEach(f => { if (!f.downed && f.alpha > 0.5) { f.hop = -10; setTimeout(() => { f.hop = 0; }, 700); } }); callout("Low gravity!"); }],
+      [/cincinnati zoo/i, () => flyName("Harambe", 160, 4000, 0.6)],
+      [/tower of london|stonehenge|winterfell|the eyrie/i, () => scene("birds", { ...across(), y0: 40, y1: 30, ms: 3600, n: 7, c: "#1d1a17" })],
+      [/colosseum|heavens arena|stadium|arena|indigo plateau/i, () => { scene("flashes", { ms: 1400 }); sfx("b_shout", 0.3); }],
+      [/king'?s landing|dragonstone|meereen|harrenhal/i, () => flyName(["Drogon", "Rhaegal", "Viserion", "Vhagar", "Caraxes", "Syrax"][Math.floor(rnd(0, 6))], 46, 4200, 0.4)],
+      [/the wall|north/i, () => scene("gust", { ms: 2000, dir: -1 })],
+      [/hogwarts|great hall|hogsmeade|diagon/i, () => Math.random() < 0.5 ? scene("candles", { ms: 4200 }) : scene("birds", { ...across(), y0: 40, y1: 36, ms: 3600, n: 1, c: "#e8e0d0", owl: true })],
+      [/azkaban|forbidden forest|department of mysteries/i, () => flyName("Dementors", 50, 4400, 0.5) || scene("fog", { ms: 3200, c: "40,40,60" })],
+      [/chamber of secrets/i, () => scene("dino", { ms: 2400, x0: rnd(60, W - 60), snake: true })],
+      [/vought|seven satellite|flatiron|white house/i, () => flyName("Homelander", 36, 1800, 0.45)],
+      [/the end\b|stronghold/i, () => flyName("Ender Dragon", 44, 4600, 0.35)],
+      [/nether|bastion/i, () => flyName("Ghast", 48, 5200, 0.6)],
+      [/ancient city/i, () => { scene("sculk", { ms: 2400 }); sfx("b_domain", 0.3); }],
+      [/konoha|hidden leaf/i, () => scene("leaves", { ms: 3000 })],
+      [/marineford/i, () => { scene("ship", { ...across(), y0: 112, y1: 112, ms: 5000 }); sfx("b_boom", 0.35); shake = time + 200; }],
+      [/shibuya/i, () => scene("fog", { ms: 3000, c: "10,10,30" })],
+      [/infinity castle/i, () => { scene("alarm", { ms: 900, c: "120,40,160" }); sfx("b_spin", 0.4); }],
+      [/namek/i, () => scene("rocks", { ms: 1600 })],
+      [/raccoon city/i, () => scene("heli", { ...across(), y0: 30, y1: 34, ms: 5000 })],
+      [/aperture/i, () => { scene("portals", { ms: 2600 }); sfx("b_portal", 0.4); }],
+      [/midgar/i, () => scene("rain", { ms: 2600, c: "#9fd0ff" })],
+      [/corneria|big blue|final destination/i, () => scene("plane", { ...across(), y0: 30, y1: 26, ms: 1600, c: "#cfd6dd" })],
+      [/dracula|castle/i, () => scene("birds", { ...across(), y0: 34, y1: 44, ms: 2200, n: 9, c: "#2a2030", bats: true })],
+      [/muppet|studio 54/i, () => scene("disco", { ms: 2600 })],
+      [/fourtrees|moonpool|sunningrocks|dark forest|viridian forest/i, () => scene("leaves", { ms: 3000 })],
+    ];
     function drawScenery() {
       scenery = scenery.filter(s => time - s.t0 < s.ms);
       for (const s of scenery) {
@@ -2391,7 +2456,8 @@
             R(bx - 2, by - up, 2, 1, s.c); R(bx, by, 1, 1, s.c); R(bx + 1, by - up, 2, 1, s.c);
             if (s.owl) { R(bx - 1, by - 2, 3, 3, s.c); }
           } break;
-          case "plane": R(x - 7, y, 14, 2, "#cfd6dd"); R(x - 1, y - 3, 3, 8, "#cfd6dd"); R(x - 7 * s.dir, y - 3, 2, 3, "#cfd6dd"); break;
+          case "plane": if (s.tie) { R(x - 1, y - 1, 3, 3, s.c || "#8c939b"); R(x - 4, y - 4, 1, 9, "#3a3a44"); R(x + 4, y - 4, 1, 9, "#3a3a44"); R(x - 3, y, 7, 1, "#3a3a44"); break; }
+            R(x - 7, y, 14, 2, s.c || "#cfd6dd"); R(x - 1, y - 3, 3, 8, s.c || "#cfd6dd"); R(x - 7 * s.dir, y - 3, 2, 3, s.c || "#cfd6dd"); break;
           case "ship": R(x - 10, y, 20, 3, "#5a3a22"); R(x - 1, y - 12, 1, 12, "#3a2a1a"); R(x - 6, y - 11, 6, 8, "#e8e0d0"); R(x + 1, y - 9, 5, 6, "#e8e0d0"); break;
           case "tentacle": { const h = Math.sin(k * Math.PI) * 30; for (let i = 0; i < h; i += 2) R(s.x0 + Math.sin(i / 5 + time / 200) * 3, s.y0 - i, 3, 2, "#5a3a6a"); break; }
           case "heli": {
@@ -2399,13 +2465,35 @@
             ctx.fillStyle = "rgba(255,250,200,0.18)"; ctx.beginPath(); ctx.moveTo(x - 2, y + 4); ctx.lineTo(x - 26 + Math.sin(time / 500) * 30, 200); ctx.lineTo(x + 26 + Math.sin(time / 500) * 30, 200); ctx.fill();
             break;
           }
-          case "car": R(x - 9, y, 18, 4, "#c0262f"); R(x - 5, y - 3, 9, 3, "#c0262f"); R(x - 3, y - 2, 5, 2, "#9fe3ff"); R(x - 7, y + 4, 3, 2, "#1d1a17"); R(x + 4, y + 4, 3, 2, "#1d1a17"); break;
+          case "car": if (s.fire) { R(x - 40 * s.dir, y + 4, 40, 1, "#ff7a1a"); R(x - 40 * s.dir, y + 6, 40, 1, "#ffcc33"); }
+            R(x - 9, y, 18, 4, s.c || "#c0262f"); R(x - 5, y - 3, 9, 3, s.c || "#c0262f"); R(x - 3, y - 2, 5, 2, "#9fe3ff"); R(x - 7, y + 4, 3, 2, "#1d1a17"); R(x + 4, y + 4, 3, 2, "#1d1a17"); break;
           case "tumbleweed": { const a = time / 120; ctx.strokeStyle = "#a07a4a"; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(x, y - 4 - Math.abs(Math.sin(a)) * 6, 5, a, a + 5); ctx.stroke(); break; }
           case "lava": for (let i = 0; i < 5; i++) { const t = k * 1.4 - i * 0.1, lx = s.x0 + (i - 2) * 14 * t, ly = 120 - Math.sin(Math.min(1, t) * Math.PI) * 60; if (t > 0 && t < 1) R(lx, ly, 3, 3, i % 2 ? "#ff7a1a" : "#ffcc33"); } break;
-          case "gust": { ctx.fillStyle = "rgba(255,255,255,0.35)"; for (let i = 0; i < 12; i++) R((((time / 3) * s.dir + i * 37) % W + W) % W, 30 + i * 13, 18, 1, "rgba(255,255,255,0.5)"); break; }
+          case "gust": { for (let i = 0; i < 12; i++) R((((time / 3) * s.dir + i * 37) % W + W) % W, 30 + i * 13, 18, 1, `rgba(${s.c || "255,255,255"},0.5)`); break; }
           case "flashes": if (Math.random() < 0.3) R(rnd(0, W), rnd(60, 120), 2, 2, "#ffffff"); break;
-          case "alarm": if (((time / 200) | 0) % 2) { ctx.fillStyle = "rgba(255,40,40,0.18)"; ctx.fillRect(0, 0, W, H); } break;
+          case "alarm": if (((time / 200) | 0) % 2) { ctx.fillStyle = `rgba(${s.c || "255,40,40"},0.18)`; ctx.fillRect(0, 0, W, H); } break;
           case "bolt": { ctx.strokeStyle = "#e8f4ff"; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(s.x0, 0); for (let i = 1; i <= 5; i++) ctx.lineTo(s.x0 + rnd(-8, 8), i * 18); ctx.stroke(); break; }
+          case "signal": { const g = ctx.createRadialGradient(300, 34, 2, 300, 34, 24); g.addColorStop(0, "rgba(255,250,200,0.75)"); g.addColorStop(1, "rgba(255,250,200,0)"); ctx.fillStyle = g; ctx.fillRect(270, 4, 60, 60);
+            ctx.fillStyle = "#1d1a17"; ctx.beginPath(); ctx.moveTo(288, 34); ctx.lineTo(294, 30); ctx.lineTo(297, 33); ctx.lineTo(300, 27); ctx.lineTo(303, 33); ctx.lineTo(306, 30); ctx.lineTo(312, 34); ctx.lineTo(300, 38); ctx.fill(); break; }
+          case "searchlight": { ctx.fillStyle = "rgba(255,250,200,0.12)"; const a = Math.sin(time / 600) * 60; ctx.beginPath(); ctx.moveTo(60, 216); ctx.lineTo(120 + a - 18, 0); ctx.lineTo(120 + a + 18, 0); ctx.fill(); break; }
+          case "beam": { ctx.globalAlpha = Math.sin(k * Math.PI); for (let i = 0; i < 6; i++) { ctx.fillStyle = s.rainbow ? ["#ff6a6a", "#ffcc33", "#6aff8a", "#6af0ff", "#8e5bd0", "#ff6ad5"][i] : s.c; ctx.fillRect(s.x0 - 9 + i * 3, 0, 3, 160); } ctx.globalAlpha = 1; break; }
+          case "rocks": for (let i = 0; i < 6; i++) { const t = (k * 1.5 + i * 0.13) % 1; R(30 + i * 57, t * 120, 4, 4, "#6b5a4a"); } break;
+          case "fog": { ctx.fillStyle = `rgba(${s.c},${(0.28 * Math.sin(k * Math.PI)).toFixed(2)})`; ctx.fillRect(0, 0, W, H); for (let i = 0; i < 5; i++) { ctx.fillStyle = `rgba(${s.c},${(0.18 * Math.sin(k * Math.PI)).toFixed(2)})`; ctx.beginPath(); ctx.ellipse((i * 90 + time / 20) % (W + 80) - 40, 150 + (i % 2) * 20, 50, 12, 0, 0, Math.PI * 2); ctx.fill(); } break; }
+          case "blimp": R(x - 16, y - 5, 32, 10, s.c); R(x - 18, y - 2, 2, 4, s.c); R(x - 4, y + 5, 8, 3, "#3a3a44"); R(x - 12, y - 4, 24, 1, "rgba(255,255,255,0.5)"); break;
+          case "eye": { const a = Math.sin(k * Math.PI); ctx.globalAlpha = a; ctx.fillStyle = "#ff7a1a"; ctx.beginPath(); ctx.ellipse(W / 2, 40, 26, 10, 0, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = "#ffcc33"; ctx.beginPath(); ctx.ellipse(W / 2, 40, 18, 6, 0, 0, Math.PI * 2); ctx.fill(); R(W / 2 - 1, 32, 3, 16, "#1d1a17"); ctx.fillStyle = "rgba(255,80,0,0.12)"; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; break; }
+          case "dino": { const h = Math.sin(k * Math.PI) * 50, bx = s.x0; ctx.fillStyle = s.snake ? "#3a5a3a" : "#4a5a3a";
+            if (s.snake) { for (let i = 0; i < h; i += 3) R(bx + Math.sin(i / 6) * 8, 130 - i, 6, 3, "#3a5a3a"); }
+            else { R(bx - 14, 128 - h * 0.6, 26, 18, "#4a5a3a"); R(bx + 6, 120 - h * 0.6, 16, 10, "#4a5a3a"); R(bx + 14, 128 - h * 0.6, 8, 2, "#f2f0ea"); R(bx - 22, 134 - h * 0.6, 10, 4, "#4a5a3a"); }
+            break; }
+          case "spores": for (let i = 0; i < 12; i++) R((i * 31 + time / 30) % W, 200 - ((time / 15 + i * 40) % 200), 1, 1, "#e8e0f0"); break;
+          case "bubbles": for (let i = 0; i < 14; i++) { const by = 200 - ((time / 12 + i * 37) % 200); ctx.strokeStyle = "rgba(220,240,255,0.7)"; ctx.beginPath(); ctx.arc((i * 29) % W + Math.sin(by / 10) * 3, by, 1 + (i % 3), 0, Math.PI * 2); ctx.stroke(); } break;
+          case "rain": for (let i = 0; i < 40; i++) R((i * 47 + time / 3) % W, (i * 23 + time / 2) % H, 1, 4, s.c); break;
+          case "ufo": { R(x - 10, y, 20, 3, "#8c939b"); R(x - 5, y - 4, 10, 4, "#9fe3ff"); if (k > 0.3 && k < 0.7) { ctx.fillStyle = "rgba(160,255,160,0.18)"; ctx.beginPath(); ctx.moveTo(x - 4, y + 3); ctx.lineTo(x - 16, 200); ctx.lineTo(x + 16, 200); ctx.lineTo(x + 4, y + 3); ctx.fill(); } break; }
+          case "candles": for (let i = 0; i < 10; i++) { const cy = 30 + (i % 4) * 9 + Math.sin(time / 500 + i) * 2; R(20 + i * 36, cy, 1, 4, "#f2f0ea"); R(20 + i * 36, cy - 2, 1, 2, ((time / 150 + i) | 0) % 2 ? "#ffcc33" : "#ff9a2a"); } break;
+          case "sculk": { ctx.fillStyle = `rgba(20,90,110,${(0.25 * Math.sin(k * Math.PI)).toFixed(2)})`; ctx.fillRect(0, 140, W, H - 140); rings.length < 40 && Math.random() < 0.1 && rings.push({ x: rnd(0, W), y: rnd(150, 200), r0: 2, r1: 18, c: "#4fd6e6", t0: time, ms: 500 }); break; }
+          case "leaves": for (let i = 0; i < 14; i++) R((i * 29 + time / 25 + Math.sin(time / 300 + i) * 10) % W, (i * 17 + time / 18) % H, 2, 1, ["#6a9a3a", "#c88a2a", "#a0522d"][i % 3]); break;
+          case "portals": { const a = Math.sin(k * Math.PI); ctx.globalAlpha = a; ctx.fillStyle = "#3f7fd6"; ctx.beginPath(); ctx.ellipse(40, 150, 8, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = "#ef8a2c"; ctx.beginPath(); ctx.ellipse(W - 40, 150, 8, 18, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; break; }
+          case "disco": { for (let i = 0; i < 8; i++) { ctx.fillStyle = ["rgba(255,106,213,0.18)", "rgba(106,240,255,0.18)", "rgba(255,225,77,0.18)"][i % 3]; ctx.beginPath(); ctx.arc((i * 61 + time / 8) % W, 120 + Math.sin(time / 400 + i) * 40, 14, 0, Math.PI * 2); ctx.fill(); } R(W / 2 - 4, 6, 8, 8, "#cfd6dd"); break; }
           case "star": R(s.x0 - k * 40, s.y0 + k * 14, 2, 1, "#ffffff"); R(s.x0 - k * 40 + 2, s.y0 + k * 14 - 1, 6, 1, "rgba(255,255,255,0.4)"); break;
         }
       }

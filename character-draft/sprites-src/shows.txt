@@ -118,3 +118,18 @@ Orcs of Mordor	h|m|w|5a6a4a|1a1a1a|3a3a3a|1f1f1f|c0262f|bald|none|armour|sword|h
 Clone Troopers	h|m|n|f2f0ea|1a1a1a|f2f0ea|3f7fd6|3f7fd6|none|helm|armour|blaster|horde|gun|none
 The Ghostbusters	h|m|n|f1d0b0|5a3a1a|8a8a6a|8a8a6a|ff6ad5|short|none|jumpsuit|blaster|horde|beam|psychic
 Oompa Loompas	c|s|n|ef8a2c|4caf50|8a5a32|f2f0ea|4caf50|short|none|tunic|none|horde|fists|none
+Bluey	h|s|n|4fa3e3|27599c|4fa3e3|9bd0f7|ffe4b5|none|none|bare|wand|ears,tail,muzzle_light|magic|nature
+Bandit Heeler	h|m|w|335e99|1a3359|335e99|84b7e8|e5ba7a|none|none|bare|none|ears,tail,muzzle_light|fists|none
+Peppa Pig	h|s|w|fca3b7|fca3b7|e83835|e83835|f37295|none|none|dress|none|cheeks,tail,ears_round|fists|water
+Mickey Mouse	h|s|n|1a1a1a|1a1a1a|d62828|d62828|f5d061|none|none|bare|wand|ears_round,gloves,trunks,tail|magic|light
+Dwight Schrute	h|m|n|f1d0b0|59412b|c79f4c|42382c|4a3b2b|short|none|suit|nunchucks|glasses|fists|earth
+Michael Scott	h|m|n|f1d0b0|2c2421|273347|273347|54729c|slick|none|suit|none||fists|none
+Jesse Pinkman	h|m|t|f1d0b0|614832|b83228|2b2e3b|d69b38|buzz|cap|tunic|gun||gun|poison
+Saul Goodman	h|m|n|f1d0b0|694f38|b07d17|8a5e0b|38a892|slick|none|suit|none||gadget|none
+Tony Soprano	h|l|w|eec5a0|38302b|6e2626|26262b|c79f32|slick|none|suit|gun||blunt|none
+Thomas Shelby	h|m|t|f1d0b0|2b2826|2b2f38|1c1e24|e3e3e8|buzz|cap|coat|gun||gun|smoke
+Paul Atreides	h|m|t|ecd0b8|262220|383a38|242624|26578a|messy|hood|jumpsuit|dagger|scarf|blade|psychic
+Shai-Hulud	s|c|w|9c784e|523821|9c784e|422b18|f76828|none|none|bare|none|fangs,spikes,mouth|bite|earth
+Ted Lasso	h|m|n|f1d0b0|634832|1e3264|1e3264|e03838|short|none|jersey|none|moustache|fists|light
+Jack Reacher	h|l|w|f1d0b0|6e523b|4a4f52|2c3033|4a4f52|buzz|none|vest|gun||fists|none
+Hercule Poirot	h|m|w|f1d0b0|262626|383431|383431|ebebeb|slick|hat|suit|staff|moustache|gadget|psychic

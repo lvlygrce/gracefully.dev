@@ -51,3 +51,19 @@ Parrot	b|s|n|c0262f|3fa0ff|c0262f|c0262f|f2cf3a|none|none|bare|none|crest|bite|w
 Herobrine	k|m|n|c9926b|3b2a1a|2e9fb5|3b3fa0|f2f0ea|short|none|tunic|none|glow_eyes|magic|dark
 Zombie Horde	k|m|n|4f8a4a|2a4a2a|2e9fb5|3b3fa0|1f1f1f|short|none|tunic|none|horde|fists|poison
 Pillager Raid	k|m|n|9aa3ad|1a1a1a|5a4a3a|3a3a44|8a5a32|none|none|tunic|crossbow|horde|bow|none
+Chicken	b|s|t|f2f2f2|c0262f|f2f2f2|f2a829|c0262f|none|none|bare|none|wings|bite|wind
+Cow	q|m|w|4b3628|4b3628|4b3628|c8c0b5|1e1e1e|none|none|bare|none|horns,spots|blunt|earth
+Pig	q|s|n|f29ba8|f29ba8|f29ba8|e07a8a|1e1e1e|none|none|bare|none|tail|blunt|earth
+Sheep	q|m|w|e2dfd5|c8c0b5|ffffff|dcd8cb|1e1e1e|none|none|fur|none|ears|blunt|nature
+Mooshroom	q|m|w|a81d22|a81d22|a81d22|f4ece6|1e1e1e|none|none|bare|none|horns,spots|blunt|nature
+Squid	o|m|n|1e3852|1e3852|1e3852|15263a|386b8c|none|none|bare|none|mouth|blunt|water
+Glow Squid	o|m|n|1dc7a5|1dc7a5|1dc7a5|107a68|8cf5dc|none|none|bare|none|glow,mouth|blunt|light
+Turtle	q|m|w|3b863d|3b863d|2b5f2c|f2d78a|1e1e1e|none|none|bare|none|shell,fins|blunt|water
+Strider	k|m|w|963533|3e2723|963533|963533|eec66a|messy|none|bare|none|noarms|blunt|fire
+Endermite	o|s|t|3f295e|3f295e|3f295e|221633|b84ef5|none|none|bare|none|redeyes|bite|dark
+Stray	k|m|t|9ba3a8|9ba3a8|5b6a72|3c494f|aee5ea|none|hood|tunic|bow|glow_eyes|bow|ice
+Husk	k|m|n|a89668|a89668|827658|5d533a|2c261c|bald|none|tunic|none||fists|earth
+Wandering Trader	k|m|n|c68864|4a2d1d|2b499d|8c3434|f3bf34|none|hood|robe|none|hood|gadget|nature
+Armadillo	q|s|n|b97c6c|b97c6c|b97c6c|7a4e44|1e1e1e|none|none|bare|none|shell,ears|blunt|shield
+Camel	q|l|w|d29c54|a56a2a|d29c54|a56a2a|1e1e1e|none|none|bare|none|ears,tail|blunt|earth
+Frog	q|s|w|d27c38|d27c38|d27c38|e5b67a|252525|none|none|bare|none|mouth|bite|nature

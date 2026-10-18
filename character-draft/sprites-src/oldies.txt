@@ -81,3 +81,15 @@ ABBA	h|m|t|f1d0b0|f2e8b0|f2f0ea|3f7fd6|e8b84a|long|none|jumpsuit|none|horde,glow
 Space Invaders	k|s|n|7fd34a|7fd34a|7fd34a|7fd34a|7fd34a|none|none|bare|none|horde,antennae|beam|none
 Q*bert	o|s|n|ef8a2c|ef8a2c|ef8a2c|ef8a2c|1a1a1a|none|none|bare|none|feet|fists|none
 Frogger	q|s|t|4caf50|4caf50|4caf50|f2cf3a|4caf50|none|none|bare|none|feet|fists|none
+Cheetara	h|m|t|f0a850|e86820|d95b26|d95b26|e8b84a|flowing|none|tunic|staff|ears,spots|blunt|wind
+Panthro	h|l|w|7a829e|f2f0ea|2d334d|2d334d|c0262f|bald|none|vest|nunchucks|ears,spikes|blunt|tech
+Captain Planet	h|m|w|50b8d8|2e8b57|c0262f|c0262f|f2cf3a|short|none|vest|none|emblem,boots_accent,gloves_accent|fists|nature
+Darkwing Duck	h|s|n|f2f0ea|1a1a1a|4a2d78|4a2d78|36a853|none|hat|coat|gun|cape,eyepatch|gadget|smoke
+Scrooge McDuck	h|s|n|f2f0ea|f2f0ea|224488|224488|c0262f|none|tophat|coat|staff|glasses,boots_accent|blunt|earth
+Bucky O'Hare	h|s|n|48b848|48b848|c0262f|e8b84a|e8b84a|none|none|uniform|blaster|ears_long,belt|gun|tech
+Jem	h|m|t|f6d6c2|f582ae|e64a85|f2f0ea|5ce1e6|huge_spiky|none|dress|guitar|cheeks,belt|psychic|light
+Rainbow Brite	h|s|n|fbe3d0|f2cf3a|3578d5|e83030|f5a623|ponytail|headband|dress|wand|star,stripes,boots_accent|magic|light
+Speed Racer	h|m|n|f6d6c2|1a1a1a|3a75c4|f2f0ea|c0262f|short|helmet|uniform|none|scarf,gloves|fists|none
+Astro Boy	h|s|n|f8d7be|1a1a1a|1a1a1a|1a1a1a|c0262f|spiky|none|bare|cannon|belt,boots_accent|beam|tech
+Inspector Clouseau	h|m|t|f1d0b0|4a4a4a|d2b48c|d2b48c|2a2a2a|short|hat|coat|gun|moustache|gadget|none
+Willy Wonka	h|m|n|f4d3b8|c4924b|5c246e|d9bc73|f2cf3a|messy|tophat|coat|staff|collar|gadget|none

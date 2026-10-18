@@ -87,3 +87,20 @@ The Rumbling	h|c|w|c06a4a|1a1a1a|c06a4a|8a3a2a|ff7a1a|none|none|bare|none|horde,
 Akatsuki	h|m|n|f3d6bf|1a1a1a|1f1f1f|c0262f|c0262f|long|none|robe|none|horde,redeyes|magic|fire
 Straw Hat Pirates	h|m|n|f1d0b0|1a1a1a|c0262f|3f7fd6|e8b84a|messy|hat|vest|katana|horde|fists|none
 Survey Corps	h|m|n|f1d0b0|5a3a1a|8a6a3a|f2f0ea|2e6b3a|short|none|coat|sword|horde,cape|blade|none
+Piccolo	h|l|w|5cae4a|5cae4a|5a2a7a|5a2a7a|3b7cae|bald|none|tunic|none|antennae,ears_long,cape|beam|light
+Gohan	h|m|n|f1d0b0|1a1a1a|5a2a7a|5a2a7a|c0262f|spiky|none|tunic|none|boots_accent|beam|light
+Krillin	h|s|n|f1d0b0|f1d0b0|e65c00|e65c00|1f3f8a|bald|none|tunic|none|spots|beam|light
+Broly	h|x|w|f1d0b0|5ce63b|2b5c2b|4b2075|e8b84a|huge_spiky|none|bare|none|belt|fists|explosion
+Bulma	h|m|t|f1d0b0|38b2d6|f05b78|f0f0f0|c0262f|short|none|dress|gun||gadget|tech
+Toji Fushiguro	h|m|w|f1d0b0|1a1a1a|1f1f1f|e0dfd5|3a3a3a|messy|none|vest|spear||blade|none
+Megumi Fushiguro	h|m|t|f1d0b0|1a1a1a|1c2238|1c2238|4a5568|spiky|none|uniform|none||summon|dark
+Nobara Kugisaki	h|m|t|f1d0b0|b85d3b|1c2238|1c2238|d97736|short|none|uniform|hammer|belt|blunt|dark
+Muzan Kibutsuji	h|m|n|f5ede6|1a1a1a|1a1a1a|f0f0f0|a81923|slick|hat|suit|claws|glow_eyes|claws|blood
+Tengen Uzui	h|l|w|f1d0b0|f0f0f0|1a1a1a|1a1a1a|b82638|ponytail|headband|vest|sword|gloves_accent|blade|explosion
+Inosuke Hashibira	h|m|w|f1d0b0|1a2844|382a1e|1a1e28|4a88cc|messy|mask|bare|katana|fangs|blade|wind
+Pain	h|m|n|f1d0b0|d95b27|1a1a1a|1a1a1a|b82626|spiky|headband|coat|spear|glow_eyes|psychic|dark
+Gaara	h|m|n|f5ded2|8a2424|822424|3a2a22|d4b479|short|none|coat|none||magic|earth
+Rock Lee	h|m|n|f1d0b0|1a1a1a|2b7a3e|2b7a3e|e66820|buzz|headband|jumpsuit|none|belt|fists|none
+Hinata Hyuga	h|m|t|f5ded2|1c203b|d6d4e0|1a1e2b|e8e6f0|long|none|coat|none|glow_eyes|fists|light
+Kaido	h|x|w|b3794d|1a1a1a|351d4a|e6e4dc|a62b2b|long|none|bare|club|horns,cape|blunt|lightning
+Anya Forger	h|s|t|f8dfd7|f7a6b8|1a1a24|1a1a24|e6b84a|short|none|dress|none|horns|psychic|psychic

@@ -229,7 +229,7 @@
     if (!POCKET || !s || !document.getElementById("pocket-tabs")) return;
     const k = st => st ? st.phase + (st.match ? st.match.stage : "") : "";
     if (k(was) === k(s)) return;
-    if (s.phase === "lobby" && was) return;
+    if (s.phase === "lobby") return;   // the host is joining (or waiting) on the controls tab
     pocketShow(["auction", "sold"].includes(s.phase) || (s.phase === "match" && s.match.stage === "vote") ? "controls" : "screen");
   }
 
@@ -689,6 +689,11 @@
   }
 
   async function startDraft() {
+    const shown = error;
+    try { await startDraftNow(); }
+    finally { if (POCKET && error && error !== shown) pocketShow("screen"); }   // show why it didn't start
+  }
+  async function startDraftNow() {
     const hfInput = document.getElementById("hf-key");
     const hfTyped = hfInput && hfInput.value.trim();
     if (hfTyped && J.pin.looksLike(hfTyped)) {

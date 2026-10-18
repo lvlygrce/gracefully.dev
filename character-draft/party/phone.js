@@ -36,7 +36,8 @@
   let paceOpen = false;                     // the admin's pace controls, folded away by default
 
   const announce = t => { announcer.textContent = ""; requestAnimationFrame(() => { announcer.textContent = t; }); };
-  const buzz = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch { /* no-op */ } };
+  // Phones only buzz once the page has been touched (browsers refuse otherwise).
+  const buzz = ms => { try { if (navigator.vibrate && (!navigator.userActivation || navigator.userActivation.hasBeenActive)) navigator.vibrate(ms); } catch { /* no-op */ } };
   const player = id => state && state.players.find(p => p.id === id);
   const card = cid => state && state.cards[cid];
   const mine = () => player(me && me.id);

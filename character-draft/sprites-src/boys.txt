@@ -37,3 +37,10 @@ Golden Boy	h|m|n|f2cf3a|f2cf3a|f2cf3a|e8b84a|ffe14d|short|none|jumpsuit|none|glo
 Sam Riordan	h|l|w|f1d0b0|1a1a1a|3a3a3a|1f1f1f|f2f0ea|long|none|tunic|none|beard|fists|none
 Emma Meyer	h|s|t|f3d6bf|5a3a1a|f2a0c0|1f1f1f|f2f0ea|long|none|tunic|none||fists|none
 Polarity	h|m|n|5a3a24|9aa3ad|1f1f1f|1f1f1f|3fa0ff|short|none|jumpsuit|none|beard|magic|tech
+Mesmer	h|m|n|f1d0b0|3b2716|2a2e38|1e1e24|825a3a|messy|none|suit|none|beard|psychic|psychic
+Doppelganger	h|m|n|f3d5be|4a3828|4c2030|181818|e0c090|bald|none|robe|none||fists|none
+Blue Hawk	h|m|w|ebc5a2|322218|1c3a68|152238|d0d8e8|buzz|none|uniform|none|emblem,boots_accent|fists|none
+Splinter	h|m|n|e8c6aa|4a3020|26354a|404040|e0a050|short|none|suit|none||fists|none
+Cindy	h|m|w|e2c0a8|2b2220|8e8499|8e8499|3a2233|bald|none|jumpsuit|none||psychic|psychic
+Tommy TNT	h|m|n|eecfb4|9a9894|d85820|902018|f5c028|ponytail|none|jumpsuit|none|belt|beam|explosion
+Webweaver	h|m|t|e8c4a4|3b2b1d|1a2436|101824|5bb2d6|messy|cowl|jumpsuit|none|webbing|fists|web

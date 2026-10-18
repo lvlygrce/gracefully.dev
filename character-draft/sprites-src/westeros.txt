@@ -74,3 +74,15 @@ Dothraki Horde	h|m|w|a0623b|1a1a1a|a0623b|5a3a1a|e8b84a|braids|none|bare|scythe|
 The Unsullied	h|m|n|8d5524|1a1a1a|6b5a3a|3b3026|cfd6dd|bald|helmet|armour|spear|horde,shield|blade|none
 Army of the Dead	h|m|t|8fa8b8|3a3a3a|5a5f66|3a3a44|6af0ff|messy|none|fur|sword|horde,glow_eyes|claws|ice
 The Golden Company	h|m|w|f1d0b0|5a3a1a|e8b84a|8a6a3a|e8b84a|none|helmet|armour|sword|horde,shield|blade|none
+Ser Duncan the Tall	h|l|w|f0caa3|7c4826|6b5842|3b2e21|88aa44|messy|none|armour|greatsword|shield,belt|blade|none
+Egg	h|s|t|f5d0b5|eeddaa|705238|382a1d|7a3080|bald|cap|tunic|staff|boots_accent|blunt|none
+Wun Wun	h|g|w|8d7864|473c35|3d342d|2a241f|c2b4a3|messy|none|fur|club|beard|fists|earth
+Lyanna Mormont	h|s|n|f5d5be|2b1e17|2b3d2b|1a241a|1f6b38|ponytail|none|armour|dagger|cape|fists|none
+The High Sparrow	h|m|t|e8cbb5|bbaba0|75695a|52483d|dbd3c5|messy|none|robe|none|feet|summon|light
+Qyburn	h|m|t|e8cdb5|999088|59473b|332820|3b7a57|short|none|robe|dagger|belt|summon|poison
+Walder Frey	h|m|t|d8beab|cfcfcf|403d42|29272b|7a8a99|bald|cap|tunic|dagger|collar|blade|dark
+Hot Pie	h|m|w|f0cfb3|8c5e39|a67b51|473627|d6c4aa|messy|none|tunic|club|belt|blunt|fire
+The Three-Eyed Raven	h|m|t|d4c8b8|e0e0e0|302720|211a14|990000|long|none|robe|none|beard_long,glow_eyes|psychic|nature
+Balerion	d|c|w|18181c|111114|26262e|0f0f12|e63900|none|none|bare|none|horns,spikes,wings_dark,redeyes|breath|fire
+Syrax	d|x|n|d9a932|b3861b|e6be43|a6760f|ff6600|none|none|bare|none|horns,wings,tail|breath|fire
+Shireen Baratheon	h|s|t|f2d0bc|472e1e|42614b|283b2e|7a7873|long|none|dress|book|spots|magic|none

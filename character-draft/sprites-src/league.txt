@@ -173,3 +173,20 @@ Zoe	h|s|t|f3d6bf|f2cf3a|8e5bd0|f2cf3a|ff6ad5|long|none|tunic|none|glow|magic|lig
 Zyra	h|m|t|4caf50|c0262f|2e6b3a|1f1f1f|c0262f|long|none|bare|none|spikes,glow|summon|nature
 Minion Wave	c|s|n|5a7aa8|1a1a1a|3f7fd6|5a5f66|9aa3ad|none|helmet|armour|sword|horde|blade|none
 Baron Nashor	s|g|w|8e5bd0|ff6ad5|8e5bd0|8e5bd0|f2cf3a|none|none|bare|none|horns,spikes,glow_eyes|beam|dark
+Caster Minion	h|s|t|1a1a24|1a1a24|325ca8|1d356b|8bd8ff|none|hood|robe|wand|glow_eyes|magic|light
+Melee Minion	h|s|n|1a1a24|1a1a24|325ca8|55657d|e6c229|none|helmet|armour|sword|shield|blade|none
+Siege Minion	c|m|w|4a5568|4a5568|2d3748|3182ce|f6e05e|none|helmet|armour|cannon|glow_eyes,plate|gun|explosion
+Super Minion	h|l|w|2c3e50|2c3e50|b8860b|1f2937|00bfff|none|helm|armour|mace|glow_eyes,plate,spikes|blunt|tech
+Gromp	o|l|w|4a6e38|4a6e38|4a6e38|7a9a3b|98d63c|none|none|bare|none|mouth,spots,fangs|breath|poison
+Raptors	b|m|n|d96b27|8b2500|d96b27|4a1505|ffd700|mohawk|none|fur|claws|horde,crest,wings|claws|nature
+Krugs	k|l|w|6b655a|6b655a|544d44|3c3832|d4af37|none|none|bare|none|horde,spikes|blunt|earth
+Murk Wolves	q|m|n|3a4454|242d3a|3a4454|1e2530|63b3ed|messy|none|fur|claws|horde,fangs,glow_eyes,tail|bite|dark
+Blue Sentinel	k|l|w|4a5d6e|4a5d6e|3b4a59|222f3e|38bdf8|none|none|bare|none|glow,glow_eyes,horns|fists|nature
+Red Brambleback	h|l|w|5c3826|2d5016|5c3826|3b2012|e64a19|messy|none|bare|none|spikes,glow_eyes,flame_head|fists|fire
+Rift Scuttler	q|m|w|297fb8|297fb8|297fb8|1f5f8a|48dbfb|none|none|bare|none|shell,antennae,glow_eyes|gadget|water
+Rift Herald	q|x|w|4c1d70|240b3b|1e1b29|4c1d70|d946ef|none|none|bare|none|shell,horns,glow_eyes,spikes|blunt|dark
+Voidgrubs	s|s|n|5b21b6|5b21b6|3b0764|7c3aed|f43f5e|none|none|bare|none|horde,fangs,glow_eyes,spikes|bite|dark
+Elder Dragon	d|g|w|2c7a7b|e2e8f0|285e61|1d4044|38bdf8|none|none|bare|none|horns,wings,tail,glow_eyes,spikes|breath|fire
+Atakhan	h|x|w|1a1215|1a1215|881337|4c0519|e11d48|none|horned_helm|armour|greatsword|horns,spikes,glow_eyes,blood_black|blade|blood
+Poros	o|s|w|f8fafc|f8fafc|f8fafc|e2e8f0|ec4899|none|none|fur|none|horde,horns,mouth,cheeks|bite|ice
+Turret	r|x|w|64748b|64748b|475569|334155|38bdf8|none|none|bare|blaster|glow,glow_eyes,plate|beam|light
