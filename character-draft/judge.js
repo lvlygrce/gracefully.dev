@@ -292,7 +292,11 @@ Reply as JSON:
   the team the returning fighter fights for; "" for everything else), and "callout" (an announcer's line, under 60
   characters, for the moments the audience should notice: a plan working or breaking, a piece of gear coming into
   play or being destroyed, the terrain changing the fight, an army splitting or losing a flank; "" for the rest,
-  roughly one beat in three has one). Pick the action
+  roughly one beat in three has one). Show each character's real
+  abilities in their actions, the way their fans would recognise them: someone who makes copies of themselves attacks
+  with clone (Naruto's Shadow Clone Jutsu), a speedster with combo or spin_dash, a stretcher with stretch, a teleporter
+  with teleport, an invisible fighter with stealth, a shapeshifter with shapeshift, a flier with fly, a giant-maker
+  with grow, and every signature technique goes in "move" by its real name. Pick the action
   that looks most like what the character really does: strike is a melee blow, combo a flurry of blows, shoot a
   weapon fired, cast a spell or power, special a big signature move (use it for the turning point), throw hurls a
   weapon or object, slam hits the ground and everyone near, barrage rains many shots down, grab seizes and hurls

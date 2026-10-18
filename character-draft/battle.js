@@ -102,6 +102,90 @@
       charm: COLOURS.purple, catapult: COLOURS.grey, mine: COLOURS.grey, boomerang: COLOURS.brown, cloak: COLOURS.black, ram: COLOURS.grey })[look] || COLOURS.cyan;
   }
 
+  /* --- Fighting like themselves ---------------------------------------------
+     What a character can do, read from their name and note, so the battle
+     shows it: a cloner attacks with copies of themselves, a speedster leaves
+     afterimages, a stretcher punches from across the field. And named moves
+     map to the animation that looks like them (Shadow Clone Jutsu, Kamehameha,
+     Gum-Gum Pistol...). */
+  const ABILITY_NAMES = {
+    clone: /^(Naruto Uzumaki|Twice|Ectoplasm|Splinter|Multiple Man|Kakashi Hatake|Loki|Mysterio|Mesmer)$/,
+    speed: /^(The Flash|Reverse-Flash|Quicksilver|Sonic|Shadow the Hedgehog|A-Train|Usain Bolt|Tracer|Killua Zoldyck|Zenitsu Agatsuma|Cheetara|Speed Racer|Makarov|Accelerator|Tenya Iida)$/,
+    stretch: /^(Monkey D\. Luffy|Mister Fantastic|Plastic Man|Elastigirl|Mina Ashido)$/,
+    teleport: /^(Nightcrawler|Kurogiri|Blink|Minato Namikaze|Dormammu|Doctor Strange|Rick Sanchez)$/,
+    stealth: /^(Invisible Woman|Translucent|Predator|Toru Hagakure|Agent 47|Snake Eyes|Black Noir|Hollow Man)$/,
+    shapeshift: /^(Mystique|Zoroark|Doppelganger|Beast Boy|Clayface|Martian Manhunter|Himiko Toga|Hulkling|Rimuru Tempest|Ditto)$/,
+    grow: /^(Ant-Man|Mt\. Lady|Giant-Man|Gigantomachia|Colossus)$/,
+    fly: /^(Superman|Supergirl|Storm|Iron Man|Captain Marvel|Falcon|Vision|Hawkman|Hawkgirl|Homelander|Starlight|Hawks|Raven|Starfire|Silver Surfer|Wonder Woman|Thor)$/,
+  };
+  const ABILITY_WORDS = {
+    clone: /\bclon(e|es|ing)\b|duplicat|copies of (him|her|them)self|multipl(ies|ying) (him|her)self|shadow clones?|splits? into (copies|duplicates)|illusory copies/i,
+    speed: /super-?speed|fastest|speedster|blinding speed|faster than|lightning-fast|sonic boom|speed force/i,
+    stretch: /stretch|elastic|rubber|gum-gum|plastic body/i,
+    teleport: /teleport|blinks? (in|out|across|behind)|apparat|warps? (through|behind)|portal gun/i,
+    stealth: /invisib|cloaking|camouflag|turns? unseen|active camo/i,
+    shapeshift: /shapeshift|shape-shift|shape-?changer|disguis|mimic|takes? the (form|shape)|polymorph/i,
+    grow: /grows? (to|giant|huge)|giant-?man|enlarg|gigantif|size-?chang/i,
+    fly: /\bflight\b|\bflies\b|\bflying\b|soars?\b/i,
+  };
+  const abilityCache = new Map();
+  function abilitiesOf(p) {
+    const key = `${p.world}|${p.name}`;
+    if (abilityCache.has(key)) return abilityCache.get(key);
+    const text = `${p.name} ${p.note || ""}`, out = new Set();
+    for (const k in ABILITY_NAMES) if (ABILITY_NAMES[k].test(p.name) || ABILITY_WORDS[k].test(text)) out.add(k);
+    abilityCache.set(key, out);
+    return out;
+  }
+  // Famous named moves and the animation that shows them.
+  const MOVES = [
+    [/shadow clone|kage bunshin|multi-?shadow|clone jutsu|doppel|mirror image|copies attack/i, "clone"],
+    [/rasengan|chidori|raikiri|rasenshuriken|spirit orb/i, "orb_strike"],
+    [/kamehameha|final flash|galick|masenko|big bang attack|special beam cannon|hollow purple|getsuga|cero/i, "mega_beam"],
+    [/spirit bomb|genki dama|supernova|death ball/i, "meteor"],
+    [/gum-?gum|gomu gomu|stretch|elastic punch/i, "stretch"],
+    [/get over here|hookshot|death sentence|rocket grab/i, "hook"],
+    [/za warudo|the world|time stop|stop time|chronostasis/i, "time_stop"],
+    [/domain expansion|infinite void|malevolent shrine|unlimited void/i, "domain_expansion"],
+    [/one punch|serious punch|consecutive normal punches/i, "one_punch"],
+    [/shield (throw|toss|bounce)|vibranium shield/i, "shield_bounce"],
+    [/web-?swing|web (zip|kick)|thwip/i, "web_swing"],
+    [/super saiyan|bankai|gear (four|fifth|5|4)|hulk out|transform|ultra instinct|mega evolution/i, "transform"],
+    [/teleport|bamf|apparat|instant transmission|flying raijin|blink/i, "teleport"],
+    [/invisib|cloak|vanish/i, "stealth"],
+    [/shapeshift|disguise|polyjuice|transform into/i, "shapeshift"],
+    [/expecto patronum|summon(s|ing)? (his|her|their)|summoning jutsu/i, "summon_companion"],
+    [/petrif|stone gaze|medusa/i, "petrify"],
+    [/heat vision|laser eyes|optic blast/i, "laser_eyes"],
+    [/fus ro dah|sonic scream|canary cry|thu'?um|roar of/i, "shout"],
+    [/black hole|gravity well|gravitational/i, "black_hole"],
+    [/meteor|comet|starfall/i, "meteor"],
+    [/lightning storm|thunderstorm|call(s)? lightning/i, "lightning_storm"],
+    [/tornado|whirlwind|cyclone/i, "tornado"],
+    [/earthquake|fissure|tremor|seismic/i, "earthquake"],
+    [/freeze|ice prison|frozen solid|absolute zero/i, "freeze"],
+    [/hadouken|fireball|fire blast|flamethrower|dracarys/i, "cast"],
+    [/spin(ning)? (attack|dash)|spin dash|judgment|tornado spin/i, "spin_slash"],
+  ];
+  const PLAIN = ["strike", "combo", "special", "cast", "shoot", "throw", "slam"];
+  // A plain attack becomes the character's signature way of fighting.
+  function flavour(p, action, move, n) {
+    const fromMove = move && MOVES.find(([re]) => re.test(move));
+    if (fromMove && (PLAIN.includes(action) || action === fromMove[1])) return fromMove[1];
+    if (!PLAIN.includes(action)) return action;
+    const a = abilitiesOf(p);
+    // Most of the time, not every time, so a fight still has variety.
+    const often = n % 3 !== 2;
+    if (a.has("clone") && often) return "clone";
+    if (a.has("stretch") && often) return "stretch";
+    if (a.has("teleport") && often) return "teleport";
+    if (a.has("stealth") && n % 3 === 0) return "stealth";
+    if (a.has("shapeshift") && n % 3 === 0) return "shapeshift";
+    if (a.has("grow") && n % 3 === 0) return "grow";
+    if (a.has("fly") && n % 2 === 0 && (action === "strike" || action === "combo")) return "fly";
+    return action;
+  }
+
   /* Clean a model's beats into something that always plays sensibly:
      real actors and targets, the dead never acting again, everyone on stage
      at least once, and a fight to the death: by the end every loser is
@@ -163,6 +247,7 @@
       const actor = find(raw.actor);
       if (!actor || down.has(actor.key)) continue;
       let action = ACTIONS.includes(raw.action) ? raw.action : "strike";
+      action = flavour(actor, action, String(raw.move || ""), out.filter(b => b.actor === actor.key).length);
       // Nobody runs in a fight to the death: losers who'd flee are killed at the end.
       if (action === "retreat") { if (actor.side !== winSide) continue; action = "dodge"; }
       let target = find(raw.target);
@@ -586,7 +671,7 @@
     const fighters = people.map(p => {
       const sprite = window.Sprite.of(p);
       const group = (((window.UNIVERSES || {})[p.world] || {}).groups || []).includes(p.name) || sprite.spec.extras.has("horde");
-      return { ...p, sprite, group, unit: group ? window.Sprite.of(p, { single: true }) : null, gearOpts: {},
+      return { ...p, sprite, group, unit: group ? window.Sprite.of(p, { single: true }) : null, gearOpts: {}, fast: abilitiesOf(p).has("speed"),
         hp: p.condition && p.condition.status === "injured" ? 70 : 100, downed: false, facing: p.side ? -1 : 1, alpha: 1, scale: 1 };
     });
     // Gear changes how someone looks: extras are added, a weapon replaces theirs.
@@ -915,6 +1000,17 @@
         else if (f.tint) img = tinted(img, f.tint, 0.45);
         const S = img.width;
         const x = Math.round(f.pos.x), y = Math.round(f.pos.y + (f.hop || 0));
+        // Speedsters leave afterimages wherever they run.
+        if (f.fast && !f.downed) {
+          const tr = f.trail || (f.trail = []), last = tr[tr.length - 1];
+          if (!last || Math.abs(last.x - x) + Math.abs(last.y - y) > 3) tr.push({ x, y }); else if (tr.length) tr.shift();
+          if (tr.length > 6) tr.shift();
+          const ghost = tinted(img, "#ffe14d", 0.6);
+          tr.slice(0, -1).forEach((p, i) => {
+            ctx.save(); ctx.globalAlpha = 0.12 + i * 0.06; ctx.translate(p.x, p.y); ctx.scale(f.facing < 0 ? -f.scale : f.scale, f.scale);
+            ctx.drawImage(ghost, -Math.floor(S / 2), -(S - 4)); ctx.restore();
+          });
+        }
         if (f.alpha <= 0.01) continue;
         // Dust kicked up by running feet.
         if (f.pose === "walk" && !f.downed && !f.sprite.flies && Math.random() < 0.25) parts.push({ x: x + rnd(-4, 4), y: Math.round(f.pos.y) - 1, vx: -f.facing * rnd(8, 20), vy: -rnd(4, 12), g: 10, c: "#c8b89a", s: 1, t0: time, life: 420 });
@@ -1573,10 +1669,14 @@
         case "clone": {
           if (!target) break;
           sfx("b_teleport", 0.8);
-          const copies = [-1, 1].map(k => ({ ...actor, key: `${actor.key}~${k}`, pos: { x: actor.pos.x - actor.facing * 6, y: actor.pos.y + k * 10 }, alpha: 0.8, pose: "idle", poseT: time, hop: 0 }));
+          // Shadow-clone users bring a crowd; anyone else, a pair.
+          const many = /shadow|kage|multi/i.test(b.move || "") || /^(Naruto Uzumaki|Twice|Ectoplasm|Splinter|Multiple Man)$/.test(actor.name);
+          const offs = many ? [-2, -1, 1, 2] : [-1, 1];
+          const copies = offs.map(k => ({ ...actor, key: `${actor.key}~${k}`, pos: { x: actor.pos.x - actor.facing * 6, y: actor.pos.y + k * 8 }, alpha: 0.85, pose: "idle", poseT: time, hop: 0 }));
           copies.forEach(c => { burst(c.pos.x, c.pos.y - 8, "smoke", 8); clones.push(c); });
           await wait(300);
-          await Promise.all([approach(actor, target), ...copies.map((c, i) => { setPose(c, "walk"); return tween(c.pos, { x: target.pos.x - actor.facing * (10 + i * 6), y: target.pos.y + (i ? 10 : -10) }, 420); })]);
+          await Promise.all([approach(actor, target), ...copies.map((c, i) => { setPose(c, "walk"); const k = offs[i]; return tween(c.pos, { x: target.pos.x - actor.facing * (12 + Math.abs(k) * 5) * (k % 2 ? 1 : -1), y: target.pos.y + k * 7 }, 420); })]);
+          copies.forEach(c => { if (Math.abs(c.pos.x - target.pos.x) > 0) c.facing = Math.sign(target.pos.x - c.pos.x) || actor.facing; });
           [actor, ...copies].forEach(f => setPose(f, "windup")); await wait(150);
           [actor, ...copies].forEach(f => setPose(f, "strike")); sfx("b_punch", 0.9);
           burst(centre(target).x, centre(target).y, b.effect !== "none" ? b.effect : "impact", 16);
