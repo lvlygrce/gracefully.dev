@@ -6166,5 +6166,303 @@ window.CHARACTER_TAGLINES = {
    "Charlie and the Chocolate Factory",
    "Pure confectionary imagination"
   ]
+ },
+ "halloween": {
+  "Count Dracula": [
+   "Dracula",
+   "I never drink… wine"
+  ],
+  "Frankenstein's Monster": [
+   "Frankenstein",
+   "It's alive!"
+  ],
+  "The Bride of Frankenstein": [
+   "Bride of Frankenstein",
+   "Hiss first, ask later"
+  ],
+  "The Wolf Man": [
+   "The Wolf Man",
+   "Bring silver"
+  ],
+  "The Mummy": [
+   "The Mummy",
+   "Wrapped and furious"
+  ],
+  "The Invisible Man": [
+   "The Invisible Man",
+   "You won't see him coming"
+  ],
+  "The Creature from the Black Lagoon": [
+   "Creature from the Black Lagoon",
+   "Don't go in the water"
+  ],
+  "The Phantom of the Opera": [
+   "The Phantom of the Opera",
+   "Mind the chandelier"
+  ],
+  "Count Orlok": [
+   "Nosferatu",
+   "The shadow on the stairs"
+  ],
+  "Abraham Van Helsing": [
+   "Dracula",
+   "Stakes, always stakes"
+  ],
+  "Headless Horseman": [
+   "Sleepy Hollow",
+   "Heads will roll"
+  ],
+  "Ichabod Crane": [
+   "The Legend of Sleepy Hollow",
+   "Already running"
+  ],
+  "Michael Myers": [
+   "Halloween",
+   "The Shape never stops"
+  ],
+  "Jason Voorhees": [
+   "Friday the 13th",
+   "Ki ki ki, ma ma ma"
+  ],
+  "Freddy Krueger": [
+   "A Nightmare on Elm Street",
+   "Never sleep again"
+  ],
+  "Leatherface": [
+   "The Texas Chain Saw Massacre",
+   "Revving up"
+  ],
+  "Ghostface": [
+   "Scream",
+   "What's your favourite scary movie?"
+  ],
+  "Chucky": [
+   "Child's Play",
+   "Hi, I'm Chucky. Wanna play?"
+  ],
+  "Pinhead": [
+   "Hellraiser",
+   "Such sights to show you"
+  ],
+  "Pennywise": [
+   "It",
+   "We all float down here"
+  ],
+  "Candyman": [
+   "Candyman",
+   "Don't say it five times"
+  ],
+  "Jigsaw": [
+   "Saw",
+   "Let's play a game"
+  ],
+  "Art the Clown": [
+   "Terrifier",
+   "Silent. Smiling. Sick."
+  ],
+  "Samara Morgan": [
+   "The Ring",
+   "Seven days"
+  ],
+  "Annabelle": [
+   "The Conjuring",
+   "Don't look away"
+  ],
+  "Valak": [
+   "The Nun",
+   "Not a real nun"
+  ],
+  "Regan MacNeil": [
+   "The Exorcist",
+   "The power of Christ compels you"
+  ],
+  "Carrie White": [
+   "Carrie",
+   "Prom queen of doom"
+  ],
+  "Norman Bates": [
+   "Psycho",
+   "A boy's best friend is his mother"
+  ],
+  "Jack Torrance": [
+   "The Shining",
+   "Here's Johnny!"
+  ],
+  "The Babadook": [
+   "The Babadook",
+   "Ba-ba-dook-dook-dook"
+  ],
+  "M3GAN": [
+   "M3GAN",
+   "Best friend, no off switch"
+  ],
+  "Pumpkinhead": [
+   "Pumpkinhead",
+   "Vengeance has a price"
+  ],
+  "The Grady Twins": [
+   "The Shining",
+   "Come play with us"
+  ],
+  "The Sanderson Sisters": [
+   "Hocus Pocus",
+   "Amok, amok, amok!"
+  ],
+  "Wicked Witch of the West": [
+   "The Wizard of Oz",
+   "I'll get you, my pretty"
+  ],
+  "The Grand High Witch": [
+   "The Witches",
+   "Mice, every last one"
+  ],
+  "Baba Yaga": [
+   "Slavic folklore",
+   "The hut is walking"
+  ],
+  "Jack Skellington": [
+   "The Nightmare Before Christmas",
+   "The Pumpkin King"
+  ],
+  "Sally": [
+   "The Nightmare Before Christmas",
+   "Stitched and determined"
+  ],
+  "Oogie Boogie": [
+   "The Nightmare Before Christmas",
+   "Roll the dice"
+  ],
+  "Zero": [
+   "The Nightmare Before Christmas",
+   "Good ghost dog"
+  ],
+  "Lock, Shock and Barrel": [
+   "The Nightmare Before Christmas",
+   "Kidnap the Sandy Claws"
+  ],
+  "Beetlejuice": [
+   "Beetlejuice",
+   "It's showtime!"
+  ],
+  "Edward Scissorhands": [
+   "Edward Scissorhands",
+   "Handy with a hedge"
+  ],
+  "Emily the Corpse Bride": [
+   "Corpse Bride",
+   "Still waiting at the altar"
+  ],
+  "Wednesday Addams": [
+   "The Addams Family",
+   "Deadpan and deadly"
+  ],
+  "Morticia Addams": [
+   "The Addams Family",
+   "Darkness, elegantly"
+  ],
+  "Gomez Addams": [
+   "The Addams Family",
+   "En garde, mon cher"
+  ],
+  "Uncle Fester": [
+   "The Addams Family",
+   "Lights up a room"
+  ],
+  "Lurch": [
+   "The Addams Family",
+   "You rang?"
+  ],
+  "Thing": [
+   "The Addams Family",
+   "Lends a hand"
+  ],
+  "Casper the Friendly Ghost": [
+   "Casper",
+   "Just wants a friend"
+  ],
+  "Count von Count": [
+   "Sesame Street",
+   "One victory, ah ah ah!"
+  ],
+  "The Great Pumpkin": [
+   "Peanuts",
+   "Maybe this year"
+  ],
+  "Sam": [
+   "Trick 'r Treat",
+   "Follow the rules"
+  ],
+  "The Other Mother": [
+   "Coraline",
+   "Buttons for eyes"
+  ],
+  "Damien Thorn": [
+   "The Omen",
+   "Accidents happen"
+  ],
+  "Elvira": [
+   "Elvira, Mistress of the Dark",
+   "Unpleasant dreams"
+  ],
+  "Ash Williams": [
+   "The Evil Dead",
+   "Groovy"
+  ],
+  "The Warrens": [
+   "The Conjuring",
+   "Case files of the damned"
+  ],
+  "Igor": [
+   "Frankenstein",
+   "Walk this way"
+  ],
+  "The Grim Reaper": [
+   "Folklore",
+   "Your time is up"
+  ],
+  "The Banshee": [
+   "Irish folklore",
+   "One scream, one omen"
+  ],
+  "La Llorona": [
+   "Mexican folklore",
+   "Ay, mis hijos"
+  ],
+  "Slender Man": [
+   "Internet folklore",
+   "Always in the trees"
+  ],
+  "Krampus": [
+   "Alpine folklore",
+   "Naughty list enforcer"
+  ],
+  "Bloody Mary": [
+   "Folklore",
+   "Say it three times"
+  ],
+  "Stingy Jack": [
+   "Irish folklore",
+   "The first jack-o'-lantern"
+  ],
+  "Living Dead Zombies": [
+   "Night of the Living Dead",
+   "Aim for the head"
+  ],
+  "Skeleton Army": [
+   "Jason and the Argonauts",
+   "Bones, by the hundred"
+  ],
+  "Bat Swarm": [
+   "Folklore",
+   "A thousand wings"
+  ],
+  "Werewolf Pack": [
+   "Folklore",
+   "Full moon tonight"
+  ],
+  "Trick-or-Treaters": [
+   "Halloween night",
+   "Sugar-fuelled mob"
+  ]
  }
 };

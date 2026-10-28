@@ -2463,6 +2463,7 @@
       if (world === "league") pick.push(() => { const s = far("Minion Wave"); if (s) scene("sprite", { sprite: s, x0, y0: 128, x1, y1: 128, ms: 6000, scale: 0.5, dir }); });
       if (world === "hp") pick.push(() => scene("birds", { x0, y0: 40, x1, y1: 34, ms: 3600, n: 1, c: "#e8e0d0", owl: true }));
       if (world === "shows" || world === "oldies") pick.push(() => scene("plane", { x0, y0: 26, x1, y1: 22, ms: 4200, dir }));
+      if (world === "halloween") pick.push(() => { scene("birds", { x0, y0: 30, x1, y1: 48, ms: 2600, n: 9, c: "#2a2030", bats: true }); sfx("b_whoosh", 0.3); });
       const byKind = {
         castle: () => scene("birds", { x0, y0: 44, x1, y1: 30, ms: 3800, n: 6, c: "#1d1a17" }),
         snow: () => { scene("gust", { ms: 1800, dir }); sfx("b_wind", 0.5); },
@@ -2488,6 +2489,13 @@
     function flyName(name, y, ms, scale) { const s = (() => { const c = characterNamed(name); return c ? Sprite.of(c) : null; })(); if (!s) return false; const dir = Math.random() < 0.5 ? 1 : -1; scene("sprite", { sprite: s, x0: dir > 0 ? -50 : W + 50, y0: y, x1: dir > 0 ? W + 50 : -50, y1: y - 6, ms, scale, dir }); return true; }
     const across = () => { const dir = Math.random() < 0.5 ? 1 : -1; return { dir, x0: dir > 0 ? -60 : W + 60, x1: dir > 0 ? W + 60 : -60 }; };
     const MAP_SCENES = [
+      [/castle dracula|transylvania/i, () => { scene("birds", { ...across(), y0: 30, y1: 52, ms: 2400, n: 11, c: "#2a2030", bats: true }); callout("Listen to them, the children of the night…"); }],
+      [/sleepy hollow/i, () => { flyName("Headless Horseman", 150, 1800, 0.6) || scene("fog", { ms: 3200, c: "60,50,80" }); sfx("b_whoosh", 0.4); }],
+      [/overlook/i, () => { flyName("The Grady Twins", 150, 5200, 0.55) && callout("Come play with us…"); }],
+      [/elm street|boiler room/i, () => { scene("fog", { ms: 2800, c: "200,90,40" }); sfx("b_domain", 0.3); }],
+      [/opera/i, () => scene("candles", { ms: 4200 })],
+      [/crystal lake|derry|catacomb/i, () => scene("fog", { ms: 3400, c: "50,70,60" })],
+      [/cemetery|pumpkin patch|halloween town|haddonfield|addams/i, () => Math.random() < 0.5 ? scene("fog", { ms: 3400, c: "90,60,120" }) : scene("birds", { ...across(), y0: 34, y1: 44, ms: 2600, n: 7, c: "#2a2030", bats: true })],
       [/gotham|arkham|batcave/i, () => { scene("signal", { ms: 4200 }); scene("searchlight", { ms: 4200 }); }],
       [/metropolis/i, () => { flyName("Superman", 40, 2200, 0.5) || scene("plane", { ...across(), y0: 30, y1: 26, ms: 2600 }); callout("It's a bird… it's a plane…"); }],
       [/new york|lumiose|deika|jaku|hosu/i, () => scene("car", { ...across(), y0: 152, y1: 152, ms: 1500, c: "#f2cf3a" })],

@@ -158,7 +158,9 @@
      lets it go, and declining to raise costs nothing. */
 
   function startDraft(names, worlds, passes) {
-    const all = worlds.flatMap(w => U[w].characters.map((_, i) => `${w}:${i}`));
+    // A character in two worlds (Freddy in TV and Halloween) is dealt once.
+    const seen = new Set();
+    const all = worlds.flatMap(w => U[w].characters.map((c, i) => seen.has(c[0]) ? null : (seen.add(c[0]), `${w}:${i}`))).filter(Boolean);
     const first = Math.random() < 0.5 ? 0 : 1;
     // The battlefield is drawn up front, so you can draft for it.
     const arena = drawArena(worlds);
@@ -492,7 +494,7 @@
     const note = document.getElementById("worlds-note");
     const countWorlds = () => {
       const picked = [...form.querySelectorAll('[name="worlds"]:checked')].map(i => i.value);
-      const total = picked.reduce((n, w) => n + U[w].characters.length, 0);
+      const total = new Set(picked.flatMap(w => U[w].characters.map(c => c[0]))).size;
       note.classList.remove("choices__note--warn");
       note.textContent = !picked.length ? "Pick at least one world."
         : picked.length === 1 ? `${total} characters in the deck. Tick another world to mix them.`

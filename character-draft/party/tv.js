@@ -670,10 +670,12 @@
   }
 
   function buildDeck() {
-    const deck = [];
+    const deck = [], seen = new Set();
     for (const w of prefs.worlds) {
       const u = U[w];
       u.characters.forEach(([name, note], i) => {
+        if (seen.has(name)) return;   // in two worlds: dealt once
+        seen.add(name);
         const tags = [];
         if ((u.strategists || []).includes(name)) tags.push("known for strategy");
         if ((u.makers || []).includes(name)) tags.push("builds gear");
