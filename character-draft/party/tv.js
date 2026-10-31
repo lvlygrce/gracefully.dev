@@ -986,6 +986,9 @@
         ${f ? `${Film.makingBar(f.startedAt, f.shots.length)}<ol class="shotlist">${f.shots.map(x => `<li class="${x.url ? "shot--done" : ""}"><span class="hand">${esc(x.label)} · ${x.url ? "ready" : esc(String(x.status).replace("_", " "))}</span><br />${esc(x.caption)}</li>`).join("")}</ol>
           <button class="btn btn--quiet" type="button" id="skip-film">Skip the film</button>` : ""}
         ${judging.matchId === m.id && judging.error ? `<p class="warn">${esc(judging.error)}</p>
+          <label class="field" style="margin-top:.5rem"><span class="field__label">Grace's PIN, to judge with the game's own key</span>
+            <input class="field__input" id="fix-pin" type="password" inputmode="numeric" autocomplete="off" placeholder="PIN" /></label>
+          <div class="controls"><button class="btn btn--primary" type="button" id="use-pin">Use the PIN and try again</button></div>
           <div class="controls"><button class="btn btn--primary" type="button" id="retry">Try the judge again</button>
           <button class="btn" type="button" id="crowd">Let the crowd decide this one</button></div>` : ""}`;
     } else {
@@ -1019,6 +1022,17 @@
     on("reasoning", () => reasoning(m.id));
     on("close-vote", () => net.send({ t: "host:next" }));
     on("retry", () => { judging.matchId = null; maybeJudge(); });
+    // Mid-tournament fix for a missing PIN or a used-up key: no trip back to the lobby.
+    on("use-pin", async () => {
+      const box = document.getElementById("fix-pin"), v = box ? box.value.trim() : "";
+      if (!J.pin.looksLike(v)) { judging.error = "The PIN is four digits."; return render(true); }
+      let ok = false;
+      try { ok = await J.pin.verify(v); } catch (err) { judging.error = err.message; return render(true); }
+      if (!ok) { judging.error = "That PIN isn't right."; return render(true); }
+      try { localStorage.removeItem("character-draft:v1:gemini-key"); } catch { /* fine */ }
+      J.gemini.pool = null;
+      judging.matchId = null; maybeJudge();
+    });
     on("crowd", () => net.send({ t: "host:crowd" }));
     on("skip-film", () => { if (judging.film) judging.film.skip = true; net.send({ t: "host:film", matchId: m.id, film: null }); finishJudged(); });
     mountCouncils();
