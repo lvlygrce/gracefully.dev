@@ -558,6 +558,14 @@ Reply as JSON:
       }
       if (viaPin && res.status === 403) { pin.clear(); throw new Error("That PIN isn't right any more. Enter it again, or use your own Gemini key."); }
       const data = await res.json().catch(() => ({}));
+      // A key saved in this browser that has run out of credits: forget it and
+      // judge through the server instead, where the PIN's key has credits.
+      const outOfCredits = res.status === 402 || /prepayment|credits are depleted|billing/i.test((data.error && data.error.message) || "");
+      if (!viaPin && outOfCredits) {
+        safe.remove(KEY_STORE); safe.remove(MODEL_STORE); gemini.pool = null;
+        if (pin.get()) return gemini.request(path, body);
+        throw new Error("The Gemini key saved in this browser has run out of credits, so I've forgotten it. Enter the judge's PIN to use the game's own key.");
+      }
       if (!res.ok) {
         const msg = (data.error && data.error.message) || `Gemini said ${res.status}.`;
         const bad = (res.status === 400 && /api key/i.test(msg)) || res.status === 401 || res.status === 403;
